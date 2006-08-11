@@ -1,6 +1,7 @@
 /*
  * SimplyHTML, a word processor based on Java, HTML and CSS
  * Copyright (C) 2002 Ulrich Hilger
+ * Copyright (C) 2006 Dimitri Polivaev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,7 +70,7 @@ import javax.swing.text.html.HTMLDocument;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class SHTMLWriter {

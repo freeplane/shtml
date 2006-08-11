@@ -1,6 +1,8 @@
 /*
  * SimplyHTML, a word processor based on Java, HTML and CSS
  * Copyright (C) 2002 Ulrich Hilger
+ * Copyright (C) 2006 Karsten Pawlik
+ * Copyright (C) 2006 Dimitri Polivaev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,78 +18,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import java.awt.*;
-import java.awt.Canvas;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+
+import com.lightdev.app.shtm.SHTMLPanel;
 
 /**
- * A splash screen for application SimplyHTML to be shown during startup.
- *
- * @author Ulrich Hilger
- * @author Light Development
- * @author <a href="http://www.lightdev.com">http://www.lightdev.com</a>
- * @author <a href="mailto:info@lightdev.com">info@lightdev.com</a>
- * @author published under the terms and conditions of the
- *      GNU General Public License,
- *      for details see file gpl.txt in the distribution
- *      package of this software
- *
- * @version stage 11, April 27, 2003
+ * Class that displays a splash screen
+ * Is run in a separate thread so that the applet continues to load in the background
+ * @author Karsten Pawlik
+ * @version stage 12, August 06, 2006
  */
+public class SplashScreen extends JWindow{
 
-public class SplashScreen extends Canvas {
-
-  private Window win;
-  private Image image;
-  private Image offscreenImg;
-  private Graphics offscreenGfx;
-
-  public SplashScreen() {
-    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    image = getToolkit().getImage(
-            getClass().getResource(FrmMain.dynRes.getResourceString(FrmMain.resources, "splashImage")));
-    MediaTracker tracker = new MediaTracker(this);
-    tracker.addImage(image,0);
-    try {
-      tracker.waitForAll();
+    public SplashScreen() {
+        try {
+            JPanel panel = new JPanel(new BorderLayout());
+            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "splashImage")));
+            panel.add(new JLabel(icon), BorderLayout.CENTER);
+            getContentPane().add(panel);
+            pack();
+            Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+            setLocation((int) (d.getWidth() - getWidth()) / 2, (int) (d.getHeight() - getHeight()) / 2);
+            setVisible(true);
+            getRootPane().paintImmediately(0, 0, getWidth(), getHeight());
+        } catch (Exception e) {
+        }
     }
-    catch(Exception e) {
-      Util.errMsg(this, e.getMessage(), e);
-    }
-    win = new Window(new Frame());
-    Dimension screen = getToolkit().getScreenSize();
-    Dimension size = new Dimension(image.getWidth(this) + 2,
-            image.getHeight(this) + 2);
-    win.setSize(size);
-    win.setLayout(new BorderLayout());
-    win.add(BorderLayout.CENTER,this);
-    win.setLocation((screen.width - size.width) / 2,
-            (screen.height - size.height) / 2);
-    win.validate();
-    win.show();
-  }
-
-  public synchronized void paint(Graphics g) {
-    Dimension size = getSize();
-    if(offscreenImg == null)
-    {
-      offscreenImg = createImage(size.width,size.height);
-      offscreenGfx = offscreenImg.getGraphics();
-    }
-    offscreenGfx.setColor(Color.black);
-    offscreenGfx.drawRect(0,0,size.width - 1,size.height - 1);
-    offscreenGfx.drawImage(image,1,1,this);
-    g.drawImage(offscreenImg,0,0,this);
-    notify();
-  }
-
-  public void dispose() {
-    win.dispose();
-  }
-
-  public void update(Graphics g) {
-    paint(g);
-  }
 }

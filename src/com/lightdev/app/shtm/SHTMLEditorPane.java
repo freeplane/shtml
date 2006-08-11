@@ -1,6 +1,7 @@
 /*
  * SimplyHTML, a word processor based on Java, HTML and CSS
  * Copyright (C) 2002 Ulrich Hilger
+ * Copyright (C) 2006 Dimitri Polivaev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,8 +34,12 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.ClipboardOwner;
+
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.Caret;
+import javax.swing.text.NavigationFilter;
+
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DragGestureEvent;
@@ -48,12 +53,15 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTargetListener;
 import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DragGestureListener;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.Cursor;
 import java.awt.Component;
 import java.awt.Color;
 import javax.swing.text.Element;
+import javax.swing.text.NavigationFilter.FilterBypass;
+import javax.swing.text.Position.Bias;
 import javax.swing.text.html.HTML;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
@@ -61,6 +69,8 @@ import javax.swing.text.Keymap;
 import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.Action;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
@@ -74,6 +84,8 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.util.Vector;
 import javax.swing.text.ElementIterator;
+
+import com.lightdev.app.shtm.SHTMLWriter.PropertiesMissingException;
 
 /**
  * An editor pane for application SimplyHTML.
@@ -100,7 +112,7 @@ import javax.swing.text.ElementIterator;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  *
  * @see com.lightdev.app.shtm.HTMLText
  * @see com.lightdev.app.shtm.HTMLTextSelection
@@ -115,7 +127,7 @@ public class SHTMLEditorPane extends JEditorPane  implements
   public SHTMLEditorPane() {
     super();
     setCaretColor(Color.black);
-
+    setNavigationFilter(new MyNavigationFilter());
     /**
      * set the cursor by adding
      * a MouseListener that allows to display a text cursor when the
@@ -159,16 +171,24 @@ public class SHTMLEditorPane extends JEditorPane  implements
     InputMap myInputMap = new InputMap();
 
     KeyStroke tab = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
-    myActionMap.put(FrmMain.nextTableCellAction, new NextTableCellAction(FrmMain.nextTableCellAction));
-    myInputMap.put(tab, FrmMain.nextTableCellAction);
+    myActionMap.put(SHTMLPanel.nextTableCellAction, new NextTableCellAction(SHTMLPanel.nextTableCellAction));
+    myInputMap.put(tab, SHTMLPanel.nextTableCellAction);
 
     KeyStroke shiftTab = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK);
-    myActionMap.put(FrmMain.prevTableCellAction, new PrevTableCellAction(FrmMain.prevTableCellAction));
-    myInputMap.put(shiftTab,FrmMain.prevTableCellAction);
+    myActionMap.put(SHTMLPanel.prevTableCellAction, new PrevTableCellAction(SHTMLPanel.prevTableCellAction));
+    myInputMap.put(shiftTab,SHTMLPanel.prevTableCellAction);
 
     KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
     myActionMap.put(newListItemAction, new NewListItemAction());
     myInputMap.put(enter, newListItemAction);
+
+    KeyStroke backspace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
+    myActionMap.put(deletePrevCharAction, new DeletePrevCharAction());
+    myInputMap.put(backspace, deletePrevCharAction);
+
+    KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+    myActionMap.put(deleteNextCharAction, new DeleteNextCharAction());
+    myInputMap.put(delete, deleteNextCharAction);
 
     myActionMap.setParent(getActionMap());
     myInputMap.setParent(getInputMap());
@@ -192,14 +212,127 @@ public class SHTMLEditorPane extends JEditorPane  implements
     setKeymap(map);
     */
   }
+  private static gnu.regexp.RE pattern1 = null;
+  private static gnu.regexp.RE pattern2 = null;
 
-  /* ------- list manipulation start ------------------- */
+  /**
+   * Convenience method for setting the document text
+   * contains hack around JDK bug 4799813
+   * see http://developer.java.sun.com/developer/bugParade/bugs/4799813.html
+   * regression in 1.4.x, to be fixed in 1.5
+   * When setting the text to be "&amp; footext", it becomes "&amp;footext" (space disappears)
+   * same ocurrs for "&lt;/a&gt; &amp;amp;", it becomes "&lt;/a&gt;&amp;amp;" (space disappears)
+   * with the hack it now does not occur anymore.
+   * @param sText the html-text of the document
+   */
+  public void setText(String sText) {
+      try {
+          if( System.getProperty("java.version").substring(0,3).equals("1.4") ) {
+              if (pattern1 == null)
+                  pattern1 = new gnu.regexp.RE("(&\\w+;|&#\\d+;)(\\s|&#160;|&nbsp;)(?=<|&\\w+;|&#\\d+;)");
+              sText=pattern1.substituteAll(sText,"$1&#160;$3");
+              if (pattern2 == null)
+                  pattern2 = new gnu.regexp.RE("<(/[^>])>(\\s|&#160;|&nbsp;|\\n\\s+)(?!&#160;)(&\\w+;|&#\\d+;)");
+              sText=pattern2.substituteAll(sText,"<$1>&#160;$3$4");
+          }
+      } catch (gnu.regexp.REException ree) {
+          ree.printStackTrace();
+      }
+      SHTMLDocument doc = (SHTMLDocument) getDocument();
+      doc.startCompoundEdit();
+      super.setText(sText);
+      setCaretPosition(0);
+      doc.endCompoundEdit();
+  }
 
-  /** start of block to remove */
-  private int removeStart;
+private class MyNavigationFilter extends NavigationFilter{
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.NavigationFilter#moveDot(javax.swing.text.NavigationFilter.FilterBypass, int, javax.swing.text.Position.Bias)
+     */
+    public void moveDot(FilterBypass fb, int dot, Bias bias) {
+        dot = getValidPosition(dot);
+        super.moveDot(fb, dot, bias);
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.NavigationFilter#setDot(javax.swing.text.NavigationFilter.FilterBypass, int, javax.swing.text.Position.Bias)
+     */
+    public void setDot(FilterBypass fb, int dot, Bias bias) {
+        dot = getValidPosition(dot);
+        super.setDot(fb, dot, bias);
+    }
+
+}
+private int getValidPosition(int position) {
+    SHTMLDocument doc = (SHTMLDocument) getDocument();
+      int startPos = 0;
+      if(doc.getDefaultRootElement().getElementCount() > 1){
+          startPos = doc.getDefaultRootElement().getElement(1).getStartOffset();
+      }
+      final int validPosition = Math.max(position,startPos);
+    return validPosition;
+}
+
+public class DeletePrevCharAction extends AbstractAction{
+    Action defaultAction = null;
+    public void actionPerformed(ActionEvent e) {
+        final int selectionStart = getSelectionStart();
+        if(selectionStart == getSelectionEnd()){
+            SHTMLDocument doc = (SHTMLDocument)getDocument();
+            {
+                Element elem = getListElement(doc.getParagraphElement(selectionStart));
+                if(elem != null && elem.getStartOffset() == selectionStart){
+                    performToggleListAction(e, elem.getName());
+                    return;
+                }
+            }
+            {
+                Element elem = getListItemElement(doc.getParagraphElement(selectionStart));
+                if(elem != null && elem.getStartOffset() == selectionStart){
+                    int nextPosition = elem.getStartOffset() - 1;
+                    mergeListItemElements(getListItemElement(doc.getParagraphElement(nextPosition)), elem);
+                    setCaretPosition(nextPosition);
+                    return;
+                }
+            }
+        }
+        performAction(defaultAction, DefaultEditorKit.deletePrevCharAction, e);
+    }
+}
+
+public class DeleteNextCharAction extends AbstractAction{
+    Action defaultAction = null;
+    public void actionPerformed(ActionEvent e) {
+        if(getSelectionStart() == getSelectionEnd()){
+            SHTMLDocument doc = (SHTMLDocument)getDocument();
+            final int nextPosition = getSelectionStart() + 1;
+            {
+                Element elem = getListElement(doc.getParagraphElement(nextPosition));
+                if(elem != null && elem.getStartOffset() == nextPosition){
+                    setCaretPosition(nextPosition);
+                    performToggleListAction(e, elem.getName());
+                    return;
+                }
+            }
+            {
+                Element elem = getListItemElement(doc.getParagraphElement(nextPosition));
+                if(elem != null && elem.getStartOffset() == nextPosition){
+                    mergeListItemElements(getListItemElement(doc.getParagraphElement(nextPosition-1)), elem);
+                    setCaretPosition(nextPosition);
+                    return;
+                }
+            }
+        }
+        performAction(defaultAction, DefaultEditorKit.deleteNextCharAction, e);
+    }
+}
+/* ------- list manipulation start ------------------- */
+  /** start block to remove */
+  private Element removeStart;
 
   /** end of block to remove */
-  private int removeEnd;
+  private int removeCount;
 
   /**
    * apply a set of attributes to the list the caret is
@@ -268,30 +401,33 @@ public class SHTMLEditorPane extends JEditorPane  implements
     public void actionPerformed(ActionEvent ae) {
       try {
         SHTMLDocument doc = (SHTMLDocument) getDocument();
-        Element elem = doc.getParagraphElement(getSelectionStart());
+        int caretPosition = getCaretPosition();
         // if we are in a list, create a new item
-        if(getListElement(elem) != null) {
-          String li = HTML.Tag.LI.toString();
-          String p = HTML.Tag.P.toString();
-          // get LI having the caret
-          while(elem != null &&
-                !elem.getName().equalsIgnoreCase(li))
-          {
-            elem = elem.getParentElement();
+        Element listItemElement = getListItemElement(doc.getParagraphElement(caretPosition));
+        if(listItemElement != null) {
+                int so = listItemElement.getStartOffset();
+                int eo = listItemElement.getEndOffset();
+                if(so != eo) {
+                    StringWriter writer = new StringWriter();
+                    FixedHTMLWriter htmlwriter = new FixedHTMLWriter(writer, doc);
+                    htmlwriter.write(listItemElement);
+                    String text = writer.toString();
+                    try{
+                        doc.startCompoundEdit();
+                        doc.setOuterHTML(listItemElement, text + "\n" + text);
+                        listItemElement = getListItemElement(doc.getParagraphElement(caretPosition));
+                        int so2 = listItemElement.getStartOffset();
+                        caretPosition += so2 - so;
+                        int eo2 = listItemElement.getEndOffset();
+                        doc.remove(caretPosition, eo2 - caretPosition - 1);
+                        doc.remove(caretPosition + 1, caretPosition - so2);
+                    }
+                    finally {
+                        doc.endCompoundEdit();
+                    }
+                    setCaretPosition(caretPosition + 1);
+                }
           }
-          // if LI found, append new LI after the found one
-          if(elem != null) {
-            StringWriter sw = new StringWriter();
-            SHTMLWriter w = new SHTMLWriter(sw);
-            w.startTag(li, null);
-            w.startTag(p, null);
-            w.endTag(p);
-            w.endTag(li);
-            doc.insertAfterEnd(elem, sw.getBuffer().toString());
-            int newPos = elem.getEndOffset();
-            select(newPos, newPos);
-          }
-        }
         // we are not in a list, call alternate action
         else {
           KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -332,18 +468,17 @@ public class SHTMLEditorPane extends JEditorPane  implements
    * inside the selection needs to be switched on or off.
    */
   public void toggleList(String listTag, AttributeSet a, boolean forceOff) {
-    try {
       boolean listOn = false;
       Element parent;
       Element elem;
       SHTMLDocument doc = (SHTMLDocument) getDocument();
+      try {
+      doc.startCompoundEdit();
       Element first = doc.getParagraphElement(getSelectionStart());
       int oStart = getSelectionStart();
       int oEnd = getSelectionEnd();
       int start = first.getStartOffset();
       int end = doc.getParagraphElement(oEnd).getEndOffset();
-      removeStart = start;
-      removeEnd = end;
       Element list = getListElement(first);
       if(list == null) {
         parent = first.getParentElement();
@@ -353,31 +488,22 @@ public class SHTMLEditorPane extends JEditorPane  implements
       }
       StringWriter sw = new StringWriter();
       if(forceOff) {
-        listOff(new SHTMLWriter(sw, doc), listTag, parent, start, end, first);
+        listOff(new FixedHTMLWriter(sw, doc), listTag, parent, start, end, first);
       }
       else {
         if(switchOn(listTag, parent, start, end)) {
-          listOn(new SHTMLWriter(sw, doc), listTag, parent,
+          listOn(new FixedHTMLWriter(sw, doc), listTag, parent,
                  start, end, first, a);
         }
         else {
-          listOff(new SHTMLWriter(sw, doc), listTag, parent,
+          listOff(new FixedHTMLWriter(sw, doc), listTag, parent,
                   start, end, first);
         }
       }
       StringBuffer newHTML = sw.getBuffer();
       if(newHTML.length() > 0) {
         //System.out.println("newHTML=\r\n\r\n" + newHTML.toString());
-        if(parent.getName() != HTML.Tag.TD.toString()) {
-          select(removeStart, removeEnd);
-          replaceSelection("");
-          SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
-          kit.read(new StringReader(newHTML.toString()),
-                   doc, getCaretPosition());
-        }
-        else {
-          doc.setInnerHTML(parent, newHTML.toString());
-        }
+          doc.replaceHTML(removeStart, removeCount, newHTML.toString());
         if(oStart == oEnd) {
           setCaretPosition(oStart);
         }
@@ -390,8 +516,39 @@ public class SHTMLEditorPane extends JEditorPane  implements
     catch(Exception e) {
       Util.errMsg(null, e.getMessage(), e);
     }
+    finally{
+        doc.endCompoundEdit();
+    }
   }
 
+  private void mergeListItemElements(Element first, Element second) {
+      final SHTMLDocument doc = (SHTMLDocument)getDocument();
+      final StringWriter sw = new StringWriter();
+      final FixedHTMLWriter w = new FixedHTMLWriter(sw, doc);
+      try {
+        w.startTag(first);
+        w.writeChildElements(first);
+        int l = sw.getBuffer().length();
+        while(sw.getBuffer().charAt(--l) <= 13){
+            sw.getBuffer().deleteCharAt(l);
+        }
+        w.writeChildElements(second);
+        w.endTag(first);
+        String htmlText = sw.toString();
+        doc.replaceHTML(first, 2, htmlText);
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    } catch (BadLocationException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    } catch (PropertiesMissingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+
+
+  }
   /**
    * decide to switch on or off list formatting
    *
@@ -447,92 +604,95 @@ public class SHTMLEditorPane extends JEditorPane  implements
    * @param first  the first element in the block of elements to turn
    * list formatting off for
    */
-  private void listOff(SHTMLWriter w, String tag, Element parent,
-                       int start, int end, Element first)
+  private void listOff(FixedHTMLWriter w, String tag, Element parent,
+          int start, int end, Element first)
   {
-    int elemIndex;
-    int count;
-    Element elem;
-    String elemName;
-    String listName = null;
-    boolean inTag = false;
-    try {
-      removeStart = start;
-      removeEnd = end;
-      Element list = getListElement(first);
-      if(list == null) {
-        parent = first.getParentElement();
-      }
-      else {
-        parent = list.getParentElement();
-      }
-      for(int i = 0; i < parent.getElementCount(); i++) {
-        elem = parent.getElement(i);
-        elemName = elem.getName();
-        if((elemName.equalsIgnoreCase(HTML.Tag.UL.toString()) ||
-           elemName.equalsIgnoreCase(HTML.Tag.OL.toString())) &&
-           (elem.getStartOffset() <= end) && (elem.getEndOffset() >= start))
-        {
-          list = elem;
-          listName = elem.getName();
-          count = list.getElementCount();
-          if(removeStart > elem.getStartOffset()) {
-            removeStart = elem.getStartOffset();
+      int elemIndex;
+      int firstReplacedElemIndex = -1;
+      int count;
+      Element elem;
+      String elemName;
+      String listName = null;
+      boolean inTag = false;
+      try {
+          Element list = getListElement(first);
+          if(list == null) {
+              parent = first.getParentElement();
           }
-          if(removeEnd < elem.getEndOffset()) {
-            removeEnd = elem.getEndOffset();
+          else {
+              parent = list.getParentElement();
           }
+          for(int i = 0; i < parent.getElementCount(); i++) {
+              elem = parent.getElement(i);
+              elemName = elem.getName();
+              if((elemName.equalsIgnoreCase(HTML.Tag.UL.toString()) ||
+                      elemName.equalsIgnoreCase(HTML.Tag.OL.toString())) &&
+                      (elem.getStartOffset() <= end) && (elem.getEndOffset() >= start))
+              {
+                  if(firstReplacedElemIndex == -1){
+                      firstReplacedElemIndex = i;
+                      removeStart = elem;
+                      removeCount = 1;
+                  }
+                  else{
+                      removeCount = i - firstReplacedElemIndex;
+                  }
+                  list = elem;
+                  listName = elem.getName();
+                  count = list.getElementCount();
 
-          elemIndex = 0;
-          elem = list.getElement(elemIndex);
-          while(elemIndex < count && elem.getStartOffset() < start) {
-            if(!inTag) {
-              inTag = true;
-              w.startTag(listName, null);
-            }
-            w.write(elem);
-            elemIndex++;
-            if(elemIndex < count) {
-              elem = list.getElement(elemIndex);
-            }
-          }
-          if(inTag) {
-            inTag = false;
-            w.endTag(listName);
-          }
+                  elemIndex = 0;
+                  elem = list.getElement(elemIndex);
+                  while(elemIndex < count && elem.getStartOffset() < start) {
+                      if(!inTag) {
+                          inTag = true;
+                          w.startTag(listName, null);
+                      }
+                      w.write(elem);
+                      elemIndex++;
+                      if(elemIndex < count) {
+                          elem = list.getElement(elemIndex);
+                      }
+                  }
+                  if(inTag) {
+                      inTag = false;
+                      w.endTag(listName, null);
+                  }
 
-          while(elemIndex < count &&
-                elem.getStartOffset() >= start &&
-                elem.getEndOffset() <= end)
-          {
-            w.writeChildElements(elem);
-            elemIndex++;
-            if(elemIndex < count) {
-              elem = list.getElement(elemIndex);
-            }
-          }
+                  while(elemIndex < count &&
+                          elem.getStartOffset() >= start &&
+                          elem.getEndOffset() <= end)
+                  {
+                      w.startTag(HTML.Tag.P.toString(), null);
+                      w.writeChildElements(elem);
+                      w.endTag(HTML.Tag.P.toString(), null);
+                      elemIndex++;
+                      if(elemIndex < count) {
+                          elem = list.getElement(elemIndex);
+                      }
+                  }
 
-          while(elemIndex < count && elem.getEndOffset() > end) {
-            if(!inTag) {
-              inTag = true;
-              w.startTag(listName, null);
-            }
-            w.write(elem);
-            elemIndex++;
-            if(elemIndex < count) {
-              elem = list.getElement(elemIndex);
-            }
+                  while(elemIndex < count && elem.getEndOffset() > end) {
+                      if(!inTag) {
+                          inTag = true;
+                          w.startTag(listName, null);
+                      }
+                      w.write(elem);
+                      elemIndex++;
+                      if(elemIndex < count) {
+                          elem = list.getElement(elemIndex);
+                      }
+                  }
+                  if(elemIndex >= count && inTag) {
+                      inTag = false;
+                      w.endTag(listName, null);
+                  }
+              }
           }
-          if(elemIndex >= count && inTag) {
-            inTag = false;
-            w.endTag(listName);
-          }
-        }
       }
-    }
-    catch(Exception e) {
-      Util.errMsg(null, e.getMessage(), e);
-    }
+      catch(Exception e) {
+          Util.errMsg(null, e.getMessage(), e);
+      }
   }
 
   /**
@@ -552,11 +712,12 @@ public class SHTMLEditorPane extends JEditorPane  implements
    * @param first  the first element of the block to switch
    * list formatting on for
    */
-  private void listOn(SHTMLWriter w, String tag, Element parent,
+  private void listOn(FixedHTMLWriter w, String tag, Element parent,
                       int start, int end, Element first, AttributeSet la)
   {
     int k;
     int count;
+    int firstReplacedElemIndex = -1;
     Element elem;
     String elemName;
     String listName = null;
@@ -567,8 +728,6 @@ public class SHTMLEditorPane extends JEditorPane  implements
     boolean aStarted = false;
     boolean mergeList = false;
     try {
-      removeStart = start;
-      removeEnd = end;
       Element list = getListElement(first);
       if(list == null) {
         parent = first.getParentElement();
@@ -577,213 +736,224 @@ public class SHTMLEditorPane extends JEditorPane  implements
         parent = list.getParentElement();
       }
       for(int i = 0; i < parent.getElementCount(); i++) {
-        // for every element of the parent
-        elem = parent.getElement(i);
-        elemName = elem.getName();
-        eStart = elem.getStartOffset();
-        eEnd = elem.getEndOffset();
-        if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString()) ||
-           elemName.equalsIgnoreCase(HTML.Tag.OL.toString()))
-        {
-          // elem is a list
-          list = elem;
-          listName = elem.getName();
-          count = list.getElementCount();
-          if(eEnd == start && listName.equalsIgnoreCase(tag))
+          // for every element of the parent
+          elem = parent.getElement(i);
+          elemName = elem.getName();
+          eStart = elem.getStartOffset();
+          eEnd = elem.getEndOffset();
+          if(firstReplacedElemIndex == -1 && eEnd > start){
+              firstReplacedElemIndex = i;
+              removeStart = elem;
+              removeCount = 0;
+          }
+          if(firstReplacedElemIndex != -1 && eStart < end){
+              removeCount++;
+          }
+          if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString()) ||
+                  elemName.equalsIgnoreCase(HTML.Tag.OL.toString()))
           {
-            // a list of the same name directly before the selection
-            mergeList = true;
-            if(removeStart > eStart) {
-              removeStart = eStart;
-            }
-            if(!bStarted) {
-              bStarted = true;
-              w.startTag(listName, list.getAttributes());
-            }
-            k = 0;
-            elem = list.getElement(k);
-            while(k < count) {
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
+              // elem is a list
+              list = elem;
+              listName = elem.getName();
+              count = list.getElementCount();
+              if(eEnd == start && listName.equalsIgnoreCase(tag))
+              {
+                  // a list of the same name directly before the selection
+                  mergeList = true;
+                  if(!bStarted) {
+                      bStarted = true;
+                      w.startTag(listName, list.getAttributes());
+                  }
+                  k = 0;
+                  elem = list.getElement(k);
+                  while(k < count) {
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
               }
-            }
+              else if(eStart < start && eEnd >= start) {
+                  // list starts outside the selection before
+                  if(!bStarted) {
+                      bStarted = true;
+                      w.startTag(listName, list.getAttributes());
+                  }
+                  k = 0;
+                  elem = list.getElement(k);
+                  while(k < count && elem.getStartOffset() < start) {
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
+                  while(k < count &&
+                          elem.getStartOffset() >= start &&
+                          elem.getEndOffset() <= end) {
+                      if(bStarted) {
+                          bStarted = false;
+                          if(!listName.equalsIgnoreCase(tag)) {
+                              w.endTag(listName, null);
+                          }
+                      }
+                      if(!iStarted) {
+                          iStarted = true;
+                          if(!listName.equalsIgnoreCase(tag)) {
+                              w.startTag(tag, la);
+                          }
+                      }
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
+                  while(k < count && elem.getEndOffset() > end) {
+                      if(iStarted) {
+                          iStarted = false;
+                          if(!listName.equalsIgnoreCase(tag)) {
+                              w.endTag(tag, null);
+                          }
+                      }
+                      if(!aStarted) {
+                          aStarted = true;
+                          if(!listName.equalsIgnoreCase(tag)) {
+                              w.startTag(listName, list.getAttributes());
+                          }
+                      }
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
+              }
+              else if(eStart >= start && eStart < end) {
+                  // list starts inside the selection
+                  k = 0;
+                  elem = list.getElement(k);
+                  while(k < count &&
+                          elem.getStartOffset() >= start &&
+                          elem.getEndOffset() <= end) {
+                      if(bStarted) {
+                          bStarted = false;
+                          if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
+                              w.endTag(listName, null);
+                          }
+                      }
+                      if(!iStarted) {
+                          iStarted = true;
+                          if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
+                              w.startTag(tag, la);
+                          }
+                      }
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
+                  while(k < count && elem.getEndOffset() > end) {
+                      if(iStarted) {
+                          iStarted = false;
+                          if(!listName.equalsIgnoreCase(tag)) {
+                              w.endTag(tag, null);
+                          }
+                      }
+                      if(!aStarted) {
+                          aStarted = true;
+                          if(!listName.equalsIgnoreCase(tag)) {
+                              w.startTag(listName, list.getAttributes());
+                          }
+                      }
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
+              }
+              else if(eStart == end && listName.equalsIgnoreCase(tag)) {
+                  // list with same name directly after selection
+                  removeCount++;
+                  k = 0;
+                  elem = list.getElement(k);
+                  while(k < count) {
+                      w.write(elem);
+                      k++;
+                      if(k < count) {
+                          elem = list.getElement(k);
+                      }
+                  }
+                  w.endTag(tag, null);
+                  aStarted = false;
+                  iStarted = false;
+              }
           }
-          else if(eStart < start && eEnd >= start) {
-            // list starts outside the selection before
-            if(removeStart > eStart) {
-              removeStart = eStart;
-            }
-            if(removeEnd < eEnd) {
-              removeEnd = eEnd;
-            }
-            if(!bStarted) {
-              bStarted = true;
-              w.startTag(listName, list.getAttributes());
-            }
-            k = 0;
-            elem = list.getElement(k);
-            while(k < count && elem.getStartOffset() < start) {
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
+          else {
+              // elem is not a list
+              list = null;
+              if(eStart >= start && eEnd <= end) {
+                  // element is inside the selection
+                  if(!iStarted) {
+                      iStarted = true;
+                      if(!bStarted) {
+                          w.startTag(tag, la);
+                      }
+                      else {
+                          if(!tag.equalsIgnoreCase(listName)) {
+                              w.endTag(listName, null);
+                              bStarted = false;
+                              w.startTag(tag, la);
+                          }
+                      }
+                  }
+                  w.startTag(HTML.Tag.LI.toString(), null);
+                  if(elem.getName().equalsIgnoreCase(HTML.Tag.P.toString())){
+                      w.writeChildElements(elem);
+                  }
+                  else{
+                      w.write(elem);
+                  }
+                  w.endTag(HTML.Tag.LI.toString(), null);
               }
-            }
-            while(k < count &&
-                  elem.getStartOffset() >= start &&
-                  elem.getEndOffset() <= end) {
-              if(bStarted) {
-                bStarted = false;
-                if(!listName.equalsIgnoreCase(tag)) {
-                  w.endTag(listName);
-                }
-              }
-              if(!iStarted) {
-                iStarted = true;
-                if(!listName.equalsIgnoreCase(tag)) {
-                  w.startTag(tag, la);
-                }
-              }
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
-              }
-            }
-            while(k < count && elem.getEndOffset() > end) {
-              if(iStarted) {
-                iStarted = false;
-                if(!listName.equalsIgnoreCase(tag)) {
-                  w.endTag(tag);
-                }
-              }
-              if(!aStarted) {
-                aStarted = true;
-                if(!listName.equalsIgnoreCase(tag)) {
-                  w.startTag(listName, list.getAttributes());
-                }
-              }
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
-              }
-            }
           }
-          else if(eStart >= start && eStart < end) {
-            // list starts inside the selection
-            if(eEnd > removeEnd) {
-              removeEnd = eEnd;
-            }
-            k = 0;
-            elem = list.getElement(k);
-            while(k < count &&
-                  elem.getStartOffset() >= start &&
-                  elem.getEndOffset() <= end) {
-              if(bStarted) {
-                bStarted = false;
-                if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
-                  w.endTag(listName);
-                }
-              }
-              if(!iStarted) {
-                iStarted = true;
-                if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
-                  w.startTag(tag, la);
-                }
-              }
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
-              }
-            }
-            while(k < count && elem.getEndOffset() > end) {
-              if(iStarted) {
-                iStarted = false;
-                if(!listName.equalsIgnoreCase(tag)) {
-                  w.endTag(tag);
-                }
-              }
-              if(!aStarted) {
-                aStarted = true;
-                if(!listName.equalsIgnoreCase(tag)) {
-                  w.startTag(listName, list.getAttributes());
-                }
-              }
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
-              }
-            }
-          }
-          else if(eStart == end && listName.equalsIgnoreCase(tag)) {
-            // list with same name directly after selection
-            if(removeEnd < eEnd) {
-              removeEnd = eEnd;
-            }
-            k = 0;
-            elem = list.getElement(k);
-            while(k < count) {
-              w.write(elem);
-              k++;
-              if(k < count) {
-                elem = list.getElement(k);
-              }
-            }
-            w.endTag(tag);
-            aStarted = false;
-            iStarted = false;
-          }
-        }
-        else {
-          // elem is not a list
-          list = null;
-          if(eStart >= start && eEnd <= end) {
-            // element is inside the selection
-            if(!iStarted) {
-              iStarted = true;
-              if(!bStarted) {
-                w.startTag(tag, la);
-              }
-              else {
-                if(!tag.equalsIgnoreCase(listName)) {
-                  w.endTag(listName);
-                  bStarted = false;
-                  w.startTag(tag, la);
-                }
-              }
-            }
-            w.startTag(HTML.Tag.LI.toString(), null);
-            w.write(elem);
-            w.endTag(HTML.Tag.LI.toString());
-          }
-        }
       }
       if(iStarted) {
-        iStarted = false;
-        if(list == null) {
-          w.endTag(tag);
-        }
-        else {
-          if(!aStarted) {
-            w.endTag(listName);
+          iStarted = false;
+          if(list == null) {
+              w.endTag(tag, null);
           }
-        }
+          else {
+              if(!aStarted) {
+                  w.endTag(listName, null);
+              }
+          }
       }
       if(aStarted) {
-        aStarted = false;
-        w.endTag(listName);
+          aStarted = false;
+          w.endTag(listName, null);
       }
     }
     catch(Exception e) {
-      Util.errMsg(null, e.getMessage(), e);
+        Util.errMsg(null, e.getMessage(), e);
     }
   }
 
+  /**
+   * get the list item element a given element is inside (if any).
+   *
+   * @param elem  the element to get the list element for
+   *
+   * @return the list element the given element is inside, or null, if
+   * the given element is not inside a list
+   */
+  private Element getListItemElement(Element elem) {
+    Element list = Util.findElementUp(HTML.Tag.LI.toString(), elem);
+    return list;
+  }
   /**
    * get the list element a given element is inside (if any).
    *
@@ -822,73 +992,75 @@ public class SHTMLEditorPane extends JEditorPane  implements
   /** default vertical alignment */
   public static final String DEFAULT_VERTICAL_ALIGN = "top";
 
-  /**
-   * insert a table
-   *
-   * @param colCount the number of columns the new table shall have
-   */
-  public void insertTable(int colCount) {
-    int start = getSelectionStart();
-    StringWriter sw = new StringWriter();
-    SHTMLWriter w = new SHTMLWriter(sw);
-    // some needed constants
-    String table = HTML.Tag.TABLE.toString();
-    String tr = HTML.Tag.TR.toString();
-    String td = HTML.Tag.TD.toString();
-    String p = HTML.Tag.P.toString();
-    // the attribute set to use for applying attributes to tags
-    SimpleAttributeSet set = new SimpleAttributeSet();
-    // build table attribute
-    Util.styleSheet().addCSSAttribute(set, CSS.Attribute.WIDTH, DEFAULT_TABLE_WIDTH);
-    Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_STYLE, "solid");
-    Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, "0");
-    Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, "0");
-    Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, "0");
-    Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, "0");
-    set.addAttribute(HTML.Attribute.BORDER, "0");
-    try {
-      w.startTag(table, set);
-      // start row tag
-      w.startTag(tr, null);
-      // get width of each cell according to column count
-      String tdWidth = Integer.toString(100 / colCount);
-      // build cell width attribute
-      Util.styleSheet().addCSSAttribute(set,
-                        CSS.Attribute.WIDTH,
-                        Integer.toString(100 / colCount) + Util.pct);
-      set.addAttribute(HTML.Attribute.VALIGN, DEFAULT_VERTICAL_ALIGN);
-      Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, "1");
-      Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, "1");
-      Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, "1");
-      Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, "1");
-      SimpleAttributeSet pSet = new SimpleAttributeSet();
-      Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_TOP, "1");
-      Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_RIGHT, "1");
-      Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_BOTTOM, "1");
-      Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_LEFT, "1");
-      set.removeAttribute(HTML.Attribute.BORDER);
-      // add cells
-      for(int i=0; i<colCount; i++) {
-        w.startTag(td, set);
-        w.startTag(p, pSet);
-        w.endTag(p);
-        w.endTag(td);
+      /**
+       * insert a table
+       *
+       * @param colCount the number of columns the new table shall have
+       */
+      public void insertTable(int colCount) {
+        final int selectionStart = getSelectionStart();
+        int start = selectionStart;
+        StringWriter sw = new StringWriter();
+        SHTMLWriter w = new SHTMLWriter(sw);
+        // some needed constants
+        String table = HTML.Tag.TABLE.toString();
+        String tr = HTML.Tag.TR.toString();
+        String td = HTML.Tag.TD.toString();
+        String p = HTML.Tag.P.toString();
+        // the attribute set to use for applying attributes to tags
+        SimpleAttributeSet set = new SimpleAttributeSet();
+        // build table attribute
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.WIDTH, DEFAULT_TABLE_WIDTH);
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_STYLE, "solid");
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, "0");
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, "0");
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, "0");
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, "0");
+        set.addAttribute(HTML.Attribute.BORDER, "0");
+        try {
+          w.startTag(table, set);
+          // start row tag
+          w.startTag(tr, null);
+          // get width of each cell according to column count
+          String tdWidth = Integer.toString(100 / colCount);
+          // build cell width attribute
+          Util.styleSheet().addCSSAttribute(set,
+                            CSS.Attribute.WIDTH,
+                            Integer.toString(100 / colCount) + Util.pct);
+          set.addAttribute(HTML.Attribute.VALIGN, DEFAULT_VERTICAL_ALIGN);
+          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, "1");
+          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, "1");
+          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, "1");
+          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, "1");
+          SimpleAttributeSet pSet = new SimpleAttributeSet();
+          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_TOP, "1");
+          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_RIGHT, "1");
+          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_BOTTOM, "1");
+          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_LEFT, "1");
+          set.removeAttribute(HTML.Attribute.BORDER);
+          // add cells
+          for(int i=0; i<colCount; i++) {
+            w.startTag(td, set);
+            w.startTag(p, pSet);
+            w.endTag(p);
+            w.endTag(td);
+          }
+          // end row and table tags
+          w.endTag(tr);
+          w.endTag(table);
+          // read table html into document
+          SHTMLDocument doc = (SHTMLDocument) getDocument();
+          Element para = doc.getParagraphElement(selectionStart);
+          if(para != null) {
+              w.write(para);
+              doc.replaceHTML(para, 1, sw.getBuffer().toString());
+          }
+        }
+        catch(Exception ex) {
+          Util.errMsg(null, ex.getMessage(), ex);
+        }
+        select(start, start);
       }
-      // end row and table tags
-      w.endTag(tr);
-      w.endTag(table);
-      // read table html into document
-      SHTMLDocument doc = (SHTMLDocument) getDocument();
-      Element para = doc.getParagraphElement(getSelectionStart());
-      if(para != null) {
-        doc.insertAfterEnd(para, sw.getBuffer().toString());
-      }
-    }
-    catch(Exception ex) {
-      Util.errMsg(null, ex.getMessage(), ex);
-    }
-    select(start, start);
-  }
 
   /**
    * apply a new anchor to the currently selected text
@@ -1020,7 +1192,7 @@ public class SHTMLEditorPane extends JEditorPane  implements
   private void setTextLink(Element e, String href, String className, String linkText, SHTMLDocument doc) {
     SimpleAttributeSet aSet = new SimpleAttributeSet();
     aSet.addAttribute(HTML.Attribute.HREF, href);
-    String sStyleName = FrmMain.dynRes.getResourceString(FrmMain.resources, "standardStyleName");
+    String sStyleName = SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "standardStyleName");
     if(className != null && !className.equalsIgnoreCase(sStyleName)) {
       aSet.addAttribute(HTML.Attribute.CLASS, className);
     }
@@ -1912,6 +2084,8 @@ public class SHTMLEditorPane extends JEditorPane  implements
       select(lastSelStart, lastSelEnd);
     }
     else {
+        final SHTMLDocument doc = (SHTMLDocument)getDocument(); 
+        doc.startCompoundEdit();
       try {
         Transferable transferable = event.getTransferable();
         if(transferable.isDataFlavorSupported(df)){
@@ -1930,6 +2104,9 @@ public class SHTMLEditorPane extends JEditorPane  implements
       catch (Exception exception) {
         exception.printStackTrace();
         event.rejectDrop();
+      }
+      finally{
+          doc.endCompoundEdit();
       }
     }
   }
@@ -2026,75 +2203,75 @@ public class SHTMLEditorPane extends JEditorPane  implements
 
   /* ------ start of cut, copy and paste implementation ------------------- */
 
-  /**
-   * Transfers the currently selected range in the associated
-   * text model to the system clipboard, removing the contents
-   * from the model. The current selection is reset.
-   *
-   * @see #replaceSelection
-   */
-
-  public void cut() {
-    if (isEditable() && isEnabled()) {
-      copy();
-      replaceSelection("");
-    }
-  }
-
-
-  /**
-   * Transfers the currently selected range in the associated
-   * text model to the system clipboard, leaving the contents
-   * in the text model.  The current selection remains intact.
-   */
-
-  public void copy() {
-    try
-    {
-      HTMLText st = new HTMLText();
-      int start = getSelectionStart();
-      st.copyHTML(this, start, getSelectionEnd() - start);
-      HTMLTextSelection contents = new HTMLTextSelection(st);
-      Clipboard clipboard = getToolkit().getSystemClipboard();
-      clipboard.setContents(contents, defaultClipboardOwner);
-    }
-    catch(Exception e) {
-      getToolkit().beep();
-    }
-  }
-
-
-  /**
-   * Transfers the contents of the system clipboard into the
-   * associated text model. If there is a selection in the
-   * associated view, it is replaced with the contents of the
-   * clipboard. If there is no selection, the clipboard contents
-   * are inserted in front of the current insert position in
-   * the associated view. If the clipboard is empty, does nothing.
-   *
-   * @see #replaceSelection
-   */
-
-  public void paste() {
-    Clipboard clipboard = getToolkit().getSystemClipboard();
-    Transferable content = clipboard.getContents(this);
-    if (content != null) {
-      try {
-        if(content.isDataFlavorSupported(df)) {
-          HTMLText st = (HTMLText) content.getTransferData(df);
-          replaceSelection(st);
-        }
-        else if(content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-          String text = (String) content.getTransferData(DataFlavor.stringFlavor);
-          replaceSelection(text);
-        }
-      }
-      catch (Exception e) {
-        getToolkit().beep();
-      }
-    }
-  }
-
+//  /**
+//   * Transfers the currently selected range in the associated
+//   * text model to the system clipboard, removing the contents
+//   * from the model. The current selection is reset.
+//   *
+//   * @see #replaceSelection
+//   */
+//
+//  public void cut() {
+//    if (isEditable() && isEnabled()) {
+//      copy();
+//      replaceSelection("");
+//    }
+//  }
+//
+//
+//  /**
+//   * Transfers the currently selected range in the associated
+//   * text model to the system clipboard, leaving the contents
+//   * in the text model.  The current selection remains intact.
+//   */
+//
+//  public void copy() {
+//    try
+//    {
+//      HTMLText st = new HTMLText();
+//      int start = getSelectionStart();
+//      st.copyHTML(this, start, getSelectionEnd() - start);
+//      HTMLTextSelection contents = new HTMLTextSelection(st);
+//      Clipboard clipboard = getToolkit().getSystemClipboard();
+//      clipboard.setContents(contents, defaultClipboardOwner);
+//    }
+//    catch(Exception e) {
+//      getToolkit().beep();
+//    }
+//  }
+//
+//
+//  /**
+//   * Transfers the contents of the system clipboard into the
+//   * associated text model. If there is a selection in the
+//   * associated view, it is replaced with the contents of the
+//   * clipboard. If there is no selection, the clipboard contents
+//   * are inserted in front of the current insert position in
+//   * the associated view. If the clipboard is empty, does nothing.
+//   *
+//   * @see #replaceSelection
+//   */
+//
+//  public void paste() {
+//    Clipboard clipboard = getToolkit().getSystemClipboard();
+//    Transferable content = clipboard.getContents(this);
+//    if (content != null) {
+//      try {
+//        if(content.isDataFlavorSupported(df)) {
+//          HTMLText st = (HTMLText) content.getTransferData(df);
+//          replaceSelection(st);
+//        }
+//        else if(content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+//          String text = (String) content.getTransferData(DataFlavor.stringFlavor);
+//          replaceSelection(text);
+//        }
+//      }
+//      catch (Exception e) {
+//        getToolkit().beep();
+//      }
+//    }
+//  }
+//
 
   /* ------ end of cut, copy and paste implementation --------------- */
 
@@ -2221,7 +2398,43 @@ public class SHTMLEditorPane extends JEditorPane  implements
 
   /* ---------- class fields start -------------- */
 
-  public static final String newListItemAction = "newListItem";
+  static Action toggleBulletListAction = null;
+  static Action toggleNumberListAction = null;
+
+  private void performAction(Action defaultAction, String actionName, ActionEvent e) {
+    if(defaultAction == null){
+        final Action[] defaultActions = getEditorKit().getActions();
+        for(int i = 0; i < defaultActions.length; i++){
+            Action action = defaultActions[i];
+            if(action.getValue(Action.NAME).equals(actionName)){
+                defaultAction = action;
+                break;
+            }
+        }
+    }
+    if(defaultAction != null){
+        defaultAction.actionPerformed(e);
+    }
+}
+  private void performToggleListAction(ActionEvent e, String elemName){
+      if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString())){
+          if(toggleBulletListAction == null){
+              toggleBulletListAction = SHTMLPanel.dynRes.getAction(SHTMLPanel.toggleBulletsAction);
+          }
+          toggleBulletListAction.actionPerformed(e);
+      }
+      else if(elemName.equalsIgnoreCase(HTML.Tag.OL.toString())){
+          if(toggleNumberListAction == null){
+              toggleNumberListAction = SHTMLPanel.dynRes.getAction(SHTMLPanel.toggleNumbersAction);
+          }
+          toggleNumberListAction.actionPerformed(e);
+      }
+  }
+
+public static final String newListItemAction = "newListItem";
+
+  public static final String deletePrevCharAction = "deletePrevChar";
+  public static final String deleteNextCharAction = "deleteNextChar";
 
   /** a data flavor for transferables processed by this component */
   private DataFlavor df =
@@ -2231,6 +2444,7 @@ public class SHTMLEditorPane extends JEditorPane  implements
   private Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
   private Cursor defaultCursor =
                   Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+
 
   /* ---------- class fields end -------------- */
 

@@ -1,9 +1,14 @@
 package com.lightdev.app.shtm;
 
 import javax.swing.text.*;
+import javax.swing.text.AbstractDocument.LeafElement;
 import javax.swing.text.html.*;
+
+import com.lightdev.app.shtm.SHTMLWriter.PropertiesMissingException;
+
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 
 /**
@@ -14,7 +19,7 @@ import java.util.*;
  * method 'createFontAttribute' so that font sizes
  * are written correctly inside content</p>.
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class FixedHTMLWriter extends HTMLWriter {
@@ -31,6 +36,7 @@ public class FixedHTMLWriter extends HTMLWriter {
     private boolean inTextArea = false;
     private boolean newlineOutputed = false;
     private boolean completeDoc;
+    private Element elem;
 
     /*
      * Stores all embedded tags. Embedded tags are tags that are
@@ -94,6 +100,55 @@ public class FixedHTMLWriter extends HTMLWriter {
         super(w, doc, pos, len);
         completeDoc = (pos == 0 && len == doc.getLength());
         setLineLength(80);
+//        try {
+//            Preferences prefs = Preferences.userNodeForPackage(getClass().forName(
+//            "com.lightdev.app.shtm.PrefsDialog"));
+//            String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE,
+//                                     PrefsDialog.PREFS_WRITE_MODE_HTML32);
+//            writeCSS = writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4);
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    protected ElementIterator getElementIterator() {
+        if(elem == null)
+            return super.getElementIterator();
+        return new ElementIterator(elem);
+    }
+
+    /**
+     * Iterates over the
+     * Element tree and controls the writing out of
+     * all the tags and its attributes.
+     *
+     * @exception IOException on any I/O error
+     * @exception BadLocationException if pos represents an invalid
+     *            location within the document.
+     *
+     */
+    synchronized public void write(Element elem) throws IOException, BadLocationException {
+        this.elem = elem;
+        try{
+            write();
+        }
+        finally{
+            elem = null;
+        }
+    }
+    /**
+     * invoke HTML creation for all children of a given element.
+     *
+     * @param elem  the element which children are to be written as HTML
+     */
+    public void writeChildElements(Element elem)
+        throws IOException, BadLocationException, PropertiesMissingException
+    {
+      Element para;
+      for(int i = 0; i < elem.getElementCount(); i++) {
+        para = elem.getElement(i);
+        write(para);
+      }
     }
 
     /**
@@ -228,7 +283,11 @@ public class FixedHTMLWriter extends HTMLWriter {
     protected void writeAttributes(AttributeSet attr) throws IOException {
         // translate css attributes to html
         convAttr.removeAttributes(convAttr);
-        convertToHTML32(attr, convAttr);
+        if (writeCSS) {
+            convertToHTML40(attr, convAttr);
+        } else {
+            convertToHTML32(attr, convAttr);
+        }
 
         Enumeration names = convAttr.getAttributeNames();
         while (names.hasMoreElements()) {
@@ -341,7 +400,10 @@ public class FixedHTMLWriter extends HTMLWriter {
     }
 
 
-    /**
+    protected boolean inRange(Element next) {
+        return elem == null || super.inRange(next);
+    }
+   /**
      * Writes out a start tag for the element.
      * Ignores all synthesized elements.
      *
@@ -357,6 +419,7 @@ public class FixedHTMLWriter extends HTMLWriter {
         }
 
         // Determine the name, as an HTML.Tag.
+        final String elemName = elem.getName();
         AttributeSet attr = elem.getAttributes();
         Object nameAttribute = attr.getAttribute(StyleConstants.NameAttribute);
         HTML.Tag name;
@@ -372,8 +435,20 @@ public class FixedHTMLWriter extends HTMLWriter {
             preEndOffset = elem.getEndOffset();
         }
 
+        startTag(elemName, attr);
+    }
+
+    public void startTag(final String elemName, AttributeSet attr) throws IOException, BadLocationException {
+        HTML.Tag name = null;
+        if(attr != null){
+            Object nameAttribute = attr.getAttribute(StyleConstants.NameAttribute);
+            if (nameAttribute instanceof HTML.Tag) {
+                name = (HTML.Tag)nameAttribute;
+            }
+            closeOutUnwantedEmbeddedTags(attr);
+        }
+
         // write out end tags for item on stack
-        closeOutUnwantedEmbeddedTags(attr);
 
         if (inContent) {
             writeLineSeparator();
@@ -400,17 +475,19 @@ public class FixedHTMLWriter extends HTMLWriter {
 
         indent();
         write('<');
-        write(elem.getName());
-        writeAttributes(attr);
+        write(elemName);
+        if(attr != null){
+            writeAttributes(attr);
+        }
         write('>');
         if (name != HTML.Tag.PRE) {
             writeLineSeparator();
         }
 
         if (name == HTML.Tag.TEXTAREA) {
-            textAreaContent(elem.getAttributes());
+            textAreaContent(attr);
         } else if (name == HTML.Tag.SELECT) {
-            selectContent(elem.getAttributes());
+            selectContent(attr);
         } else if (completeDoc && name == HTML.Tag.BODY) {
             // Write out the maps, which is not stored as Elements in
             // the Document.
@@ -564,12 +641,21 @@ public class FixedHTMLWriter extends HTMLWriter {
         if (synthesizedElement(elem)) {
             return;
         }
-        if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
-            inPre = false;
+        final String elemName = elem.getName();
+        final AttributeSet attributes = elem.getAttributes();
+        endTag(elemName, attributes);
+    }
+
+    public void endTag(final String elemName, final AttributeSet attributes) throws IOException {
+        if(attributes != null){
+            if (matchNameAttribute(attributes, HTML.Tag.PRE)) {
+                inPre = false;
+            }
+
+            // write out end tags for item on stack
+            closeOutUnwantedEmbeddedTags(attributes);
         }
 
-        // write out end tags for item on stack
-        closeOutUnwantedEmbeddedTags(elem.getAttributes());
         if (inContent) {
             if (!newlineOutputed) {
                 writeLineSeparator();
@@ -580,11 +666,10 @@ public class FixedHTMLWriter extends HTMLWriter {
         indent();
         write('<');
         write('/');
-        write(elem.getName());
+        write(elemName);
         write('>');
         writeLineSeparator();
     }
-
 
 
     /**
@@ -985,7 +1070,7 @@ public class FixedHTMLWriter extends HTMLWriter {
         }
         to.removeAttributes(to);
         if (writeCSS) {
-            convertToHTML40(from, to);
+          convertToHTML40(from, to);
         } else {
             convertToHTML32(from, to);
         }
@@ -1107,7 +1192,7 @@ public class FixedHTMLWriter extends HTMLWriter {
           fontAttr.addAttribute(HTML.Attribute.SIZE, htmlValue);
         }
         else {
-          fontAttr.addAttribute(HTML.Attribute.SIZE, Integer.toString(Util.getRelativeSize(htmlValue)));
+          fontAttr.addAttribute(HTML.Attribute.SIZE, Util.getRelativeSize(htmlValue));
         }
       }
       else if (a == CSS.Attribute.COLOR) {
@@ -1125,6 +1210,9 @@ public class FixedHTMLWriter extends HTMLWriter {
      * attribute.
      */
     private static void convertToHTML40(AttributeSet from, MutableAttributeSet to) {
+        if (from == null) {
+            return;
+        }
         Enumeration keys = from.getAttributeNames();
         String value = "";
         while (keys.hasMoreElements()) {
@@ -1136,7 +1224,15 @@ public class FixedHTMLWriter extends HTMLWriter {
             }
         }
         if (value.length() > 0) {
-            to.addAttribute(HTML.Attribute.STYLE, value);
+            if(from instanceof LeafElement){
+                SimpleAttributeSet style = new SimpleAttributeSet();
+                value = value.replace('=', ':');
+                style.addAttribute(HTML.Attribute.STYLE, value);       
+                to.addAttribute(HTML.Tag.SPAN, style);
+            }
+            else{
+                to.addAttribute(HTML.Attribute.STYLE, value);                
+            }
         }
     }
 

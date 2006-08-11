@@ -46,7 +46,7 @@ import javax.help.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class DialogShell extends JDialog implements ActionListener {
@@ -165,8 +165,8 @@ public class DialogShell extends JDialog implements ActionListener {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
     // construct dialog buttons
-    okButton = new JButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "okBtnName"));
-    cancelButton = new JButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "cancelBtnName"));
+    okButton = new JButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "okBtnName"));
+    cancelButton = new JButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cancelBtnName"));
     cancelButton.addActionListener(this);
     okButton.addActionListener(this);
 
@@ -177,11 +177,11 @@ public class DialogShell extends JDialog implements ActionListener {
 
     // construct help button
     if(helpTopicId != null) {
-      helpButton = new JButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "helpLabel"));
+      helpButton = new JButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "helpLabel"));
       CSH.setHelpIDString(helpButton, helpTopicId);
       if(myHelpBroker == null) {
         helpButton.addActionListener(
-            new CSH.DisplayHelpFromSource(FrmMain.getHelpBroker()));
+            new CSH.DisplayHelpFromSource(SHTMLPanel.getHelpBroker()));
       }
       else {
         helpButton.addActionListener(

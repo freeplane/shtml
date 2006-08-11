@@ -35,7 +35,7 @@ import java.util.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class TagSelector extends JComboBox {
@@ -100,13 +100,13 @@ public class TagSelector extends JComboBox {
     tags.addElement(HTML.Tag.H5.toString());
     tags.addElement(HTML.Tag.H6.toString());
 
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNamePara"));
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNameHead1"));
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNameHead2"));
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNameHead3"));
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNameHead4"));
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNameHead5"));
-    tagNames.addElement(FrmMain.dynRes.getResourceString(FrmMain.resources, "cTagNameHead6"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNamePara"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead1"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead2"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead3"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead4"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead5"));
+    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead6"));
   }
 
 }

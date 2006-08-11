@@ -35,7 +35,7 @@ import java.util.*;
  * All in all a totally ugly solution which hopefully can be corrected
  * once Sun decided to tidy up the CSS part of Swing.
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class SHTMLTableView extends BoxView implements ViewFactory {

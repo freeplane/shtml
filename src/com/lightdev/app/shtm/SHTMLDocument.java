@@ -1,6 +1,7 @@
 /*
  * SimplyHTML, a word processor based on Java, HTML and CSS
  * Copyright (C) 2002 Ulrich Hilger
+ * Copyright (C) 2006 Dimitri Polivaev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,13 +20,18 @@
 
 package com.lightdev.app.shtm;
 
+import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTMLDocument;
 
 import javax.swing.text.html.*;
 import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.UndoableEditEvent;
+
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
+
 import javax.swing.undo.*;
 import javax.swing.event.*;
 
@@ -42,12 +48,14 @@ import javax.swing.event.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class SHTMLDocument extends HTMLDocument {
 
   private AttributeContext context;
+  private CompoundEdit compoundEdit;
+  private int compoundEditDepth;
 
   /**
    * Constructs an SHTMLDocument.
@@ -77,6 +85,7 @@ public class SHTMLDocument extends HTMLDocument {
    */
   public SHTMLDocument(Content c, StyleSheet styles) {
     super(c, styles);
+    compoundEdit = null;
   }
 
   /**
@@ -148,6 +157,55 @@ public class SHTMLDocument extends HTMLDocument {
     }
   }
 
+  public void replaceHTML(Element firstElement, int number, String htmlText) throws
+  BadLocationException, IOException {
+      if(number > 1){
+          if (firstElement != null && firstElement.getParentElement() != null &&
+                  htmlText != null) {
+              int start = firstElement.getStartOffset();
+              Element parent = firstElement.getParentElement();
+              int removeIndex = parent.getElementIndex(start);
+              try{
+                  startCompoundEdit();
+                  removeElements(parent, removeIndex, number - 1);
+                  setOuterHTML(parent.getElement(removeIndex), htmlText);
+              }
+              finally{
+                  endCompoundEdit();
+              }
+          }
+      }
+      else if (number == 1) {
+          setOuterHTML(firstElement, htmlText);
+      }
+ }
+
+  public void startCompoundEdit() {
+          compoundEditDepth++;
+  }
+
+  public void endCompoundEdit() {
+      if(compoundEditDepth != 0){
+          compoundEditDepth--;
+          if(compoundEditDepth == 0 && compoundEdit != null){
+              compoundEdit.end();
+              super.fireUndoableEditUpdate(new UndoableEditEvent(this, compoundEdit));
+              compoundEdit = null;
+          }
+      }
+  }
+
+  protected void fireUndoableEditUpdate(UndoableEditEvent e) {
+      if(compoundEditDepth == 0){
+          super.fireUndoableEditUpdate(e);
+      }
+      else{
+          if(compoundEdit == null){
+              compoundEdit = new CompoundEdit();;
+          }
+          compoundEdit.addEdit(e.getEdit());
+      }
+  }
   /* ------------------ custom document title handling start -------------------- */
 
   /**
@@ -310,6 +368,45 @@ public class SHTMLDocument extends HTMLDocument {
      */
     public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
       if(t == HTML.Tag.SPAN) {
+        handleStartSpan(a);
+      }
+      else if(t == HTML.Tag.FONT) {
+        handleStartFont(a);
+      }
+      else {
+        super.handleStartTag(t, a, pos);
+      }
+    }
+
+    private void handleStartFont(MutableAttributeSet a) {
+        Enumeration keys = a.getAttributeNames();
+        String value = "";
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            final String size = a.getAttribute(key).toString();
+            if (key == HTML.Attribute.FACE){
+                value += "font-family:" + size + "; ";
+                a.removeAttribute(key);
+            }
+            else if (key == HTML.Attribute.SIZE){
+                value += "font-size:" + Util.getPtSize(size) + "; ";
+                a.removeAttribute(key);
+            }
+            else if (key == HTML.Attribute.COLOR){
+                value += "color:" + size + "; ";
+                a.removeAttribute(key);
+            }
+        }
+        int valLen = value.length();
+        if( valLen> 0){
+            value = value.substring(0, valLen-2);
+            a.addAttribute(HTML.Attribute.STYLE, value);
+        }
+        handleStartSpan(a);
+        
+    }
+
+    private void handleStartSpan(MutableAttributeSet a) {
         if(a.isDefined(HTML.Attribute.STYLE)) {
           String decl = (String)a.getAttribute(HTML.Attribute.STYLE);
           a.removeAttribute(HTML.Attribute.STYLE);
@@ -327,12 +424,8 @@ public class SHTMLDocument extends HTMLDocument {
            */
           inSpan = true;
 
-          action.start(t, a);
+          action.start(HTML.Tag.SPAN, a);
         }
-      }
-      else {
-        super.handleStartTag(t, a, pos);
-      }
     }
 
     /**
@@ -359,7 +452,15 @@ public class SHTMLDocument extends HTMLDocument {
      * otherwise, let HTMLDocument.HTMLReader do the work
      */
     public void handleEndTag(HTML.Tag t, int pos) {
-      if(t == HTML.Tag.SPAN) {
+      if(t == HTML.Tag.SPAN || t == HTML.Tag.FONT) {
+        handleEndSpan();
+      }
+      else {
+        super.handleEndTag(t, pos);
+      }
+    }
+
+    private void handleEndSpan() {
         TagAction action = (TagAction) ca;
         if (action != null) {
           /**
@@ -367,12 +468,8 @@ public class SHTMLDocument extends HTMLDocument {
            */
           inSpan = false;
 
-          action.end(t);
+          action.end(HTML.Tag.SPAN);
         }
-      }
-      else {
-        super.handleEndTag(t, pos);
-      }
     }
 
     /**

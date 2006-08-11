@@ -40,7 +40,7 @@ import javax.swing.text.html.StyleSheet;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 public class EffectPanel extends JPanel implements AttributeComponent {
 
@@ -63,9 +63,9 @@ public class EffectPanel extends JPanel implements AttributeComponent {
     super(new GridLayout(3,1,3,3));
 
     /** initialize the line effects button group */
-    noLine = new JRadioButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "noLineLabel"));
-    uLine = new JRadioButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "uLineLabel"));
-    strike = new JRadioButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "strikeLabel"));
+    noLine = new JRadioButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "noLineLabel"));
+    uLine = new JRadioButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "uLineLabel"));
+    strike = new JRadioButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "strikeLabel"));
     ButtonGroup effectGroup = new ButtonGroup();
     effectGroup.add(noLine);
     effectGroup.add(uLine);
@@ -73,7 +73,7 @@ public class EffectPanel extends JPanel implements AttributeComponent {
 
     //JPanel linePanel = new JPanel(new GridLayout(3,1,3,3));
     setBorder(new TitledBorder(new EtchedBorder(
-            EtchedBorder.LOWERED), FrmMain.dynRes.getResourceString(FrmMain.resources, "effectLabel")));
+            EtchedBorder.LOWERED), SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "effectLabel")));
     Font font = UIManager.getFont("TextField.font");
     uLine.setFont(font);
     strike.setFont(font);

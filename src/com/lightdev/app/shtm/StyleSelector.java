@@ -39,7 +39,7 @@ import java.util.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class StyleSelector extends JComboBox
@@ -52,7 +52,7 @@ public class StyleSelector extends JComboBox
   /** indicates whether or not to ignore change events */
   private boolean ignoreChanges = false;
 
-  private String standardStyleName = FrmMain.dynRes.getResourceString(FrmMain.resources, "standardStyleName");
+  private String standardStyleName = SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "standardStyleName");
 
   /**
    * construct a <code>StyleSelector</code>

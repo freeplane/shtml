@@ -20,9 +20,12 @@
 package com.lightdev.app.shtm.plugin;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
+
+import java.awt.Component;
 import java.awt.event.*;
 import com.lightdev.app.shtm.SHTMLAction;
-import com.lightdev.app.shtm.FrmMain;
+import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.Util;
 import javax.swing.Action;
 import com.lightdev.app.shtm.DialogShell;
@@ -40,7 +43,7 @@ import java.util.Enumeration;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class ManagePluginsAction extends AbstractAction
@@ -55,31 +58,32 @@ public class ManagePluginsAction extends AbstractAction
         KeyEvent.VK_N, KeyEvent.CTRL_MASK));*/
   }
   public void actionPerformed(ActionEvent e) {
-    PluginManagerDialog pmd = new PluginManagerDialog(FrmMain.mainFrame,
-        FrmMain.dynRes.getResourceString(FrmMain.resources,
+    final Component source = (Component)e.getSource();
+    PluginManagerDialog pmd = new PluginManagerDialog(JOptionPane.getFrameForComponent(source),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources,
         "pluginManagerDialogTitle"));
-    Util.center(FrmMain.mainFrame, pmd);
+    Util.center(source, pmd);
     pmd.setModal(true);
     pmd.show();
 
     /** if the user made a selection, apply it to the document */
     if(pmd.getResult() == DialogShell.RESULT_OK) {
-      ((FrmMain) FrmMain.mainFrame).clearDockPanels();
-      Enumeration plugins = FrmMain.pluginManager.plugins();
+      ((SHTMLPanel) source).clearDockPanels();
+      Enumeration plugins = SHTMLPanel.pluginManager.plugins();
       SHTMLPlugin pi;
       while(plugins.hasMoreElements()) {
         pi = (SHTMLPlugin) plugins.nextElement();
-        ((FrmMain) FrmMain.mainFrame).refreshPluginDisplay(pi);
+        ((SHTMLPanel) source).refreshPluginDisplay(pi);
       }
-      ((FrmMain) FrmMain.mainFrame).paintComponents(
-          ((FrmMain) FrmMain.mainFrame).getGraphics());
+      ((SHTMLPanel) source).paintComponents(
+          ((SHTMLPanel) source).getGraphics());
     }
-    ((FrmMain) FrmMain.mainFrame).adjustDividers();
-    ((FrmMain) FrmMain.mainFrame).updateActions();
+    ((SHTMLPanel) source).adjustDividers();
+    ((SHTMLPanel) source).updateActions();
   }
   public void update() {
   }
   public void getProperties() {
-    FrmMain.getActionProperties(this, (String) getValue(Action.NAME));
+    SHTMLPanel.getActionProperties(this, (String) getValue(Action.NAME));
   }
 }

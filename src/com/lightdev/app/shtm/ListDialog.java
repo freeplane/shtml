@@ -36,7 +36,7 @@ import javax.swing.text.AttributeSet;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class ListDialog extends DialogShell {

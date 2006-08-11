@@ -20,7 +20,7 @@
 package com.lightdev.app.shtm.plugin;
 
 import com.lightdev.app.shtm.DialogShell;
-import com.lightdev.app.shtm.FrmMain;
+import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.Util;
 import java.awt.Frame;
 import javax.swing.JPanel;
@@ -55,7 +55,7 @@ import java.awt.Dimension;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class PluginManagerDialog extends DialogShell implements
@@ -71,12 +71,12 @@ public class PluginManagerDialog extends DialogShell implements
   private JList pluginNames;
 
   /** constant for activation button label */
-  private String activateName = FrmMain.dynRes.getResourceString(
-      FrmMain.resources, "activatePlugin");
+  private String activateName = SHTMLPanel.dynRes.getResourceString(
+      SHTMLPanel.resources, "activatePlugin");
 
   /** constant for deactivation button label */
-  private String deactivateName = FrmMain.dynRes.getResourceString(
-      FrmMain.resources, "deactivatePlugin");
+  private String deactivateName = SHTMLPanel.dynRes.getResourceString(
+      SHTMLPanel.resources, "deactivatePlugin");
 
   /** button to toggle plug-in activation state */
   private JButton toggleActivationButton;
@@ -94,7 +94,7 @@ public class PluginManagerDialog extends DialogShell implements
     super(parent, title);
     Container contentPane = super.getContentPane();
 
-    okButton.setText(FrmMain.dynRes.getResourceString(FrmMain.resources, "close"));
+    okButton.setText(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "close"));
     cancelButton.setVisible(false);
 
     GridBagLayout g;
@@ -104,13 +104,13 @@ public class PluginManagerDialog extends DialogShell implements
     JPanel pluginPanel = new JPanel(new BorderLayout());
     pluginPanel.setBorder(
         new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
-        FrmMain.dynRes.getResourceString(
-        FrmMain.resources, "pluginPanelTitle")));
+        SHTMLPanel.dynRes.getResourceString(
+        SHTMLPanel.resources, "pluginPanelTitle")));
     //pluginPanel.setMinimumSize(new Dimension(400, 400));
 
     /** load a list with plug-in names and add it to the plug-in panel */
-    Enumeration plugins = FrmMain.pluginManager.plugins();
-    pluginNames = new JList(FrmMain.pluginManager.getPluginNames());
+    Enumeration plugins = SHTMLPanel.pluginManager.plugins();
+    pluginNames = new JList(SHTMLPanel.pluginManager.getPluginNames());
     pluginNames.addListSelectionListener(this);
     pluginNames.setMinimumSize(new Dimension(250, 400));
     pluginNames.setPreferredSize(new Dimension(250, 400));
@@ -127,22 +127,22 @@ public class PluginManagerDialog extends DialogShell implements
     /** create panel to edit settings for a plug-in */
     g = new GridBagLayout();
     JPanel pluginSettingsPanel = new JPanel(g);
-    toggleActivationCheckbox = new JCheckBox(FrmMain.dynRes.getResourceString(
-        FrmMain.resources, "togglePluginActivationCheckbox"));
+    toggleActivationCheckbox = new JCheckBox(SHTMLPanel.dynRes.getResourceString(
+        SHTMLPanel.resources, "togglePluginActivationCheckbox"));
     toggleActivationCheckbox.setEnabled(false);
     toggleActivationCheckbox.addActionListener(this);
     Util.addGridBagComponent(pluginSettingsPanel, toggleActivationCheckbox,
                              g, c, 0, 0, GridBagConstraints.WEST);
 
     Util.addGridBagComponent(pluginSettingsPanel, new JLabel(
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "dockLocationLabel")),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "dockLocationLabel")),
                              g, c, 0, 1, GridBagConstraints.EAST);
     String[] locations = {
-      FrmMain.dynRes.getResourceString(FrmMain.resources, "pluginDockLocationNone"),
-      FrmMain.dynRes.getResourceString(FrmMain.resources, "pluginDockLocationTop"),
-      FrmMain.dynRes.getResourceString(FrmMain.resources, "pluginDockLocationRight"),
-      FrmMain.dynRes.getResourceString(FrmMain.resources, "pluginDockLocationBottom"),
-      FrmMain.dynRes.getResourceString(FrmMain.resources, "pluginDockLocationLeft"),
+      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationNone"),
+      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationTop"),
+      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationRight"),
+      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationBottom"),
+      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationLeft"),
     };
     dockLocation = new JComboBox(locations);
     dockLocation.setEnabled(false);
@@ -158,8 +158,8 @@ public class PluginManagerDialog extends DialogShell implements
     centerPanel.add(centerWestPanel, BorderLayout.WEST);
     centerPanel.setBorder(
         new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
-        FrmMain.dynRes.getResourceString(
-        FrmMain.resources, "pluginSettingsPanelTitle")));
+        SHTMLPanel.dynRes.getResourceString(
+        SHTMLPanel.resources, "pluginSettingsPanelTitle")));
     //centerPanel.setPreferredSize(new Dimension(200,400));
     contentPane.add(centerPanel, BorderLayout.CENTER);
 
@@ -195,7 +195,7 @@ public class PluginManagerDialog extends DialogShell implements
    */
   private SHTMLPlugin getSelectedPlugin() {
     String name = (String) pluginNames.getSelectedValue();
-    return FrmMain.pluginManager.pluginForName(name);
+    return SHTMLPanel.pluginManager.pluginForName(name);
   }
 
   /**

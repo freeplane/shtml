@@ -39,14 +39,14 @@ import javax.swing.ImageIcon;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class App {
 
   //Construct the application
   public App() {
-    FrmMain frame = new FrmMain(); // create an instance of the app's main window
+      FrmMain frame = new FrmMain(); // create an instance of the app's main window
     frame.validate();
 
     //Center the window

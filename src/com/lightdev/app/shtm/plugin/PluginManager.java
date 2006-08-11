@@ -30,7 +30,7 @@ import java.util.jar.JarEntry;
 import java.io.File;
 import java.net.URI;
 import java.util.Hashtable;
-import com.lightdev.app.shtm.FrmMain;
+import com.lightdev.app.shtm.SHTMLPanel;
 import javax.help.*;
 import javax.help.event.*;
 
@@ -46,7 +46,7 @@ import javax.help.event.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class PluginManager {
@@ -68,14 +68,14 @@ public class PluginManager {
   /** the URLs pointing to the classes in pluginClassNames */
   private Vector urls = new Vector();
 
-  private FrmMain owner;
+  private SHTMLPanel owner;
 
   /**
    * construct a new <code>PluginManager</code> and load
    * all available plug-ins.
    */
-  public PluginManager(Frame owner) {
-    this.owner = (FrmMain) owner;
+  public PluginManager(SHTMLPanel owner) {
+    this.owner = (SHTMLPanel) owner;
   }
 
   /**

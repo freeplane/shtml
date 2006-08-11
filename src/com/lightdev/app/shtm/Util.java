@@ -57,7 +57,7 @@ import javax.swing.text.StyleConstants;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class Util {
@@ -246,8 +246,8 @@ public class Util {
     JOptionPane op = new JOptionPane();
     Object input = op.showInputDialog(
         null,
-        FrmMain.dynRes.getResourceString(FrmMain.resources, text),
-        FrmMain.dynRes.getResourceString(FrmMain.resources, title),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, text),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, title),
         JOptionPane.QUESTION_MESSAGE,
         null,
         null,
@@ -276,12 +276,12 @@ public class Util {
   public static int msgChoice(int options, String title, String msg,
                             String item, String sep)
   {
-    String message = item + sep + FrmMain.dynRes.getResourceString(
-        FrmMain.resources, msg);
+    String message = item + sep + SHTMLPanel.dynRes.getResourceString(
+        SHTMLPanel.resources, msg);
     return JOptionPane.showConfirmDialog(
           null,
           message,
-          FrmMain.dynRes.getResourceString(FrmMain.resources, title),
+          SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, title),
           options,
           JOptionPane.QUESTION_MESSAGE);
   }
@@ -562,6 +562,38 @@ public class Util {
     return len;
   }
 
+  public static String getPtSize(String relValStr) {
+      String len = "3";
+      if(relValStr.startsWith("+") || relValStr.startsWith("-")) {
+        relValStr = relValStr.substring(1);
+      }
+      final int valInt = Integer.parseInt(relValStr);
+      switch(valInt) {
+      case 1:
+        len = "8";
+        break;
+      case 2:
+        len = "10";
+        break;
+      case 3:
+        len = "12";
+        break;
+      case 4:
+        len = "14";
+        break;
+      case 5:
+        len = "18";
+        break;
+      case 6:
+        len = "24";
+        break;
+      default:
+        len = relValStr;
+        break;
+    }
+     return len;
+  }
+
   /**
    * get the relative size matching a given point size
    *
@@ -570,8 +602,8 @@ public class Util {
    *
    * @return the relative size
    */
-  public static int getRelativeSize(String valStr) {
-    float len = 3;
+  public static String getRelativeSize(String valStr) {
+    String len = "3";
     if(valStr.startsWith("+") || valStr.startsWith("-")) {
       valStr = valStr.substring(1);
     }
@@ -580,68 +612,39 @@ public class Util {
       unit = pt;
       valStr = valStr.substring(0, pos);
     }
-    else {
-      try {
-        len = Float.valueOf(valStr).floatValue();
-      }
-      catch(Exception e) {
-        // unsupported number format (em ex, etc.)
-      }
-    }
-    switch(Integer.parseInt(valStr)) {
+    final int valInt = Integer.parseInt(valStr);
+    switch(valInt) {
       case 8:
-        len = 1;
-        break;
       case 9:
-        len = 1;
+        len = "1";
         break;
       case 10:
-        len = 2;
-        break;
       case 11:
-        len = 2;
+        len = "2";
         break;
       case 12:
-        len = 3;
-        break;
       case 13:
-        len = 3;
+        len = "3";
         break;
       case 14:
-        len = 4;
-        break;
       case 15:
-        len = 4;
-        break;
       case 16:
-        len = 4;
-        break;
       case 17:
-        len = 4;
+        len = "4";
         break;
       case 18:
-        len = 5;
-        break;
       case 19:
-        len = 5;
-        break;
       case 20:
-        len = 5;
-        break;
       case 21:
-        len = 5;
-        break;
       case 22:
-        len = 5;
-        break;
       case 23:
-        len = 5;
+        len = "5";
         break;
       case 24:
-        len = 6;
+        len = "6";
         break;
     }
-    return (int) len;
+    return len;
   }
 
   /**

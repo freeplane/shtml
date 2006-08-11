@@ -42,7 +42,7 @@ import java.net.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class AnchorDialog extends DialogShell implements
@@ -140,14 +140,14 @@ public class AnchorDialog extends DialogShell implements
     JPanel anchorPanel = new JPanel(new BorderLayout());
     anchorPanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "anchorPanelLabel")));
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "anchorPanelLabel")));
     //getAnchors(doc);
     anchorList = new JList(/*anchorTable.keySet().toArray()*/);
     anchorPanel.add(new JScrollPane(anchorList), BorderLayout.CENTER);
     anchorList.addListSelectionListener(this);
-    addAnchor = new JButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "addImgBtnTitle"));
+    addAnchor = new JButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "addImgBtnTitle"));
     addAnchor.addActionListener(this);
-    delAnchor = new JButton(FrmMain.dynRes.getResourceString(FrmMain.resources, "delImgBtnTitle"));
+    delAnchor = new JButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "delImgBtnTitle"));
     delAnchor.addActionListener(this);
 
     // use a help panel to add add/del buttons
@@ -179,7 +179,7 @@ public class AnchorDialog extends DialogShell implements
     JPanel docPanel = new JPanel(new BorderLayout());
     docPanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "docPanelLabel")));
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "docPanelLabel")));
     docPanel.add(dp, BorderLayout.CENTER);
 
     // use a help panel to properly align anchorPanel and docPanel

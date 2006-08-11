@@ -84,7 +84,7 @@ import java.net.URL;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class DynamicResource {
@@ -143,9 +143,8 @@ public class DynamicResource {
    *
    * @return the created menu bar
    */
-  public JMenuBar createMenubar(ResourceBundle resources, String name) {
-    JMenuItem mi;
-    JMenuBar mb = new JMenuBar();
+  public SHTMLMenuBar createMenubar(ResourceBundle resources, String name) {
+    SHTMLMenuBar mb = new SHTMLMenuBar();
     String[] menuKeys = Util.tokenize(getResourceString(resources, name), " ");
     for (int i = 0; i < menuKeys.length; i++) {
       JMenu m = createMenu(resources, menuKeys[i]);
@@ -339,7 +338,7 @@ public class DynamicResource {
   }
 
   /** create our PropertyChangeListener implementation */
-  private PropertyChangeListener createActionChangeListener(JMenuItem b) {
+  private PropertyChangeListener createActionChangeListener(AbstractButton b) {
     return new ActionChangedListener(b);
   }
 
@@ -355,9 +354,9 @@ public class DynamicResource {
    * its property are associated to.
    */
   private class ActionChangedListener implements PropertyChangeListener {
-    JMenuItem menuItem;
+    AbstractButton menuItem;
 
-    ActionChangedListener(JMenuItem mi) {
+    ActionChangedListener(AbstractButton mi) {
       super();
       this.menuItem = mi;
     }

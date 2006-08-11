@@ -41,7 +41,7 @@ import java.util.Enumeration;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class BoundariesPanel extends JPanel implements AttributeComponent {
@@ -77,16 +77,16 @@ public class BoundariesPanel extends JPanel implements AttributeComponent {
     GridBagConstraints c = new GridBagConstraints();
 
     Util.addGridBagComponent(this, new JLabel(
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "topLabel")),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "topLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "rightLabel")),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "rightLabel")),
         g, c, 2, 0, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "bottomLabel")),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "bottomLabel")),
         g, c, 0, 1, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "leftLabel")),
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "leftLabel")),
         g, c, 2, 1, GridBagConstraints.EAST);
 
     addSizeSelector(g, c, attrKey, 1, 0); // top

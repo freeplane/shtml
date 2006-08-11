@@ -38,7 +38,7 @@ import java.util.prefs.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class PrefsDialog extends DialogShell implements ActionListener {
@@ -82,8 +82,8 @@ public class PrefsDialog extends DialogShell implements ActionListener {
     Util.addGridBagComponent(
         appPrefsPanel,
         new JLabel(
-        FrmMain.dynRes.getResourceString(
-        FrmMain.resources, "prfLafLabel")),
+        SHTMLPanel.dynRes.getResourceString(
+        SHTMLPanel.resources, "prfLafLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
     lafCombo = new JComboBox();
     initLfComboBox();
@@ -107,12 +107,12 @@ public class PrefsDialog extends DialogShell implements ActionListener {
     JPanel writeModePnl = new JPanel(g);
     writeModePnl.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
-                  FrmMain.dynRes.getResourceString(
-                  FrmMain.resources, "prfWriteModeLabel")));
-    saveHTML32 = new JRadioButton(FrmMain.dynRes.getResourceString(
-                  FrmMain.resources, "prfWriteModeHTML32Label"));
-    saveHTML4 = new JRadioButton(FrmMain.dynRes.getResourceString(
-                  FrmMain.resources, "prfWriteModeHTML4Label"));
+                  SHTMLPanel.dynRes.getResourceString(
+                  SHTMLPanel.resources, "prfWriteModeLabel")));
+    saveHTML32 = new JRadioButton(SHTMLPanel.dynRes.getResourceString(
+                  SHTMLPanel.resources, "prfWriteModeHTML32Label"));
+    saveHTML4 = new JRadioButton(SHTMLPanel.dynRes.getResourceString(
+                  SHTMLPanel.resources, "prfWriteModeHTML4Label"));
     ButtonGroup bg = new ButtonGroup();
     bg.add(saveHTML32);
     bg.add(saveHTML4);
@@ -131,8 +131,8 @@ public class PrefsDialog extends DialogShell implements ActionListener {
     Util.addGridBagComponent(layoutPanel, writeModePnl, g, c, 0, 1, GridBagConstraints.WEST);
 
     // add option for standard stlye sheet
-    useStdStyleSheet = new JCheckBox(FrmMain.dynRes.getResourceString(
-                  FrmMain.resources, "linkDefaultStyleSheetLabel"));
+    useStdStyleSheet = new JCheckBox(SHTMLPanel.dynRes.getResourceString(
+                  SHTMLPanel.resources, "linkDefaultStyleSheetLabel"));
     boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
     useStdStyleSheet.setSelected(useStyle);
     Util.addGridBagComponent(layoutPanel, useStdStyleSheet, g, c, 0, 2, GridBagConstraints.WEST);
@@ -163,20 +163,20 @@ public class PrefsDialog extends DialogShell implements ActionListener {
    * clicks onto the ok and cancel button.
    */
   public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      Component src = (Component)e.getSource();
       if(src == okButton) {
-        savePrefs();
+        savePrefs(src);
       }
       super.actionPerformed(e);
   }
 
-  private void savePrefs() {
+  private void savePrefs(final Component src) {
     try {
       String newLaf = lfinfo[lafCombo.getSelectedIndex()].getClassName();
       if(!lafName.equalsIgnoreCase(newLaf)) {
         prefs.put(PREFSID_LOOK_AND_FEEL, newLaf);
         UIManager.setLookAndFeel(newLaf);
-        SwingUtilities.updateComponentTreeUI(FrmMain.mainFrame);
+        SwingUtilities.updateComponentTreeUI(JOptionPane.getFrameForComponent(src));
       }
       if(saveHTML32.isSelected()) {
         prefs.put(PREFSID_WRITE_MODE, PREFS_WRITE_MODE_HTML32);

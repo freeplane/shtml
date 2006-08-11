@@ -51,7 +51,7 @@ import java.util.prefs.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class SHTMLEditorKit extends HTMLEditorKit {
@@ -148,21 +148,13 @@ public class SHTMLEditorKit extends HTMLEditorKit {
 
     if (doc instanceof SHTMLDocument) {
       try {
-        Preferences prefs = Preferences.userNodeForPackage(getClass().forName(
-            "com.lightdev.app.shtm.PrefsDialog"));
-        String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE,
-                                     PrefsDialog.PREFS_WRITE_MODE_HTML32);
-        if (writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4)) {
-          SHTMLWriter w = new SHTMLWriter(out, (SHTMLDocument) doc, pos, len);
-          w.write();
-        }
-        else {
-          FixedHTMLWriter w = new FixedHTMLWriter(out, (SHTMLDocument) doc, pos,
+           FixedHTMLWriter w = new FixedHTMLWriter(out, (SHTMLDocument) doc, pos,
                                                   len);
           w.write();
-        }
       }
-      catch(Exception e) {}
+      catch(Exception e) {
+          e.printStackTrace();
+      }
     }
     else if (doc instanceof StyledDocument) {
       MinimalHTMLWriter w = new MinimalHTMLWriter(out, (StyledDocument)doc, pos, len);

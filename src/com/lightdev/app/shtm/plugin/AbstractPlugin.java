@@ -27,7 +27,7 @@ import com.lightdev.app.shtm.Util;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Locale;
-import com.lightdev.app.shtm.FrmMain;
+import com.lightdev.app.shtm.SHTMLPanel;
 import javax.swing.JFrame;
 import java.util.prefs.*;
 import javax.help.*;
@@ -59,7 +59,7 @@ import javax.help.event.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  *
  * @see com.lightdev.app.shtm.DynamicResource
  */
@@ -87,14 +87,14 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * this is called by the PluginManager directly after instantiating the plug-in
    */
-  public void initPlugin(FrmMain owner) {  }
+  public void initPlugin(SHTMLPanel owner) {  }
 
   /**
    * create the plug-in menu
    */
   protected void createPluginMenu() {
     if(pluginMenuId != null) {
-      pMenu = FrmMain.dynRes.createMenu(this.resources, pluginMenuId);
+      pMenu = SHTMLPanel.dynRes.createMenu(this.resources, pluginMenuId);
     }
   }
 
@@ -103,7 +103,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   protected void createHelpMenu() {
     if(helpMenuId != null) {
-      hMenu = FrmMain.dynRes.createMenu(this.resources, helpMenuId);
+      hMenu = SHTMLPanel.dynRes.createMenu(this.resources, helpMenuId);
       initHelpMenu();
     }
   }
@@ -162,15 +162,15 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    * @param helpMenuId  the id of the help menu for this plug-in in the
    * ResourceBundle, or null if no help menu is to be created
    */
-  public void initPlugin(FrmMain owner, String internalName, String pluginMenuId,
+  public void initPlugin(SHTMLPanel owner, String internalName, String pluginMenuId,
                         String helpMenuId) {
     this.internalName = internalName;
     this.pluginMenuId = pluginMenuId;
     this.helpMenuId = helpMenuId;
     try {
       //System.out.println("AbstractPlugin this.getClass.getName=" + this.getClass().getName());
-      if(FrmMain.pluginManager != null) {
-        ClassLoader plLoader = FrmMain.pluginManager.getPluginLoader();
+      if(SHTMLPanel.pluginManager != null) {
+        ClassLoader plLoader = SHTMLPanel.pluginManager.getPluginLoader();
         if(plLoader != null) {
           resources = ResourceBundle.getBundle(
               this.getClass().getName(), Locale.getDefault(), plLoader);
@@ -205,7 +205,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * @param owner  the main frame of the instance of SimplyHTML creating the plug-in
    */
-  public void setOwner(FrmMain owner) {
+  public void setOwner(SHTMLPanel owner) {
     this.owner = owner;
   }
 
@@ -214,7 +214,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * @return the owner of this plug-in
    */
-  public FrmMain getOwner() {
+  public SHTMLPanel getOwner() {
     return owner;
   }
 
@@ -399,7 +399,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
   protected Preferences prefs;
 
   /** the owner of this plug in */
-  protected static FrmMain owner;
+  protected static SHTMLPanel owner;
 
   /* ------------- class fields end ------------------ */
 }

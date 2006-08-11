@@ -49,7 +49,7 @@ import javax.swing.border.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class AboutBox extends JDialog implements ActionListener {
@@ -69,9 +69,9 @@ public class AboutBox extends JDialog implements ActionListener {
     super(parent);
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     closeButton.addActionListener(this);
-    closeButton.setText(FrmMain.dynRes.getResourceString(FrmMain.resources, "closeBtnName"));
+    closeButton.setText(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "closeBtnName"));
     constructFrame();
-    setTitle(FrmMain.dynRes.getResourceString(FrmMain.resources, "aboutFrameTitle"));
+    setTitle(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "aboutFrameTitle"));
     pack();
   }
 
@@ -89,12 +89,12 @@ public class AboutBox extends JDialog implements ActionListener {
     JPanel emptyPane = new JPanel();
     LicensePane licPane = new LicensePane(new Dimension(650,200), LICENSE);
     JLabel imageLabel = new JLabel(new ImageIcon(this.getClass().
-		      getResource(FrmMain.dynRes.getResourceString(FrmMain.resources, "splashImage"))));
+		      getResource(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "splashImage"))));
     JLabel emptyLabel = new JLabel("");
     JLabel appTitleLabel = new JLabel(FrmMain.APP_NAME);
-    JLabel appStageLabel = new JLabel("Stage 11, release 2");
+    JLabel appStageLabel = new JLabel("Stage 12, release 1");
     JLabel appCopyrightLabel =
-                            new JLabel("Copyright (c) 2002, 2003 Ulrich Hilger");
+                            new JLabel("Copyright (c) 2002-2006 Ulrich Hilger, Dimitri Polivaev");
     JLabel appHomepageLabel = new JLabel("http://www.lightdev.com");
 
     /* set the dialog title */

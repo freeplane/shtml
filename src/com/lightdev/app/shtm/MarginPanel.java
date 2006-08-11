@@ -36,7 +36,7 @@ import javax.swing.text.html.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class MarginPanel extends AttributePanel {
@@ -56,7 +56,7 @@ public class MarginPanel extends AttributePanel {
     // set border and title and add margin panel
     margin.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "marginLabel")));
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "marginLabel")));
     this.add(margin);
 
     // construct padding panel
@@ -65,7 +65,7 @@ public class MarginPanel extends AttributePanel {
     // set border and title adn add padding panel
     padding.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        FrmMain.dynRes.getResourceString(FrmMain.resources, "paddingLabel")));
+        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "paddingLabel")));
     this.add(padding);
   }
 

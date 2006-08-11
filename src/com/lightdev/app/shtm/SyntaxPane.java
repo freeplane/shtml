@@ -61,7 +61,7 @@ import java.awt.event.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  *
  */
 public class SyntaxPane extends JEditorPane implements CaretListener {
@@ -156,16 +156,18 @@ public class SyntaxPane extends JEditorPane implements CaretListener {
    * display a wait cursor for lengthy operations
    */
   private void cursor() {
-    Component gp = getRootPane().getGlassPane();
-    if(!gp.isVisible()) {
-      gp.setCursor(waitCursor);
-      gp.setVisible(true);
-    }
-    else {
-      gp.setVisible(false);
-    }
+      final JRootPane rootPane = getRootPane();
+      if(rootPane != null){
+          Component gp = rootPane.getGlassPane();
+          if(!gp.isVisible()) {
+              gp.setCursor(waitCursor);
+              gp.setVisible(true);
+          }
+          else {
+              gp.setVisible(false);
+          }
+      }
   }
-
   /**
    * StyleUpdater does the actual syntax highlighting work
    * and can be used in SwingUtilities.invokeLater()

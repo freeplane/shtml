@@ -62,7 +62,7 @@ import java.util.prefs.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 11, April 27, 2003
+ * @version stage 12, August 06, 2006
  */
 
 public class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
@@ -85,6 +85,20 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   /** indicates if the document text has changed */
   private boolean textChanged;
 
+  /**
+   * @param textChanged The textChanged to set.
+   */
+  private void setTextChanged(boolean textChanged) {
+      this.textChanged = textChanged;
+  }
+
+  /**
+   * @return Returns the textChanged.
+   */
+  private boolean isTextChanged() {
+      return textChanged;
+  }
+
   /** the name of the document */
   private String docName;
 
@@ -97,8 +111,8 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   /** JTabbedPane for our views */
   private JTabbedPane tpView;
 
-  private static final int VIEW_TAB_LAYOUT = 0;
-  private static final int VIEW_TAB_HTML = 1;
+  public static final int VIEW_TAB_LAYOUT = 0;
+  public static final int VIEW_TAB_HTML = 1;
 
   /**
    * a save place for sourceUrl, when a document is to be saved
@@ -151,14 +165,14 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     tpView.setTabPlacement(JTabbedPane.BOTTOM);
     tpView.add(sp, VIEW_TAB_LAYOUT);
     tpView.add(htmlSp, VIEW_TAB_HTML);
-    tpView.setTitleAt(VIEW_TAB_LAYOUT, FrmMain.dynRes.getResourceString(FrmMain.resources, "layoutTabTitle"));
-    tpView.setTitleAt(VIEW_TAB_HTML, FrmMain.dynRes.getResourceString(FrmMain.resources, "htmlTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_LAYOUT, SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "layoutTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_HTML, SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "htmlTabTitle"));
     tpView.addChangeListener(this);
 
     // add comnponents to content pane
     setLayout(new BorderLayout());        // a simple border layout is enough
     add(tpView, BorderLayout.CENTER);         // ..and add both to this DocumentPane
-    textChanged = false;                  // no changes so far
+    setTextChanged(false);                  // no changes so far
     setPreferredSize(new Dimension(550, 550));
   }
 
@@ -174,8 +188,8 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public DocumentPane(URL docToLoad, int newDocNo/*, int renderMode*/) {
     this(/*renderMode*/);
-    DEFAULT_DOC_NAME = FrmMain.dynRes.getResourceString(
-        FrmMain.resources, "defaultDocName");
+    DEFAULT_DOC_NAME = SHTMLPanel.dynRes.getResourceString(
+        SHTMLPanel.resources, "defaultDocName");
     if(docToLoad != null) {
       loadDocument(docToLoad);
     }
@@ -194,6 +208,21 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     return editor;
   }
 
+  /**
+   * get the <code>SyntaxPane</code> of this <code>DocumentPane</code>
+   *
+   * @return the SyntaxPane of this DocumentPane
+   */
+  public SyntaxPane getHtmlEditor() {
+    return htmlEditor;
+  }
+
+  /**
+   * @return the selected tab index
+   */
+  public int getSelectedTab(){
+      return tpView.getSelectedIndex();
+  }
   /**
    * create a new HTMLDocument and attach it to the editor
    */
@@ -241,7 +270,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    * @return URL of created temporary document directoy
    */
   private URL createTempDir() throws MalformedURLException {
-    docTempDir = new File(FrmMain.getAppTempDir().getAbsolutePath() +
+    docTempDir = new File(SHTMLPanel.getAppTempDir().getAbsolutePath() +
                                File.separator +
                                getDocumentName() + File.separator);
     if(!docTempDir.exists()) {
@@ -359,7 +388,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
 
           /* clean up */
           //System.out.println("DocumentPane textChanged = false");
-          textChanged = false; // indicate no changes pending anymore after the save
+          setTextChanged(false); // indicate no changes pending anymore after the save
           file = new File(sourceUrl.getPath()).getParentFile();
           ((HTMLDocument) getDocument()).setBase(file.toURL()); // set the doc base
           deleteTempDir();
@@ -404,7 +433,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
       srcDir = new File(
           docTempDir +
           File.separator +
-          FrmMain.IMAGE_DIR +
+          SHTMLPanel.IMAGE_DIR +
           File.separator);
     }
     else {
@@ -413,7 +442,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
         srcDir = new File(
             new File(sourceUrl.getPath()).getParent() +
             File.separator +
-            FrmMain.IMAGE_DIR +
+            SHTMLPanel.IMAGE_DIR +
             File.separator);
       }
       else {
@@ -424,7 +453,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
         srcDir = new File(
             new File(savedUrl.getPath()).getParent() +
             File.separator +
-            FrmMain.IMAGE_DIR +
+            SHTMLPanel.IMAGE_DIR +
             File.separator);
       }
     }
@@ -439,7 +468,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     File destDir = new File(
         new File(sourceUrl.getPath()).getParent() +
         File.separator +
-        FrmMain.IMAGE_DIR +
+        SHTMLPanel.IMAGE_DIR +
         File.separator);
     try {
       if(srcDir.exists()) {
@@ -618,7 +647,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public boolean needsSaving() {
     //System.out.println("DocumentPane.needsSaving=" + textChanged + " for document " + getDocumentName());
-    return textChanged;
+    return isTextChanged();
   }
 
   /**
@@ -716,6 +745,34 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     editor.getDocument().addDocumentListener(this);
   }
 
+  /**
+   * Convenience method for obtaining the document text
+   * @return returns the document text as string.
+   */
+  String getDocumentText() {
+      if(tpView.getSelectedIndex() == VIEW_TAB_HTML){
+          editor.setText(htmlEditor.getText());
+      }
+      return editor.getText();
+  }
+
+  /**
+   * Convenience method for setting the document text
+   */
+  void setDocumentText(String docName, String sText) {
+      this.docName = docName;
+      switch(tpView.getSelectedIndex()) {
+      case VIEW_TAB_LAYOUT:
+          editor.setText(sText);
+        break;
+      case VIEW_TAB_HTML:
+          htmlEditor.setText(sText);
+        break;
+    }
+      setTextChanged(false);
+  }
+
+
   /* ----------------- changeListener implementation start ---------------------- */
 
   public void stateChanged(ChangeEvent e) {
@@ -743,7 +800,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public void insertUpdate(DocumentEvent e) {
     //System.out.println("insertUpdate setting textChanged=true for " + getDocumentName());
-    textChanged = true;
+    setTextChanged(true);
     /*if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
       StyledDocument sDoc = (StyledDocument) e.getDocument();
       htmlEditor.setMarks(sDoc, 0, sDoc.getLength(), this);
@@ -756,7 +813,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public void removeUpdate(DocumentEvent e) {
     //System.out.println("removeUpdate setting textChanged=true for " + getDocumentName());
-    textChanged = true;
+    setTextChanged(true);
   }
 
   /**
@@ -766,7 +823,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   public void changedUpdate(DocumentEvent e) {
     //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
     if (tpView.getSelectedIndex() == VIEW_TAB_LAYOUT) {
-      textChanged = true;
+      setTextChanged(true);
     }
   }
 
