@@ -27,6 +27,8 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import javax.swing.event.*;
 import javax.swing.*;
+
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.net.URL;
@@ -273,7 +275,7 @@ public class DynamicResource {
    * @param nm  the key of the string
    * @return the string for the given key or null if not found
    */
-  public String getResourceString(ResourceBundle resources, String nm) {
+  static public String getResourceString(ResourceBundle resources, String nm) {
     String str = null;
     try {
       //System.out.println("getResourceString nm=" + nm);
@@ -399,11 +401,11 @@ public class DynamicResource {
    * @return the icon for that command or null, if none is present
    *        for this command
    */
-  public Icon getIconForCommand(ResourceBundle resources, String cmd) {
+  static public Icon getIconForCommand(ResourceBundle resources, String cmd) {
     return getIconForName(resources, cmd + imageSuffix);
   }
 
-  public Icon getIconForName(ResourceBundle resources, String name) {
+  static public Icon getIconForName(ResourceBundle resources, String name) {
     Icon icon = null;
     URL url = getResource(resources, name);
     //System.out.println("getIconForName name=" + name + ", url=" + url);
@@ -425,10 +427,10 @@ public class DynamicResource {
    * @param key  the key of the resource in the resource file
    * @return the resource location as a URL
    */
-  public URL getResource(ResourceBundle resources, String key) {
+  static public URL getResource(ResourceBundle resources, String key) {
     String name = getResourceString(resources, key);
     if (name != null/* && !name.endsWith(IMAGE_EMPTY)*/) {
-      URL url = this.getClass().getResource(name);
+      URL url = DynamicResource.class.getResource(name);
       return url;
     }
     return null;

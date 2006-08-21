@@ -21,9 +21,11 @@
 package com.lightdev.app.shtm;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,8 +44,9 @@ public class SplashScreen extends JWindow{
     public SplashScreen() {
         try {
             JPanel panel = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "splashImage")));
+            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(DynamicResource.getResourceString(SHTMLPanel.resources, "splashImage")));
             panel.add(new JLabel(icon), BorderLayout.CENTER);
+            panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getContentPane().add(panel);
             pack();
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();

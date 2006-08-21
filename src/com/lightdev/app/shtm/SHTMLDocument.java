@@ -20,10 +20,14 @@
 
 package com.lightdev.app.shtm;
 
+import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 import javax.swing.text.html.CSS;
+import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
 import javax.swing.text.html.*;
+import javax.swing.text.html.HTML.Tag;
+import javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction;
 import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
@@ -34,6 +38,7 @@ import java.util.*;
 
 import javax.swing.undo.*;
 import javax.swing.event.*;
+
 
 /**
  * Extends <code>HTMLDocument</code> by a custom reader which supports
@@ -157,7 +162,7 @@ public class SHTMLDocument extends HTMLDocument {
     }
   }
 
-  public void replaceHTML(Element firstElement, int number, String htmlText) throws
+    public void replaceHTML(Element firstElement, int number, String htmlText) throws
   BadLocationException, IOException {
       if(number > 1){
           if (firstElement != null && firstElement.getParentElement() != null &&
@@ -180,7 +185,7 @@ public class SHTMLDocument extends HTMLDocument {
       }
  }
 
-  public void startCompoundEdit() {
+public void startCompoundEdit() {
           compoundEditDepth++;
   }
 
@@ -336,6 +341,35 @@ public class SHTMLDocument extends HTMLDocument {
   }
 
   /**
+   * get the list element a given element is inside (if any).
+   *
+   * @param elem  the element to get the list element for
+   *
+   * @return the list element the given element is inside, or null, if
+   * the given element is not inside a list
+   */
+  static Element getListElement(Element elem) {
+    Element list = Util.findElementUp(HTML.Tag.UL.toString(), elem);
+    if(list == null) {
+      list = Util.findElementUp(HTML.Tag.OL.toString(), elem);
+    }
+    return list;
+  }
+
+/**
+   * get the list item element a given element is inside (if any).
+   *
+   * @param elem  the element to get the list element for
+   *
+   * @return the list element the given element is inside, or null, if
+   * the given element is not inside a list
+   */
+  static Element getListItemElement(Element elem) {
+    Element list = Util.findElementUp(HTML.Tag.LI.toString(), elem);
+    return list;
+  }
+
+/**
    * This reader extends HTMLDocument.HTMLReader by the capability
    * to handle SPAN tags
    */
@@ -370,40 +404,9 @@ public class SHTMLDocument extends HTMLDocument {
       if(t == HTML.Tag.SPAN) {
         handleStartSpan(a);
       }
-      else if(t == HTML.Tag.FONT) {
-        handleStartFont(a);
-      }
       else {
         super.handleStartTag(t, a, pos);
       }
-    }
-
-    private void handleStartFont(MutableAttributeSet a) {
-        Enumeration keys = a.getAttributeNames();
-        String value = "";
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            final String size = a.getAttribute(key).toString();
-            if (key == HTML.Attribute.FACE){
-                value += "font-family:" + size + "; ";
-                a.removeAttribute(key);
-            }
-            else if (key == HTML.Attribute.SIZE){
-                value += "font-size:" + Util.getPtSize(size) + "; ";
-                a.removeAttribute(key);
-            }
-            else if (key == HTML.Attribute.COLOR){
-                value += "color:" + size + "; ";
-                a.removeAttribute(key);
-            }
-        }
-        int valLen = value.length();
-        if( valLen> 0){
-            value = value.substring(0, valLen-2);
-            a.addAttribute(HTML.Attribute.STYLE, value);
-        }
-        handleStartSpan(a);
-        
     }
 
     private void handleStartSpan(MutableAttributeSet a) {
@@ -452,7 +455,7 @@ public class SHTMLDocument extends HTMLDocument {
      * otherwise, let HTMLDocument.HTMLReader do the work
      */
     public void handleEndTag(HTML.Tag t, int pos) {
-      if(t == HTML.Tag.SPAN || t == HTML.Tag.FONT) {
+      if(t == HTML.Tag.SPAN) {
         handleEndSpan();
       }
       else {
@@ -501,5 +504,55 @@ public class SHTMLDocument extends HTMLDocument {
   }
 
   /* -------- custom reader implementation end -------- */
+
+  /* (non-Javadoc)
+   * @see javax.swing.text.AbstractDocument#remove(int, int)
+   */
+  public void remove(int offs, int len) throws BadLocationException {
+      
+      final Element elem = getLastGroupingElement(offs, len);
+      if(elem == null){
+          super.remove(offs, len);
+          return;
+      }
+      try {
+        startCompoundEdit();
+        len = elem.getStartOffset() - offs; 
+        setOuterHTML(elem, "<p>\n</p>");
+        super.remove(offs, len);
+    } catch (BadLocationException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    } finally{
+        endCompoundEdit();
+    }
+      
+  }
+
+  /**
+   * Gets the upper <ul> or <ol> element at the offset <code>pos</code>.
+   * A paragraph consists of at least one child Element, which is usually
+   * a leaf.
+   *
+   * @param pos the starting offset >= 0
+   * @return the element
+   */
+  private Element getLastGroupingElement(int offs, int len) {
+      int end = offs+len;
+      Element e = getParagraphElement(end);  
+      Element result = null;
+      while(! e.getName().equalsIgnoreCase(HTML.Tag.BODY.toString())
+              && e.getStartOffset() >= offs
+              && e.getEndOffset() <= end + 1){
+          if(e.getName().equalsIgnoreCase(HTML.Tag.TABLE.toString())
+                  || e.getName().equalsIgnoreCase(HTML.Tag.UL.toString())
+                  || e.getName().equalsIgnoreCase(HTML.Tag.OL.toString())
+          )
+          result = e;
+          e = e.getParentElement();
+      }
+      return result;
+  }
 
 }

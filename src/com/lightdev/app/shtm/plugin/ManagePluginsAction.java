@@ -24,11 +24,14 @@ import javax.swing.JOptionPane;
 
 import java.awt.Component;
 import java.awt.event.*;
+
+import com.lightdev.app.shtm.DynamicResource;
 import com.lightdev.app.shtm.SHTMLAction;
 import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.Util;
 import javax.swing.Action;
 import com.lightdev.app.shtm.DialogShell;
+
 import java.util.Enumeration;
 
 /**
@@ -60,7 +63,7 @@ public class ManagePluginsAction extends AbstractAction
   public void actionPerformed(ActionEvent e) {
     final Component source = (Component)e.getSource();
     PluginManagerDialog pmd = new PluginManagerDialog(JOptionPane.getFrameForComponent(source),
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources,
+        DynamicResource.getResourceString(SHTMLPanel.resources,
         "pluginManagerDialogTitle"));
     Util.center(source, pmd);
     pmd.setModal(true);

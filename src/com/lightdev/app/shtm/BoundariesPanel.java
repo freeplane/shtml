@@ -77,16 +77,16 @@ public class BoundariesPanel extends JPanel implements AttributeComponent {
     GridBagConstraints c = new GridBagConstraints();
 
     Util.addGridBagComponent(this, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "topLabel")),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "topLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "rightLabel")),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "rightLabel")),
         g, c, 2, 0, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "bottomLabel")),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "bottomLabel")),
         g, c, 0, 1, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "leftLabel")),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "leftLabel")),
         g, c, 2, 1, GridBagConstraints.EAST);
 
     addSizeSelector(g, c, attrKey, 1, 0); // top

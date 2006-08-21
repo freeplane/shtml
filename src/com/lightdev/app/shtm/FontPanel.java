@@ -49,6 +49,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.UIManager;
 import java.util.ResourceBundle;
 import javax.swing.text.html.CSS;
+import javax.swing.text.html.HTML;
 import javax.swing.text.html.StyleSheet;
 import javax.swing.text.MutableAttributeSet;
 import java.util.Vector;
@@ -91,11 +92,11 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     sample.setEditable(false);
     sample.setPreferredSize(new Dimension(200, 50));
     sample.setHorizontalAlignment(SwingConstants.CENTER);
-    sample.setText(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "previewText"));
+    sample.setText(DynamicResource.getResourceString(SHTMLPanel.resources, "previewText"));
     JPanel previewPanel = new JPanel(new BorderLayout());
     previewPanel.add(sample, BorderLayout.CENTER);
     previewPanel.setBorder(new TitledBorder(new EtchedBorder(
-          EtchedBorder.LOWERED), SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "previewLabel")));
+          EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanel.resources, "previewLabel")));
 
     /**
      * create a pick list for family filled with
@@ -103,14 +104,14 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
      */
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     FamilyPickList family = new FamilyPickList(ge.getAvailableFontFamilyNames(),
-                          SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "familyLabel"));
+                          DynamicResource.getResourceString(SHTMLPanel.resources, "familyLabel"));
     family.addTitledPickListListener(this);
     fontComponents.add(family);
 
     /** create a pick list for font size */
     String[] fontSizes = new String[] {"8", "10", "12", "14", "18", "24"};
     SizePickList size = new SizePickList(fontSizes,
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "sizeLabel"), CSS.Attribute.FONT_SIZE);
+        DynamicResource.getResourceString(SHTMLPanel.resources, "sizeLabel"));
     size.addTitledPickListListener(this);
     fontComponents.add(size);
 
@@ -123,13 +124,13 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     JPanel fontPartsPanel = new JPanel(new BorderLayout(5,5));
     fontPartsPanel.add(familySizePanel, BorderLayout.CENTER);
     String[] fontStyles = new String[] {
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "plainName"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "boldName"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "italicName"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "boldItalicName")};
+      DynamicResource.getResourceString(SHTMLPanel.resources, "plainName"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "boldName"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "italicName"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "boldItalicName")};
     StylePickList style = new StylePickList(
         fontStyles,
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "styleLabel"));
+        DynamicResource.getResourceString(SHTMLPanel.resources, "styleLabel"));
     style.addTitledPickListListener(this);
     fontPartsPanel.add(style, BorderLayout.EAST);
     fontComponents.add(style);
@@ -141,12 +142,12 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     /** create a panel for color choices */
     JPanel colorPanel = new JPanel(new GridLayout(2,1,3,3));
     colorPanel.setBorder(new TitledBorder(new EtchedBorder(
-          EtchedBorder.LOWERED), SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "colorLabel")));
-    ColorPanel fCol = new ColorPanel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "foregroundLabel"),
+          EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanel.resources, "colorLabel")));
+    ColorPanel fCol = new ColorPanel(DynamicResource.getResourceString(SHTMLPanel.resources, "foregroundLabel"),
                                   Color.black, CSS.Attribute.COLOR);
     fCol.addColorPanelListener(this);
     fontComponents.add(fCol);
-    ColorPanel bCol = new ColorPanel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "backgroundLabel"),
+    ColorPanel bCol = new ColorPanel(DynamicResource.getResourceString(SHTMLPanel.resources, "backgroundLabel"),
                                     Color.white, CSS.Attribute.BACKGROUND_COLOR);
     bCol.addColorPanelListener(this);
     fontComponents.add(bCol);
@@ -282,13 +283,10 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     }
   }
 
-  /**
+  /* TODO
    * fix for bug id 4765271
    * (see http://developer.java.sun.com/developer/bugParade/bugs/4765271.html)
    */
-  private int adjustFontSize(int size) {
-    return (int) (((float) size) * 1.3f);
-  }
 
   /**
    * extend <code>TitledPickList</code> with a way to set values
@@ -319,52 +317,32 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
      *            false if not
      */
     public boolean setValue(AttributeSet a) {
-      boolean success = false;
       ignoreTextChanges = true;
-      Object newSelection;
-      if(a.isDefined(CSS.Attribute.FONT_FAMILY)) {
-        newSelection = a.getAttribute(CSS.Attribute.FONT_FAMILY);
- 	setSelection(a.getAttribute(CSS.Attribute.FONT_FAMILY));
-	success = true;
-      }
-      else {
-        newSelection = (Object) "SansSerif";
-	setSelection(newSelection);
-      }
+      final String newSelection  = Util.styleSheet().getFont(a).getFamily();
+      setSelection(newSelection);
       ignoreTextChanges = false;
       if(++setValCount < 2) {
         originalValue = newSelection;
       }
-      return success;
+      return true;
     }
 
-    public AttributeSet getValue() {
+    public AttributeSet getValue(boolean includeUnchanged) {
       SimpleAttributeSet set = new SimpleAttributeSet();
       Object value = getSelection();
-      //System.out.println("FamilyPicker getValue originalValue=" + originalValue);
-      //System.out.println("FamilyPicker getValue value=" + value);
-      if(((originalValue == null) && (value != null)) ||
+      if(includeUnchanged ||
+         ((originalValue == null) && (value != null)) ||
          ((originalValue != null) && (value != null) && (!originalValue.toString().equalsIgnoreCase(value.toString()))))
       {
         Util.styleSheet().addCSSAttribute(set,
             CSS.Attribute.FONT_FAMILY, value.toString());
+        set.addAttribute(HTML.Attribute.FACE, value.toString());
       }
       return set;
     }
 
-    public AttributeSet getValue(boolean includeUnchanged) {
-      if(includeUnchanged) {
-        SimpleAttributeSet set = new SimpleAttributeSet();
-        Object value = getSelection();
-        //System.out.println("FamilyPicker getValue originalValue=" + originalValue);
-        //System.out.println("FamilyPicker getValue value=" + value);
-        Util.styleSheet().addCSSAttribute(set,
-            CSS.Attribute.FONT_FAMILY, value.toString());
-        return set;
-      }
-      else {
-        return getValue();
-      }
+    public AttributeSet getValue() {
+        return getValue(false);
     }
 
     public String getFamily() {
@@ -383,7 +361,6 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
    */
   class SizePickList extends TitledPickList implements AttributeComponent {
 
-    private Object key;
     private int setValCount = 0;
     private String originalValue;
 
@@ -393,9 +370,8 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
      * @param options  the options to be selectable in this list
      * @param titleText  the title for the pick list
      */
-    SizePickList(String[] options, String titleText, Object key) {
+    SizePickList(String[] options, String titleText) {
       super(options, titleText);
-      this.key = key;
     }
 
     /**
@@ -409,56 +385,27 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
      */
     public boolean setValue(AttributeSet a) {
       ignoreTextChanges = true;
-      boolean success = false;
-      Object attr = a.getAttribute(key);
-      String newSelection;
-      if(attr != null) {
-        //LengthValue lv = new LengthValue(a.getAttribute(key));
-        //int val = new Float(lv.getAttrValue(attr.toString(), LengthValue.pt)).intValue();
-        int val = (int) Util.getAttrValue(a.getAttribute(key));
-        if(val > 0) {
-          success = true;
-          newSelection = new Integer(val).toString();
-          setSelection(newSelection);
-        }
-        else {
-          newSelection = "12";
-          setSelection(newSelection);
-        }
-      }
-      else {
-        newSelection = "12";
-        setSelection(newSelection);
-      }
-      ignoreTextChanges = false;
-      if(++setValCount < 2) {
-        originalValue = newSelection;
-      }
-      return success;
+      final int size = Util.styleSheet().getFont(a).getSize();
+      String newSelection = Integer.toString(size);
+      setSelection(newSelection);
+      return true;
     }
 
-    public AttributeSet getValue() {
+    public AttributeSet getValue(boolean includeUnchanged) {
       SimpleAttributeSet set = new SimpleAttributeSet();
       String value = (String) getSelection();
-      if(((originalValue == null) && (value != null)) ||
+      if((includeUnchanged || (originalValue == null) && (value != null)) ||
          ((originalValue != null) && (!originalValue.equalsIgnoreCase(value)))) {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE,
-            (String) getSelection() /*+ "pt"*/);
+          final String relativeSize = Integer.toString(getIndex() + 1);
+          set.addAttribute(HTML.Attribute.SIZE, relativeSize);
+        Util.styleSheet().addCSSAttributeFromHTML(set, CSS.Attribute.FONT_SIZE,
+                  relativeSize /*+ "pt"*/);
       }
       return set;
     }
 
-    public AttributeSet getValue(boolean includeUnchanged) {
-      if(includeUnchanged) {
-        SimpleAttributeSet set = new SimpleAttributeSet();
-        String value = (String) getSelection();
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE,
-            (String) getSelection() /*+ "pt"*/);
-        return set;
-      }
-      else {
-        return getValue();
-      }
+    public AttributeSet getValue() {
+          return getValue(false);
     }
 
     public void reset() {

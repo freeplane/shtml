@@ -31,11 +31,59 @@ import javax.swing.text.*;
 import javax.swing.text.html.*;
 import javax.swing.undo.*;
 import java.util.*;
-import com.sun.demo.ElementTreePanel;
-import com.sun.demo.ExampleFileFilter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.awt.datatransfer.*;
+
+import com.lightdev.app.shtm.actions.AppendTableColAction;
+import com.lightdev.app.shtm.actions.AppendTableRowAction;
+import com.lightdev.app.shtm.actions.BoldAction;
+import com.lightdev.app.shtm.actions.DeleteTableColAction;
+import com.lightdev.app.shtm.actions.DeleteTableRowAction;
+import com.lightdev.app.shtm.actions.DocumentTitleAction;
+import com.lightdev.app.shtm.actions.EditAnchorsAction;
+import com.lightdev.app.shtm.actions.EditLinkAction;
+import com.lightdev.app.shtm.actions.EditNamedStyleAction;
+import com.lightdev.app.shtm.actions.FindReplaceAction;
+import com.lightdev.app.shtm.actions.FontAction;
+import com.lightdev.app.shtm.actions.FontFamilyAction;
+import com.lightdev.app.shtm.actions.FontSizeAction;
+import com.lightdev.app.shtm.actions.FormatImageAction;
+import com.lightdev.app.shtm.actions.FormatListAction;
+import com.lightdev.app.shtm.actions.FormatParaAction;
+import com.lightdev.app.shtm.actions.FormatTableAction;
+import com.lightdev.app.shtm.actions.GCAction;
+import com.lightdev.app.shtm.actions.InsertImageAction;
+import com.lightdev.app.shtm.actions.InsertTableAction;
+import com.lightdev.app.shtm.actions.InsertTableColAction;
+import com.lightdev.app.shtm.actions.InsertTableRowAction;
+import com.lightdev.app.shtm.actions.ItalicAction;
+import com.lightdev.app.shtm.actions.NextTableCellAction;
+import com.lightdev.app.shtm.actions.PrevTableCellAction;
+import com.lightdev.app.shtm.actions.RedoAction;
+import com.lightdev.app.shtm.actions.SHTMLEditCopyAction;
+import com.lightdev.app.shtm.actions.SHTMLEditCutAction;
+import com.lightdev.app.shtm.actions.SHTMLEditPasteAction;
+import com.lightdev.app.shtm.actions.SHTMLEditPrefsAction;
+import com.lightdev.app.shtm.actions.SHTMLEditSelectAllAction;
+import com.lightdev.app.shtm.actions.SHTMLFileCloseAction;
+import com.lightdev.app.shtm.actions.SHTMLFileCloseAllAction;
+import com.lightdev.app.shtm.actions.SHTMLFileExitAction;
+import com.lightdev.app.shtm.actions.SHTMLFileNewAction;
+import com.lightdev.app.shtm.actions.SHTMLFileOpenAction;
+import com.lightdev.app.shtm.actions.SHTMLFileSaveAction;
+import com.lightdev.app.shtm.actions.SHTMLFileSaveAllAction;
+import com.lightdev.app.shtm.actions.SHTMLFileSaveAsAction;
+import com.lightdev.app.shtm.actions.SHTMLFileTestAction;
+import com.lightdev.app.shtm.actions.SHTMLHelpAppInfoAction;
+import com.lightdev.app.shtm.actions.SetDefaultStyleRefAction;
+import com.lightdev.app.shtm.actions.SetStyleAction;
+import com.lightdev.app.shtm.actions.SetTagAction;
+import com.lightdev.app.shtm.actions.ShowElementTreeAction;
+import com.lightdev.app.shtm.actions.ToggleAction;
+import com.lightdev.app.shtm.actions.ToggleListAction;
+import com.lightdev.app.shtm.actions.UnderlineAction;
+import com.lightdev.app.shtm.actions.UndoAction;
 import com.lightdev.app.shtm.plugin.SHTMLPlugin;
 import com.lightdev.app.shtm.plugin.PluginManager;
 import com.lightdev.app.shtm.plugin.ManagePluginsAction;
@@ -80,7 +128,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   public static final String FILE_LAST_SAVE = "lastSaveFileName";
 
   /** single instance of a dynamic resource for use by all */
-  public static DynamicResource dynRes =
+  public DynamicResource dynRes =
       new DynamicResource();
 
   /** SimplyHTML's main resource bundle (plug-ins use their own) */
@@ -112,9 +160,6 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   /** tool bar for formatting commands */
   private JToolBar paraToolBar;
 
-  /** a frame for showing an element tree panel */
-  private JFrame elementTreeFrame = null;
-
   /** the tabbed pane for adding documents to show to */
   private JTabbedPane jtpDocs;
 
@@ -134,7 +179,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   private RepeatKeyWatcher rkw = new RepeatKeyWatcher(40);
 
   /** counter for newly created documents */
-  private int newDocCounter = 0;
+  int newDocCounter = 0;
 
   /** reference to applicatin temp directory */
   private static File appTempDir;
@@ -146,10 +191,10 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   private TagSelector tagSelector;
 
   /** panel for plug-in display */
-  private SplitPanel sp;
+  SplitPanel sp;
 
   /** indicates, whether document activation shall be handled */
-  private boolean ignoreActivateDoc = false;
+  boolean ignoreActivateDoc = false;
 
   /**
    * action names
@@ -215,6 +260,17 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   public static final String setDefaultStyleRefAction = "setDefaultStyleRef";
   public static final String findReplaceAction = "findReplace";
 
+  public static SHTMLPanel getOwnerSHTMLPanel(Component c){
+      for(;;){
+          if(c == null){
+              return null;
+          }
+          if(c instanceof SHTMLPanel){
+              return (SHTMLPanel)c;
+          }
+          c = c.getParent();
+      }
+  }
   /** construct a new main application frame */
   public SHTMLPanel() {
       super(new BorderLayout());
@@ -305,10 +361,6 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    */
   public String getCurrentDocName() {
     return dp.getDocumentName();
-  }
-
-  public SHTMLEditorPane getEditor() {
-    return editor;
   }
 
     /**
@@ -633,23 +685,26 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    * store it for later use and connect it to the help menu.
    */
   private void initJavaHelp() {
-    try {
-      URL url = this.getClass().getResource(APP_HELP_NAME +
-          Util.URL_SEPARATOR + APP_HELP_NAME + JAVA_HELP_EXT);
-      HelpSet hs = new HelpSet(null, url);
-      hb = hs.createHelpBroker();
-      JMenuItem mi = dynRes.getMenuItem(helpTopicsAction);
-      CSH.setHelpIDString(mi, "item15");
-      mi.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
-      mi.setIcon(dynRes.getIconForCommand(resources, helpTopicsAction));
-      mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-      mi.setEnabled(true);
-    }
-    catch (Exception e) {
-      Util.errMsg(this,
+      try {
+          JMenuItem mi = dynRes.getMenuItem(helpTopicsAction);
+          if(mi == null){
+              return;
+          }
+          CSH.setHelpIDString(mi, "item15");
+          URL url = this.getClass().getResource(APP_HELP_NAME +
+                  Util.URL_SEPARATOR + APP_HELP_NAME + JAVA_HELP_EXT);
+          HelpSet hs = new HelpSet(null, url);
+          hb = hs.createHelpBroker();
+          mi.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
+          mi.setIcon(dynRes.getIconForCommand(resources, helpTopicsAction));
+          mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+          mi.setEnabled(true);
+      }
+      catch (Exception e) {
+          Util.errMsg(this,
                   dynRes.getResourceString(resources, "helpNotFoundError"),
                   e);
-    }
+      }
   }
 
   /**
@@ -661,7 +716,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     return hb;
   }
 
-  /**
+    /**
    * instantiate Actions and put them into the commands
    * Hashtable for later use along with their action commands.
    *
@@ -670,62 +725,62 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    * right away.
    */
   private void initActions() {
-    dynRes.addAction(findReplaceAction, new FindReplaceAction());
-    dynRes.addAction(setDefaultStyleRefAction, new SetDefaultStyleRefAction());
-    dynRes.addAction(documentTitleAction, new DocumentTitleAction());
-    dynRes.addAction(saveAllAction, new SHTMLFileSaveAllAction());
-    dynRes.addAction(editAnchorsAction, new EditAnchorsAction());
-    dynRes.addAction(setTagAction, new SetTagAction());
-    dynRes.addAction(editLinkAction, new EditLinkAction());
-    dynRes.addAction(prevTableCellAction, new PrevTableCellAction());
-    dynRes.addAction(nextTableCellAction, new NextTableCellAction());
-    dynRes.addAction(editNamedStyleAction, new EditNamedStyleAction());
-    dynRes.addAction(formatParaAction, new FormatParaAction());
-    dynRes.addAction(setStyleAction, new SetStyleAction());
-    dynRes.addAction(formatImageAction, new FormatImageAction());
-    dynRes.addAction(insertImageAction, new InsertImageAction());
-    dynRes.addAction(editPrefsAction, new SHTMLEditPrefsAction());
-    dynRes.addAction(toggleBulletsAction, new ToggleListAction(toggleBulletsAction, HTML.Tag.UL));
-    dynRes.addAction(toggleNumbersAction, new ToggleListAction(toggleNumbersAction, HTML.Tag.OL));
-    dynRes.addAction(formatListAction, new FormatListAction());
+    dynRes.addAction(findReplaceAction, new FindReplaceAction(this));
+    dynRes.addAction(setDefaultStyleRefAction, new SetDefaultStyleRefAction(this));
+    dynRes.addAction(documentTitleAction, new DocumentTitleAction(this));
+    dynRes.addAction(saveAllAction, new SHTMLFileSaveAllAction(this));
+    dynRes.addAction(editAnchorsAction, new EditAnchorsAction(this));
+    dynRes.addAction(setTagAction, new SetTagAction(this));
+    dynRes.addAction(editLinkAction, new EditLinkAction(this));
+    dynRes.addAction(prevTableCellAction, new PrevTableCellAction(this));
+    dynRes.addAction(nextTableCellAction, new NextTableCellAction(this));
+    dynRes.addAction(editNamedStyleAction, new EditNamedStyleAction(this));
+    dynRes.addAction(formatParaAction, new FormatParaAction(this));
+    dynRes.addAction(setStyleAction, new SetStyleAction(this));
+    dynRes.addAction(formatImageAction, new FormatImageAction(this));
+    dynRes.addAction(insertImageAction, new InsertImageAction(this));
+    dynRes.addAction(editPrefsAction, new SHTMLEditPrefsAction(this));
+    dynRes.addAction(toggleBulletsAction, new ToggleListAction(this, toggleBulletsAction, HTML.Tag.UL));
+    dynRes.addAction(toggleNumbersAction, new ToggleListAction(this, toggleNumbersAction, HTML.Tag.OL));
+    dynRes.addAction(formatListAction, new FormatListAction(this));
     dynRes.addAction(ManagePluginsAction.managePluginsAction,
                      new ManagePluginsAction());
-    dynRes.addAction(newAction, new SHTMLFileNewAction());
-    dynRes.addAction(openAction, new SHTMLFileOpenAction());
-    dynRes.addAction(closeAction, new SHTMLFileCloseAction());
-    dynRes.addAction(closeAllAction, new SHTMLFileCloseAllAction());
-    dynRes.addAction(saveAction, new SHTMLFileSaveAction());
-    dynRes.addAction(saveAsAction, new SHTMLFileSaveAsAction());
-    dynRes.addAction(exitAction, new SHTMLFileExitAction());
-    dynRes.addAction(elemTreeAction, new ShowElementTreeAction());
-    dynRes.addAction(gcAction, new GCAction());
-    dynRes.addAction(testAction, new SHTMLFileTestAction());
-    dynRes.addAction(undoAction, new UndoAction());
-    dynRes.addAction(redoAction, new RedoAction());
-    dynRes.addAction(cutAction, new SHTMLEditCutAction());
-    dynRes.addAction(copyAction, new SHTMLEditCopyAction());
-    dynRes.addAction(pasteAction, new SHTMLEditPasteAction());
-    dynRes.addAction(selectAllAction, new SHTMLEditSelectAllAction());
-    dynRes.addAction(aboutAction, new SHTMLHelpAppInfoAction());
-    dynRes.addAction(fontAction, new FontAction());
-    dynRes.addAction(fontFamilyAction, new FontFamilyAction());
-    dynRes.addAction(fontSizeAction, new FontSizeAction());
-    dynRes.addAction(insertTableAction, new InsertTableAction());
-    dynRes.addAction(insertTableRowAction, new InsertTableRowAction());
-    dynRes.addAction(insertTableColAction, new InsertTableColAction());
-    dynRes.addAction(appendTableColAction, new AppendTableColAction());
-    dynRes.addAction(appendTableRowAction, new AppendTableRowAction());
-    dynRes.addAction(deleteTableRowAction, new DeleteTableRowAction());
-    dynRes.addAction(deleteTableColAction, new DeleteTableColAction());
-    dynRes.addAction(formatTableAction, new FormatTableAction());
-    dynRes.addAction(fontBoldAction, new BoldAction());
-    dynRes.addAction(fontItalicAction, new ItalicAction());
-    dynRes.addAction(fontUnderlineAction, new UnderlineAction());
-    dynRes.addAction(paraAlignLeftAction, new ToggleAction(paraAlignLeftAction,
+    dynRes.addAction(newAction, new SHTMLFileNewAction(this));
+    dynRes.addAction(openAction, new SHTMLFileOpenAction(this));
+    dynRes.addAction(closeAction, new SHTMLFileCloseAction(this));
+    dynRes.addAction(closeAllAction, new SHTMLFileCloseAllAction(this));
+    dynRes.addAction(saveAction, new SHTMLFileSaveAction(this));
+    dynRes.addAction(saveAsAction, new SHTMLFileSaveAsAction(this));
+    dynRes.addAction(exitAction, new SHTMLFileExitAction(this));
+    dynRes.addAction(elemTreeAction, new ShowElementTreeAction(this));
+    dynRes.addAction(gcAction, new GCAction(this));
+    dynRes.addAction(testAction, new SHTMLFileTestAction(this));
+    dynRes.addAction(undoAction, new UndoAction(this));
+    dynRes.addAction(redoAction, new RedoAction(this));
+    dynRes.addAction(cutAction, new SHTMLEditCutAction(this));
+    dynRes.addAction(copyAction, new SHTMLEditCopyAction(this));
+    dynRes.addAction(pasteAction, new SHTMLEditPasteAction(this));
+    dynRes.addAction(selectAllAction, new SHTMLEditSelectAllAction(this));
+    dynRes.addAction(aboutAction, new SHTMLHelpAppInfoAction(this));
+    dynRes.addAction(fontAction, new FontAction(this));
+    dynRes.addAction(fontFamilyAction, new FontFamilyAction(this));
+    dynRes.addAction(fontSizeAction, new FontSizeAction(this));
+    dynRes.addAction(insertTableAction, new InsertTableAction(this));
+    dynRes.addAction(insertTableRowAction, new InsertTableRowAction(this));
+    dynRes.addAction(insertTableColAction, new InsertTableColAction(this));
+    dynRes.addAction(appendTableColAction, new AppendTableColAction(this));
+    dynRes.addAction(appendTableRowAction, new AppendTableRowAction(this));
+    dynRes.addAction(deleteTableRowAction, new DeleteTableRowAction(this));
+    dynRes.addAction(deleteTableColAction, new DeleteTableColAction(this));
+    dynRes.addAction(formatTableAction, new FormatTableAction(this));
+    dynRes.addAction(fontBoldAction, new BoldAction(this));
+    dynRes.addAction(fontItalicAction, new ItalicAction(this));
+    dynRes.addAction(fontUnderlineAction, new UnderlineAction(this));
+    dynRes.addAction(paraAlignLeftAction, new ToggleAction(this, paraAlignLeftAction,
               CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_LEFT));
-    dynRes.addAction(paraAlignCenterAction, new ToggleAction(paraAlignCenterAction,
+    dynRes.addAction(paraAlignCenterAction, new ToggleAction(this, paraAlignCenterAction,
               CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_CENTER));
-    dynRes.addAction(paraAlignRightAction, new ToggleAction(paraAlignRightAction,
+    dynRes.addAction(paraAlignRightAction, new ToggleAction(this, paraAlignRightAction,
               CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_RIGHT));
   }
 
@@ -823,7 +878,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
 	toolBar.add(fontFamily);
       }
       else if(itemKeys[i].equalsIgnoreCase(fontSizeAction)) {
-	FontSizePicker fontSize = new FontSizePicker(CSS.Attribute.FONT_SIZE);
+	FontSizePicker fontSize = new FontSizePicker();
         fontSize.setPreferredSize(new Dimension(50, 23));
         fontSize.setAction(dynRes.getAction(fontSizeAction));
         fontSize.setMaximumSize(comboBoxSize);
@@ -942,8 +997,8 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    */
   public void registerDocument() {
     doc.addUndoableEditListener(undoHandler);
-    editor.addCaretListener(this);
-    editor.addKeyListener(rkw);
+    getEditor().addCaretListener(this);
+    getEditor().addKeyListener(rkw);
     ((SHTMLDocument) dp.getDocument()).getStyleSheet().addChangeListener(styleSelector);
   }
 
@@ -955,8 +1010,8 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    * SimplyHTML objects too
    */
   public void unregisterDocument() {
-    editor.removeCaretListener(this);
-    editor.removeKeyListener(rkw);
+    getEditor().removeCaretListener(this);
+    getEditor().removeKeyListener(rkw);
     if(doc != null) {
       doc.removeUndoableEditListener(undoHandler);
     }
@@ -996,14 +1051,14 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    * @param cmd the name of the action to get properties for
    */
   public static void getActionProperties(Action action, String cmd) {
-    Icon icon = dynRes.getIconForCommand(resources, cmd);
+    Icon icon = DynamicResource.getIconForCommand(resources, cmd);
     if (icon != null) {
       action.putValue(Action.SMALL_ICON, icon);
     }
     /*else {
       action.putValue(Action.SMALL_ICON, emptyIcon);
     }*/
-    String toolTip = dynRes.getResourceString(resources, cmd + dynRes.toolTipSuffix);
+    String toolTip = DynamicResource.getResourceString(resources, cmd + DynamicResource.toolTipSuffix);
     if(toolTip != null) {
       action.putValue(Action.SHORT_DESCRIPTION, toolTip);
     }
@@ -1011,6 +1066,13 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
 
   public int getActiveTabNo() {
     return activeTabNo;
+  }
+
+  /**
+   * @param activeTabNo The activeTabNo to set.
+   */
+  public void setActiveTabNo(int activeTabNo) {
+      this.activeTabNo = activeTabNo;
   }
 
   /**
@@ -1023,7 +1085,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     dp = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
     editor = dp.getEditor();
     //System.out.println("FrmMain stateChanged docName now " + dp.getDocumentName());
-    doc = (SHTMLDocument) editor.getDocument();
+    doc = (SHTMLDocument) getEditor().getDocument();
     //fireDocumentChanged();
     if(!ignoreActivateDoc) {
       dp.fireActivated();
@@ -1049,1525 +1111,9 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
       if(getCurrentDocumentPane().getSelectedTab() != DocumentPane.VIEW_TAB_LAYOUT){
           return;
       }
-      undo.addEdit(e.getEdit());
+      getUndo().addEdit(e.getEdit());
     }
   }
-
-  /**
-   * UndoAction for the edit menu
-   */
-  public class UndoAction extends AbstractAction implements SHTMLAction {
-    public UndoAction() {
-      super(undoAction);
-      setEnabled(false);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_Z, KeyEvent.CTRL_MASK));
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      if(getCurrentDocumentPane().getSelectedTab() != DocumentPane.VIEW_TAB_LAYOUT){
-         return;
-      }
-      try {
-        undo.undo();
-      }
-      catch(CannotUndoException ex) {
-        Util.errMsg((Component) e.getSource(),
-		  dynRes.getResourceString(resources, "unableToUndoError") + ex, ex);
-      }
-    }
-
-    public void update() {
-      setEnabled(undo.canUndo());
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * RedoAction for the edit menu
-   */
-  public class RedoAction extends AbstractAction implements SHTMLAction {
-    public RedoAction() {
-      super(redoAction);
-      setEnabled(false);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_Z, KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK));
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      if(getCurrentDocumentPane().getSelectedTab() != DocumentPane.VIEW_TAB_LAYOUT){
-         return;
-      }
-      try {
-        undo.redo();
-      }
-      catch(CannotRedoException ex) {
-        Util.errMsg((Component) e.getSource(),
-	      dynRes.getResourceString(resources, "unableToRedoError") + ex, ex);
-      }
-      updateActions();
-    }
-
-    public void update() {
-      setEnabled(undo.canRedo());
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /* ---------- undo/redo implementation end ------------------- */
-
-
-
-  /* ---------- application actions start ----------------
-         (see also undo/redo implementation above) */
-
-  /** just adds a normal name to the superclasse's action */
-  public class SHTMLEditCutAction extends DefaultEditorKit.CutAction
-	implements SHTMLAction
-  {
-    public SHTMLEditCutAction() {
-      super();
-      putValue(Action.NAME, cutAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_X, KeyEvent.CTRL_MASK));
-    }
-    public void actionPerformed(ActionEvent e) {
-      super.actionPerformed(e);
-      updateActions();
-    }
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        setEnabled(true);
-      }
-      else {
-        setEnabled(false);
-      }
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /** just adds a normal name to the superclasse's action */
-  public class SHTMLEditCopyAction extends DefaultEditorKit.CopyAction
-	implements SHTMLAction
-  {
-    public SHTMLEditCopyAction() {
-      super();
-      putValue(Action.NAME, copyAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_C, KeyEvent.CTRL_MASK));
-    }
-    public void actionPerformed(ActionEvent e) {
-      super.actionPerformed(e);
-      updateActions();
-    }
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        setEnabled(true);
-      }
-      else {
-        setEnabled(false);
-      }
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /** just adds a normal name to the superclasse's action */
-  public class SHTMLEditPasteAction extends DefaultEditorKit.PasteAction
-	implements SHTMLAction
-  {
-    public SHTMLEditPasteAction() {
-      super();
-      putValue(Action.NAME, pasteAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_V, KeyEvent.CTRL_MASK));
-    }
-    public void actionPerformed(ActionEvent e) {
-      super.actionPerformed(e);
-      updateActions();
-    }
-    public void update() {
-      try {
-        Clipboard cb = getToolkit().getSystemClipboard();
-        Transferable data = cb.getContents(this);
-        if(jtpDocs.getTabCount() > 0 && data != null) {
-          setEnabled(true);
-        }
-        else {
-          setEnabled(false);
-        }
-      }
-      catch(Exception e) {
-        setEnabled(false);
-        Util.errMsg(null, null, e);
-      }
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  public class SHTMLEditSelectAllAction extends AbstractAction
-        implements SHTMLAction
-  {
-    public SHTMLEditSelectAllAction() {
-      super();
-      putValue(Action.NAME, selectAllAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.selectAll();
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /** create a new empty document and show it */
-  public class SHTMLFileNewAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLFileNewAction() {
-      super(newAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_N, KeyEvent.CTRL_MASK));
-    }
-
-    /** create a new empty document and show it */
-    public void actionPerformed(ActionEvent ae) {
-      dp = new DocumentPane(null, ++newDocCounter/*, renderMode*/);   // create a new empty document
-      jtpDocs.setSelectedComponent(                   // add the document to the
-            jtpDocs.add(dp.getDocumentName(), dp));   // tabbed pane for display
-
-      registerDocument();
-
-      updateActions();
-    }
-
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /** open an existing document from file and show it */
-  public class SHTMLFileOpenAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLFileOpenAction() {
-      super(openAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_O, KeyEvent.CTRL_MASK));
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Preferences prefs = Preferences.userNodeForPackage( getClass() );
-      JFileChooser chooser = new JFileChooser();        // create a file chooser
-      ExampleFileFilter filter = new ExampleFileFilter();     // create a filter
-      filter.addExtension("htm");
-      filter.addExtension("html");
-      filter.setDescription(dynRes.getResourceString(resources, "htmlFileDesc"));
-      chooser.setFileFilter(filter);                    // apply the file filter
-      String lastFileName = prefs.get(FILE_LAST_OPEN, "");
-      if(lastFileName.length() > 0) {
-        chooser.setCurrentDirectory(new File(lastFileName).getParentFile());
-      }
-      int returnVal =                             // ..and show the file chooser
-        chooser.showOpenDialog((Component) ae.getSource());
-      if(returnVal == JFileChooser.APPROVE_OPTION) {   // if a file was selected
-        File file = chooser.getSelectedFile();
-        prefs.put(FILE_LAST_OPEN, file.getAbsolutePath());
-        openDocument(file);
-      }
-      updateActions();
-    }
-
-    public void openDocument(File file) {
-      openDocument(file, null);
-    }
-
-    public void openDocument(File file, DocumentPane.DocumentPaneListener listener) {
-      int openDocNo = -1;
-      try {
-        openDocNo = getOpenDocument(file.toURL().toString());
-      }
-      catch(MalformedURLException mue) {}
-      if(openDocNo > -1) {
-        //System.out.println("FrmMain.SHTMLFileOpenAction.openAction setting to open doc no " + openDocNo);
-        jtpDocs.setSelectedIndex(openDocNo);
-      }
-      else {
-        //System.out.println("FrmMain.SHTMLFileOpenAction.openAction loading file " + file);
-        FileLoader loader = new FileLoader(file, null, listener);
-        loader.start();
-      }
-    }
-
-    public int getOpenDocument(String url) {
-      int tabNo = -1;
-      int openDocCount = jtpDocs.getTabCount();
-      int i = 0;
-      while(i < openDocCount && tabNo < 0) {
-        URL source = ((DocumentPane) jtpDocs.getComponentAt(i)).getSource();
-        if(source != null) {
-          if(source.toString().equalsIgnoreCase(url)) {
-            tabNo = i;
-          }
-        }
-        i++;
-      }
-      return tabNo;
-    }
-
-    /**
-     * get a FileLoader object for the document currently active
-     *
-     * @param url  the url of the file to open
-     */
-    public FileLoader createFileLoader(URL url) {
-      return new FileLoader(new File(url.getFile()), null);
-    }
-
-    /**
-     * Helper class for being able to load a document in a separate thread.
-     * Using a separate thread will not cause the application to block during
-     * a lengthy load operation
-     */
-    public class FileLoader extends Thread {
-      File file;
-      Component owner;
-      DocumentPane.DocumentPaneListener l;
-      public FileLoader(File file, Component owner) {
-        this.file = file;
-        this.owner = owner;
-      }
-      public FileLoader(File file, Component owner, DocumentPane.DocumentPaneListener listener) {
-        this(file, owner);
-        this.l = listener;
-      }
-      public void run() {
-        try {
-          Frame parent =JOptionPane.getFrameForComponent(SHTMLPanel.this);
-          dp = new DocumentPane(file.toURL(), 0/*, renderMode*/);
-          if(l != null) {
-            dp.addDocumentPaneListener(l);
-          }
-          jtpDocs.setSelectedComponent(
-              jtpDocs.add(dp.getDocumentName(), dp));
-	  registerDocument();
-        }
-        catch(Exception e) {
-          Util.errMsg(owner, dynRes.getResourceString(resources, "unableToOpenFileError"), e);
-        }
-      }
-    }
-
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * close a document.
-   *
-   * <p>the action takes into account whether or not a document needs to be
-   * saved.</p>
-   *
-   * <p>By having the actual closing task in a separate public method of this
-   * action, the close functionality can be shared with action 'close all' or
-   * others that might need it.</p>
-   */
-  public class SHTMLFileCloseAction extends AbstractAction
-	implements SHTMLAction
-  {
-
-    private boolean exitApp = false;
-
-    /** constructor */
-    public SHTMLFileCloseAction() {
-      super(closeAction);
-      getProperties();
-    }
-
-    /** close the currently active document, if there is one */
-    public void actionPerformed(ActionEvent ae) {
-      if(jtpDocs.getTabCount() > 0) {                   // if documents are open
-        closeDocument(activeTabNo, ae, false);  // close the active one
-      }
-      updateActions();
-    }
-
-    /**
-     * close a document by its tab index.
-     *
-     * <p>The method takes care of saving the document if necessary prior
-     * to closing.</p>
-     *
-     * @param the tab index number of the document in the tabbed pane.
-     * @return true, if the document was closed successfully.
-     */
-    public void closeDocument(final int index, ActionEvent ae, boolean ignoreChanges) {
-      //System.out.println("closeDocument index=" + index);
-      exitApp = ae.getActionCommand().indexOf(exitAction) > -1;
-      final DocumentPane dp = (DocumentPane) jtpDocs.getComponentAt(index);
-      if(!dp.saveInProgress()) {            // if no save is going on and..
-        //System.out.println("closeDocument: no save is going on");
-        if(ignoreChanges) {
-          closeDoc(dp);
-        }
-        else {
-          if(dp.needsSaving()) {              // ..the document needs to be saved
-            //System.out.println("closeDocument: " + dp.getDocumentName() + " needsSaving");
-            ignoreActivateDoc = true;
-            jtpDocs.setSelectedIndex(index);
-            ignoreActivateDoc = false;
-            String docName = dp.getDocumentName();
-            int choice = Util.msgChoice(JOptionPane.YES_NO_CANCEL_OPTION, "confirmClosing", "saveChangesQuery", docName, "\r\n\r\n");
-            switch(choice) {
-              case JOptionPane.YES_OPTION:           // if the user wanted to save
-                if(dp.isNewDoc()) {                     //if the document is new
-                  dynRes.getAction(saveAsAction).actionPerformed(ae); // 'save as'
-                }
-                else {                                             // else
-                  dynRes.getAction(saveAction).actionPerformed(ae);   // 'save'
-                }
-                scheduleClose(dp);    //..and wait until it is finshed, then close
-                break;
-              case JOptionPane.NO_OPTION:       // if the user don't like to save
-                closeDoc(dp);       // close the document without saving
-                break;
-              case JOptionPane.CANCEL_OPTION:             // if the user cancelled
-                //System.out.println("closeDocument: save cancelled for " + dp.getDocumentName());
-                break;                                    // do nothing
-            }
-          }
-          else {                      // if the document does not need to be saved
-            //System.out.println("closeDocument: " + dp.getDocumentName() + " NOT needsSaving");
-            closeDoc(dp);             // close the document
-          }
-        }
-      }
-      else {                  // save was going on upon close request, so
-        //System.out.println("closeDocument: a save is going on, wait");
-        scheduleClose(dp);    // wait for completion, then close
-      }
-    }
-
-    /**
-     * schedule closing of a document.
-     *
-     * <p>This creates a <code>Timer</code> thread for which a
-     * <code>TimerTask</code> is scheduled to peridically check
-     * whether or not the save process for respective document commenced
-     * successfully.</p>
-     *
-     * <p>If yes, Timer and TimerTask are disposed and the document
-     * is closed. If not, the document remains open.</p>
-     *
-     * @param dp  the document to close
-     * @param index  the number of the tab for that document
-     */
-    private void scheduleClose(final DocumentPane dp) {
-      //System.out.println("scheduleClose for " + dp.getDocumentName());
-      final java.util.Timer timer = new java.util.Timer();
-      TimerTask task = new TimerTask() {
-        public void run() {
-          if(!dp.saveInProgress()) {                   // if done with saving
-            if(dp.saveSuccessful) {                     // and all went fine
-              closeDoc(dp);                          // close the document
-              this.cancel();                            // dispose the task
-              timer.cancel();                           // dispose the timer
-            }
-          }
-        }
-      };
-      timer.schedule(task, 0, 400); // try to close every 400 milliseconds
-    }
-
-    /**
-     * convenience method for closing a document
-     */
-    private void closeDoc(DocumentPane dp) {
-      //System.out.println("closeDoc for document " + dp.getDocumentName());
-      try {
-        dp.deleteTempDir();
-        unregisterDocument();
-        //jtpDocs.remove(jtpDocs.indexOfComponent(dp));   // try to close the doc
-        jtpDocs.remove(dp);
-      }
-      catch(IndexOutOfBoundsException e) { // if the tabs have changed meanwhile
-        catchCloseErr(dp);
-      }
-      if(exitApp) { // if the doc close was caused by a request to exit the app
-        if(jtpDocs.getTabCount() == 0) {      // ..and if there are no open docs
-          System.exit(0);                               // exit the application
-        }
-      }
-    }
-
-    private void catchCloseErr(DocumentPane dp) {
-      try {
-        int i = jtpDocs.indexOfComponent(dp);       // get the current tab index
-        if(i < 0 && jtpDocs.getTabCount() > 0) {
-          activeTabNo = jtpDocs.getSelectedIndex();
-          dp = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
-          i = jtpDocs.indexOfComponent(dp);   // get the current tab index again
-          unregisterDocument();
-          jtpDocs.remove(i);                                      //now remove it
-        }
-        else {
-          while(i > 0 && i > jtpDocs.getTabCount()) {     // while its still wrong
-            i = jtpDocs.indexOfComponent(dp);   // get the current tab index again
-          }
-          unregisterDocument();
-          jtpDocs.remove(i);                                      //now remove it
-        }
-      }
-      catch(IndexOutOfBoundsException e) {
-        catchCloseErr(dp);
-      }
-    }
-
-    /** update the state of this action */
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * close all documents currently shown.
-   *
-   * <p>This action simply loops through all open documents and uses an instance
-   * of SHTMLFileCloseAction to perform the actual closing on each of them.</p>
-   */
-  public class SHTMLFileCloseAllAction extends AbstractAction
-	implements SHTMLAction
-  {
-
-    /** constructor */
-    public SHTMLFileCloseAllAction() {
-      super(closeAllAction);
-      getProperties();
-    }
-
-    /** close all open documents */
-    public void actionPerformed(ActionEvent ae) {
-      SHTMLFileCloseAction a = (SHTMLFileCloseAction)dynRes.getAction(closeAction);
-      for(int i = jtpDocs.getTabCount(); i > 0; i--) {
-        //System.out.println("CloseAll, close tab no " + i);
-        a.closeDocument(i-1, ae, false);
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  public class SHTMLFileSaveAllAction extends AbstractAction
-        implements SHTMLAction
-  {
-    public SHTMLFileSaveAllAction() {
-      super(saveAllAction);
-      getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_S, KeyEvent.CTRL_MASK));*/
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      int count = jtpDocs.getTabCount();
-      for(int i = 0; i < count; i++) {
-        jtpDocs.setSelectedIndex(i);
-        dp = (DocumentPane) jtpDocs.getSelectedComponent();
-        if(dp.needsSaving()) {
-          dynRes.getAction(saveAction).actionPerformed(ae);
-        }
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /** save a document */
-  public class SHTMLFileSaveAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLFileSaveAction() {
-      super(saveAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_S, KeyEvent.CTRL_MASK));
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      if(!dp.isNewDoc()) {
-        FileSaver saver = new FileSaver(dp);
-        saver.setName("FileSaver");
-        saver.start();
-      }
-      else {
-        dynRes.getAction(saveAsAction).actionPerformed(ae);
-      }
-      updateActions();
-    }
-
-    /**
-     * Helper class for being able to save a document in a separate thread.
-     * Using a separate thread will not cause the application to block during
-     * a lengthy save operation
-     */
-    class FileSaver extends Thread {
-      DocumentPane dp;
-      Component owner;
-      FileSaver(DocumentPane dp) {
-        setPriority(Thread.MIN_PRIORITY);
-        this.dp = dp;
-      }
-      public void run() {
-        doSave(this.dp);
-      }
-    }
-
-    public void update() {
-      boolean isEnabled = jtpDocs.getTabCount() > 0;
-      boolean saveInProgress = false;
-      boolean needsSaving = false;
-      if(isEnabled) {
-        saveInProgress = dp.saveInProgress();
-        needsSaving = dp.needsSaving();
-      }
-      this.setEnabled(isEnabled && needsSaving && !saveInProgress);
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * save a document under a different name and/or location
-   *
-   * <p>If a file already exists at the chosen location / name, the method
-   * will ask the user if the existing file shall be overwritten.
-   */
-  public class SHTMLFileSaveAsAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLFileSaveAsAction() {
-      super(saveAsAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      boolean canSave = true;
-      Preferences prefs = Preferences.userNodeForPackage( getClass() );
-      JFileChooser chooser = new JFileChooser();
-      ExampleFileFilter filter = new ExampleFileFilter();
-      filter.addExtension("htm");
-      filter.addExtension("html");
-      filter.setDescription(dynRes.getResourceString(resources, "htmlFileDesc"));
-      chooser.setFileFilter(filter);
-      String lastSaveFileName = prefs.get(FILE_LAST_SAVE, "");
-      if(lastSaveFileName.length() > 0) {
-        chooser.setCurrentDirectory(new File(lastSaveFileName).getParentFile());
-      }
-      URL sourceUrl = dp.getSource();
-      String fName;
-      if(sourceUrl != null) {
-        fName = sourceUrl.getFile();
-      }
-      else {
-        fName = dp.getDocumentName();
-        //System.out.println("SHTMLFileSaveAsAction fName=" + fName);
-        fName = Util.removeChar(fName, ' ');
-        //System.out.println("SHTMLFileSaveAsAction fName=" + fName);
-      }
-      if(fName.indexOf(Util.CLASS_SEPARATOR) < 0) {
-        chooser.setSelectedFile(new File(fName + ".htm"));
-      }
-      else {
-        chooser.setSelectedFile(new File(fName));
-      }
-      int result = chooser.showSaveDialog((Component) ae.getSource());
-      if(result == JFileChooser.APPROVE_OPTION) {
-        File selection = chooser.getSelectedFile();
-        prefs.put(FILE_LAST_SAVE, selection.getAbsolutePath());
-        if(selection.exists()) {
-          String newName = selection.getName();
-          canSave = Util.msg(JOptionPane.YES_NO_OPTION, "confirmSaveAs", "fileExistsQuery", newName, " ");
-        }
-        if(canSave) {
-          try {
-            NewFileSaver saver = new NewFileSaver(
-                                  dp, selection.toURL(), activeTabNo);
-            saver.setName("NewFileSaver");
-            saver.start();
-          }
-          catch(Exception ex) {
-            Util.errMsg((Component) ae.getSource(),
-                dynRes.getResourceString(resources, "cantCreateURLError") +
-                    selection.getAbsolutePath(),
-                ex);
-          }
-        }
-      }
-      updateActions();
-    }
-
-    /**
-     * Helper class for being able to save a document in a separate thread.
-     * Using a separate thread will not cause the application to block during
-     * a lengthy save operation
-     */
-    public class NewFileSaver extends Thread {
-      DocumentPane dp;
-      URL url;
-      int activeTabNo;
-      DocumentPane.DocumentPaneListener l;
-      NewFileSaver(DocumentPane dp, URL url, int activeTabNo) {
-        this.dp = dp;
-        this.url = url;
-        this.activeTabNo = activeTabNo;
-      }
-      NewFileSaver(DocumentPane dp, URL url, int activeTabNo, DocumentPane.DocumentPaneListener listener) {
-        this(dp, url, activeTabNo);
-        this.l = listener;
-      }
-      public void run() {
-        this.dp.setSource(url);
-        doSave(this.dp);
-        if(this.dp.saveSuccessful) {
-          jtpDocs.setTitleAt(jtpDocs.indexOfComponent(this.dp),
-					  this.dp.getDocumentName());
-          if(l != null) {
-            dp.addDocumentPaneListener(l);
-          }
-        }
-      }
-    }
-
-    /**
-     * get a FileSaver object for the document currently active
-     *
-     * @param url  the url of the file to save
-     */
-    public NewFileSaver createNewFileSaver(URL url) {
-      return new NewFileSaver(dp, url, activeTabNo);
-    }
-
-    /**
-     * get a FileSaver object for the document currently active
-     *
-     * @param url  the url of the file to save
-     */
-    public NewFileSaver createNewFileSaver(URL url, DocumentPane.DocumentPaneListener listener) {
-      return new NewFileSaver(dp, url, activeTabNo, listener);
-    }
-
-    public void update() {
-      boolean isEnabled = jtpDocs.getTabCount() > 0;
-      boolean saveInProgress = false;
-      if(isEnabled) {
-        saveInProgress = dp.saveInProgress();
-      }
-      this.setEnabled(isEnabled && !saveInProgress);
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * exit the application.
-   *
-   * <p>This will only exit the application, if<ul>
-   * <li>no documents are open or </li>
-   * <li>documents are open that do not need to be saved or </li>
-   * <li>documents are open and are saved successfully prior to close or </li>
-   * <li>documents are open for which the user explicitly opted not
-   *        to save them </li>
-   * </ul></p>
-   */
-  public class SHTMLFileExitAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLFileExitAction() {
-      super(exitAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      //System.out.println("FrmMain.SHTMLFileExitAction.actionPerformed");
-      saveRelevantPrefs();
-      new SHTMLFileCloseAllAction().actionPerformed(ae);
-      if(jtpDocs.getTabCount() == 0) {
-        //removeAllListeners();
-        System.exit(0);
-      }
-      updateActions();
-    }
-
-    public void saveRelevantPrefs() {
-      //System.out.println("FrmMain.SHTMLFileExitAction.saveRelevantPrefs");
-
-      /* ---- save splitpane sizes start -------------- */
-
-      sp.savePrefs();
-
-      /* ---- save splitpane sizes end -------------- */
-    }
-
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * a slot for testing certain things conveniently during development
-   */
-  public class SHTMLFileTestAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLFileTestAction() {
-      super(testAction);
-      getProperties();
-    }
-    public void actionPerformed(ActionEvent ae) {
-
-      //Util.errMsg(null, "no test action is implemented.", null);
-
-      getEditor().insertBreak();
-
-      //GregorianCalendar gc = new GregorianCalendar(2003, 4, 31);
-      //System.out.println(gc.getTime().getTime());
-
-      /* list attributes
-      Element elem = doc.getParagraphElement(editor.getCaretPosition());
-
-      //System.out.println("\r\n\r\n element name=" + elem.getName());
-      AttributeSet attrs = doc.getStyleSheet().getStyle(elem.getName());
-      de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      hd.listAttributes(attrs, 4);
-
-      System.out.println("\r\n\r\n resolved element name=" + elem.getName());
-      attrs = Util.resolveAttributes(doc.getStyleSheet().getStyle(elem.getName()));
-      hd = new de.calcom.cclib.html.HTMLDiag();
-      hd.listAttributes(attrs, 4);
-
-      System.out.println("\r\n\r\n maxAttributes element name=" + elem.getName());
-      attrs = getMaxAttributes(elem, doc.getStyleSheet());
-      hd = new de.calcom.cclib.html.HTMLDiag();
-      hd.listAttributes(attrs, 4);
-      */
-
-      /* switch editable
-      SHTMLEditorPane editor = dp.getEditor();
-      editor.setEditable(!editor.isEditable());
-      updateActions();
-      */
-    }
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * insert a new table
-   */
-  public class InsertTableAction extends AbstractAction
-				implements SHTMLAction
-  {
-
-    public InsertTableAction() {
-      super(insertTableAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      Object input = Util.nameInput(parent, "3", "insertTableTitle","insertTableMsg");
-      if(input != null) {
-        int choice = Integer.parseInt(input.toString());
-        if(choice > 0) {
-          editor.insertTable(choice);
-        }
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * insert a new table column
-   */
-  public class InsertTableColAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public InsertTableColAction() {
-      super(insertTableColAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.insertTableColumn();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * append a new table row
-   */
-  public class AppendTableRowAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public AppendTableRowAction() {
-      super(appendTableRowAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.appendTableRow();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * delete a table row
-   */
-  public class DeleteTableRowAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public DeleteTableRowAction() {
-      super(deleteTableRowAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.deleteTableRow();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * set the title of the currently active document
-   */
-  public class DocumentTitleAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public DocumentTitleAction() {
-      super(documentTitleAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      String newTitle;
-      String currentTitle = doc.getDocumentTitle();
-      if(currentTitle != null) {
-        newTitle = currentTitle;
-      }
-      else {
-        newTitle = "";
-      }
-      newTitle = Util.nameInput(JOptionPane.getFrameForComponent(SHTMLPanel.this), newTitle, "docTitleTitle", "docTitleQuery");
-      if(newTitle != null && newTitle.length() > 0) {
-        doc.setDocumentTitle(newTitle);
-      }
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * append a new table col
-   */
-  public class AppendTableColAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public AppendTableColAction() {
-      super(appendTableColAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.appendTableColumn();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * delete a table col
-   */
-  public class DeleteTableColAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public DeleteTableColAction() {
-      super(deleteTableColAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.deleteTableCol();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * insert a new table row
-   */
-  public class InsertTableRowAction extends AbstractAction
-                                implements SHTMLAction
-  {
-    public InsertTableRowAction() {
-      super(insertTableRowAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.insertTableRow();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * format table attributes
-   */
-  public class FormatTableAction extends AbstractAction
-				implements SHTMLAction
-  {
-    public FormatTableAction() {
-      super(formatTableAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      editor.requestFocus();
-      int pos = editor.getSelectionStart();
-      TableDialog td = new TableDialog(parent,
-                     dynRes.getResourceString(resources, "tableDialogTitle"));
-      td.setTableAttributes(getMaxAttributes(editor, HTML.Tag.TABLE.toString()));
-      td.setCellAttributes(getMaxAttributes(editor, HTML.Tag.TD.toString()));
-      Util.center(parent, td);
-      td.setModal(true);
-      td.show();
-
-      /** if the user made a selection, apply it to the document */
-      if(td.getResult() == DialogShell.RESULT_OK) {
-        AttributeSet a = td.getTableAttributes();
-        if(a.getAttributeCount() > 0) {
-          editor.applyTableAttributes(a);
-        }
-        a = td.getCellAttributes();
-        if(a.getAttributeCount() > 0) {
-          editor.applyCellAttributes(a, td.getCellRange());
-        }
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * toggle list formatting for a given type of list on/off
-   */
-  public class ToggleListAction extends AbstractAction
-                                implements SHTMLAction
-  {
-
-    private HTML.Tag listTag;
-
-    public ToggleListAction(String name, HTML.Tag listTag) {
-      super(name);
-      this.listTag = listTag;
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      editor.toggleList(listTag.toString(),
-                        getMaxAttributes(editor, listTag.toString()),
-                        false);
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * Change list formatting
-   */
-  public class FormatListAction extends AbstractAction
-                                implements SHTMLAction
-  {
-
-    public FormatListAction() {
-      super(formatListAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      editor.requestFocus();
-      int pos = editor.getSelectionStart();
-      ListDialog dlg = new ListDialog(parent,
-                     dynRes.getResourceString(resources, "listDialogTitle"));
-      SimpleAttributeSet set = new SimpleAttributeSet(
-          getMaxAttributes(editor, HTML.Tag.UL.toString()));
-      set.addAttributes(getMaxAttributes(editor, HTML.Tag.OL.toString()));
-      dlg.setListAttributes(set);
-      String currentTag = dlg.getListTag();
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-
-      /** if the user made a selection, apply it to the document */
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
-        AttributeSet a = dlg.getListAttributes();
-        String newTag = dlg.getListTag();
-        if(newTag == null) {
-          editor.toggleList(newTag, a, true);
-        }
-        else if(newTag.equalsIgnoreCase(currentTag)) {
-          if(a.getAttributeCount() > 0) {
-            editor.applyListAttributes(a);
-          }
-        }
-        else {
-          editor.toggleList(newTag, a, false);
-        }
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /** show information about SimplyHTML in a dialog */
-  public class SHTMLHelpAppInfoAction extends AbstractAction
-	implements SHTMLAction
-  {
-    public SHTMLHelpAppInfoAction() {
-      super(aboutAction);
-      getProperties();
-    }
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      AboutBox dlg = new AboutBox(parent);
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-      repaint();
-      updateActions();
-    }
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * Action that brings up a JFrame with a JTree showing the structure
-   * of the document in the currently active DocumentPane.
-   *
-   * will be hidden from menu if not in development mode (DEV_MODE = false)
-   */
-  public class ShowElementTreeAction extends AbstractAction implements SHTMLAction {
-    ShowElementTreeAction() {
-      super(elemTreeAction);
-      getProperties();
-    }
-    public void actionPerformed(ActionEvent e) {
-      if(elementTreeFrame == null) {
-        String title = dynRes.getResourceString(resources, "elementTreeTitle");
-        elementTreeFrame = new JFrame(title);
-        elementTreeFrame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent we) {
-            elementTreeFrame.dispose();
-            elementTreeFrame = null;
-          }
-        });
-        Container fContentPane = elementTreeFrame.getContentPane();
-        fContentPane.setLayout(new BorderLayout());
-        int activeTabNo = jtpDocs.getSelectedIndex();
-        ElementTreePanel elementTreePanel = new ElementTreePanel(editor);
-        fContentPane.add(elementTreePanel);
-        elementTreeFrame.pack();
-      }
-      elementTreeFrame.show();
-      updateActions();
-    }
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * force a garbage collection. This can be helpful to find out
-   * whether or not objects are properly disposed.
-   *
-   * Without forcing a garbage collection, this would happen
-   * at random intervals so although an object might be properly
-   * disposed, it might still be around until the next GC.
-   *
-   * will be hidden from menu if not in development mode (DEV_MODE = false)
-   */
-  public class GCAction extends AbstractAction implements SHTMLAction {
-    GCAction() {
-      super(gcAction);
-      getProperties();
-    }
-    public void actionPerformed(ActionEvent e) {
-      System.gc();
-      updateActions();
-    }
-    public void update() {
-    }
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  public class SHTMLEditPrefsAction extends AbstractAction
-        implements SHTMLAction
-  {
-    public SHTMLEditPrefsAction() {
-      super();
-      putValue(Action.NAME, editPrefsAction);
-      getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));*/
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      PrefsDialog dlg = new PrefsDialog(parent,
-                                       dynRes.getResourceString(resources,
-                                       "prefsDialogTitle"));
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-
-      /** if the user made a selection, apply it to the document */
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
-      }
-      updateActions();
-    }
-
-    public void update() {
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  public class InsertImageAction extends AbstractAction
-        implements SHTMLAction
-  {
-    public InsertImageAction() {
-      super();
-      putValue(Action.NAME, insertImageAction);
-      getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));*/
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      ImageDialog dlg = new ImageDialog(parent,
-                                       dynRes.getResourceString(resources,
-                                       "imageDialogTitle"),
-                                       dp.getImageDir());
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-
-      /** if the user made a selection, apply it to the document */
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
-        //System.out.println("imageHTML=\r\n\r\n" + dlg.getImageHTML());
-        try {
-          doc.insertBeforeStart(
-              doc.getCharacterElement(editor.getSelectionEnd()),
-              dlg.getImageHTML());
-        }
-        catch(Exception e) {
-          Util.errMsg(null, e.getMessage(), e);
-        }
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  public class FormatImageAction extends AbstractAction
-        implements SHTMLAction
-  {
-    public FormatImageAction() {
-      super();
-      putValue(Action.NAME, formatImageAction);
-      getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));*/
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      ImageDialog dlg = new ImageDialog(parent,
-                                       dynRes.getResourceString(resources,
-                                       "imageDialogTitle"),
-                                       dp.getImageDir(),
-                                       (SHTMLDocument) dp.getDocument());
-      Element img = doc.getCharacterElement(editor.getCaretPosition());
-      if(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
-        Util.center(parent, dlg);
-        dlg.setImageAttributes(img.getAttributes());
-        dlg.setModal(true);
-        dlg.show();
-
-        /** if the user made a selection, apply it to the document */
-        if(dlg.getResult() == DialogShell.RESULT_OK) {
-          //System.out.println("imageHTML=\r\n\r\n" + dlg.getImageHTML());
-          try {
-            doc.setOuterHTML(img, dlg.getImageHTML());
-          }
-          catch(Exception e) {
-            Util.errMsg(null, e.getMessage(), e);
-          }
-        }
-        updateActions();
-      }
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        Element img = doc.getCharacterElement(editor.getCaretPosition());
-        if(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
-          this.setEnabled(true);
-        }
-        else {
-          this.setEnabled(false);
-        }
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /* ---------- other application actions end ------------------ */
-
-  /* ---------- font manipulation code start ------------------ */
 
   /**
    * caret listener implementation to track format changes
@@ -2582,10 +1128,10 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    * update any controls that relate to formats at the
    * current caret position
    */
-  private void updateFormatControls() {
+  public void updateFormatControls() {
     updateAToolBar(formatToolBar);
     updateAToolBar(paraToolBar);
-    Element e = doc.getParagraphElement(editor.getCaretPosition());
+    Element e = doc.getParagraphElement(getEditor().getCaretPosition());
     SetTagAction sta = (SetTagAction) tagSelector.getAction();
     sta.setIgnoreActions(true);
     tagSelector.setSelectedTag(e.getName());
@@ -2596,7 +1142,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     Component c;
     Action action;
     int count = bar.getComponentCount();
-    AttributeSet a = getMaxAttributes(editor, null);
+    AttributeSet a = getMaxAttributes(getEditor(), null);
     for(int i = 0; i < count; i++) {
       c = bar.getComponentAtIndex(i);
       if(c instanceof AttributeComponent) {
@@ -2653,13 +1199,10 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
      */
     public boolean setValue(AttributeSet a) {
       ignoreActions = true;
-      boolean success = false;
-      if(a.isDefined(CSS.Attribute.FONT_FAMILY)) {
-	setSelectedItem(a.getAttribute(CSS.Attribute.FONT_FAMILY).toString());
-	success = true;
-      }
+      final String newSelection  = Util.styleSheet().getFont(a).getFamily();
+      setSelectedItem(newSelection);
       ignoreActions = false;
-      return success;
+      return true;
     }
 
     /**
@@ -2671,6 +1214,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
       SimpleAttributeSet set = new SimpleAttributeSet();
       Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_FAMILY,
 				(String) getSelectedItem());
+      set.addAttribute(HTML.Attribute.FACE, (String) getSelectedItem());
       return set;
     }
 
@@ -2684,13 +1228,13 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
    */
   public class FontSizePicker extends JComboBox  implements AttributeComponent {
     private boolean ignoreActions = false;
-    private Object key;
-    FontSizePicker(Object key) {
+    final private Object key;
+    FontSizePicker() {
       /**
        * add font sizes to the combo box
        */
       super(new String[] {"8", "10", "12", "14", "18", "24"} );
-      this.key = key;
+      this.key = CSS.Attribute.FONT_SIZE;
     }
 
     public boolean ignore() {
@@ -2708,24 +1252,11 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
      */
     public boolean setValue(AttributeSet a) {
       ignoreActions = true;
-      boolean success = false;
-      Object attr = a.getAttribute(key);
-      if(attr != null) {
-        //System.out.println("FontSizePicker setValue attribute=" + a.getAttribute(key));
-        int val = (int) Util.getAttrValue(a.getAttribute(key));
-        if(val > 0) {
-          success = true;
-          setSelectedItem(new Integer(val).toString());
-        }
-        else {
-          setSelectedItem("12");
-        }
-      }
-      else {
-        setSelectedItem("12");
-      }
+      final int size = Util.styleSheet().getFont(a).getSize();
+      String newSelection = Integer.toString(size);
+      setSelectedItem(newSelection);
       ignoreActions = false;
-      return success;
+      return true;
     }
 
     /**
@@ -2735,491 +1266,14 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
      */
     public AttributeSet getValue() {
       SimpleAttributeSet set = new SimpleAttributeSet();
-      Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE,
-		      (String) getSelectedItem() /*+ "pt"*/);
+      final String relativeSize = Integer.toString(getSelectedIndex() + 1);
+      set.addAttribute(HTML.Attribute.SIZE, relativeSize);
+    Util.styleSheet().addCSSAttributeFromHTML(set, CSS.Attribute.FONT_SIZE,
+              relativeSize /*+ "pt"*/);
       return set;
     }
     public AttributeSet getValue(boolean includeUnchanged) {
       return getValue();
-    }
-  }
-
-  /**
-   * Show a dialog to format fonts
-   */
-  public class FontAction extends AbstractAction implements SHTMLAction
-  {
-    public FontAction() {
-      super(fontAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      editor.requestFocus();
-
-      /** create a modal FontDialog, center and show it */
-      FontDialog fd = new FontDialog(parent,
-				    dynRes.getResourceString(resources, "fontDialogTitle"),
-                                    getMaxAttributes(editor, null));
-      Util.center(parent, fd);
-      fd.setModal(true);
-      fd.show();
-
-      /** if the user made a selection, apply it to the document */
-      if(fd.getResult() == FontDialog.RESULT_OK) {
-        editor.applyAttributes(fd.getAttributes(), false);
-        updateFormatControls();
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * change a font family setting
-   */
-  public class FontFamilyAction extends AbstractAction implements SHTMLAction
-  {
-    public FontFamilyAction() {
-      super(fontFamilyAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      FontFamilyPicker ffp = ((FontFamilyPicker) ae.getSource());
-      if(!ffp.ignore()) {
-        editor.applyAttributes(ffp.getValue(), false);
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to set the style
-   */
-  public class SetStyleAction extends AbstractAction implements SHTMLAction
-  {
-    private boolean ignoreActions = false;
-
-    public SetStyleAction() {
-      super(setStyleAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      if(!ignoreActions) {
-        StyleSelector styleSelector = (StyleSelector) ae.getSource();
-        AttributeSet a = styleSelector.getValue();
-        if(a != null) {
-          //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-          //hd.listAttributes(a, 2);
-          editor.applyAttributes(a, true);
-        }
-        updateActions();
-      }
-    }
-
-    public void setIgnoreActions(boolean ignore) {
-      ignoreActions = ignore;
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to find and replace a given text
-   */
-  public class FindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener
-  {
-    public FindReplaceAction() {
-      super(findReplaceAction);
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      currentTab = jtpDocs.getSelectedIndex();
-      caretPos = dp.getEditor().getCaretPosition();
-      if(jtpDocs.getTabCount() > 1) {
-        System.out.println("FindReplaceAction.actionPerformed with Listener");
-        FindReplaceDialog frd = new FindReplaceDialog(getMainFrame(), getEditor(), this);
-      }
-      else {
-        System.out.println("FindReplaceAction.actionPerformed NO Listener");
-        FindReplaceDialog frd = new FindReplaceDialog(getMainFrame(), getEditor());
-      }
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-
-    public void getNextDocument(FindReplaceEvent e) {
-      FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-      int tabCount = jtpDocs.getTabCount();
-      int curTab = jtpDocs.getSelectedIndex();
-      System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
-      if(++curTab < tabCount) {
-        System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
-        resumeWithNewEditor(frd, curTab);
-        /*
-        jtpDocs.setSelectedIndex(curTab);
-        DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(curTab);
-        JEditorPane editor = docPane.getEditor();
-        editor.requestFocus();
-        frd.setEditor(editor);
-        frd.resumeOperation();
-        */
-      }
-      else {
-        frd.terminateOperation();
-      }
-    }
-
-    public void getFirstDocument(FindReplaceEvent e) {
-      FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-      resumeWithNewEditor(frd, 0);
-      /*DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(0);
-      jtpDocs.setSelectedIndex(0);
-      JEditorPane editor = docPane.getEditor();
-      editor.requestFocus();
-      frd.setEditor(editor);
-      frd.resumeOperation();*/
-    }
-
-    public void findReplaceTerminated(FindReplaceEvent e) {
-      jtpDocs.setSelectedIndex(currentTab);
-      DocumentPane docPane = (DocumentPane) jtpDocs.getSelectedComponent();
-      JEditorPane editor = docPane.getEditor();
-      editor.setCaretPosition(caretPos);
-      editor.requestFocus();
-    }
-
-    private void resumeWithNewEditor(FindReplaceDialog frd, int tabNo) {
-      jtpDocs.setSelectedIndex(tabNo);
-      DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(tabNo);
-      JEditorPane editor = docPane.getEditor();
-      editor.requestFocus();
-      frd.setEditor(editor);
-      frd.resumeOperation();
-    }
-
-    private int caretPos;
-    private int currentTab;
-  }
-
-  /**
-   * action to set the tag type
-   */
-  public class SetTagAction extends AbstractAction implements SHTMLAction
-  {
-    private boolean ignoreActions = false;
-
-    public SetTagAction() {
-      super(setTagAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      if(!ignoreActions) {
-        String tag = tagSelector.getSelectedTag();
-        editor.applyTag(tag, tagSelector.getTags());
-        updateActions();
-      }
-    }
-
-    public void setIgnoreActions(boolean ignore) {
-      ignoreActions = ignore;
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to change the paragraph style
-   */
-  public class FormatParaAction extends AbstractAction implements SHTMLAction
-  {
-    public FormatParaAction() {
-      super(formatParaAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      ParaStyleDialog dlg = new ParaStyleDialog(parent,
-                                       dynRes.getResourceString(resources,
-                                       "paraStyleDialogTitle"));
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-      dlg.setValue(getMaxAttributes(doc.getParagraphElement(editor.getCaretPosition()), doc.getStyleSheet()));
-      dlg.show();
-
-      /** if the user made a selection, apply it to the document */
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
-        editor.applyAttributes(dlg.getValue(), true);
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to change the paragraph style
-   */
-  public class EditNamedStyleAction extends AbstractAction implements SHTMLAction
-  {
-    public EditNamedStyleAction() {
-      super(editNamedStyleAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      ParaStyleDialog dlg = new ParaStyleDialog(parent,
-                                       dynRes.getResourceString(resources,
-                                       "namedStyleDialogTitle"),
-                                       doc);
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-      dlg.setValue(getMaxAttributes(doc.getParagraphElement(editor.getCaretPosition()), doc.getStyleSheet()));
-      //dlg.setValue(getMaxAttributes(editor, null));
-      dlg.show();
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to edit a link
-   */
-  public class EditLinkAction extends AbstractAction implements SHTMLAction
-  {
-    public EditLinkAction() {
-      super(editLinkAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      LinkDialog dlg = new LinkDialog(parent,
-                                       dynRes.getResourceString(resources,
-                                       "linkDialogTitle"),
-                                       doc,
-                                       editor.getSelectionStart(),
-                                       editor.getSelectionEnd(),
-                                       dp.getImageDir()/*,
-                                       renderMode*/);
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
-        // apply link here
-        editor.setLink(dlg.getLinkText(), dlg.getHref(), dlg.getStyleName(), dlg.getLinkImage(), dlg.getLinkImageSize());
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        if((editor.getSelectionEnd() > editor.getSelectionStart()) ||
-           (Util.findLinkElementUp(doc.getCharacterElement(editor.getSelectionStart())) != null)) {
-          this.setEnabled(true);
-        }
-        else {
-          this.setEnabled(false);
-        }
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to set a reference to the default style sheet
-   * (for being able to use an already existing style sheet
-   * without having to define named styles)
-   */
-  public class SetDefaultStyleRefAction extends AbstractAction implements SHTMLAction
-  {
-    public SetDefaultStyleRefAction() {
-      super(setDefaultStyleRefAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      doc.insertStyleRef();
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0 && !doc.hasStyleRef()) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to edit anchors inside a document
-   */
-  public class EditAnchorsAction extends AbstractAction implements SHTMLAction
-  {
-    public EditAnchorsAction() {
-      super(editAnchorsAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Frame parent = JOptionPane.getFrameForComponent(SHTMLPanel.this);
-      AnchorDialog dlg = new AnchorDialog(
-          parent,
-          SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "anchorDialogTitle"),
-          doc/*,
-          renderMode*/);
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * change a font size setting
-   */
-  public class FontSizeAction extends AbstractAction implements SHTMLAction
-  {
-    public FontSizeAction() {
-      super(fontSizeAction);
-      getProperties();
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      FontSizePicker fsp = ((FontSizePicker) ae.getSource());
-      if(!fsp.ignore()) {
-        editor.applyAttributes(fsp.getValue(), false);
-      }
-      updateActions();
-    }
-
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
 
@@ -3250,600 +1304,6 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   }
 
   /**
-   * action to move to the previous cell in a table
-   */
-  public class PrevTableCellAction extends AbstractAction implements SHTMLAction
-  {
-    public PrevTableCellAction() {
-      super(prevTableCellAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_TAB, KeyEvent.SHIFT_MASK));
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-      Element cell = editor.getCurTableCell();
-      if(cell != null) {
-        editor.goPrevCell(cell);
-        updateActions();
-      }
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
-   * action to move to the next cell in a table
-   */
-  public class NextTableCellAction extends AbstractAction implements SHTMLAction
-  {
-    public NextTableCellAction() {
-      super(nextTableCellAction);
-      getProperties();
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_TAB, 0));
-    }
-
-    public void actionPerformed(ActionEvent ae) {
-
-      Element cell = editor.getCurTableCell();
-      if(cell != null) {
-        editor.goNextCell(cell);
-        updateActions();
-      }
-
-    }
-
-    public void update() {
-      if((jtpDocs.getTabCount() > 0) && (editor.getCurTableCell() != null)) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  public class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLAction, AttributeComponent {
-    public ItalicAction() {
-      //Action act = new StyledEditorKit.BoldAction();
-      super();
-      putValue(Action.NAME, fontItalicAction);
-      putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_I, KeyEvent.CTRL_MASK));
-      getActionProperties(this, fontItalicAction);
-    }
-    /**
-     * do the format change for the associated attribute
-     *
-     * <p>This reverses the current setting for the associated attribute</p>
-     *
-     * @param  e  the ActionEvent describing the cause for this action
-     */
-    public void actionPerformed(ActionEvent e) {
-      //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      //editor.applyAttributes(getValue(), (unselectedValue == null));
-      super.actionPerformed(e);
-      //if(unselectedValue != null) {
-      if(editor != null) {
-        SHTMLDocument doc = (SHTMLDocument) editor.getDocument();
-        if (doc != null) {
-          AttributeSet a = doc.getCharacterElement(editor.getSelectionStart()).
-              getAttributes();
-          boolean isItalic = StyleConstants.isItalic(a);
-          //if(a.isDefined(attributeKey)) {
-          //Object value = a.getAttribute(attributeKey);
-          if (isItalic) {
-            putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-          }
-          else {
-            putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-          }
-        }
-      }
-      /*}
-      else {
-        putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
-      }*/
-      updateActions();
-    }
-
-    public void getProperties() {
-      getActionProperties(this, fontItalicAction);
-    }
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-    /**
-     * set the value of this <code>AttributeComponent</code>
-     *
-     * @param a  the set of attributes possibly having an
-     *          attribute this component can display
-     *
-     * @return true, if the set of attributes had a matching attribute,
-     *            false if not
-     */
-    public boolean setValue(AttributeSet a) {
-      boolean success = false;
-      boolean isItalic = StyleConstants.isItalic(a);
-      if(a.isDefined(CSS.Attribute.FONT_STYLE)) {
-        Object value = a.getAttribute(CSS.Attribute.FONT_STYLE);
-        if (value.toString().equalsIgnoreCase(StyleConstants.Italic.toString())) {
-          isItalic = true;
-        }
-      }
-      //System.out.println("ItalicAction setValue isItalic=" + isItalic);
-      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      //hd.listAttributes(a, 6);
-      //if(a.isDefined(attributeKey)) {
-        //Object value = a.getAttribute(attributeKey);
-        if(isItalic) {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-        }
-        success = true;
-      //}
-      //else {
-      //  putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_UNSELECTED);
-      //}
-      return success;
-    }
-
-    /**
-     * get the value of this <code>AttributeComponent</code>
-     *
-     * @return the value selected from this component
-     */
-    public AttributeSet getValue() {
-      //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      //if(unselectedValue != null) {
-      if (getValue(SHTMLPanel.ACTION_SELECTED_KEY).toString().equals(
-          SHTMLPanel.ACTION_SELECTED)) {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
-                                          Util.CSS_ATTRIBUTE_NORMAL.toString());
-      }
-      else {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
-                                          StyleConstants.Italic.toString());
-      }
-      /*}
-             else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-             }*/
-      return set;
-    }
-    public AttributeSet getValue(boolean includeUnchanged) {
-      return getValue();
-    }
-
-  }
-
-  public class BoldAction extends StyledEditorKit.BoldAction implements SHTMLAction, AttributeComponent {
-    public BoldAction() {
-      //Action act = new StyledEditorKit.BoldAction();
-      super();
-      putValue(Action.NAME, fontBoldAction);
-      putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_B, KeyEvent.CTRL_MASK));
-      getActionProperties(this, fontBoldAction);
-    }
-    /**
-     * do the format change for the associated attribute
-     *
-     * <p>This reverses the current setting for the associated attribute</p>
-     *
-     * @param  e  the ActionEvent describing the cause for this action
-     */
-    public void actionPerformed(ActionEvent e) {
-      //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      //editor.applyAttributes(getValue(), (unselectedValue == null));
-      super.actionPerformed(e);
-      //if(unselectedValue != null) {
-      if(editor != null) {
-        SHTMLDocument doc = (SHTMLDocument) editor.getDocument();
-        if (doc != null) {
-          AttributeSet a = doc.getCharacterElement(editor.getSelectionStart()).
-              getAttributes();
-          boolean isBold = StyleConstants.isBold(a);
-          //if(a.isDefined(attributeKey)) {
-          //Object value = a.getAttribute(attributeKey);
-          if (isBold) {
-            putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-          }
-          else {
-            putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-          }
-        }
-      }
-      /*}
-      else {
-        putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
-      }*/
-      updateActions();
-    }
-
-    public void getProperties() {
-      getActionProperties(this, fontItalicAction);
-    }
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-    /**
-     * set the value of this <code>AttributeComponent</code>
-     *
-     * @param a  the set of attributes possibly having an
-     *          attribute this component can display
-     *
-     * @return true, if the set of attributes had a matching attribute,
-     *            false if not
-     */
-    public boolean setValue(AttributeSet a) {
-      boolean success = false;
-      boolean isBold = StyleConstants.isBold(a);
-      if(a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
-        Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
-        if (value.toString().equalsIgnoreCase(StyleConstants.Bold.toString())) {
-          isBold = true;
-        }
-      }
-      //System.out.println("ItalicAction setValue isItalic=" + isItalic);
-      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      //hd.listAttributes(a, 6);
-      //if(a.isDefined(attributeKey)) {
-        //Object value = a.getAttribute(attributeKey);
-        if(isBold) {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-        }
-        success = true;
-      //}
-      //else {
-      //  putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_UNSELECTED);
-      //}
-      return success;
-    }
-
-    /**
-     * get the value of this <code>AttributeComponent</code>
-     *
-     * @return the value selected from this component
-     */
-    public AttributeSet getValue() {
-      //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      //if(unselectedValue != null) {
-      if (getValue(SHTMLPanel.ACTION_SELECTED_KEY).toString().equals(
-          SHTMLPanel.ACTION_SELECTED)) {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
-                                          Util.CSS_ATTRIBUTE_NORMAL.toString());
-      }
-      else {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
-                                          StyleConstants.Bold.toString());
-      }
-      /*}
-             else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-             }*/
-      return set;
-    }
-    public AttributeSet getValue(boolean includeUnchanged) {
-      return getValue();
-    }
-
-  }
-
-  public class UnderlineAction extends StyledEditorKit.UnderlineAction implements SHTMLAction, AttributeComponent {
-    public UnderlineAction() {
-      //Action act = new StyledEditorKit.BoldAction();
-      super();
-      putValue(Action.NAME, fontUnderlineAction);
-      putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_U, KeyEvent.CTRL_MASK));
-      getActionProperties(this, fontUnderlineAction);
-    }
-    /**
-     * do the format change for the associated attribute
-     *
-     * <p>This reverses the current setting for the associated attribute</p>
-     *
-     * @param  e  the ActionEvent describing the cause for this action
-     */
-    public void actionPerformed(ActionEvent e) {
-      //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      //editor.applyAttributes(getValue(), (unselectedValue == null));
-      super.actionPerformed(e);
-      //if(unselectedValue != null) {
-      if(editor != null) {
-        SHTMLDocument doc = (SHTMLDocument) editor.getDocument();
-        if (doc != null) {
-          AttributeSet a = doc.getCharacterElement(editor.getSelectionStart()).
-              getAttributes();
-          boolean isUnderlined = StyleConstants.isUnderline(a);
-          //if(a.isDefined(attributeKey)) {
-          //Object value = a.getAttribute(attributeKey);
-          if (isUnderlined) {
-            putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-          }
-          else {
-            putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-          }
-        }
-      }
-      /*}
-      else {
-        putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
-      }*/
-      updateActions();
-    }
-
-    public void getProperties() {
-      getActionProperties(this, fontUnderlineAction);
-    }
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-    /**
-     * set the value of this <code>AttributeComponent</code>
-     *
-     * @param a  the set of attributes possibly having an
-     *          attribute this component can display
-     *
-     * @return true, if the set of attributes had a matching attribute,
-     *            false if not
-     */
-    public boolean setValue(AttributeSet a) {
-      boolean success = false;
-      boolean isUnderlined = StyleConstants.isUnderline(a);
-      if(a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
-        Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
-        if (value.toString().equalsIgnoreCase(Util.CSS_ATTRIBUTE_UNDERLINE /*StyleConstants.Underline.toString()*/)) {
-          isUnderlined = true;
-        }
-      }
-      //System.out.println("ItalicAction setValue isItalic=" + isItalic);
-      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      //hd.listAttributes(a, 6);
-      //if(a.isDefined(attributeKey)) {
-        //Object value = a.getAttribute(attributeKey);
-        if(isUnderlined) {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-        }
-        success = true;
-      //}
-      //else {
-      //  putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_UNSELECTED);
-      //}
-      return success;
-    }
-
-    /**
-     * get the value of this <code>AttributeComponent</code>
-     *
-     * @return the value selected from this component
-     */
-    public AttributeSet getValue() {
-      //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      //if(unselectedValue != null) {
-      if (getValue(SHTMLPanel.ACTION_SELECTED_KEY).toString().equals(SHTMLPanel.ACTION_SELECTED)) {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, Util.CSS_ATTRIBUTE_UNDERLINE);
-      }
-      else {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, Util.CSS_ATTRIBUTE_NONE);
-      }
-      /*}
-             else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-             }*/
-      return set;
-    }
-    public AttributeSet getValue(boolean includeUnchanged) {
-      return getValue();
-    }
-
-  }
-  /**
-   * action to toggle an attribute
-   */
-  public class ToggleAction extends AbstractAction implements SHTMLAction,
-        AttributeComponent
-  {
-    /** the attribute this action represents values for */
-    private Object attributeKey;
-
-    /** the value for the attribute being selected */
-    private Object selectedValue = null;
-
-    /** the value for the attribute not being selected */
-    private Object unselectedValue = null;
-
-    /**
-     * construct a ToggleFontAction
-     *
-     * @param name  the name and command for this action
-     * @param key the attribute this action represents values for
-     * @param sVal the value for the attribute being selected
-     * @param uVal the value for the attribute not being selected
-     */
-    public ToggleAction(String name, Object key, Object sVal, Object uVal)
-    {
-      super(name);
-      putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-      attributeKey = key;
-      selectedValue = sVal;
-      unselectedValue = uVal;
-      getProperties();
-    }
-
-    /**
-     * construct a ToggleFontAction
-     *
-     * @param name  the name and command for this action
-     * @param key the attribute this action represents values for
-     * @param sVal the value for the attribute being selected
-     */
-    public ToggleAction(String name, Object key, Object sVal)
-    {
-      this(name, key, sVal, null);
-      //System.out.println("ToggleAction constructor sVal=" + sVal);
-    }
-
-    /**
-     * do the format change for the associated attribute
-     *
-     * <p>This reverses the current setting for the associated attribute</p>
-     *
-     * @param  e  the ActionEvent describing the cause for this action
-     */
-    public void actionPerformed(ActionEvent e) {
-      //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      editor.applyAttributes(getValue(), (unselectedValue == null));
-      if(unselectedValue != null) {
-        if(getValue(SHTMLPanel.ACTION_SELECTED_KEY).toString().equals(SHTMLPanel.ACTION_UNSELECTED))
-        {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-        }
-      }
-      else {
-        putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-      }
-      updateActions();
-    }
-
-    /**
-     * get the attribute this action represents values for
-     *
-     * @return the attribute this action represents values for
-     */
-    public Object getAttributeKey() {
-      return attributeKey;
-    }
-
-    /**
-     * set the value of this <code>AttributeComponent</code>
-     *
-     * @param a  the set of attributes possibly having an
-     *          attribute this component can display
-     *
-     * @return true, if the set of attributes had a matching attribute,
-     *            false if not
-     */
-    public boolean setValue(AttributeSet a) {
-      boolean success = false;
-      if(a.isDefined(attributeKey)) {
-        Object value = a.getAttribute(attributeKey);
-        if(value.toString().equalsIgnoreCase(selectedValue.toString())) {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-        }
-        success = true;
-      }
-      else {
-        putValue(SHTMLPanel.ACTION_SELECTED_KEY, SHTMLPanel.ACTION_UNSELECTED);
-      }
-      return success;
-    }
-
-    /**
-     * get the value of this <code>AttributeComponent</code>
-     *
-     * @return the value selected from this component
-     */
-    public AttributeSet getValue() {
-      //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      if(unselectedValue != null) {
-        if(getValue(SHTMLPanel.ACTION_SELECTED_KEY).toString().equals(
-            SHTMLPanel.ACTION_SELECTED))
-        {
-          if(unselectedValue != null) {
-            Util.styleSheet().addCSSAttribute(set,
-                (CSS.Attribute) getAttributeKey(), unselectedValue.toString());
-          }
-        }
-        else {
-          Util.styleSheet().addCSSAttribute(set,
-              (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-        }
-      }
-      else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-      }
-      return set;
-    }
-
-    public AttributeSet getValue(boolean includeUnchanged) {
-      return getValue();
-    }
-
-    /** update the action's state */
-    public void update() {
-      if(jtpDocs.getTabCount() > 0) {
-        this.setEnabled(true);
-      }
-      else {
-        this.setEnabled(false);
-      }
-    }
-
-    /** get image, etc. from resource */
-    public void getProperties() {
-      getActionProperties(this, (String) getValue(Action.NAME));
-    }
-  }
-
-  /**
    * Get all attributes that can be found in the element tree
    * starting at the highest parent down to the character element
    * at the current position in the document. Combine element
@@ -3864,7 +1324,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     return getMaxAttributes(e, s);
   }
 
-  private Frame getMainFrame() {
+  public Frame getMainFrame() {
     return JOptionPane.getFrameForComponent(SHTMLPanel.this);
 }
 
@@ -3911,6 +1371,87 @@ public static AttributeSet getMaxAttributes(Element e, StyleSheet s) {
     //hd.listAttributes(a, 4);
     return new AttributeMapper(a).getMappedAttributes(AttributeMapper.toJava);
   }
+
+/**
+ * @param dp The dp to set.
+ */
+public void setDocumentPane(DocumentPane dp) {
+    this.dp = dp;
+}
+
+/**
+ * @return Returns the dp.
+ */
+public DocumentPane getDocumentPane() {
+    return dp;
+}
+
+/**
+ * @return Returns the editor.
+ */
+public SHTMLEditorPane getEditor() {
+    return editor;
+}
+
+/**
+ * @return Returns the doc.
+ */
+public SHTMLDocument getSHTMLDocument() {
+    return doc;
+}
+
+/**
+ * @return Returns the jtpDocs.
+ */
+public JTabbedPane getTabbedPaneForDocuments() {
+    return jtpDocs;
+}
+
+/**
+ * @param undo The undo to set.
+ */
+public void setUndo(UndoManager undo) {
+    this.undo = undo;
+}
+
+/**
+ * @return Returns the undo.
+ */
+public UndoManager getUndo() {
+    return undo;
+}
+
+/**
+ * @param tagSelector The tagSelector to set.
+ */
+public void setTagSelector(TagSelector tagSelector) {
+    this.tagSelector = tagSelector;
+}
+
+/**
+ * @return Returns the tagSelector.
+ */
+public TagSelector getTagSelector() {
+    return tagSelector;
+}
+
+public void savePrefs() {
+    sp.savePrefs();    
+}
+
+public void incNewDocCounter() {
+    newDocCounter++;
+}
+
+public void createNewDocumentPane() {
+    setDocumentPane(new DocumentPane(null, ++newDocCounter));
+}
+
+public void selectTabbedPane(int index) {
+    ignoreActivateDoc = true;
+    getTabbedPaneForDocuments().setSelectedIndex(index);
+    ignoreActivateDoc = false;
+}
 
   /* ---------- font manipulation code end ------------------ */
 

@@ -25,6 +25,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
+
+
 import java.util.*;
 
 /**
@@ -52,7 +54,7 @@ public class StyleSelector extends JComboBox
   /** indicates whether or not to ignore change events */
   private boolean ignoreChanges = false;
 
-  private String standardStyleName = SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "standardStyleName");
+  private String standardStyleName = DynamicResource.getResourceString(SHTMLPanel.resources, "standardStyleName");
 
   /**
    * construct a <code>StyleSelector</code>

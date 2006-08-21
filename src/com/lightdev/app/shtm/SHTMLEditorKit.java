@@ -22,6 +22,8 @@ package com.lightdev.app.shtm;
 import java.io.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
+
+
 import java.util.prefs.*;
 
 /**
@@ -148,7 +150,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
 
     if (doc instanceof SHTMLDocument) {
       try {
-           FixedHTMLWriter w = new FixedHTMLWriter(out, (SHTMLDocument) doc, pos,
+           SHTMLWriter w = new SHTMLWriter(out, (SHTMLDocument) doc, pos,
                                                   len);
           w.write();
       }
@@ -193,12 +195,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         HTML.Tag kind = (HTML.Tag) o;
         //System.out.println("SHTMLEditorKit.SHTMLFactory o is HTML.Tag kind=" + kind.toString());
         if (kind == HTML.Tag.TABLE) {
-          if(renderMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
             view = super.create(elem);
-          }
-          else if(renderMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4)) {
-            view = new SHTMLTableView(elem);
-          }
         }
         else if (kind == HTML.Tag.COMMENT) {
           view = new InvisibleView(elem);

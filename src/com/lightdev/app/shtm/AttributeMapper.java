@@ -86,13 +86,6 @@ public class AttributeMapper extends SimpleAttributeSet {
         addAttribute(CSS.Attribute.FONT_FAMILY, "Monospace, Monospaced");
       }
     }
-    /*
-    Object cssFontSize = getAttribute(CSS.Attribute.FONT_SIZE);
-    if(cssFontSize != null) {
-      int size = new Float(new LengthValue(cssFontSize).getValue() / 1.3).intValue();
-      addAttribute(CSS.Attribute.FONT_SIZE, Integer.toString(size) + "pt");
-    }
-    */
   }
 
   private void mapToJavaAttributes() {

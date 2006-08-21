@@ -61,7 +61,7 @@ public class StylePanel extends AttributePanel {
 
     if(type == TYPE_TABLE_CELL) {
       // background color label
-      lb = new JLabel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "tableBgColLabel"));
+      lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "tableBgColLabel"));
       Util.addGridBagComponent(this, lb, g, c, 0, 0, GridBagConstraints.EAST);
 
       // background color panel
@@ -71,29 +71,29 @@ public class StylePanel extends AttributePanel {
     }
 
     // text alignment label
-    lb = new JLabel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "alignLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "alignLabel"));
     Util.addGridBagComponent(this, lb, g, c, 0, 1, GridBagConstraints.EAST);
 
     // text align combo box
     String[] items = new String[] {
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "alignLeft"),
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "alignCenter"),
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "alignRight") };
+        DynamicResource.getResourceString(SHTMLPanel.resources, "alignLeft"),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "alignCenter"),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "alignRight") };
     String[] names = new String[] {"left", "center", "right"};
     ctAlgn = new AttributeComboBox(items, names,
         CSS.Attribute.TEXT_ALIGN, HTML.Attribute.ALIGN);
     Util.addGridBagComponent(this, ctAlgn, g, c, 1, 1, GridBagConstraints.WEST);
 
     // vertical alignment label
-    lb = new JLabel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "valignLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "valignLabel"));
     Util.addGridBagComponent(this, lb, g, c, 0, 2, GridBagConstraints.EAST);
 
     // vertical alignment combo box
     items = new String[] {
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "valignTop"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "valignMiddle"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "valignBottom"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "valignBaseline")};
+      DynamicResource.getResourceString(SHTMLPanel.resources, "valignTop"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "valignMiddle"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "valignBottom"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "valignBaseline")};
     names = new String[] {"top", "middle", "bottom", "baseline"};
     cAlgn = new AttributeComboBox(items, names,
         CSS.Attribute.VERTICAL_ALIGN, HTML.Attribute.VALIGN);
@@ -101,11 +101,11 @@ public class StylePanel extends AttributePanel {
 
     switch(type) {
       case TYPE_PARAGRAPH:
-        addSizeSelector(SHTMLPanel.dynRes.getResourceString(
+        addSizeSelector(DynamicResource.getResourceString(
             SHTMLPanel.resources, "textIndentLabel"), CSS.Attribute.TEXT_INDENT, null, true, g, c);
         break;
       case TYPE_TABLE_CELL:
-        addSizeSelector(SHTMLPanel.dynRes.getResourceString(
+        addSizeSelector(DynamicResource.getResourceString(
             SHTMLPanel.resources, "tableWidthLabel"), CSS.Attribute.WIDTH, HTML.Attribute.WIDTH, false, g, c);
         break;
     }

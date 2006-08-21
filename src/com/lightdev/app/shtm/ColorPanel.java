@@ -29,6 +29,7 @@ import java.util.EventListener;
 import java.util.Vector;
 import java.util.Enumeration;
 import javax.swing.text.html.CSS;
+import javax.swing.text.html.HTML;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.StyleSheet;
 
@@ -147,6 +148,7 @@ public class ColorPanel extends JPanel implements ActionListener, AttributeCompo
 				"Select Color",
 				colorDisplay.getBackground());
     if(color != null) {
+        setValCount++;
       setColor(color);
     }
   }
@@ -161,18 +163,18 @@ public class ColorPanel extends JPanel implements ActionListener, AttributeCompo
    *            false if not
    */
   public boolean setValue(AttributeSet a) {
-    boolean success = false;
-    if(a.isDefined(getAttributeKey())) {
-      //System.out.println("ColorPanel setValue attributeKey=" + attributeKey + ", a=" + a.getAttribute(attributeKey));
-      String value = a.getAttribute(getAttributeKey()).toString();
-      setValue(value);
-      //setColor(Util.styleSheet().getForeground(a));
-      success = true;
-    }
-    else {
-      setColor(defaultColor);
-    }
-    return success;
+      Color newSelection = null;
+      if(getAttributeKey() == CSS.Attribute.COLOR){
+          newSelection = Util.styleSheet().getForeground(a);          
+      }
+      if(getAttributeKey() == CSS.Attribute.BACKGROUND_COLOR){
+          newSelection  = Util.styleSheet().getBackground(a);
+      }
+      if(newSelection != null){
+          setColor(newSelection);
+          return true;
+      }
+      return false;
   }
 
   public void setValue(String value) {
@@ -208,16 +210,16 @@ public class ColorPanel extends JPanel implements ActionListener, AttributeCompo
     SimpleAttributeSet set = new SimpleAttributeSet();
     Color value = getColor();
     if(value != originalColor) {
-      String color = "#" + Integer.toHexString(
-          value.getRGB()).substring(2);
-      try {
+        String color = "#" + Integer.toHexString(
+                value.getRGB()).substring(2);
         Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), color);
-      }
-      catch(Exception e) {
-        set.addAttribute(getAttributeKey(), color);
-      }
-      //System.out.println("ColorPanel getValue color=" + color);
+                (CSS.Attribute) getAttributeKey(), color);
+        if(getAttributeKey() == CSS.Attribute.COLOR){
+            set.addAttribute(HTML.Attribute.COLOR, color);
+        }
+        else if(getAttributeKey() == CSS.Attribute.BACKGROUND_COLOR){
+            set.addAttribute(HTML.Attribute.BGCOLOR, color);
+        }
     }
     return set;
   }

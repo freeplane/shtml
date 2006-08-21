@@ -79,20 +79,20 @@ public class ListPanel extends JPanel implements AttributeComponent {
 
     // add label for list type
     Util.addGridBagComponent(formatPanel, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeLabel")),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
 
     // add combo box for list type selection
     String[] items = new String[] {
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeNone"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeDecimal"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeLowerRoman"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeUpperRoman"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeLowerAlpha"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeUpperAlpha"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeDisc"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeCircle"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listTypeSquare")};
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeNone"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeDecimal"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeLowerRoman"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeUpperRoman"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeLowerAlpha"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeUpperAlpha"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeDisc"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeCircle"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "listTypeSquare")};
     String[] names = new String[] {"none", "decimal", "lower-roman", "upper-roman",
       "lower-alpha", "upper-alpha", "disc", "circle", "square"};
     listType = new AttributeComboBox(items, names,
@@ -102,14 +102,14 @@ public class ListPanel extends JPanel implements AttributeComponent {
 
     // add label for list position
     Util.addGridBagComponent(formatPanel, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(
+        DynamicResource.getResourceString(
         SHTMLPanel.resources, "listPositionLabel")),
         g, c, 0, 1, GridBagConstraints.EAST);
 
     // add combo box for list postion selection
     items = new String[] {
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listPosInside"),
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "listPosOutside")};
+        DynamicResource.getResourceString(SHTMLPanel.resources, "listPosInside"),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "listPosOutside")};
     names = new String[] {"inside", "outside"};
     listPosition = new AttributeComboBox(items, names,
         CSS.Attribute.LIST_STYLE_POSITION, null);
@@ -120,7 +120,7 @@ public class ListPanel extends JPanel implements AttributeComponent {
     bndPanel = new BoundariesPanel(CSS.Attribute.MARGIN);
     bndPanel.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
-                  SHTMLPanel.dynRes.getResourceString(
+                  DynamicResource.getResourceString(
                   SHTMLPanel.resources, "listIndentTitle")));
 
     // add components to this ListPanel

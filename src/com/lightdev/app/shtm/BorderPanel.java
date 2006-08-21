@@ -79,25 +79,25 @@ public class BorderPanel extends JPanel implements AttributeComponent {
 
       addSettings(g,
                   c,
-                  SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "topLabel"),
+                  DynamicResource.getResourceString(SHTMLPanel.resources, "topLabel"),
                   CombinedAttribute.ATTR_TOP,
                   0,
                   0);
       addSettings(g,
                   c,
-                  SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "rightLabel"),
+                  DynamicResource.getResourceString(SHTMLPanel.resources, "rightLabel"),
                   CombinedAttribute.ATTR_RIGHT,
                   1,
                   1);
       addSettings(g,
                   c,
-                  SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "bottomLabel"),
+                  DynamicResource.getResourceString(SHTMLPanel.resources, "bottomLabel"),
                   CombinedAttribute.ATTR_BOTTOM,
                   1,
                   0);
       addSettings(g,
                   c,
-                  SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "leftLabel"),
+                  DynamicResource.getResourceString(SHTMLPanel.resources, "leftLabel"),
                   CombinedAttribute.ATTR_LEFT,
                   0,
                   1);
@@ -252,7 +252,7 @@ public class BorderPanel extends JPanel implements AttributeComponent {
                     title));
         // add the width control and label
         Util.addGridBagComponent(this,
-                   new JLabel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "borderWidthLabel")),
+                   new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "borderWidthLabel")),
                    g, c, 0, 0, GridBagConstraints.EAST);
         bWidth = new SizeSelectorPanel(CSS.Attribute.BORDER_WIDTH, null, false, SizeSelectorPanel.TYPE_LABEL);
         Util.addGridBagComponent(this,bWidth,
@@ -260,7 +260,7 @@ public class BorderPanel extends JPanel implements AttributeComponent {
 
         // add the color control and label
         Util.addGridBagComponent(this,
-                   new JLabel(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "borderColorLabel")),
+                   new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "borderColorLabel")),
                    g, c, 0, 1, GridBagConstraints.EAST);
         bColor = new ColorPanel(null, Color.black, CSS.Attribute.BORDER_COLOR);
         Util.addGridBagComponent(this,bColor,

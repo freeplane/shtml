@@ -100,13 +100,13 @@ public class TagSelector extends JComboBox {
     tags.addElement(HTML.Tag.H5.toString());
     tags.addElement(HTML.Tag.H6.toString());
 
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNamePara"));
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead1"));
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead2"));
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead3"));
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead4"));
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead5"));
-    tagNames.addElement(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "cTagNameHead6"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNamePara"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNameHead1"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNameHead2"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNameHead3"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNameHead4"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNameHead5"));
+    tagNames.addElement(DynamicResource.getResourceString(SHTMLPanel.resources, "cTagNameHead6"));
   }
 
 }

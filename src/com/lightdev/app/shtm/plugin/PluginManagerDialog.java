@@ -20,6 +20,7 @@
 package com.lightdev.app.shtm.plugin;
 
 import com.lightdev.app.shtm.DialogShell;
+import com.lightdev.app.shtm.DynamicResource;
 import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.Util;
 import java.awt.Frame;
@@ -71,11 +72,11 @@ public class PluginManagerDialog extends DialogShell implements
   private JList pluginNames;
 
   /** constant for activation button label */
-  private String activateName = SHTMLPanel.dynRes.getResourceString(
+  private String activateName = DynamicResource.getResourceString(
       SHTMLPanel.resources, "activatePlugin");
 
   /** constant for deactivation button label */
-  private String deactivateName = SHTMLPanel.dynRes.getResourceString(
+  private String deactivateName = DynamicResource.getResourceString(
       SHTMLPanel.resources, "deactivatePlugin");
 
   /** button to toggle plug-in activation state */
@@ -94,7 +95,7 @@ public class PluginManagerDialog extends DialogShell implements
     super(parent, title);
     Container contentPane = super.getContentPane();
 
-    okButton.setText(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "close"));
+    okButton.setText(DynamicResource.getResourceString(SHTMLPanel.resources, "close"));
     cancelButton.setVisible(false);
 
     GridBagLayout g;
@@ -104,7 +105,7 @@ public class PluginManagerDialog extends DialogShell implements
     JPanel pluginPanel = new JPanel(new BorderLayout());
     pluginPanel.setBorder(
         new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
-        SHTMLPanel.dynRes.getResourceString(
+        DynamicResource.getResourceString(
         SHTMLPanel.resources, "pluginPanelTitle")));
     //pluginPanel.setMinimumSize(new Dimension(400, 400));
 
@@ -127,7 +128,7 @@ public class PluginManagerDialog extends DialogShell implements
     /** create panel to edit settings for a plug-in */
     g = new GridBagLayout();
     JPanel pluginSettingsPanel = new JPanel(g);
-    toggleActivationCheckbox = new JCheckBox(SHTMLPanel.dynRes.getResourceString(
+    toggleActivationCheckbox = new JCheckBox(DynamicResource.getResourceString(
         SHTMLPanel.resources, "togglePluginActivationCheckbox"));
     toggleActivationCheckbox.setEnabled(false);
     toggleActivationCheckbox.addActionListener(this);
@@ -135,14 +136,14 @@ public class PluginManagerDialog extends DialogShell implements
                              g, c, 0, 0, GridBagConstraints.WEST);
 
     Util.addGridBagComponent(pluginSettingsPanel, new JLabel(
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "dockLocationLabel")),
+        DynamicResource.getResourceString(SHTMLPanel.resources, "dockLocationLabel")),
                              g, c, 0, 1, GridBagConstraints.EAST);
     String[] locations = {
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationNone"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationTop"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationRight"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationBottom"),
-      SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "pluginDockLocationLeft"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "pluginDockLocationNone"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "pluginDockLocationTop"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "pluginDockLocationRight"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "pluginDockLocationBottom"),
+      DynamicResource.getResourceString(SHTMLPanel.resources, "pluginDockLocationLeft"),
     };
     dockLocation = new JComboBox(locations);
     dockLocation.setEnabled(false);
@@ -158,7 +159,7 @@ public class PluginManagerDialog extends DialogShell implements
     centerPanel.add(centerWestPanel, BorderLayout.WEST);
     centerPanel.setBorder(
         new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
-        SHTMLPanel.dynRes.getResourceString(
+        DynamicResource.getResourceString(
         SHTMLPanel.resources, "pluginSettingsPanelTitle")));
     //centerPanel.setPreferredSize(new Dimension(200,400));
     contentPane.add(centerPanel, BorderLayout.CENTER);

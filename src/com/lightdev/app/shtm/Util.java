@@ -246,8 +246,8 @@ public class Util {
     JOptionPane op = new JOptionPane();
     Object input = op.showInputDialog(
         null,
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, text),
-        SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, title),
+        DynamicResource.getResourceString(SHTMLPanel.resources, text),
+        DynamicResource.getResourceString(SHTMLPanel.resources, title),
         JOptionPane.QUESTION_MESSAGE,
         null,
         null,
@@ -276,12 +276,12 @@ public class Util {
   public static int msgChoice(int options, String title, String msg,
                             String item, String sep)
   {
-    String message = item + sep + SHTMLPanel.dynRes.getResourceString(
+    String message = item + sep + DynamicResource.getResourceString(
         SHTMLPanel.resources, msg);
     return JOptionPane.showConfirmDialog(
           null,
           message,
-          SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, title),
+          DynamicResource.getResourceString(SHTMLPanel.resources, title),
           options,
           JOptionPane.QUESTION_MESSAGE);
   }
@@ -558,91 +558,6 @@ public class Util {
           }
         }
       }
-    }
-    return len;
-  }
-
-  public static String getPtSize(String relValStr) {
-      String len = "3";
-      if(relValStr.startsWith("+") || relValStr.startsWith("-")) {
-        relValStr = relValStr.substring(1);
-      }
-      final int valInt = Integer.parseInt(relValStr);
-      switch(valInt) {
-      case 1:
-        len = "8";
-        break;
-      case 2:
-        len = "10";
-        break;
-      case 3:
-        len = "12";
-        break;
-      case 4:
-        len = "14";
-        break;
-      case 5:
-        len = "18";
-        break;
-      case 6:
-        len = "24";
-        break;
-      default:
-        len = relValStr;
-        break;
-    }
-     return len;
-  }
-
-  /**
-   * get the relative size matching a given point size
-   *
-   * @param valStr  the string with the value attribute
-   * to get the relative size for
-   *
-   * @return the relative size
-   */
-  public static String getRelativeSize(String valStr) {
-    String len = "3";
-    if(valStr.startsWith("+") || valStr.startsWith("-")) {
-      valStr = valStr.substring(1);
-    }
-    int pos = valStr.indexOf(pt);
-    if(pos > -1) {
-      unit = pt;
-      valStr = valStr.substring(0, pos);
-    }
-    final int valInt = Integer.parseInt(valStr);
-    switch(valInt) {
-      case 8:
-      case 9:
-        len = "1";
-        break;
-      case 10:
-      case 11:
-        len = "2";
-        break;
-      case 12:
-      case 13:
-        len = "3";
-        break;
-      case 14:
-      case 15:
-      case 16:
-      case 17:
-        len = "4";
-        break;
-      case 18:
-      case 19:
-      case 20:
-      case 21:
-      case 22:
-      case 23:
-        len = "5";
-        break;
-      case 24:
-        len = "6";
-        break;
     }
     return len;
   }

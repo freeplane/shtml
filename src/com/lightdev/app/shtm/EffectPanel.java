@@ -22,11 +22,13 @@ package com.lightdev.app.shtm;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.StyleConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.html.CSS;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.StyleSheet;
+import javax.swing.text.html.HTML;
 
 /**
  * a panel to display and change line attributes
@@ -63,9 +65,9 @@ public class EffectPanel extends JPanel implements AttributeComponent {
     super(new GridLayout(3,1,3,3));
 
     /** initialize the line effects button group */
-    noLine = new JRadioButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "noLineLabel"));
-    uLine = new JRadioButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "uLineLabel"));
-    strike = new JRadioButton(SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "strikeLabel"));
+    noLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "noLineLabel"));
+    uLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "uLineLabel"));
+    strike = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "strikeLabel"));
     ButtonGroup effectGroup = new ButtonGroup();
     effectGroup.add(noLine);
     effectGroup.add(uLine);
@@ -73,7 +75,7 @@ public class EffectPanel extends JPanel implements AttributeComponent {
 
     //JPanel linePanel = new JPanel(new GridLayout(3,1,3,3));
     setBorder(new TitledBorder(new EtchedBorder(
-            EtchedBorder.LOWERED), SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "effectLabel")));
+            EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanel.resources, "effectLabel")));
     Font font = UIManager.getFont("TextField.font");
     uLine.setFont(font);
     strike.setFont(font);
@@ -97,23 +99,26 @@ public class EffectPanel extends JPanel implements AttributeComponent {
     selection = Util.CSS_ATTRIBUTE_NONE;
     if(uLine.isSelected()) {
       selection = Util.CSS_ATTRIBUTE_UNDERLINE;
+      StyleConstants.setUnderline(set, true);
     }
     else if(strike.isSelected()) {
       selection = Util.CSS_ATTRIBUTE_LINE_THROUGH;
+      StyleConstants.setStrikeThrough(set, true);
     }
     Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, selection);
     return set;
   }
-
+  
   public AttributeSet getValue() {
-    if(((originalValue == null) && (!selection.equalsIgnoreCase(Util.CSS_ATTRIBUTE_NONE))) ||
-        ((originalValue != null) && (!originalValue.toString().equalsIgnoreCase(selection))))
-    {
-      return getAttributes();
-    }
-    else {
-      return new SimpleAttributeSet();
-    }
+      final AttributeSet set = getAttributes();
+      if(((originalValue == null) && (!selection.equalsIgnoreCase(Util.CSS_ATTRIBUTE_NONE))) ||
+              ((originalValue != null) && (!originalValue.toString().equalsIgnoreCase(selection))))
+      {
+          return set;
+      }
+      else {
+          return new SimpleAttributeSet();
+      }
   }
 
   public boolean setValue(AttributeSet a) {

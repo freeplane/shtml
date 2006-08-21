@@ -85,7 +85,6 @@ import javax.swing.text.StyleConstants;
 import java.util.Vector;
 import javax.swing.text.ElementIterator;
 
-import com.lightdev.app.shtm.SHTMLWriter.PropertiesMissingException;
 
 /**
  * An editor pane for application SimplyHTML.
@@ -281,17 +280,17 @@ public class DeletePrevCharAction extends AbstractAction{
         if(selectionStart == getSelectionEnd()){
             SHTMLDocument doc = (SHTMLDocument)getDocument();
             {
-                Element elem = getListElement(doc.getParagraphElement(selectionStart));
+                Element elem = SHTMLDocument.getListElement(doc.getParagraphElement(selectionStart));
                 if(elem != null && elem.getStartOffset() == selectionStart){
                     performToggleListAction(e, elem.getName());
                     return;
                 }
             }
             {
-                Element elem = getListItemElement(doc.getParagraphElement(selectionStart));
+                Element elem = SHTMLDocument.getListItemElement(doc.getParagraphElement(selectionStart));
                 if(elem != null && elem.getStartOffset() == selectionStart){
                     int nextPosition = elem.getStartOffset() - 1;
-                    mergeListItemElements(getListItemElement(doc.getParagraphElement(nextPosition)), elem);
+                    mergeListItemElements(SHTMLDocument.getListItemElement(doc.getParagraphElement(nextPosition)), elem);
                     setCaretPosition(nextPosition);
                     return;
                 }
@@ -308,7 +307,7 @@ public class DeleteNextCharAction extends AbstractAction{
             SHTMLDocument doc = (SHTMLDocument)getDocument();
             final int nextPosition = getSelectionStart() + 1;
             {
-                Element elem = getListElement(doc.getParagraphElement(nextPosition));
+                Element elem = SHTMLDocument.getListElement(doc.getParagraphElement(nextPosition));
                 if(elem != null && elem.getStartOffset() == nextPosition){
                     setCaretPosition(nextPosition);
                     performToggleListAction(e, elem.getName());
@@ -316,9 +315,9 @@ public class DeleteNextCharAction extends AbstractAction{
                 }
             }
             {
-                Element elem = getListItemElement(doc.getParagraphElement(nextPosition));
+                Element elem = SHTMLDocument.getListItemElement(doc.getParagraphElement(nextPosition));
                 if(elem != null && elem.getStartOffset() == nextPosition){
-                    mergeListItemElements(getListItemElement(doc.getParagraphElement(nextPosition-1)), elem);
+                    mergeListItemElements(SHTMLDocument.getListItemElement(doc.getParagraphElement(nextPosition-1)), elem);
                     setCaretPosition(nextPosition);
                     return;
                 }
@@ -343,7 +342,7 @@ public class DeleteNextCharAction extends AbstractAction{
   public void applyListAttributes(AttributeSet a) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
     Element first = doc.getParagraphElement(getSelectionStart());
-    Element list = getListElement(first);
+    Element list = SHTMLDocument.getListElement(first);
     if(list != null) {
       if(a.getAttributeCount() > 0) {
         doc.addAttributes(list, a);
@@ -403,19 +402,19 @@ public class DeleteNextCharAction extends AbstractAction{
         SHTMLDocument doc = (SHTMLDocument) getDocument();
         int caretPosition = getCaretPosition();
         // if we are in a list, create a new item
-        Element listItemElement = getListItemElement(doc.getParagraphElement(caretPosition));
+        Element listItemElement = SHTMLDocument.getListItemElement(doc.getParagraphElement(caretPosition));
         if(listItemElement != null) {
                 int so = listItemElement.getStartOffset();
                 int eo = listItemElement.getEndOffset();
                 if(so != eo) {
                     StringWriter writer = new StringWriter();
-                    FixedHTMLWriter htmlwriter = new FixedHTMLWriter(writer, doc);
+                    SHTMLWriter htmlwriter = new SHTMLWriter(writer, doc);
                     htmlwriter.write(listItemElement);
                     String text = writer.toString();
                     try{
                         doc.startCompoundEdit();
                         doc.setOuterHTML(listItemElement, text + "\n" + text);
-                        listItemElement = getListItemElement(doc.getParagraphElement(caretPosition));
+                        listItemElement = SHTMLDocument.getListItemElement(doc.getParagraphElement(caretPosition));
                         int so2 = listItemElement.getStartOffset();
                         caretPosition += so2 - so;
                         int eo2 = listItemElement.getEndOffset();
@@ -479,7 +478,7 @@ public class DeleteNextCharAction extends AbstractAction{
       int oEnd = getSelectionEnd();
       int start = first.getStartOffset();
       int end = doc.getParagraphElement(oEnd).getEndOffset();
-      Element list = getListElement(first);
+      Element list = SHTMLDocument.getListElement(first);
       if(list == null) {
         parent = first.getParentElement();
       }
@@ -488,15 +487,15 @@ public class DeleteNextCharAction extends AbstractAction{
       }
       StringWriter sw = new StringWriter();
       if(forceOff) {
-        listOff(new FixedHTMLWriter(sw, doc), listTag, parent, start, end, first);
+        listOff(new SHTMLWriter(sw, doc), listTag, parent, start, end, first);
       }
       else {
         if(switchOn(listTag, parent, start, end)) {
-          listOn(new FixedHTMLWriter(sw, doc), listTag, parent,
+          listOn(new SHTMLWriter(sw, doc), listTag, parent,
                  start, end, first, a);
         }
         else {
-          listOff(new FixedHTMLWriter(sw, doc), listTag, parent,
+          listOff(new SHTMLWriter(sw, doc), listTag, parent,
                   start, end, first);
         }
       }
@@ -524,7 +523,7 @@ public class DeleteNextCharAction extends AbstractAction{
   private void mergeListItemElements(Element first, Element second) {
       final SHTMLDocument doc = (SHTMLDocument)getDocument();
       final StringWriter sw = new StringWriter();
-      final FixedHTMLWriter w = new FixedHTMLWriter(sw, doc);
+      final SHTMLWriter w = new SHTMLWriter(sw, doc);
       try {
         w.startTag(first);
         w.writeChildElements(first);
@@ -540,9 +539,6 @@ public class DeleteNextCharAction extends AbstractAction{
         // TODO Auto-generated catch block
         e.printStackTrace();
     } catch (BadLocationException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    } catch (PropertiesMissingException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
     }
@@ -604,7 +600,7 @@ public class DeleteNextCharAction extends AbstractAction{
    * @param first  the first element in the block of elements to turn
    * list formatting off for
    */
-  private void listOff(FixedHTMLWriter w, String tag, Element parent,
+  private void listOff(SHTMLWriter w, String tag, Element parent,
           int start, int end, Element first)
   {
       int elemIndex;
@@ -615,7 +611,7 @@ public class DeleteNextCharAction extends AbstractAction{
       String listName = null;
       boolean inTag = false;
       try {
-          Element list = getListElement(first);
+          Element list = SHTMLDocument.getListElement(first);
           if(list == null) {
               parent = first.getParentElement();
           }
@@ -656,16 +652,24 @@ public class DeleteNextCharAction extends AbstractAction{
                   }
                   if(inTag) {
                       inTag = false;
-                      w.endTag(listName, null);
+                      w.endTag(listName);
                   }
 
                   while(elemIndex < count &&
                           elem.getStartOffset() >= start &&
                           elem.getEndOffset() <= end)
                   {
-                      w.startTag(HTML.Tag.P.toString(), null);
+                      SimpleAttributeSet pSet = null;
+                      if(list.getParentElement().getName().equalsIgnoreCase(HTML.Tag.TD.toString())){
+                          pSet = new SimpleAttributeSet();
+                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_TOP, "1");
+                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_RIGHT, "1");
+                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_BOTTOM, "1");
+                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_LEFT, "1");
+                      }
+                      w.startTag(HTML.Tag.P.toString(), pSet);
                       w.writeChildElements(elem);
-                      w.endTag(HTML.Tag.P.toString(), null);
+                      w.endTag(HTML.Tag.P.toString());
                       elemIndex++;
                       if(elemIndex < count) {
                           elem = list.getElement(elemIndex);
@@ -685,7 +689,7 @@ public class DeleteNextCharAction extends AbstractAction{
                   }
                   if(elemIndex >= count && inTag) {
                       inTag = false;
-                      w.endTag(listName, null);
+                      w.endTag(listName);
                   }
               }
           }
@@ -712,7 +716,7 @@ public class DeleteNextCharAction extends AbstractAction{
    * @param first  the first element of the block to switch
    * list formatting on for
    */
-  private void listOn(FixedHTMLWriter w, String tag, Element parent,
+  private void listOn(SHTMLWriter w, String tag, Element parent,
                       int start, int end, Element first, AttributeSet la)
   {
     int k;
@@ -728,7 +732,7 @@ public class DeleteNextCharAction extends AbstractAction{
     boolean aStarted = false;
     boolean mergeList = false;
     try {
-      Element list = getListElement(first);
+      Element list = SHTMLDocument.getListElement(first);
       if(list == null) {
         parent = first.getParentElement();
       }
@@ -795,7 +799,7 @@ public class DeleteNextCharAction extends AbstractAction{
                       if(bStarted) {
                           bStarted = false;
                           if(!listName.equalsIgnoreCase(tag)) {
-                              w.endTag(listName, null);
+                              w.endTag(listName);
                           }
                       }
                       if(!iStarted) {
@@ -814,7 +818,7 @@ public class DeleteNextCharAction extends AbstractAction{
                       if(iStarted) {
                           iStarted = false;
                           if(!listName.equalsIgnoreCase(tag)) {
-                              w.endTag(tag, null);
+                              w.endTag(tag);
                           }
                       }
                       if(!aStarted) {
@@ -840,7 +844,7 @@ public class DeleteNextCharAction extends AbstractAction{
                       if(bStarted) {
                           bStarted = false;
                           if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
-                              w.endTag(listName, null);
+                              w.endTag(listName);
                           }
                       }
                       if(!iStarted) {
@@ -859,7 +863,7 @@ public class DeleteNextCharAction extends AbstractAction{
                       if(iStarted) {
                           iStarted = false;
                           if(!listName.equalsIgnoreCase(tag)) {
-                              w.endTag(tag, null);
+                              w.endTag(tag);
                           }
                       }
                       if(!aStarted) {
@@ -887,7 +891,7 @@ public class DeleteNextCharAction extends AbstractAction{
                           elem = list.getElement(k);
                       }
                   }
-                  w.endTag(tag, null);
+                  w.endTag(tag);
                   aStarted = false;
                   iStarted = false;
               }
@@ -904,7 +908,7 @@ public class DeleteNextCharAction extends AbstractAction{
                       }
                       else {
                           if(!tag.equalsIgnoreCase(listName)) {
-                              w.endTag(listName, null);
+                              w.endTag(listName);
                               bStarted = false;
                               w.startTag(tag, la);
                           }
@@ -917,62 +921,30 @@ public class DeleteNextCharAction extends AbstractAction{
                   else{
                       w.write(elem);
                   }
-                  w.endTag(HTML.Tag.LI.toString(), null);
+                  w.endTag(HTML.Tag.LI.toString());
               }
           }
       }
       if(iStarted) {
           iStarted = false;
           if(list == null) {
-              w.endTag(tag, null);
+              w.endTag(tag);
           }
           else {
               if(!aStarted) {
-                  w.endTag(listName, null);
+                  w.endTag(listName);
               }
           }
       }
       if(aStarted) {
           aStarted = false;
-          w.endTag(listName, null);
+          w.endTag(listName);
       }
     }
     catch(Exception e) {
         Util.errMsg(null, e.getMessage(), e);
     }
   }
-
-  /**
-   * get the list item element a given element is inside (if any).
-   *
-   * @param elem  the element to get the list element for
-   *
-   * @return the list element the given element is inside, or null, if
-   * the given element is not inside a list
-   */
-  private Element getListItemElement(Element elem) {
-    Element list = Util.findElementUp(HTML.Tag.LI.toString(), elem);
-    return list;
-  }
-  /**
-   * get the list element a given element is inside (if any).
-   *
-   * @param elem  the element to get the list element for
-   *
-   * @return the list element the given element is inside, or null, if
-   * the given element is not inside a list
-   */
-  private Element getListElement(Element elem) {
-    Element list = Util.findElementUp(HTML.Tag.UL.toString(), elem);
-    if(list == null) {
-      list = Util.findElementUp(HTML.Tag.OL.toString(), elem);
-    }
-    return list;
-  }
-
-  /* ------- list manipulation end ------------------- */
-
-  /* ------- table manipulation start ------------------ */
 
   /** range indicator for applying attributes to the current cell only */
   public static final int THIS_CELL = 0;
@@ -1192,7 +1164,7 @@ public class DeleteNextCharAction extends AbstractAction{
   private void setTextLink(Element e, String href, String className, String linkText, SHTMLDocument doc) {
     SimpleAttributeSet aSet = new SimpleAttributeSet();
     aSet.addAttribute(HTML.Attribute.HREF, href);
-    String sStyleName = SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "standardStyleName");
+    String sStyleName = DynamicResource.getResourceString(SHTMLPanel.resources, "standardStyleName");
     if(className != null && !className.equalsIgnoreCase(sStyleName)) {
       aSet.addAttribute(HTML.Attribute.CLASS, className);
     }
@@ -2419,13 +2391,17 @@ public class DeleteNextCharAction extends AbstractAction{
   private void performToggleListAction(ActionEvent e, String elemName){
       if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString())){
           if(toggleBulletListAction == null){
-              toggleBulletListAction = SHTMLPanel.dynRes.getAction(SHTMLPanel.toggleBulletsAction);
+              Component c = (Component)e.getSource();
+              SHTMLPanel panel = SHTMLPanel.getOwnerSHTMLPanel(c);
+              toggleBulletListAction = panel.dynRes.getAction(SHTMLPanel.toggleBulletsAction);
           }
           toggleBulletListAction.actionPerformed(e);
       }
       else if(elemName.equalsIgnoreCase(HTML.Tag.OL.toString())){
           if(toggleNumberListAction == null){
-              toggleNumberListAction = SHTMLPanel.dynRes.getAction(SHTMLPanel.toggleNumbersAction);
+              Component c = (Component)e.getSource();
+              SHTMLPanel panel = SHTMLPanel.getOwnerSHTMLPanel(c);
+              toggleNumberListAction = panel.dynRes.getAction(SHTMLPanel.toggleNumbersAction);
           }
           toggleNumberListAction.actionPerformed(e);
       }

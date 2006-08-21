@@ -27,6 +27,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
+
 import com.sun.demo.ExampleFileFilter;
 import java.util.*;
 import java.util.prefs.*;
@@ -165,8 +166,8 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     tpView.setTabPlacement(JTabbedPane.BOTTOM);
     tpView.add(sp, VIEW_TAB_LAYOUT);
     tpView.add(htmlSp, VIEW_TAB_HTML);
-    tpView.setTitleAt(VIEW_TAB_LAYOUT, SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "layoutTabTitle"));
-    tpView.setTitleAt(VIEW_TAB_HTML, SHTMLPanel.dynRes.getResourceString(SHTMLPanel.resources, "htmlTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_LAYOUT, DynamicResource.getResourceString(SHTMLPanel.resources, "layoutTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_HTML, DynamicResource.getResourceString(SHTMLPanel.resources, "htmlTabTitle"));
     tpView.addChangeListener(this);
 
     // add comnponents to content pane
@@ -188,7 +189,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public DocumentPane(URL docToLoad, int newDocNo/*, int renderMode*/) {
     this(/*renderMode*/);
-    DEFAULT_DOC_NAME = SHTMLPanel.dynRes.getResourceString(
+    DEFAULT_DOC_NAME = DynamicResource.getResourceString(
         SHTMLPanel.resources, "defaultDocName");
     if(docToLoad != null) {
       loadDocument(docToLoad);
@@ -361,11 +362,11 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
           Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
           String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
           if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4)) {
-            SHTMLWriter hw = new SHTMLWriter(osw, doc, SHTMLWriter.MODE_HTML);
+            SHTMLWriter hw = new SHTMLWriter(osw, doc);
             hw.write();
           }
           else {
-            FixedHTMLWriter hw = new FixedHTMLWriter(osw, doc);
+            SHTMLWriter hw = new SHTMLWriter(osw, doc);
             //HTMLWriter hw = new HTMLWriter(osw, doc);
             //System.out.println("DocumentPane.saveDocument saving with title=" + doc.getProperty(Document.TitleProperty));
             hw.write();
@@ -710,8 +711,8 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     return editor.getDocument();
   }
 
-  private Document getHTMLDocument() {
-    return htmlEditor.getDocument();
+  HTMLDocument getHTMLDocument() {
+    return (HTMLDocument)htmlEditor.getDocument();
   }
 
   /**

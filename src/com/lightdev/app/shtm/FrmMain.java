@@ -62,7 +62,7 @@ public class FrmMain extends JFrame {
         setSize(new Dimension(800, 600));
         setTitle(APP_NAME);
 
-        setIconImage(Toolkit.getDefaultToolkit().createImage(SHTMLPanel.dynRes.getResource(SHTMLPanel.resources, "appIcon")));
+        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanel.resources, "appIcon")));
         getContentPane().add(mainPane);
     }
 

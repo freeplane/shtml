@@ -87,14 +87,14 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * this is called by the PluginManager directly after instantiating the plug-in
    */
-  public void initPlugin(SHTMLPanel owner) {  }
+  public void initPlugin(SHTMLPanel owner) { this.owner = owner; }
 
   /**
    * create the plug-in menu
    */
   protected void createPluginMenu() {
     if(pluginMenuId != null) {
-      pMenu = SHTMLPanel.dynRes.createMenu(this.resources, pluginMenuId);
+      pMenu = owner.dynRes.createMenu(this.resources, pluginMenuId);
     }
   }
 
@@ -103,7 +103,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   protected void createHelpMenu() {
     if(helpMenuId != null) {
-      hMenu = SHTMLPanel.dynRes.createMenu(this.resources, helpMenuId);
+      hMenu = owner.dynRes.createMenu(this.resources, helpMenuId);
       initHelpMenu();
     }
   }
@@ -164,6 +164,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   public void initPlugin(SHTMLPanel owner, String internalName, String pluginMenuId,
                         String helpMenuId) {
+    this.owner = owner; 
     this.internalName = internalName;
     this.pluginMenuId = pluginMenuId;
     this.helpMenuId = helpMenuId;
@@ -399,7 +400,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
   protected Preferences prefs;
 
   /** the owner of this plug in */
-  protected static SHTMLPanel owner;
+  protected SHTMLPanel owner;
 
   /* ------------- class fields end ------------------ */
 }
