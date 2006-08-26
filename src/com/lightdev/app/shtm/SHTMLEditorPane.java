@@ -343,6 +343,12 @@ public class DeleteNextCharAction extends AbstractAction{
                     return;
                 }
             }
+            {
+                Element elem = SHTMLDocument.getTableCellElement(doc.getParagraphElement(selectionStart));
+                if(elem != null && elem.getEndOffset() == nextPosition){
+                    return;
+                }
+            }
             if(nextPosition < doc.getLength())
             {
                 Element elem = SHTMLDocument.getTableCellElement(doc.getParagraphElement(nextPosition));
