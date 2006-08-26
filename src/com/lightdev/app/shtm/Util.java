@@ -922,12 +922,12 @@ public class Util {
    * @param e the exception object describing the error, or null
    */
   public static void errMsg(Component owner, String msg, Exception e) {
-    if(msg != null) {
-      JOptionPane.showMessageDialog(owner, msg, ERR_TITLE, JOptionPane.ERROR_MESSAGE);
-    }
-    if(e != null) {
-      e.printStackTrace();
-    }
+      if(e != null) {
+          e.printStackTrace();
+      }
+      if(msg != null) {
+          JOptionPane.showMessageDialog(owner, msg, ERR_TITLE, JOptionPane.ERROR_MESSAGE);
+      }
   }
 
   /**

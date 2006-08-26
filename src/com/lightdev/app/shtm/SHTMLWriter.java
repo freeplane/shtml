@@ -20,16 +20,10 @@ public class SHTMLWriter extends HTMLWriter {
 
     public SHTMLWriter(Writer w, HTMLDocument doc, int pos, int len) {
         super(w, doc, pos, len);
-        // TODO Auto-generated constructor stub
     }
 
     public SHTMLWriter(Writer w, HTMLDocument doc) {
         super(w, doc);
-        // TODO Auto-generated constructor stub
-    }
-
-    public SHTMLWriter(StringWriter sw) {
-        super(sw, new HTMLDocument());
     }
 
     protected ElementIterator getElementIterator() {
@@ -53,8 +47,13 @@ public class SHTMLWriter extends HTMLWriter {
         try{
             write();
         }
-        finally{
+        catch(BadLocationException e){
             elem = null;
+            throw e;
+        }
+        catch(IOException e){
+            elem = null;
+            throw e;
         }
     }
     /**
@@ -88,26 +87,6 @@ public class SHTMLWriter extends HTMLWriter {
      */
     public void startTag(Element elem) throws IOException, BadLocationException {
         super.startTag(elem);
-    }
-
-    public void startTag(String elementName, AttributeSet attributes) throws IOException{
-        indent();
-        write('<');
-        write(elementName);
-        if(attributes != null){
-            writeAttributes(attributes);
-        }
-        write('>');
-        writeLineSeparator();
-    }
-
-    public void endTag(String elementName) throws IOException{
-        indent();
-        write('<');
-        write('/');
-        write(elementName);
-        write('>');
-        writeLineSeparator();
     }
 
     /**
@@ -160,6 +139,26 @@ public class SHTMLWriter extends HTMLWriter {
         writeElementsUntil(e, end);
         e = parent.getElement(i++);
       }
+    }
+
+    public void endTag(String elementName) throws IOException{
+        indent();
+        write('<');
+        write('/');
+        write(elementName);
+        write('>');
+        writeLineSeparator();
+    }
+
+    public void startTag(String elementName, AttributeSet attributes) throws IOException{
+        indent();
+        write('<');
+        write(elementName);
+        if(attributes != null){
+            writeAttributes(attributes);
+        }
+        write('>');
+        writeLineSeparator();
     }
 
 

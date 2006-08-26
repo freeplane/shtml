@@ -33,6 +33,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.*;
 import java.util.*;
 
@@ -61,7 +62,7 @@ public class SHTMLDocument extends HTMLDocument {
   private AttributeContext context;
   private CompoundEdit compoundEdit;
   private int compoundEditDepth;
-
+  private boolean inSetParagraphAttributes = false;
   /**
    * Constructs an SHTMLDocument.
    */
@@ -161,6 +162,19 @@ public class SHTMLDocument extends HTMLDocument {
       writeUnlock();
     }
   }
+
+    /* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#setOuterHTML(javax.swing.text.Element, java.lang.String)
+ */
+public void setOuterHTML(Element elem, String htmlText) throws BadLocationException, IOException {
+    try{
+        startCompoundEdit();
+        super.setOuterHTML(elem, htmlText);
+    }
+    finally{
+        endCompoundEdit();
+    }
+}
 
     public void replaceHTML(Element firstElement, int number, String htmlText) throws
   BadLocationException, IOException {
@@ -353,6 +367,19 @@ public void startCompoundEdit() {
     if(list == null) {
       list = Util.findElementUp(HTML.Tag.OL.toString(), elem);
     }
+    return list;
+  }
+
+  /**
+   * get the list element a given element is inside (if any).
+   *
+   * @param elem  the element to get the list element for
+   *
+   * @return the list element the given element is inside, or null, if
+   * the given element is not inside a list
+   */
+  static Element getTableCellElement(Element elem) {
+    Element list = Util.findElementUp(HTML.Tag.TD.toString(), elem);
     return list;
   }
 
@@ -554,5 +581,30 @@ public void startCompoundEdit() {
       }
       return result;
   }
+
+/* (non-Javadoc)
+ * @see javax.swing.text.DefaultStyledDocument#getParagraphElement(int)
+ */
+public Element getParagraphElement(int pos) {
+     Element element = super.getParagraphElement(pos);
+     if(inSetParagraphAttributes){
+         while(element != null && element.getName().equalsIgnoreCase("p-implied")){
+             element = element.getParentElement();
+         }
+     }
+    return element;
+}
+
+/* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#setParagraphAttributes(int, int, javax.swing.text.AttributeSet, boolean)
+ */
+public void setParagraphAttributes(int offset, int length, AttributeSet s, boolean replace) {
+    startCompoundEdit();
+    super.setParagraphAttributes(offset, length, s, replace);
+    inSetParagraphAttributes  = true;
+    super.setParagraphAttributes(offset, length, s, replace);
+    inSetParagraphAttributes = false;
+    endCompoundEdit();
+}
 
 }

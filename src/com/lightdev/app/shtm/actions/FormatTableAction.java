@@ -12,6 +12,8 @@ import javax.swing.text.html.HTML;
 import com.lightdev.app.shtm.DialogShell;
 import com.lightdev.app.shtm.DynamicResource;
 import com.lightdev.app.shtm.SHTMLAction;
+import com.lightdev.app.shtm.SHTMLDocument;
+import com.lightdev.app.shtm.SHTMLEditorPane;
 import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.TableDialog;
 import com.lightdev.app.shtm.Util;
@@ -35,26 +37,30 @@ import com.lightdev.app.shtm.Util;
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      this.panel.getEditor().requestFocus();
-      int pos = this.panel.getEditor().getSelectionStart();
+      final SHTMLEditorPane editor = this.panel.getEditor();
+    editor.requestFocus();
+      int pos = editor.getSelectionStart();
       TableDialog td = new TableDialog(parent,
                      DynamicResource.getResourceString(SHTMLPanel.resources, "tableDialogTitle"));
-      td.setTableAttributes(this.panel.getMaxAttributes(this.panel.getEditor(), HTML.Tag.TABLE.toString()));
-      td.setCellAttributes(this.panel.getMaxAttributes(this.panel.getEditor(), HTML.Tag.TD.toString()));
+      td.setTableAttributes(this.panel.getMaxAttributes(editor, HTML.Tag.TABLE.toString()));
+      td.setCellAttributes(this.panel.getMaxAttributes(editor, HTML.Tag.TD.toString()));
       Util.center(parent, td);
       td.setModal(true);
       td.show();
 
       /** if the user made a selection, apply it to the document */
       if(td.getResult() == DialogShell.RESULT_OK) {
-        AttributeSet a = td.getTableAttributes();
-        if(a.getAttributeCount() > 0) {
-          this.panel.getEditor().applyTableAttributes(a);
-        }
-        a = td.getCellAttributes();
-        if(a.getAttributeCount() > 0) {
-          this.panel.getEditor().applyCellAttributes(a, td.getCellRange());
-        }
+          SHTMLDocument doc = (SHTMLDocument )editor.getDocument();
+          doc.startCompoundEdit();
+          AttributeSet a = td.getTableAttributes();
+          if(a.getAttributeCount() > 0) {
+              editor.applyTableAttributes(a);
+          }
+          a = td.getCellAttributes();
+          if(a.getAttributeCount() > 0) {
+              editor.applyCellAttributes(a, td.getCellRange());
+          }
+          doc.endCompoundEdit();
       }
       this.panel.updateActions();
     }

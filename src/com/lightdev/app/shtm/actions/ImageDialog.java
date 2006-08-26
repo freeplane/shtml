@@ -460,7 +460,7 @@ public class ImageDialog extends DialogShell
   public String getImageHTML() {
     SimpleAttributeSet set = new SimpleAttributeSet(originalAttributes);
     StringWriter sw = new StringWriter();
-    SHTMLWriter w = new SHTMLWriter(sw);
+    SHTMLWriter w = new SHTMLWriter(sw, doc);
     for(int i = 0; i < attributeComponents.size(); i++) {
       set.addAttributes(((AttributeComponent) attributeComponents.get(i)).getValue());
     }

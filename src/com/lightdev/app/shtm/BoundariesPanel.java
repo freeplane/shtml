@@ -125,7 +125,7 @@ public class BoundariesPanel extends JPanel implements AttributeComponent {
     SizeSelectorPanel ssp;
     for(int i = 0; i < components.size(); i++) {
       ssp = (SizeSelectorPanel) components.elementAt(i);
-      ssp.setValue(ca.getAttribute(i));
+      ssp.setValue((String)ca.getAttribute(i));
     }
     return success;
   }

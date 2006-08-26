@@ -1132,10 +1132,12 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     updateAToolBar(formatToolBar);
     updateAToolBar(paraToolBar);
     Element e = doc.getParagraphElement(getEditor().getCaretPosition());
-    SetTagAction sta = (SetTagAction) tagSelector.getAction();
-    sta.setIgnoreActions(true);
-    tagSelector.setSelectedTag(e.getName());
-    sta.setIgnoreActions(false);
+    if(tagSelector != null){
+        SetTagAction sta = (SetTagAction) tagSelector.getAction();
+        sta.setIgnoreActions(true);
+        tagSelector.setSelectedTag(e.getName());
+        sta.setIgnoreActions(false);
+    }
   }
 
   private void updateAToolBar(JToolBar bar) {

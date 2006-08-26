@@ -21,6 +21,8 @@
 package com.lightdev.app.shtm;
 
 import java.awt.Dimension;
+
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.JComponent;
 import javax.swing.ActionMap;
@@ -117,7 +119,7 @@ import javax.swing.text.ElementIterator;
  * @see com.lightdev.app.shtm.HTMLTextSelection
  */
 
-public class SHTMLEditorPane extends JEditorPane  implements
+public class SHTMLEditorPane extends JTextPane  implements
     DropTargetListener, DragSourceListener, DragGestureListener
 {
   /**
@@ -181,7 +183,7 @@ public class SHTMLEditorPane extends JEditorPane  implements
     myActionMap.put(newListItemAction, new NewListItemAction());
     myInputMap.put(enter, newListItemAction);
 
-    KeyStroke backspace = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
+    KeyStroke backspace = KeyStroke.getKeyStroke('\b');
     myActionMap.put(deletePrevCharAction, new DeletePrevCharAction());
     myInputMap.put(backspace, deletePrevCharAction);
 
@@ -265,6 +267,9 @@ private class MyNavigationFilter extends NavigationFilter{
 }
 private int getValidPosition(int position) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
+    if(position > doc.getLength()){
+        position = doc.getLength();
+    }
       int startPos = 0;
       if(doc.getDefaultRootElement().getElementCount() > 1){
           startPos = doc.getDefaultRootElement().getElement(1).getStartOffset();
@@ -274,7 +279,6 @@ private int getValidPosition(int position) {
 }
 
 public class DeletePrevCharAction extends AbstractAction{
-    Action defaultAction = null;
     public void actionPerformed(ActionEvent e) {
         final int selectionStart = getSelectionStart();
         if(selectionStart == getSelectionEnd()){
@@ -295,17 +299,34 @@ public class DeletePrevCharAction extends AbstractAction{
                     return;
                 }
             }
+            if(selectionStart > 0)
+            {
+                int nextPosition = selectionStart - 1;
+                Element elem = SHTMLDocument.getTableCellElement(doc.getParagraphElement(nextPosition));
+                if(elem != null && elem.getEndOffset() == selectionStart){
+                    KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
+                    Object key = getInputMap().getParent().get(enter);
+                    if(key != null) {
+                      getActionMap().getParent().get(key).actionPerformed(e);
+                    }
+                    return;
+                }
+            }
         }
-        performAction(defaultAction, DefaultEditorKit.deletePrevCharAction, e);
+        KeyStroke enter = KeyStroke.getKeyStroke('\b');
+        Object key = getInputMap().getParent().get(enter);
+        if(key != null) {
+          getActionMap().getParent().get(key).actionPerformed(e);
+        }
     }
 }
 
 public class DeleteNextCharAction extends AbstractAction{
-    Action defaultAction = null;
     public void actionPerformed(ActionEvent e) {
-        if(getSelectionStart() == getSelectionEnd()){
+        final int selectionStart = getSelectionStart();
+        if(selectionStart == getSelectionEnd()){
             SHTMLDocument doc = (SHTMLDocument)getDocument();
-            final int nextPosition = getSelectionStart() + 1;
+            final int nextPosition = selectionStart + 1;
             {
                 Element elem = SHTMLDocument.getListElement(doc.getParagraphElement(nextPosition));
                 if(elem != null && elem.getStartOffset() == nextPosition){
@@ -322,8 +343,19 @@ public class DeleteNextCharAction extends AbstractAction{
                     return;
                 }
             }
+            if(nextPosition < doc.getLength())
+            {
+                Element elem = SHTMLDocument.getTableCellElement(doc.getParagraphElement(nextPosition));
+                if(elem != null && elem.getStartOffset() == nextPosition){
+                    return;
+                }
+            }
         }
-        performAction(defaultAction, DefaultEditorKit.deleteNextCharAction, e);
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+        Object key = getInputMap().getParent().get(enter);
+        if(key != null) {
+          getActionMap().getParent().get(key).actionPerformed(e);
+        }
     }
 }
 /* ------- list manipulation start ------------------- */
@@ -973,7 +1005,8 @@ public class DeleteNextCharAction extends AbstractAction{
         final int selectionStart = getSelectionStart();
         int start = selectionStart;
         StringWriter sw = new StringWriter();
-        SHTMLWriter w = new SHTMLWriter(sw);
+        SHTMLDocument doc = (SHTMLDocument) getDocument();
+        SHTMLWriter w = new SHTMLWriter(sw, doc);
         // some needed constants
         String table = HTML.Tag.TABLE.toString();
         String tr = HTML.Tag.TR.toString();
@@ -1021,11 +1054,20 @@ public class DeleteNextCharAction extends AbstractAction{
           w.endTag(tr);
           w.endTag(table);
           // read table html into document
-          SHTMLDocument doc = (SHTMLDocument) getDocument();
           Element para = doc.getParagraphElement(selectionStart);
+          if(para == null) {
+              throw new Exception("no text selected");
+          }
+          for(Element parent = para.getParentElement();
+              ! parent.getName().equalsIgnoreCase(HTML.Tag.BODY.toString())
+              && !parent.getName().equalsIgnoreCase(HTML.Tag.TD.toString());
+              para = parent, parent = parent.getParentElement()
+           );
+          
           if(para != null) {
-              w.write(para);
-              doc.replaceHTML(para, 1, sw.getBuffer().toString());
+              doc.insertBeforeStart(para, sw.getBuffer().toString());
+//              w.write(para);
+//              doc.replaceHTML(para, 1, sw.getBuffer().toString());
           }
         }
         catch(Exception ex) {
@@ -1121,7 +1163,7 @@ public class DeleteNextCharAction extends AbstractAction{
     set.addAttribute(HTML.Attribute.HREF, href);
     set.addAttribute(HTML.Attribute.CLASS, className);
     StringWriter sw = new StringWriter();
-    SHTMLWriter w = new SHTMLWriter(sw);
+    SHTMLWriter w = new SHTMLWriter(sw, doc);
     try {
       w.startTag(a, set);
       set = new SimpleAttributeSet();
@@ -1390,7 +1432,7 @@ public class DeleteNextCharAction extends AbstractAction{
     String td = HTML.Tag.TD.toString();
     String p = HTML.Tag.P.toString();
     StringWriter sw = new StringWriter();
-    SHTMLWriter w = new SHTMLWriter(sw);
+    SHTMLWriter w = new SHTMLWriter(sw, (SHTMLDocument)getDocument());
     try {
       w.startTag(tr, srcRow.getAttributes());
       for(int i = 0; i < srcRow.getElementCount(); i++) {
@@ -1421,7 +1463,7 @@ public class DeleteNextCharAction extends AbstractAction{
   public String getTableCellHTML(Element srcCell)
   {
     StringWriter sw = new StringWriter();
-    SHTMLWriter w = new SHTMLWriter(sw);
+    SHTMLWriter w = new SHTMLWriter(sw, (SHTMLDocument)getDocument());
     String td = HTML.Tag.TD.toString();
     String p = HTML.Tag.P.toString();
     try {
@@ -2303,12 +2345,13 @@ public class DeleteNextCharAction extends AbstractAction{
    * @param allowedTags  tags that may be switched
    */
   public void applyTag(String tag, Vector allowedTags) {
-    try {
       int start = getSelectionStart();
       int end = getSelectionEnd();
       //System.out.println("SHTMLEditorPane applyTag start=" + start + ", end=" + end);
       StringWriter sw = new StringWriter();
       SHTMLDocument doc = (SHTMLDocument) getDocument();
+    try {
+      doc.startCompoundEdit();
       SHTMLWriter w = new SHTMLWriter(sw, doc);
       Element elem = doc.getParagraphElement(start);
       //System.out.println("SHTMLEditorPane applyTag elemName=" + elem.getName());
@@ -2364,6 +2407,9 @@ public class DeleteNextCharAction extends AbstractAction{
     catch(Exception e) {
       Util.errMsg(this, e.getMessage(), e);
     }
+    finally{
+        doc.endCompoundEdit();
+    }
   }
 
   /* ------ end of font/paragraph manipulation --------------- */
@@ -2373,21 +2419,6 @@ public class DeleteNextCharAction extends AbstractAction{
   static Action toggleBulletListAction = null;
   static Action toggleNumberListAction = null;
 
-  private void performAction(Action defaultAction, String actionName, ActionEvent e) {
-    if(defaultAction == null){
-        final Action[] defaultActions = getEditorKit().getActions();
-        for(int i = 0; i < defaultActions.length; i++){
-            Action action = defaultActions[i];
-            if(action.getValue(Action.NAME).equals(actionName)){
-                defaultAction = action;
-                break;
-            }
-        }
-    }
-    if(defaultAction != null){
-        defaultAction.actionPerformed(e);
-    }
-}
   private void performToggleListAction(ActionEvent e, String elemName){
       if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString())){
           if(toggleBulletListAction == null){
