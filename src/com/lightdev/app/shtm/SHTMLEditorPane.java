@@ -196,9 +196,6 @@ public class SHTMLEditorPane extends JTextPane  implements
     myInputMap.setParent(getInputMap());
     setActionMap(myActionMap);
     setInputMap(JComponent.WHEN_FOCUSED, myInputMap);
-        
-    final Action defaultAction = getKeymap().getDefaultAction();
-    getKeymap().setDefaultAction(new DefaultAction(defaultAction));
 
     /*
      implementation before 1.4.1
@@ -220,7 +217,24 @@ public class SHTMLEditorPane extends JTextPane  implements
   private static gnu.regexp.RE pattern1 = null;
   private static gnu.regexp.RE pattern2 = null;
 
-  /**
+  /* (non-Javadoc)
+ * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
+ */
+protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
+    final int maximumEndSelection = getDocument().getLength()-5;
+    if(getSelectionStart() >= maximumEndSelection  && 
+            ! (ks.getKeyCode() == KeyEvent.VK_LEFT
+               || ks.getKeyCode() == KeyEvent.VK_UP
+               || ks.getKeyCode() == KeyEvent.VK_HOME)){
+        return true;
+    }
+    if(getSelectionEnd() >= maximumEndSelection){
+        setSelectionEnd(maximumEndSelection-1);
+    }
+    return super.processKeyBinding(ks, e, condition, pressed);
+}
+
+/**
    * Convenience method for setting the document text
    * contains hack around JDK bug 4799813
    * see http://developer.java.sun.com/developer/bugParade/bugs/4799813.html
@@ -245,6 +259,9 @@ public class SHTMLEditorPane extends JTextPane  implements
       }
       SHTMLDocument doc = (SHTMLDocument) getDocument();
       doc.startCompoundEdit();
+      if(sText == null || sText.equals("") ){
+          sText = "<html><body><p></p></body></html>";
+      }
       super.setText(sText);
       setCaretPosition(0);
       doc.endCompoundEdit();
@@ -376,22 +393,6 @@ public class DeleteNextCharAction extends AbstractAction{
         }
     }
 }
-private class DefaultAction extends AbstractAction{
-    private Action defaultAction;
-
-    public DefaultAction(Action defaultAction) {
-        this.defaultAction = defaultAction;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        final int selectionEnd = getSelectionEnd();
-        SHTMLDocument doc = (SHTMLDocument)getDocument();
-        if(selectionEnd >= doc.getLength()-5){
-            return;
-        }
-        defaultAction.actionPerformed(e);
-    }
-}
 /* ------- list manipulation start ------------------- */
   /** start block to remove */
   private Element removeStart;
@@ -486,6 +487,9 @@ private class DefaultAction extends AbstractAction{
                         int eo2 = listItemElement.getEndOffset();
                         doc.remove(caretPosition, eo2 - caretPosition - 1);
                         doc.remove(caretPosition + 1, caretPosition - so2);
+                    }
+                    catch(Exception e) {
+                        Util.errMsg(null, e.getMessage(), e);
                     }
                     finally {
                         doc.endCompoundEdit();
@@ -1105,6 +1109,9 @@ private class DefaultAction extends AbstractAction{
               try{
                   doc.startCompoundEdit();
                   doc.insertBeforeStart(para, sw.getBuffer().toString());
+              }
+              catch(Exception e) {
+                  Util.errMsg(null, e.getMessage(), e);
               }
               finally{
                   doc.endCompoundEdit();

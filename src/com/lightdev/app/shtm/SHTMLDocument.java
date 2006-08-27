@@ -492,6 +492,9 @@ public void startCompoundEdit() {
       }
       else {
         super.handleStartTag(t, a, pos);
+        if(t == HTML.Tag.FONT){
+            charAttr.removeAttribute(t);
+        }
       }
     }
 
