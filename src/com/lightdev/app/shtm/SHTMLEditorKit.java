@@ -20,6 +20,7 @@
 package com.lightdev.app.shtm;
 
 import java.io.*;
+
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
@@ -89,8 +90,15 @@ public class SHTMLEditorKit extends HTMLEditorKit {
     catch(Exception e) {}
     SHTMLDocument doc = new SHTMLDocument(ss);
     doc.setParser(getParser());
-    doc.setAsynchronousLoadPriority(4);
-    doc.setTokenThreshold(100);
+    doc.setAsynchronousLoadPriority(-1);
+    doc.setTokenThreshold(1);
+    try {
+        doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), "<p>\n</p>\n<p>\n&lt;END&gt;\n</p>\n");
+    } catch (BadLocationException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     return doc;
   }
 

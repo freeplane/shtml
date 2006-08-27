@@ -20,6 +20,7 @@
 
 package com.lightdev.app.shtm;
 
+import javax.swing.text.AbstractDocument.AbstractElement;
 import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
@@ -27,11 +28,14 @@ import javax.swing.text.html.HTMLDocument;
 
 import javax.swing.text.html.*;
 import javax.swing.text.html.HTML.Tag;
+import javax.swing.text.html.HTMLDocument.BlockElement;
+import javax.swing.text.html.HTMLDocument.RunElement;
 import javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction;
 import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.*;
@@ -170,6 +174,58 @@ public void setOuterHTML(Element elem, String htmlText) throws BadLocationExcept
     try{
         startCompoundEdit();
         super.setOuterHTML(elem, htmlText);
+    }
+    finally{
+        endCompoundEdit();
+    }
+}
+
+    /* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#insertAfterEnd(javax.swing.text.Element, java.lang.String)
+ */
+public void insertAfterEnd(Element elem, String htmlText) throws BadLocationException, IOException {
+    try{
+        startCompoundEdit();
+        super.insertAfterEnd(elem, htmlText);
+    }
+    finally{
+        endCompoundEdit();
+    }
+}
+
+/* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#insertAfterStart(javax.swing.text.Element, java.lang.String)
+ */
+public void insertAfterStart(Element elem, String htmlText) throws BadLocationException, IOException {
+    try{
+        startCompoundEdit();
+        super.insertAfterStart(elem, htmlText);
+    }
+    finally{
+        endCompoundEdit();
+    }
+}
+
+/* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#insertBeforeEnd(javax.swing.text.Element, java.lang.String)
+ */
+public void insertBeforeEnd(Element elem, String htmlText) throws BadLocationException, IOException {
+    try{
+        startCompoundEdit();
+        super.insertBeforeEnd(elem, htmlText);
+    }
+    finally{
+        endCompoundEdit();
+    }
+}
+
+/* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#insertBeforeStart(javax.swing.text.Element, java.lang.String)
+ */
+public void insertBeforeStart(Element elem, String htmlText) throws BadLocationException, IOException {
+    try{
+        startCompoundEdit();
+        super.insertBeforeStart(elem, htmlText);
     }
     finally{
         endCompoundEdit();
@@ -350,7 +406,7 @@ public void startCompoundEdit() {
     if (desc instanceof URL) {
         setBase((URL)desc);
     }
-    SHTMLReader reader = new SHTMLReader(pos);
+    SHTMLReader reader = new SHTMLReader(pos, getLength() == 0);
     return reader;
   }
 
@@ -410,12 +466,15 @@ public void startCompoundEdit() {
 
     /** indicates whether we're inside a SPAN tag */
     boolean inSpan = false;
+    boolean emptyDocument;
 
     /**
      * Constructor
+     * @param emttyDocument 
      */
-    public SHTMLReader(int offset) {
+    public SHTMLReader(int offset, boolean emptyDocument) {
       super(offset, 0, 0, null);
+      this.emptyDocument = emptyDocument;
     }
 
     /**
@@ -486,6 +545,15 @@ public void startCompoundEdit() {
         handleEndSpan();
       }
       else {
+          if(emptyDocument && t == HTML.Tag.BODY){
+              char data[] = "<END>".toCharArray();
+            final SimpleAttributeSet set = new SimpleAttributeSet();
+//            StyleConstants.setBackground(set, Color.BLUE);
+//            StyleConstants.setForeground(set, Color.WHITE);
+            super.handleStartTag(HTML.Tag.P, set, pos);  
+            super.handleText(data, pos);
+            super.handleEndTag(HTML.Tag.P, pos);  
+          }
         super.handleEndTag(t, pos);
       }
     }
@@ -527,6 +595,30 @@ public void startCompoundEdit() {
       public void end(HTML.Tag t) {
         popCharacterStyle();
       }
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLDocument.HTMLReader#addContent(char[], int, int, boolean)
+     */
+    protected void addContent(char[] data, int offs, int length, boolean generateImpliedPIfNecessary) {
+        // TODO Auto-generated method stub
+        super.addContent(data, offs, length, generateImpliedPIfNecessary);
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLDocument.HTMLReader#addContent(char[], int, int)
+     */
+    protected void addContent(char[] data, int offs, int length) {
+        // TODO Auto-generated method stub
+        super.addContent(data, offs, length);
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
+     */
+    public void handleText(char[] data, int pos) {
+        // TODO Auto-generated method stub
+        super.handleText(data, pos);
     }
   }
 

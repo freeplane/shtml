@@ -40,6 +40,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
 import javax.swing.text.Caret;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.NavigationFilter;
 
 import java.awt.dnd.DragSource;
@@ -195,6 +196,9 @@ public class SHTMLEditorPane extends JTextPane  implements
     myInputMap.setParent(getInputMap());
     setActionMap(myActionMap);
     setInputMap(JComponent.WHEN_FOCUSED, myInputMap);
+        
+    final Action defaultAction = getKeymap().getDefaultAction();
+    getKeymap().setDefaultAction(new DefaultAction(defaultAction));
 
     /*
      implementation before 1.4.1
@@ -265,10 +269,11 @@ private class MyNavigationFilter extends NavigationFilter{
     }
 
 }
+
 private int getValidPosition(int position) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
-    if(position > doc.getLength()){
-        position = doc.getLength();
+    if(doc.getLength() > 4 && position >= doc.getLength()-4){
+        position = doc.getLength()-5;
     }
       int startPos = 0;
       if(doc.getDefaultRootElement().getElementCount() > 1){
@@ -281,8 +286,12 @@ private int getValidPosition(int position) {
 public class DeletePrevCharAction extends AbstractAction{
     public void actionPerformed(ActionEvent e) {
         final int selectionStart = getSelectionStart();
-        if(selectionStart == getSelectionEnd()){
-            SHTMLDocument doc = (SHTMLDocument)getDocument();
+        final int selectionEnd = getSelectionEnd();
+        SHTMLDocument doc = (SHTMLDocument)getDocument();
+        if(selectionEnd >= doc.getLength() - 5){
+            return;
+        }
+        if(selectionStart == selectionEnd){
             {
                 Element elem = SHTMLDocument.getListElement(doc.getParagraphElement(selectionStart));
                 if(elem != null && elem.getStartOffset() == selectionStart){
@@ -327,7 +336,10 @@ public class DeleteNextCharAction extends AbstractAction{
         if(selectionStart == getSelectionEnd()){
             SHTMLDocument doc = (SHTMLDocument)getDocument();
             final int nextPosition = selectionStart + 1;
-            {
+            if(selectionStart >= doc.getLength()-6){
+                return;
+            }
+            {                
                 Element elem = SHTMLDocument.getListElement(doc.getParagraphElement(nextPosition));
                 if(elem != null && elem.getStartOffset() == nextPosition){
                     setCaretPosition(nextPosition);
@@ -362,6 +374,22 @@ public class DeleteNextCharAction extends AbstractAction{
         if(key != null) {
           getActionMap().getParent().get(key).actionPerformed(e);
         }
+    }
+}
+private class DefaultAction extends AbstractAction{
+    private Action defaultAction;
+
+    public DefaultAction(Action defaultAction) {
+        this.defaultAction = defaultAction;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        final int selectionEnd = getSelectionEnd();
+        SHTMLDocument doc = (SHTMLDocument)getDocument();
+        if(selectionEnd >= doc.getLength()-5){
+            return;
+        }
+        defaultAction.actionPerformed(e);
     }
 }
 /* ------- list manipulation start ------------------- */
@@ -514,6 +542,9 @@ public class DeleteNextCharAction extends AbstractAction{
       Element first = doc.getParagraphElement(getSelectionStart());
       int oStart = getSelectionStart();
       int oEnd = getSelectionEnd();
+      if(oEnd > doc.getLength()- 6){
+          return;
+      }
       int start = first.getStartOffset();
       int end = doc.getParagraphElement(oEnd).getEndOffset();
       Element list = SHTMLDocument.getListElement(first);
@@ -1071,7 +1102,13 @@ public class DeleteNextCharAction extends AbstractAction{
            );
           
           if(para != null) {
-              doc.insertBeforeStart(para, sw.getBuffer().toString());
+              try{
+                  doc.startCompoundEdit();
+                  doc.insertBeforeStart(para, sw.getBuffer().toString());
+              }
+              finally{
+                  doc.endCompoundEdit();
+              }
 //              w.write(para);
 //              doc.replaceHTML(para, 1, sw.getBuffer().toString());
           }
@@ -2292,6 +2329,20 @@ public class DeleteNextCharAction extends AbstractAction{
 //    }
 //  }
 //
+  /* (non-Javadoc)
+   * @see javax.swing.text.JTextComponent#paste()
+   */
+  public void paste() {
+     SHTMLDocument doc = (SHTMLDocument)getDocument();
+     try{
+         doc.startCompoundEdit();
+         super.paste();         
+     }
+     finally{
+         doc.endCompoundEdit();
+     }
+  }
+
 
   /* ------ end of cut, copy and paste implementation --------------- */
 
@@ -2457,7 +2508,6 @@ public static final String newListItemAction = "newListItem";
   private Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
   private Cursor defaultCursor =
                   Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-
 
   /* ---------- class fields end -------------- */
 

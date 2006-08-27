@@ -23,7 +23,7 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
     public SHTMLWriter(Writer w, HTMLDocument doc) {
-        super(w, doc);
+        super(w, doc,0 , doc.getLength());
     }
 
     protected ElementIterator getElementIterator() {
@@ -72,7 +72,7 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
     protected boolean inRange(Element next) {
-        return elem == null || super.inRange(next);
+        return next.getStartOffset() < next.getDocument().getLength()-5 && super.inRange(next);
     }
 
     /* (non-Javadoc)

@@ -39,7 +39,7 @@ import com.lightdev.app.shtm.Util;
       try {
         this.panel.getUndo().undo();
       }
-      catch(CannotUndoException ex) {
+      catch(Exception ex) {
         Util.errMsg((Component) e.getSource(),
 		  DynamicResource.getResourceString(SHTMLPanel.resources, "unableToUndoError") + ex, ex);
       }
