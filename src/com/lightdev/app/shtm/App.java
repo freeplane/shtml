@@ -51,6 +51,7 @@ public class App {
 
     //Center the window
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    frame.pack();
     Dimension frameSize = frame.getSize();
     if (frameSize.height > screenSize.height) {
       frameSize.height = screenSize.height;
@@ -60,9 +61,7 @@ public class App {
     }
     frame.setLocation((screenSize.width - frameSize.width) / 2,
                             (screenSize.height - frameSize.height) / 2);
-
     frame.setVisible(true); // show the window
-    frame.pack();
   }
   //Main method
   public static void main(String[] args) {

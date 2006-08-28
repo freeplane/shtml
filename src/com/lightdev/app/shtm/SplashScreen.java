@@ -40,8 +40,9 @@ import com.lightdev.app.shtm.SHTMLPanel;
  * @version stage 12, August 06, 2006
  */
 public class SplashScreen extends JWindow{
-
-    public SplashScreen() {
+private static SplashScreen instance = null;
+private static int counter;
+    private SplashScreen() {
         try {
             JPanel panel = new JPanel(new BorderLayout());
             ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(DynamicResource.getResourceString(SHTMLPanel.resources, "splashImage")));
@@ -51,9 +52,33 @@ public class SplashScreen extends JWindow{
             pack();
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
             setLocation((int) (d.getWidth() - getWidth()) / 2, (int) (d.getHeight() - getHeight()) / 2);
-            setVisible(true);
-            getRootPane().paintImmediately(0, 0, getWidth(), getHeight());
         } catch (Exception e) {
         }
     }
+
+    /* (non-Javadoc)
+     * @see java.awt.Window#dispose()
+     */
+    synchronized  public static void hideInstance() {
+        if(counter > 0)
+            counter--;
+        if(counter == 0)
+            instance.hide();
+    }
+
+    /**
+     * @return Returns the instance.
+     */
+    synchronized public static void showInstance() {
+        if(instance == null){
+            instance = new SplashScreen();
+            counter = 0;
+        }
+        if(counter == 0){
+            instance.setVisible(true);
+            instance.getRootPane().paintImmediately(0, 0, instance.getWidth(), instance.getHeight());
+        }
+        counter++;
+    }
+    
 }

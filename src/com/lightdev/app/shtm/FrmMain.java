@@ -21,11 +21,14 @@
 package com.lightdev.app.shtm;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 /**
@@ -56,14 +59,26 @@ public class FrmMain extends JFrame {
     private SHTMLPanel mainPane;
 
     public FrmMain(){
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         mainFrame = this;
-        mainPane = new SHTMLPanel();
-        setSize(new Dimension(800, 600));
+        SHTMLPanel.setResources(null);
+        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanel.resources, "appIcon")));
         setTitle(APP_NAME);
 
-        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanel.resources, "appIcon")));
-        getContentPane().add(mainPane);
+        SplashScreen.showInstance();
+        try {
+            EventQueue.invokeAndWait(new Runnable(){
+                public void run() {
+                    mainPane = new SHTMLPanel();
+                    getContentPane().add(mainPane);
+                }
+                
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        SplashScreen.hideInstance();
     }
 
     /**

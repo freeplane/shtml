@@ -138,6 +138,17 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   public static PluginManager pluginManager; // = new PluginManager(mainFrame);
 
   public static void setResources(ResourceBundle resources){
+      if(SHTMLPanel.resources != null) return;
+      if(resources == null)
+      {
+          try {
+              resources = ResourceBundle.getBundle(
+                      "com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
+          }
+          catch(MissingResourceException mre) {
+              Util.errMsg(null, "resources/SimplyHTML.properties not found", mre);
+          }
+      }
       SHTMLPanel.resources = resources;
   }
   private SHTMLMenuBar menuBar;
@@ -274,17 +285,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   /** construct a new main application frame */
   public SHTMLPanel() {
       super(new BorderLayout());
-      if(resources == null)
-      {
-          try {
-              resources = ResourceBundle.getBundle(
-                      "com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
-          }
-          catch(MissingResourceException mre) {
-              Util.errMsg(null, "resources/SimplyHTML.properties not found", mre);
-          }
-      }
-    SplashScreen splash = new SplashScreen();
+    SplashScreen.showInstance();
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     initActions();
     menuBar = dynRes.createMenubar(resources, "menubar");
@@ -294,7 +295,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     initPlugins();
     updateActions();
     initJavaHelp();
-    splash.dispose();
+    SplashScreen.hideInstance();
     dynRes.getAction(newAction).actionPerformed(null);
     dp.getEditor().setCaretPosition(0);
   }
