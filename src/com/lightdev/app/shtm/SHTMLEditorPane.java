@@ -836,6 +836,9 @@ public class DeleteNextCharAction extends AbstractAction{
               if(eEnd == start && listName.equalsIgnoreCase(tag))
               {
                   // a list of the same name directly before the selection
+                  firstReplacedElemIndex = i;
+                  removeStart = elem;
+                  removeCount = 1;
                   mergeList = true;
                   if(!bStarted) {
                       bStarted = true;
