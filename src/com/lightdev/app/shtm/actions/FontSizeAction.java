@@ -34,6 +34,10 @@ import com.lightdev.app.shtm.SHTMLPanel.FontSizePicker;
     }
 
     public void update() {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
       if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
         this.setEnabled(true);
       }

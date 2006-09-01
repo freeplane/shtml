@@ -50,6 +50,10 @@ import com.lightdev.app.shtm.Util;
     }
 
     public void update() {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
       if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
         if((this.panel.getEditor().getSelectionEnd() > this.panel.getEditor().getSelectionStart()) ||
            (Util.findLinkElementUp(this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getSelectionStart())) != null)) {

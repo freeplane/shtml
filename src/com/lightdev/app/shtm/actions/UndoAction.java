@@ -47,6 +47,10 @@ import com.lightdev.app.shtm.Util;
     }
 
     public void update() {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
       setEnabled(this.panel.getUndo().canUndo());
     }
     public void getProperties() {

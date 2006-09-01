@@ -38,7 +38,11 @@ import com.lightdev.app.shtm.SHTMLPanel;
     }
 
     public void update() {
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
+     if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {

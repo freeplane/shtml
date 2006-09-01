@@ -66,6 +66,10 @@ import com.lightdev.app.shtm.Util;
     }
 
     public void update() {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
       if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }

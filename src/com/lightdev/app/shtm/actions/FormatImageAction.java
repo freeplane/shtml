@@ -66,6 +66,10 @@ public class FormatImageAction extends AbstractAction
     }
 
     public void update() {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
       if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
         Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getCaretPosition());
         if(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {

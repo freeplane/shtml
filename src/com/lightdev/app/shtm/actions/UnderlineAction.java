@@ -76,6 +76,10 @@ public class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       SHTMLPanel.getActionProperties(this, SHTMLPanel.fontUnderlineAction);
     }
     public void update() {
+        if(this.panel.isHtmlEditorActive()){
+            this.setEnabled(false);
+            return;
+        }
       if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
         this.setEnabled(true);
       }

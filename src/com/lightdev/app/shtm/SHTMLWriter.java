@@ -12,7 +12,7 @@ import java.util.prefs.Preferences;
 /**
  * FixedHTMLWriter
  *
- * @version stage 12, August 06, 2006
+ * 
  */
 
 public class SHTMLWriter extends HTMLWriter {
@@ -72,7 +72,17 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
     protected boolean inRange(Element next) {
-        return next.getStartOffset() < next.getDocument().getLength()-5 && super.inRange(next);
+        if(next.getStartOffset() >= next.getDocument().getLength()-5){
+            return false;
+        }
+        int startOffset = getStartOffset();
+        int endOffset = getEndOffset();
+        if ((next.getStartOffset() >= startOffset 
+               && (next.getStartOffset()  < endOffset) || next.getEndOffset() - 1 == endOffset) 
+          || (startOffset >= next.getStartOffset() && startOffset < next.getEndOffset())) {
+            return true;
+        }
+        return false;
     }
 
     /* (non-Javadoc)

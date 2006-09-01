@@ -44,7 +44,7 @@ import java.awt.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 12, August 06, 2006
+ * 
  */
 public class ImagePreview extends JComponent implements Scrollable {
 

@@ -42,7 +42,7 @@ import java.io.StringReader;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 12, August 06, 2006
+ * 
  *
  * @see java.awt.datatransfer.DataFlavor.stringFlavor
  * @see java.awt.datatransfer.DataFlavor.plainTextFlavor

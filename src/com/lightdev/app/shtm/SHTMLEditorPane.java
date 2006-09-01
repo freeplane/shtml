@@ -114,7 +114,7 @@ import javax.swing.text.ElementIterator;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 12, August 06, 2006
+ * 
  *
  * @see com.lightdev.app.shtm.HTMLText
  * @see com.lightdev.app.shtm.HTMLTextSelection
@@ -123,6 +123,9 @@ import javax.swing.text.ElementIterator;
 public class SHTMLEditorPane extends JTextPane  implements
     DropTargetListener, DragSourceListener, DragGestureListener
 {
+    private static final boolean OLD_JAVA_VERSION = System
+    .getProperty("java.version").compareTo("1.5.0") < 0;
+
   /**
    * construct a new <code>SHTMLEditorPane</code>
    */
@@ -265,6 +268,9 @@ protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boo
       super.setText(sText);
       setCaretPosition(0);
       doc.endCompoundEdit();
+      if(OLD_JAVA_VERSION){
+          SHTMLPanel.getOwnerSHTMLPanel(this).purgeUndos();
+      }
   }
 
 private class MyNavigationFilter extends NavigationFilter{

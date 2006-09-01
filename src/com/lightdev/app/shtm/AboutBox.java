@@ -49,7 +49,7 @@ import javax.swing.border.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 12, August 06, 2006
+ * 
  */
 
 public class AboutBox extends JDialog implements ActionListener {
@@ -92,7 +92,7 @@ public class AboutBox extends JDialog implements ActionListener {
 		      getResource(DynamicResource.getResourceString(SHTMLPanel.resources, "splashImage"))));
     JLabel emptyLabel = new JLabel("");
     JLabel appTitleLabel = new JLabel(FrmMain.APP_NAME);
-    JLabel appStageLabel = new JLabel("Stage 12, release 1");
+    JLabel appStageLabel = new JLabel(FrmMain.VERSION);
     JLabel appCopyrightLabel =
                             new JLabel("Copyright (c) 2002-2006 Ulrich Hilger, Dimitri Polivaev");
     JLabel appHomepageLabel = new JLabel("http://www.lightdev.com");

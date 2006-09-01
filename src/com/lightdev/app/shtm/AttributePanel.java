@@ -42,7 +42,7 @@ import java.awt.event.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * @version stage 12, August 06, 2006
+ * 
  */
 
 public abstract class AttributePanel extends JPanel

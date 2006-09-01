@@ -37,7 +37,7 @@ import com.lightdev.app.shtm.SHTMLPanel;
  * Class that displays a splash screen
  * Is run in a separate thread so that the applet continues to load in the background
  * @author Karsten Pawlik
- * @version stage 12, August 06, 2006
+ * 
  */
 public class SplashScreen extends JWindow{
 private static SplashScreen instance = null;
