@@ -23,7 +23,7 @@ import com.lightdev.app.shtm.SHTMLEditorPane;
 import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.Util;
 
-public class ClearFormatAction extends StyledEditorKit.BoldAction implements SHTMLAction{
+public class ClearFormatAction extends AbstractAction implements SHTMLAction{
     /**
      * 
      */
@@ -46,7 +46,6 @@ public class ClearFormatAction extends StyledEditorKit.BoldAction implements SHT
      * @param  e  the ActionEvent describing the cause for this action
      */
     public void actionPerformed(ActionEvent e) {
-      super.actionPerformed(e);
       final SHTMLEditorPane editor = this.panel.getEditor();
       if(editor != null) {
           editor.removeCharacterAttributes();
@@ -63,7 +62,7 @@ public class ClearFormatAction extends StyledEditorKit.BoldAction implements SHT
             return;
         }
         final SHTMLEditorPane editor = this.panel.getEditor();
-        this.setEnabled(editor.getSelectionStart() != editor.getSelectionEnd());
+        this.setEnabled(editor != null && editor.getSelectionStart() != editor.getSelectionEnd());
     }
 
   }

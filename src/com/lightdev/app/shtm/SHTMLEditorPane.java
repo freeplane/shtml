@@ -2404,7 +2404,7 @@ public class DeleteNextCharAction extends AbstractAction{
                   }
               }
               try {
-                  doc.setCharacterAttributes(i, i+1, sasText, true);
+                  doc.setCharacterAttributes(i, 1, sasText, true);
               } catch (Exception e) {
               }
           }
