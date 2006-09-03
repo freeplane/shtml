@@ -2276,88 +2276,96 @@ public class DeleteNextCharAction extends AbstractAction{
 
   /* ------ start of cut, copy and paste implementation ------------------- */
 
-//  /**
-//   * Transfers the currently selected range in the associated
-//   * text model to the system clipboard, removing the contents
-//   * from the model. The current selection is reset.
-//   *
-//   * @see #replaceSelection
-//   */
-//
-//  public void cut() {
-//    if (isEditable() && isEnabled()) {
-//      copy();
-//      replaceSelection("");
-//    }
-//  }
-//
-//
-//  /**
-//   * Transfers the currently selected range in the associated
-//   * text model to the system clipboard, leaving the contents
-//   * in the text model.  The current selection remains intact.
-//   */
-//
-//  public void copy() {
-//    try
-//    {
-//      HTMLText st = new HTMLText();
-//      int start = getSelectionStart();
-//      st.copyHTML(this, start, getSelectionEnd() - start);
-//      HTMLTextSelection contents = new HTMLTextSelection(st);
-//      Clipboard clipboard = getToolkit().getSystemClipboard();
-//      clipboard.setContents(contents, defaultClipboardOwner);
-//    }
-//    catch(Exception e) {
-//      getToolkit().beep();
-//    }
-//  }
-//
-//
-//  /**
-//   * Transfers the contents of the system clipboard into the
-//   * associated text model. If there is a selection in the
-//   * associated view, it is replaced with the contents of the
-//   * clipboard. If there is no selection, the clipboard contents
-//   * are inserted in front of the current insert position in
-//   * the associated view. If the clipboard is empty, does nothing.
-//   *
-//   * @see #replaceSelection
-//   */
-//
-//  public void paste() {
-//    Clipboard clipboard = getToolkit().getSystemClipboard();
-//    Transferable content = clipboard.getContents(this);
-//    if (content != null) {
-//      try {
-//        if(content.isDataFlavorSupported(df)) {
-//          HTMLText st = (HTMLText) content.getTransferData(df);
-//          replaceSelection(st);
-//        }
-//        else if(content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-//          String text = (String) content.getTransferData(DataFlavor.stringFlavor);
-//          replaceSelection(text);
-//        }
-//      }
-//      catch (Exception e) {
-//        getToolkit().beep();
-//      }
-//    }
-//  }
-//
-  /* (non-Javadoc)
-   * @see javax.swing.text.JTextComponent#paste()
+  /**
+   * Transfers the currently selected range in the associated
+   * text model to the system clipboard, removing the contents
+   * from the model. The current selection is reset.
+   *
+   * @see #replaceSelection
    */
-  public void paste() {
-     SHTMLDocument doc = (SHTMLDocument)getDocument();
-     try{
-         doc.startCompoundEdit();
-         super.paste();         
-     }
-     finally{
-         doc.endCompoundEdit();
-     }
+
+  public void cut() {
+    if (isEditable() && isEnabled()) {
+      copy();
+      replaceSelection("");
+    }
   }
+
+
+  /**
+   * Transfers the currently selected range in the associated
+   * text model to the system clipboard, leaving the contents
+   * in the text model.  The current selection remains intact.
+   */
+
+  public void copy() {
+      SHTMLDocument doc = (SHTMLDocument)getDocument();
+      if(doc.getParagraphElement(getSelectionStart()) == doc.getParagraphElement(getSelectionEnd())){
+          try
+          {
+              HTMLText st = new HTMLText();
+              int start = getSelectionStart();
+              st.copyHTML(this, start, getSelectionEnd() - start);
+              HTMLTextSelection contents = new HTMLTextSelection(st);
+              Clipboard clipboard = getToolkit().getSystemClipboard();
+              clipboard.setContents(contents, defaultClipboardOwner);
+          }
+          catch(Exception e) {
+              getToolkit().beep();
+          }
+      }
+      else{
+          super.copy();
+      }
+  }
+
+
+  /**
+   * Transfers the contents of the system clipboard into the
+   * associated text model. If there is a selection in the
+   * associated view, it is replaced with the contents of the
+   * clipboard. If there is no selection, the clipboard contents
+   * are inserted in front of the current insert position in
+   * the associated view. If the clipboard is empty, does nothing.
+   *
+   * @see #replaceSelection
+   */
+
+  public void paste() {
+    Clipboard clipboard = getToolkit().getSystemClipboard();
+    Transferable content = clipboard.getContents(this);
+    if (content != null) {
+        SHTMLDocument doc = (SHTMLDocument)getDocument();
+        doc.startCompoundEdit();
+      try {
+        if(content.isDataFlavorSupported(df)) {
+          HTMLText st = (HTMLText) content.getTransferData(df);
+          replaceSelection(st);
+        }
+        else{
+            super.paste();
+        }
+      }
+      catch (Exception e) {
+        getToolkit().beep();
+      }
+      doc.endCompoundEdit();
+    }
+  }
+
+//  /* (non-Javadoc)
+//   * @see javax.swing.text.JTextComponent#paste()
+//   */
+//  public void paste() {
+//     SHTMLDocument doc = (SHTMLDocument)getDocument();
+//     try{
+//         doc.startCompoundEdit();
+//         super.paste();         
+//     }
+//     finally{
+//         doc.endCompoundEdit();
+//     }
+//  }
 
 
   /* ------ end of cut, copy and paste implementation --------------- */
