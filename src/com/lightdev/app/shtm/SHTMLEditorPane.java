@@ -42,6 +42,7 @@ import javax.swing.text.Document;
 import javax.swing.text.Caret;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.NavigationFilter;
+import javax.swing.text.StyledDocument;
 
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DropTarget;
@@ -85,6 +86,8 @@ import javax.swing.text.AttributeSet;
 import java.io.StringWriter;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
+
+import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.text.ElementIterator;
 
@@ -2383,6 +2386,31 @@ public class DeleteNextCharAction extends AbstractAction{
 
   /* ------ start of font/paragraph manipulation --------------- */
 
+  public void removeCharacterAttributes() {
+      int p0 = getSelectionStart();
+      int p1 = getSelectionEnd();
+      if (p0 != p1) {
+          SHTMLDocument doc = (SHTMLDocument)getDocument();
+          doc.startCompoundEdit();
+          // clear all character attributes in selection
+          SimpleAttributeSet sasText = null;
+          for(int i = p0; i < p1; i++) {
+              sasText = new SimpleAttributeSet(doc.getCharacterElement(i).getAttributes().copyAttributes());
+              Enumeration attribEntries1 = sasText.getAttributeNames();
+              while(attribEntries1.hasMoreElements()) {
+                  Object entryKey   = attribEntries1.nextElement();
+                  if (!entryKey.toString().equals(HTML.Attribute.NAME.toString())) {
+                      sasText.removeAttribute(entryKey);
+                  }
+              }
+              try {
+                  doc.setCharacterAttributes(i, i+1, sasText, true);
+              } catch (Exception e) {
+              }
+          }
+          doc.endCompoundEdit();
+      }
+  }
   public void applyAttributes(AttributeSet a, boolean para) {
     applyAttributes(a, para, false);
   }

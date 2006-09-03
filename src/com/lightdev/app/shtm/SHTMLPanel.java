@@ -38,6 +38,7 @@ import java.awt.datatransfer.*;
 import com.lightdev.app.shtm.actions.AppendTableColAction;
 import com.lightdev.app.shtm.actions.AppendTableRowAction;
 import com.lightdev.app.shtm.actions.BoldAction;
+import com.lightdev.app.shtm.actions.ClearFormatAction;
 import com.lightdev.app.shtm.actions.DeleteTableColAction;
 import com.lightdev.app.shtm.actions.DeleteTableRowAction;
 import com.lightdev.app.shtm.actions.DocumentTitleAction;
@@ -227,6 +228,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
   public static  final String copyAction = "copy";
   public static  final String pasteAction = "paste";
   public static  final String selectAllAction = "selectAll";
+  public static  final String clearFormatAction = "clearFormat";
   public static  final String fontAction = "font";
   public static  final String fontFamilyAction = "fontFamily";
   public static  final String fontSizeAction = "fontSize";
@@ -736,6 +738,7 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     dynRes.addAction(prevTableCellAction, new PrevTableCellAction(this));
     dynRes.addAction(nextTableCellAction, new NextTableCellAction(this));
     dynRes.addAction(editNamedStyleAction, new EditNamedStyleAction(this));
+    dynRes.addAction(clearFormatAction, new ClearFormatAction(this));
     dynRes.addAction(formatParaAction, new FormatParaAction(this));
     dynRes.addAction(setStyleAction, new SetStyleAction(this));
     dynRes.addAction(formatImageAction, new FormatImageAction(this));
