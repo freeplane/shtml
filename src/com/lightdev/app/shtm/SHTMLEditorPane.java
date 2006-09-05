@@ -22,12 +22,15 @@ package com.lightdev.app.shtm;
 
 import java.awt.Dimension;
 
+import javax.swing.Icon;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.JComponent;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JFrame;
+import javax.swing.TransferHandler;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -36,6 +39,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.UnsupportedFlavorException;
 
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Document;
@@ -2279,110 +2283,111 @@ public class DeleteNextCharAction extends AbstractAction{
 
   /* ------ start of cut, copy and paste implementation ------------------- */
 
-  /**
-   * Transfers the currently selected range in the associated
-   * text model to the system clipboard, removing the contents
-   * from the model. The current selection is reset.
-   *
-   * @see #replaceSelection
-   */
-
-  public void cut() {
-    if (isEditable() && isEnabled()) {
-      copy();
-      replaceSelection("");
-    }
-  }
-
-
-  /**
-   * Transfers the currently selected range in the associated
-   * text model to the system clipboard, leaving the contents
-   * in the text model.  The current selection remains intact.
-   */
-
-  public void copy() {
-      SHTMLDocument doc = (SHTMLDocument)getDocument();
-      if(doc.getParagraphElement(getSelectionStart()) == doc.getParagraphElement(getSelectionEnd())){
-          try
-          {
-              HTMLText st = new HTMLText();
-              int start = getSelectionStart();
-              st.copyHTML(this, start, getSelectionEnd() - start);
-              HTMLTextSelection contents = new HTMLTextSelection(st);
-              Clipboard clipboard = getToolkit().getSystemClipboard();
-              clipboard.setContents(contents, defaultClipboardOwner);
-          }
-          catch(Exception e) {
-              getToolkit().beep();
-          }
-      }
-      else{
-          super.copy();
-      }
-  }
-
-
-  /**
-   * Transfers the contents of the system clipboard into the
-   * associated text model. If there is a selection in the
-   * associated view, it is replaced with the contents of the
-   * clipboard. If there is no selection, the clipboard contents
-   * are inserted in front of the current insert position in
-   * the associated view. If the clipboard is empty, does nothing.
-   *
-   * @see #replaceSelection
-   */
-
-  public void paste() {
-    Clipboard clipboard = getToolkit().getSystemClipboard();
-    Transferable content = clipboard.getContents(this);
-    if (content != null) {
-        SHTMLDocument doc = (SHTMLDocument)getDocument();
-        doc.startCompoundEdit();
-      try {
-        if(content.isDataFlavorSupported(df)) {
-          HTMLText st = (HTMLText) content.getTransferData(df);
-          replaceSelection(st);
+  public TransferHandler getTransferHandler() {
+      final TransferHandler defaultTransferHandler = super.getTransferHandler();
+      if(defaultTransferHandler == null) return null;
+      class LocalTransferHandler extends TransferHandler{
+        /* (non-Javadoc)
+         * @see javax.swing.TransferHandler#canImport(javax.swing.JComponent, java.awt.datatransfer.DataFlavor[])
+         */
+        public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+            return defaultTransferHandler.canImport(comp, transferFlavors);
         }
-        else{
-            super.paste();
+
+        /* (non-Javadoc)
+         * @see javax.swing.TransferHandler#exportAsDrag(javax.swing.JComponent, java.awt.event.InputEvent, int)
+         */
+        public void exportAsDrag(JComponent comp, InputEvent e, int action) {
+            defaultTransferHandler.exportAsDrag(comp, e, action);
+        }
+
+        /* (non-Javadoc)
+         * @see javax.swing.TransferHandler#exportToClipboard(javax.swing.JComponent, java.awt.datatransfer.Clipboard, int)
+         */
+        public void exportToClipboard(JComponent comp, Clipboard clip, int action) {            
+            SHTMLDocument doc = (SHTMLDocument)getDocument();
+            if(doc.getParagraphElement(getSelectionStart()) != doc.getParagraphElement(getSelectionEnd())){
+                defaultTransferHandler.exportToClipboard(comp, clip, action);
+                return;
+            }
+            try
+            {
+                Clipboard temp = new Clipboard("");
+                defaultTransferHandler.exportToClipboard(comp, temp, action);
+                final Transferable defaultContents = temp.getContents(this);
+                HTMLText st = new HTMLText();
+                int start = getSelectionStart();
+                st.copyHTML(SHTMLEditorPane.this, start, getSelectionEnd() - start);
+                final Transferable additionalContents = new HTMLTextSelection(st);
+                clip.setContents(new Transferable(){
+                    public DataFlavor[] getTransferDataFlavors() {
+                        DataFlavor[] defaultFlavors = defaultContents.getTransferDataFlavors();
+                        DataFlavor[] additionalFlavors = additionalContents.getTransferDataFlavors();
+                        DataFlavor[] resultFlavor = new DataFlavor[defaultFlavors.length + additionalFlavors.length];
+                        System.arraycopy(defaultFlavors, 0, resultFlavor, 0, defaultFlavors.length);
+                        System.arraycopy(additionalFlavors, 0, resultFlavor, defaultFlavors.length, additionalFlavors.length);
+                        return resultFlavor;
+                    }
+
+                    public boolean isDataFlavorSupported(DataFlavor flavor) {
+                        return additionalContents.isDataFlavorSupported(flavor) 
+                        || defaultContents.isDataFlavorSupported(flavor);
+                    }
+
+                    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+                        if(additionalContents.isDataFlavorSupported(flavor))
+                            return additionalContents.getTransferData(flavor);
+                        return defaultContents.getTransferData(flavor);
+                    }
+                }, null);
+            }
+            catch(Exception e) {
+                getToolkit().beep();
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see javax.swing.TransferHandler#getSourceActions(javax.swing.JComponent)
+         */
+        public int getSourceActions(JComponent c) {
+            return defaultTransferHandler.getSourceActions(c);
+        }
+
+        /* (non-Javadoc)
+         * @see javax.swing.TransferHandler#getVisualRepresentation(java.awt.datatransfer.Transferable)
+         */
+        public Icon getVisualRepresentation(Transferable t) {
+            return defaultTransferHandler.getVisualRepresentation(t);
+        }
+
+        /* (non-Javadoc)
+         * @see javax.swing.TransferHandler#importData(javax.swing.JComponent, java.awt.datatransfer.Transferable)
+         */
+        public boolean importData(JComponent comp, Transferable t) {
+            SHTMLDocument doc = (SHTMLDocument)getDocument();
+            doc.startCompoundEdit();
+            boolean result = false;
+            try {
+                if(t.isDataFlavorSupported(df)) {
+                    HTMLText st = (HTMLText) t.getTransferData(df);
+                    replaceSelection(st);
+                    result = true;
+                }
+                else{
+                    result = defaultTransferHandler.importData(comp, t);
+                }
+            }
+            catch (Exception e) {
+                getToolkit().beep();
+            }
+            doc.endCompoundEdit();
+            return result;
         }
       }
-      catch (Exception e) {
-        getToolkit().beep();
-      }
-      doc.endCompoundEdit();
-    }
+      return new LocalTransferHandler();
   }
-
-//  /* (non-Javadoc)
-//   * @see javax.swing.text.JTextComponent#paste()
-//   */
-//  public void paste() {
-//     SHTMLDocument doc = (SHTMLDocument)getDocument();
-//     try{
-//         doc.startCompoundEdit();
-//         super.paste();         
-//     }
-//     finally{
-//         doc.endCompoundEdit();
-//     }
-//  }
-
 
   /* ------ end of cut, copy and paste implementation --------------- */
-
-  /* ------ start of Clipboard implementation --------------- */
-
-  private static ClipboardOwner defaultClipboardOwner = new ClipboardObserver();
-
-  static class ClipboardObserver implements ClipboardOwner {
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
-    }
-  }
-
-  /* ------ end of Clipboard implementation --------------- */
 
   /* ------ start of font/paragraph manipulation --------------- */
 
@@ -2560,6 +2565,10 @@ public static final String newListItemAction = "newListItem";
   private Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
   private Cursor defaultCursor =
                   Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+
+/* (non-Javadoc)
+ * @see javax.swing.JComponent#getTransferHandler()
+ */
 
   /* ---------- class fields end -------------- */
 

@@ -20,11 +20,8 @@ package com.lightdev.app.shtm;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.io.StringReader;
 
 /**
  * A transferable for HTML text.
@@ -49,22 +46,18 @@ import java.io.StringReader;
  * @see com.lightdev.app.shtm.HTMLText
  */
 
-public class HTMLTextSelection  implements Transferable, ClipboardOwner
+public class HTMLTextSelection  implements Transferable
 {
 
   /** index of HTML text data flavor */
   private static final int HTML_TEXT = 0;
-
-  /** index of String data flavor */
-  private static final int STRING = 1;
 
   /** the data to transfer */
   private HTMLText data;
 
   /** the data flavor of this transferable */
   private static final DataFlavor[] flavors = {
-    new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText"),
-    DataFlavor.stringFlavor
+    new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText")
   };
 
   /**
@@ -123,9 +116,6 @@ public class HTMLTextSelection  implements Transferable, ClipboardOwner
     if (flavor.equals(flavors[HTML_TEXT])) {
       return (Object) data;
     }
-    else if (flavor.equals(flavors[STRING])) {
-      return (Object) data.toString();
-    }
     else {
       throw new UnsupportedFlavorException(flavor);
     }
@@ -133,16 +123,4 @@ public class HTMLTextSelection  implements Transferable, ClipboardOwner
 
   /* ----------- end of Transferable implementation ------------------- */
 
-  /* ----------- start of ClipboardOwner implementation --------------- */
-
-  /**
-   * Notifies this object that it is no longer the owner of
-   * the contents of the clipboard.
-   * @param clipboard the clipboard that is no longer owned
-   * @param contents the contents which this owner had placed on the clipboard
-   */
-  public void lostOwnership(Clipboard clipboard, Transferable contents) {
-  }
-
-  /* ------------ end of ClipboardOwner implementation ---------------- */
 }

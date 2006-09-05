@@ -84,20 +84,37 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   public boolean saveSuccessful = false;
 
   /** indicates if the document text has changed */
-  private boolean textChanged;
+  private boolean documentChanged = false;
 
   /**
-   * @param textChanged The textChanged to set.
+   * @param documentChanged The documentChanged to set.
    */
-  private void setTextChanged(boolean textChanged) {
-      this.textChanged = textChanged;
+  private void setDocumentChanged(boolean documentChanged) {
+      this.documentChanged = documentChanged;
   }
 
   /**
-   * @return Returns the textChanged.
+   * @return Returns the documentChanged.
    */
-  private boolean isTextChanged() {
-      return textChanged;
+  private boolean isDocumentChanged() {
+      return documentChanged;
+  }
+
+  /** indicates if the document text has changed */
+  private boolean htmlChanged = false;
+
+  /**
+   * @param htmlChanged The htmlChanged to set.
+   */
+  private void setHtmlChanged(boolean htmlChanged) {
+      this.htmlChanged = htmlChanged;
+  }
+
+  /**
+   * @return Returns the htmlChanged.
+   */
+  private boolean isHtmlChanged() {
+      return htmlChanged;
   }
 
   /** the name of the document */
@@ -173,7 +190,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     // add comnponents to content pane
     setLayout(new BorderLayout());        // a simple border layout is enough
     add(tpView, BorderLayout.CENTER);         // ..and add both to this DocumentPane
-    setTextChanged(false);                  // no changes so far
+    setDocumentChanged(false);                  // no changes so far
     setPreferredSize(new Dimension(550, 550));
   }
 
@@ -389,7 +406,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
 
           /* clean up */
           //System.out.println("DocumentPane textChanged = false");
-          setTextChanged(false); // indicate no changes pending anymore after the save
+          setDocumentChanged(false); // indicate no changes pending anymore after the save
           file = new File(sourceUrl.getPath()).getParentFile();
           ((HTMLDocument) getDocument()).setBase(file.toURL()); // set the doc base
           deleteTempDir();
@@ -648,7 +665,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public boolean needsSaving() {
     //System.out.println("DocumentPane.needsSaving=" + textChanged + " for document " + getDocumentName());
-    return isTextChanged();
+    return isDocumentChanged();
   }
 
   /**
@@ -729,6 +746,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
       htmlEditor.setText(sw.toString());
       htmlEditor.getDocument().addDocumentListener(this);
       htmlEditor.addCaretListener(htmlEditor);
+      setHtmlChanged(false);
     }
     catch(Exception ex) {
       ex.printStackTrace();
@@ -741,7 +759,9 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   private void setLayoutView() {
     htmlEditor.getDocument().removeDocumentListener(this);
     htmlEditor.removeCaretListener(htmlEditor);
-    editor.setText(htmlEditor.getText());
+    if(isHtmlChanged()){
+        editor.setText(htmlEditor.getText());
+    }
     editor.setCaretPosition(0);
     editor.getDocument().addDocumentListener(this);
   }
@@ -768,9 +788,10 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
         break;
       case VIEW_TAB_HTML:
           htmlEditor.setText(sText);
+          setHtmlChanged(true);
         break;
     }
-      setTextChanged(false);
+      setDocumentChanged(false);
   }
 
 
@@ -802,31 +823,37 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    */
   public void insertUpdate(DocumentEvent e) {
     //System.out.println("insertUpdate setting textChanged=true for " + getDocumentName());
-    setTextChanged(true);
-    /*if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
-      StyledDocument sDoc = (StyledDocument) e.getDocument();
-      htmlEditor.setMarks(sDoc, 0, sDoc.getLength(), this);
-    }*/
+      if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+          setHtmlChanged(true);
+      }
+      setDocumentChanged(true);
+      /*if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+       StyledDocument sDoc = (StyledDocument) e.getDocument();
+       htmlEditor.setMarks(sDoc, 0, sDoc.getLength(), this);
+       }*/
   }
-
+  
   /**
    * listens to removes from the document to track whether or not the document
    * needs to be saved.
    */
   public void removeUpdate(DocumentEvent e) {
-    //System.out.println("removeUpdate setting textChanged=true for " + getDocumentName());
-    setTextChanged(true);
+      //System.out.println("removeUpdate setting textChanged=true for " + getDocumentName());
+      if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+          setHtmlChanged(true);
+      }
+      setDocumentChanged(true);
   }
-
+  
   /**
    * listens to changes on the document to track whether or not the document
    * needs to be saved.
    */
   public void changedUpdate(DocumentEvent e) {
-    //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
-    if (tpView.getSelectedIndex() == VIEW_TAB_LAYOUT) {
-      setTextChanged(true);
-    }
+      //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
+      if (tpView.getSelectedIndex() == VIEW_TAB_LAYOUT) {
+          setDocumentChanged(true);
+      }
   }
 
   /* -------- DocumentListener implementation end ------------*/
