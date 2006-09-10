@@ -49,6 +49,7 @@ private static int counter;
             panel.add(new JLabel(icon), BorderLayout.CENTER);
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getContentPane().add(panel);
+            getRootPane().setOpaque(true);
             pack();
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
             setLocation((int) (d.getWidth() - getWidth()) / 2, (int) (d.getHeight() - getHeight()) / 2);

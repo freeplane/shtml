@@ -22,6 +22,7 @@ package com.lightdev.app.shtm;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import javax.help.*;
 import javax.swing.*;
@@ -581,10 +582,19 @@ public class SHTMLPanel extends JPanel implements CaretListener, ChangeListener 
     /**
      * Task to be executed when a key is released
      */
-    private class ReleaseTask extends TimerTask {
+    private class ReleaseTask extends TimerTask implements Runnable{
       public void run() {
-        repeating = false;
-        updateFormatControls();
+          if(EventQueue.isDispatchThread()){
+              repeating = false;
+              updateFormatControls();
+          }
+          else{
+              try {
+                EventQueue.invokeAndWait(this);
+            } catch (InterruptedException e) {
+            } catch (InvocationTargetException e) {
+            }
+          }
       }
     }
   }

@@ -93,7 +93,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
     doc.setAsynchronousLoadPriority(-1);
     doc.setTokenThreshold(1);
     try {
-        doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), "<p>\n</p>\n<p>\n&lt;END&gt;\n</p>\n");
+        doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ doc.SUFFIX +"\n</p>\n");
     } catch (BadLocationException e) {
         e.printStackTrace();
     } catch (IOException e) {
@@ -131,8 +131,13 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         throw new BadLocationException("Invalid location", pos);
       }
       ParserCallback receiver = hdoc.getReader(pos);
-      Boolean ignoreCharset = (Boolean)doc.getProperty("IgnoreCharsetDirective");
-      p.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
+      if(doc.getLength() == 0){
+          Boolean ignoreCharset = (Boolean)doc.getProperty("IgnoreCharsetDirective");
+          p.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
+      }
+      else{
+          p.parse(in, receiver, true);
+      }
       receiver.flush();
     }
     else {

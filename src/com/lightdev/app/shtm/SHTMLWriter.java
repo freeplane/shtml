@@ -72,7 +72,7 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
     protected boolean inRange(Element next) {
-        if(next.getStartOffset() >= next.getDocument().getLength()-5){
+        if(next.getStartOffset() >= ((SHTMLDocument)next.getDocument()).getLastDocumentPosition()){
             return false;
         }
         int startOffset = getStartOffset();

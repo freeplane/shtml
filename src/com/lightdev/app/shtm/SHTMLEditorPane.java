@@ -20,80 +20,58 @@
 
 package com.lightdev.app.shtm;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
-
-import javax.swing.Icon;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.JComponent;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JFrame;
-import javax.swing.TransferHandler;
-
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import javax.swing.JEditorPane;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.UnsupportedFlavorException;
-
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.Document;
-import javax.swing.text.Caret;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.NavigationFilter;
-import javax.swing.text.StyledDocument;
-
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DropTarget;
+import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
 import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTargetListener;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DragGestureListener;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.Cursor;
-import java.awt.Component;
-import java.awt.Color;
-import javax.swing.text.Element;
-import javax.swing.text.NavigationFilter.FilterBypass;
-import javax.swing.text.Position.Bias;
-import javax.swing.text.html.HTML;
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
-import javax.swing.text.Keymap;
-import javax.swing.KeyStroke;
-import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.Action;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.CSS;
-import java.io.StringReader;
-import java.io.IOException;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.AttributeSet;
+import java.io.IOException;
 import java.io.StringWriter;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.StyleConstants;
-
 import java.util.Enumeration;
 import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.Icon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import javax.swing.text.Element;
 import javax.swing.text.ElementIterator;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.NavigationFilter;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Position.Bias;
+import javax.swing.text.html.CSS;
+import javax.swing.text.html.HTML;
 
 
 /**
@@ -127,7 +105,7 @@ import javax.swing.text.ElementIterator;
  * @see com.lightdev.app.shtm.HTMLTextSelection
  */
 
-public class SHTMLEditorPane extends JTextPane  implements
+public class SHTMLEditorPane extends JEditorPane  implements
     DropTargetListener, DragSourceListener, DragGestureListener
 {
     private static final boolean OLD_JAVA_VERSION = System
@@ -231,7 +209,7 @@ public class SHTMLEditorPane extends JTextPane  implements
  * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
  */
 protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
-    final int maximumEndSelection = getDocument().getLength()-5;
+    final int maximumEndSelection = ((SHTMLDocument)getDocument()).getLastDocumentPosition();
     if(getSelectionStart() >= maximumEndSelection  && 
             ! (ks.getKeyCode() == KeyEvent.VK_LEFT
                || ks.getKeyCode() == KeyEvent.VK_UP
@@ -302,8 +280,8 @@ private class MyNavigationFilter extends NavigationFilter{
 
 private int getValidPosition(int position) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
-    if(doc.getLength() > 4 && position >= doc.getLength()-4){
-        position = doc.getLength()-5;
+    if(position > doc.getLastDocumentPosition() ){
+        position = doc.getLastDocumentPosition();
     }
       int startPos = 0;
       if(doc.getDefaultRootElement().getElementCount() > 1){
@@ -318,7 +296,7 @@ public class DeletePrevCharAction extends AbstractAction{
         final int selectionStart = getSelectionStart();
         final int selectionEnd = getSelectionEnd();
         SHTMLDocument doc = (SHTMLDocument)getDocument();
-        if(selectionEnd >= doc.getLength() - 5){
+        if(selectionEnd >= doc.getLastDocumentPosition()){
             return;
         }
         if(selectionStart == selectionEnd){
@@ -366,7 +344,7 @@ public class DeleteNextCharAction extends AbstractAction{
         if(selectionStart == getSelectionEnd()){
             SHTMLDocument doc = (SHTMLDocument)getDocument();
             final int nextPosition = selectionStart + 1;
-            if(selectionStart >= doc.getLength()-6){
+            if(selectionStart >= doc.getLastDocumentPosition()-1){
                 return;
             }
             {                
@@ -550,16 +528,14 @@ public class DeleteNextCharAction extends AbstractAction{
    * inside the selection needs to be switched on or off.
    */
   public void toggleList(String listTag, AttributeSet a, boolean forceOff) {
-      boolean listOn = false;
       Element parent;
-      Element elem;
       SHTMLDocument doc = (SHTMLDocument) getDocument();
       try {
       doc.startCompoundEdit();
       Element first = doc.getParagraphElement(getSelectionStart());
       int oStart = getSelectionStart();
       int oEnd = getSelectionEnd();
-      if(oEnd > doc.getLength()- 6){
+      if(oEnd > doc.getLastDocumentPosition()- 1){
           return;
       }
       int start = first.getStartOffset();
@@ -938,7 +914,7 @@ public class DeleteNextCharAction extends AbstractAction{
                       }
                       if(!iStarted) {
                           iStarted = true;
-                          if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
+                          if(!mergeList) {
                               w.startTag(tag, la);
                           }
                       }
@@ -1084,7 +1060,6 @@ public class DeleteNextCharAction extends AbstractAction{
           // start row tag
           w.startTag(tr, null);
           // get width of each cell according to column count
-          String tdWidth = Integer.toString(100 / colCount);
           // build cell width attribute
           Util.styleSheet().addCSSAttribute(set,
                             CSS.Attribute.WIDTH,
@@ -1151,8 +1126,6 @@ public class DeleteNextCharAction extends AbstractAction{
    */
   public void insertAnchor(String anchorName) {
     if(getSelectionStart() != getSelectionEnd()) {
-      String a = HTML.Tag.A.toString();
-      String selectedText = getSelectedText();
       SimpleAttributeSet aSet = new SimpleAttributeSet();
       aSet.addAttribute(HTML.Attribute.NAME, anchorName);
       SimpleAttributeSet set = new SimpleAttributeSet();
@@ -1307,7 +1280,6 @@ public class DeleteNextCharAction extends AbstractAction{
    */
   public void removeAnchor(String anchorName) {
     //System.out.println("SHTMLEditorPane removeAnchor");
-    String aTag = HTML.Tag.A.toString();
     AttributeSet attrs;
     Object nameAttr;
     Object link;
@@ -2024,11 +1996,7 @@ public class DeleteNextCharAction extends AbstractAction{
    */
   public void replaceSelection(HTMLText content) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
-    String text;
     Caret caret = getCaret();
-    int insertPos = 0;
-    int i;
-    int contentSize;
     if (doc != null) {
       try {
         int p0 = Math.min(caret.getDot(), caret.getMark());
@@ -2107,7 +2075,6 @@ public class DeleteNextCharAction extends AbstractAction{
   /** a drag gesture has been initiated */
   public void dragGestureRecognized(DragGestureEvent event) {
     int selStart = getSelectionStart();
-    int selEnd = getSelectionEnd();
     try {
       if( (lastSelEnd > lastSelStart) &&
           (selStart >= lastSelStart) &&
@@ -2374,7 +2341,7 @@ public class DeleteNextCharAction extends AbstractAction{
                     result = true;
                 }
                 else{
-                    result = defaultTransferHandler.importData(comp, t);
+                    result = defaultImportData(comp, t);
                 }
             }
             catch (Exception e) {
@@ -2382,6 +2349,10 @@ public class DeleteNextCharAction extends AbstractAction{
             }
             doc.endCompoundEdit();
             return result;
+        }
+
+        private boolean defaultImportData(JComponent comp, Transferable t) {
+            return defaultTransferHandler.importData(comp, t);
         }
       }
       return new LocalTransferHandler();

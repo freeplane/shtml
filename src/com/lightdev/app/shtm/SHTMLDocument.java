@@ -28,9 +28,6 @@ import javax.swing.text.html.HTMLDocument;
 
 import javax.swing.text.html.*;
 import javax.swing.text.html.HTML.Tag;
-import javax.swing.text.html.HTMLDocument.BlockElement;
-import javax.swing.text.html.HTMLDocument.RunElement;
-import javax.swing.text.html.HTMLEditorKit.InsertHTMLTextAction;
 import javax.swing.text.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
@@ -63,7 +60,11 @@ import javax.swing.event.*;
 
 public class SHTMLDocument extends HTMLDocument {
 
-  private AttributeContext context;
+    public static final String SUFFIX = "&nbsp;";
+
+    private static Set paragraphElements;
+
+    private AttributeContext context;
   private CompoundEdit compoundEdit;
   private int compoundEditDepth;
   private boolean inSetParagraphAttributes = false;
@@ -468,6 +469,12 @@ public void startCompoundEdit() {
     boolean inSpan = false;
     boolean emptyDocument;
 
+    private int paragraphLevel;
+    private boolean inBody;
+    private boolean paragraphCreated;
+
+    private boolean isParagraphTag;
+
     /**
      * Constructor
      * @param emttyDocument 
@@ -475,6 +482,9 @@ public void startCompoundEdit() {
     public SHTMLReader(int offset, boolean emptyDocument) {
       super(offset, 0, 0, null);
       this.emptyDocument = emptyDocument;
+      inBody = false;
+      paragraphLevel = 0;
+      paragraphCreated = false;
     }
 
     /**
@@ -487,6 +497,21 @@ public void startCompoundEdit() {
      * Otherwise let HTMLDocument.HTMLReader do the work.
      */
     public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
+        if(t == HTML.Tag.BODY){
+            inBody = true;
+        }
+        else if(inBody){
+            isParagraphTag = isParagraphTag(t);
+            if(isParagraphTag){
+                if(paragraphCreated && paragraphLevel == 0){
+                    insertParagraphEndTag(pos);
+                }
+                paragraphLevel++;
+            }
+            else if(! paragraphCreated && paragraphLevel == 0){
+                insertParagraphStartTag(pos);
+            }
+        }
       if(t == HTML.Tag.SPAN) {
         handleStartSpan(a);
       }
@@ -496,6 +521,45 @@ public void startCompoundEdit() {
             charAttr.removeAttribute(t);
         }
       }
+    }
+
+    private void insertParagraphStartTag(int pos) {
+        super.handleStartTag(HTML.Tag.P, new SimpleAttributeSet(), pos);
+        paragraphCreated =true;
+    }
+
+    private void insertParagraphEndTag(int pos) {
+        super.handleEndTag(HTML.Tag.P, pos);
+        paragraphCreated = false;
+    }
+
+    private boolean isParagraphTag(Tag t) {
+        if(paragraphElements == null){
+            paragraphElements = new HashSet();
+            paragraphElements.add(HTML.Tag.DIR);
+            paragraphElements.add(HTML.Tag.DIV);
+            paragraphElements.add(HTML.Tag.DL);
+            paragraphElements.add(HTML.Tag.DT);
+            paragraphElements.add(HTML.Tag.FRAMESET);
+            paragraphElements.add(HTML.Tag.H1);
+            paragraphElements.add(HTML.Tag.H2);
+            paragraphElements.add(HTML.Tag.H3);
+            paragraphElements.add(HTML.Tag.H4);
+            paragraphElements.add(HTML.Tag.H5);
+            paragraphElements.add(HTML.Tag.H6);
+            paragraphElements.add(HTML.Tag.HR);
+            paragraphElements.add(HTML.Tag.LI);
+            paragraphElements.add(HTML.Tag.MENU);
+            paragraphElements.add(HTML.Tag.OL);
+            paragraphElements.add(HTML.Tag.P);
+            paragraphElements.add(HTML.Tag.PRE);
+            paragraphElements.add(HTML.Tag.TABLE);
+            paragraphElements.add(HTML.Tag.TD);
+            paragraphElements.add(HTML.Tag.TH);
+            paragraphElements.add(HTML.Tag.TR);
+            paragraphElements.add(HTML.Tag.UL);
+        }
+        return paragraphElements.contains(t);
     }
 
     private void handleStartSpan(MutableAttributeSet a) {
@@ -526,6 +590,9 @@ public void startCompoundEdit() {
      * to handleStartTag and handleEndTag respectively.
      */
     public void handleSimpleTag(HTML.Tag t, MutableAttributeSet a, int pos) {
+        if(! paragraphCreated && paragraphLevel == 0){
+            insertParagraphStartTag(pos);
+        }
       if(t == HTML.Tag.SPAN) {
         if(inSpan) {
           handleEndTag(t, pos);
@@ -544,21 +611,44 @@ public void startCompoundEdit() {
      * otherwise, let HTMLDocument.HTMLReader do the work
      */
     public void handleEndTag(HTML.Tag t, int pos) {
+        if(t == HTML.Tag.BODY ){
+            if (paragraphCreated){
+                insertParagraphEndTag(pos);
+            }
+            inBody = false;
+        }
       if(t == HTML.Tag.SPAN) {
         handleEndSpan();
       }
       else {
           if(emptyDocument && t == HTML.Tag.BODY){
-              char data[] = "<END>".toCharArray();
-            final SimpleAttributeSet set = new SimpleAttributeSet();
-//            StyleConstants.setBackground(set, Color.BLUE);
-//            StyleConstants.setForeground(set, Color.WHITE);
+              char data[] = " ".toCharArray();
+            final SimpleAttributeSet set = getEndingAttributeSet();
             super.handleStartTag(HTML.Tag.P, set, pos);  
             super.handleText(data, pos);
             super.handleEndTag(HTML.Tag.P, pos);  
           }
         super.handleEndTag(t, pos);
       }
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleComment(char[], int)
+     */
+    public void handleComment(char[] data, int pos) {
+        if(emptyDocument){
+            super.handleComment(data, pos);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
+     */
+    public void handleText(char[] data, int pos) {
+        if(! paragraphCreated && paragraphLevel == 0){
+            insertParagraphStartTag(pos);
+        }
+        super.handleText(data, pos);
     }
 
     private void handleEndSpan() {
@@ -600,29 +690,6 @@ public void startCompoundEdit() {
       }
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLDocument.HTMLReader#addContent(char[], int, int, boolean)
-     */
-    protected void addContent(char[] data, int offs, int length, boolean generateImpliedPIfNecessary) {
-        // TODO Auto-generated method stub
-        super.addContent(data, offs, length, generateImpliedPIfNecessary);
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLDocument.HTMLReader#addContent(char[], int, int)
-     */
-    protected void addContent(char[] data, int offs, int length) {
-        // TODO Auto-generated method stub
-        super.addContent(data, offs, length);
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
-     */
-    public void handleText(char[] data, int pos) {
-        // TODO Auto-generated method stub
-        super.handleText(data, pos);
-    }
   }
 
   /* -------- custom reader implementation end -------- */
@@ -690,6 +757,11 @@ public Element getParagraphElement(int pos) {
     return element;
 }
 
+public int getLastDocumentPosition(){
+    final int length = getLength();
+    final int suffixLength = 1;
+    return length > suffixLength ? length - suffixLength : length;
+}
 /* (non-Javadoc)
  * @see javax.swing.text.html.HTMLDocument#setParagraphAttributes(int, int, javax.swing.text.AttributeSet, boolean)
  */
@@ -700,6 +772,12 @@ public void setParagraphAttributes(int offset, int length, AttributeSet s, boole
     super.setParagraphAttributes(offset, length, s, replace);
     inSetParagraphAttributes = false;
     endCompoundEdit();
+}
+
+private SimpleAttributeSet getEndingAttributeSet() {
+    final SimpleAttributeSet set = new SimpleAttributeSet();
+    StyleConstants.setBackground(set, Color.GRAY);
+    return set;
 }
 
 }
