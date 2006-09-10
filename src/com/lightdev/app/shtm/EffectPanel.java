@@ -65,9 +65,9 @@ class EffectPanel extends JPanel implements AttributeComponent {
     super(new GridLayout(3,1,3,3));
 
     /** initialize the line effects button group */
-    noLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "noLineLabel"));
-    uLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "uLineLabel"));
-    strike = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "strikeLabel"));
+    noLine = new JRadioButton(Util.getResourceString(SHTMLPanelImpl.resources, "noLineLabel"));
+    uLine = new JRadioButton(Util.getResourceString(SHTMLPanelImpl.resources, "uLineLabel"));
+    strike = new JRadioButton(Util.getResourceString(SHTMLPanelImpl.resources, "strikeLabel"));
     ButtonGroup effectGroup = new ButtonGroup();
     effectGroup.add(noLine);
     effectGroup.add(uLine);
@@ -75,7 +75,7 @@ class EffectPanel extends JPanel implements AttributeComponent {
 
     //JPanel linePanel = new JPanel(new GridLayout(3,1,3,3));
     setBorder(new TitledBorder(new EtchedBorder(
-            EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanelImpl.resources, "effectLabel")));
+            EtchedBorder.LOWERED), Util.getResourceString(SHTMLPanelImpl.resources, "effectLabel")));
     Font font = UIManager.getFont("TextField.font");
     uLine.setFont(font);
     strike.setFont(font);

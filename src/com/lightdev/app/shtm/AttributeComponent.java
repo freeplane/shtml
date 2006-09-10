@@ -36,7 +36,7 @@ import javax.swing.text.AttributeSet;
  * 
  */
 
-public interface AttributeComponent {
+interface AttributeComponent {
 
   /**
    * set the value of this <code>AttributeComponent</code>

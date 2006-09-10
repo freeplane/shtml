@@ -340,7 +340,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    * @return the string with the given name or null, if none is found
    */
   public String getOwnerResString(String nm) {
-    return owner.getDynRes().getResourceString(owner.getResources(), nm);
+    return Util.getResourceString(owner.getResources(), nm);
   }
 
   /**

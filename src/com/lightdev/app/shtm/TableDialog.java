@@ -154,7 +154,7 @@ class TableDialog extends DialogShell {
     JPanel cellPanel = new JPanel(new BorderLayout());
     cellPanel.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
-                  DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cellPanelTitle")));
+                  Util.getResourceString(SHTMLPanelImpl.resources, "cellPanelTitle")));
 
     // construct tabbed pane for various cell settings
     JTabbedPane tp = new JTabbedPane();
@@ -163,12 +163,12 @@ class TableDialog extends DialogShell {
     // add general panel to tabbed pane
     StylePanel sp = new StylePanel(StylePanel.TYPE_TABLE_CELL);
     cellComponents.add(sp);
-    tp.add(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cellGenTabLabel"), sp);
+    tp.add(Util.getResourceString(SHTMLPanelImpl.resources, "cellGenTabLabel"), sp);
 
     // add padding panel to cell components and tabbed pane
     MarginPanel mp = new MarginPanel();
     cellComponents.add(mp);
-    tp.add(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cellMarginTabLabel"),mp);
+    tp.add(Util.getResourceString(SHTMLPanelImpl.resources, "cellMarginTabLabel"),mp);
 
     // construct border panel
     BorderPanel bPanel = new BorderPanel();
@@ -177,16 +177,16 @@ class TableDialog extends DialogShell {
     cellComponents.add(bPanel);
 
     // add border panel to tabbed pane
-    tp.add(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cellBorderTabLabel"), bPanel);
+    tp.add(Util.getResourceString(SHTMLPanelImpl.resources, "cellBorderTabLabel"), bPanel);
 
     // create cell range panel
     JPanel crPanel = new JPanel();
     String[] cellRangeSelection = new String[] {
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "thisCellRangeLabel"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "thisColRangeLabel"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "thisRowRangeLabel"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "allCellsRangeLabel")};
-    crPanel.add(new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "applyCellAttrLabel")));
+      Util.getResourceString(SHTMLPanelImpl.resources, "thisCellRangeLabel"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "thisColRangeLabel"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "thisRowRangeLabel"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "allCellsRangeLabel")};
+    crPanel.add(new JLabel(Util.getResourceString(SHTMLPanelImpl.resources, "applyCellAttrLabel")));
     cellRange = new JComboBox(cellRangeSelection);
     crPanel.add(cellRange);
 
@@ -228,10 +228,10 @@ class TableDialog extends DialogShell {
     JPanel tablePanel = new JPanel(g);
     tablePanel.setBorder(new TitledBorder(new EtchedBorder(
 		  EtchedBorder.LOWERED),
-		  DynamicResource.getResourceString(SHTMLPanelImpl.resources, "tablePanelTitle")));
+		  Util.getResourceString(SHTMLPanelImpl.resources, "tablePanelTitle")));
 
     // table width label
-    JLabel lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "tableWidthLabel"));
+    JLabel lb = new JLabel(Util.getResourceString(SHTMLPanelImpl.resources, "tableWidthLabel"));
     Util.addGridBagComponent(tablePanel, lb, g, c, 0, 0, GridBagConstraints.EAST);
 
     // table width combo box
@@ -244,7 +244,7 @@ class TableDialog extends DialogShell {
     tableComponents.addElement(ssp);
 
     // table background color label
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "tableBgColLabel"));
+    lb = new JLabel(Util.getResourceString(SHTMLPanelImpl.resources, "tableBgColLabel"));
     Util.addGridBagComponent(tablePanel, lb, g, c, 0, 1, GridBagConstraints.EAST);
 
     // table background color panel
@@ -254,14 +254,14 @@ class TableDialog extends DialogShell {
     tableComponents.addElement(cp);
 
     // table alignment label
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "alignLabel"));
+    lb = new JLabel(Util.getResourceString(SHTMLPanelImpl.resources, "alignLabel"));
     Util.addGridBagComponent(tablePanel, lb, g, c, 0, 2, GridBagConstraints.EAST);
 
     // table alignment combo box
     String[] items = new String[] {
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "alignLeft"),
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "alignCenter"),
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "alignRight") };
+        Util.getResourceString(SHTMLPanelImpl.resources, "alignLeft"),
+        Util.getResourceString(SHTMLPanelImpl.resources, "alignCenter"),
+        Util.getResourceString(SHTMLPanelImpl.resources, "alignRight") };
     String[] names = new String[] {"left", "center", "right"};
     AttributeComboBox tAlgn = new AttributeComboBox(items, names,
 					        CSS.Attribute.TEXT_ALIGN, HTML.Attribute.ALIGN);

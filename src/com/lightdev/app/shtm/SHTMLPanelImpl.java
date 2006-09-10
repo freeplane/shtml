@@ -654,7 +654,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
       }
       catch (Exception e) {
           Util.errMsg(this,
-                  dynRes.getResourceString(resources, "helpNotFoundError"),
+                  Util.getResourceString(resources, "helpNotFoundError"),
                   e);
       }
   }
@@ -809,7 +809,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     Dimension separatorSize = new Dimension(3, 24);
     JSeparator separator;
     String[] itemKeys = Util.tokenize(
-        dynRes.getResourceString(resources, nm), " ");
+        Util.getResourceString(resources, nm), " ");
     JToolBar toolBar = new JToolBar();
     toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE );
     for (int i = 0; i < itemKeys.length; i++) {
@@ -864,7 +864,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
           newButton.addActionListener(
               new CSH.DisplayHelpFromSource(getHelpBroker()));
           newButton.setIcon(dynRes.getIconForCommand(resources, itemKeys[i]));
-          newButton.setToolTipText(dynRes.getResourceString(
+          newButton.setToolTipText(Util.getResourceString(
               resources, itemKeys[i] + dynRes.toolTipSuffix));
           toolBar.add(newButton);
         }
@@ -993,7 +993,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
      * that way, we catch the exception here.
      */
     catch(DocNameMissingException e) {
-      Util.errMsg(this, dynRes.getResourceString(resources, "docNameMissingError"), e);
+      Util.errMsg(this, Util.getResourceString(resources, "docNameMissingError"), e);
     }
   }
 
@@ -1015,7 +1015,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     /*else {
       action.putValue(Action.SMALL_ICON, emptyIcon);
     }*/
-    String toolTip = DynamicResource.getResourceString(resources, cmd + DynamicResource.toolTipSuffix);
+    String toolTip = Util.getResourceString(resources, cmd + DynamicResource.toolTipSuffix);
     if(toolTip != null) {
       action.putValue(Action.SHORT_DESCRIPTION, toolTip);
     }

@@ -68,11 +68,11 @@ public class PluginManagerDialog extends DialogShell implements
   private JList pluginNames;
 
   /** constant for activation button label */
-  private String activateName = DynamicResource.getResourceString(
+  private String activateName = Util.getResourceString(
       SHTMLPanelImpl.resources, "activatePlugin");
 
   /** constant for deactivation button label */
-  private String deactivateName = DynamicResource.getResourceString(
+  private String deactivateName = Util.getResourceString(
       SHTMLPanelImpl.resources, "deactivatePlugin");
 
   /** button to toggle plug-in activation state */
@@ -91,7 +91,7 @@ public class PluginManagerDialog extends DialogShell implements
     super(parent, title);
     Container contentPane = super.getContentPane();
 
-    okButton.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "close"));
+    okButton.setText(Util.getResourceString(SHTMLPanelImpl.resources, "close"));
     cancelButton.setVisible(false);
 
     GridBagLayout g;
@@ -101,7 +101,7 @@ public class PluginManagerDialog extends DialogShell implements
     JPanel pluginPanel = new JPanel(new BorderLayout());
     pluginPanel.setBorder(
         new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(
+        Util.getResourceString(
         SHTMLPanelImpl.resources, "pluginPanelTitle")));
     //pluginPanel.setMinimumSize(new Dimension(400, 400));
 
@@ -124,7 +124,7 @@ public class PluginManagerDialog extends DialogShell implements
     /** create panel to edit settings for a plug-in */
     g = new GridBagLayout();
     JPanel pluginSettingsPanel = new JPanel(g);
-    toggleActivationCheckbox = new JCheckBox(DynamicResource.getResourceString(
+    toggleActivationCheckbox = new JCheckBox(Util.getResourceString(
         SHTMLPanelImpl.resources, "togglePluginActivationCheckbox"));
     toggleActivationCheckbox.setEnabled(false);
     toggleActivationCheckbox.addActionListener(this);
@@ -132,14 +132,14 @@ public class PluginManagerDialog extends DialogShell implements
                              g, c, 0, 0, GridBagConstraints.WEST);
 
     Util.addGridBagComponent(pluginSettingsPanel, new JLabel(
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "dockLocationLabel")),
+        Util.getResourceString(SHTMLPanelImpl.resources, "dockLocationLabel")),
                              g, c, 0, 1, GridBagConstraints.EAST);
     String[] locations = {
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationNone"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationTop"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationRight"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationBottom"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationLeft"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationNone"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationTop"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationRight"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationBottom"),
+      Util.getResourceString(SHTMLPanelImpl.resources, "pluginDockLocationLeft"),
     };
     dockLocation = new JComboBox(locations);
     dockLocation.setEnabled(false);
@@ -155,7 +155,7 @@ public class PluginManagerDialog extends DialogShell implements
     centerPanel.add(centerWestPanel, BorderLayout.WEST);
     centerPanel.setBorder(
         new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(
+        Util.getResourceString(
         SHTMLPanelImpl.resources, "pluginSettingsPanelTitle")));
     //centerPanel.setPreferredSize(new Dimension(200,400));
     contentPane.add(centerPanel, BorderLayout.CENTER);

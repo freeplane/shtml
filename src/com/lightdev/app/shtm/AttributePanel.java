@@ -45,7 +45,7 @@ import java.awt.event.*;
  * 
  */
 
-public abstract class AttributePanel extends JPanel
+abstract class AttributePanel extends JPanel
     implements AttributeComponent, ContainerListener
 {
 

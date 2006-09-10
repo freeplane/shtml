@@ -20,8 +20,8 @@
 package com.lightdev.app.shtm;
 
 import java.awt.Component;
-import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Locale;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -89,7 +89,7 @@ import java.net.URL;
  * 
  */
 
-public class DynamicResource {
+class DynamicResource {
 
   /** name constant for labels in the resource file */
   private static final String labelSuffix = "Label";
@@ -147,7 +147,7 @@ public class DynamicResource {
    */
   public SHTMLMenuBar createMenubar(ResourceBundle resources, String name) {
     SHTMLMenuBar mb = new SHTMLMenuBar();
-    String[] menuKeys = Util.tokenize(getResourceString(resources, name), " ");
+    String[] menuKeys = Util.tokenize(Util.getResourceString(resources, name), " ");
     for (int i = 0; i < menuKeys.length; i++) {
       JMenu m = createMenu(resources, menuKeys[i]);
       if (m != null) {
@@ -167,12 +167,12 @@ public class DynamicResource {
    */
   public JMenu createMenu(ResourceBundle resources, String key) {
     JMenu menu = null;
-    String def = getResourceString(resources, key);
+    String def = Util.getResourceString(resources, key);
     if(def == null) {
       def = "";
     }
     String[] itemKeys = Util.tokenize(def, " ");
-    menu = new JMenu(getResourceString(resources, key + labelSuffix));
+    menu = new JMenu(Util.getResourceString(resources, key + labelSuffix));
     for (int i = 0; i < itemKeys.length; i++) {
       if (itemKeys[i].equals(menuSeparatorKey)) {
         menu.addSeparator();
@@ -209,9 +209,9 @@ public class DynamicResource {
      * menu item is associated to (see below).
      */
     JMenuItem mi;
-    mi = new JMenuItem(getResourceString(resources, cmd + labelSuffix));
+    mi = new JMenuItem(Util.getResourceString(resources, cmd + labelSuffix));
 
-    String astr = getResourceString(resources, cmd + actionSuffix);
+    String astr = Util.getResourceString(resources, cmd + actionSuffix);
     if (astr == null) {
       astr = cmd;
     }
@@ -284,7 +284,6 @@ public class DynamicResource {
     catch (MissingResourceException mre) { }
     return str;
   }
-
   /**
    * listen to menu select events for proper updating of menu items
    *
@@ -428,7 +427,7 @@ public class DynamicResource {
    * @return the resource location as a URL
    */
   static public URL getResource(ResourceBundle resources, String key) {
-    String name = getResourceString(resources, key);
+    String name = Util.getResourceString(resources, key);
     if (name != null/* && !name.endsWith(IMAGE_EMPTY)*/) {
       URL url = DynamicResource.class.getResource(name);
       return url;
@@ -451,7 +450,7 @@ public class DynamicResource {
     java.awt.Dimension buttonSize = new java.awt.Dimension(24,24);
     java.awt.Dimension separatorSize = new java.awt.Dimension(3, 20);
     JSeparator separator;
-    String[] itemKeys = Util.tokenize(getResourceString(resources, nm), " ");
+    String[] itemKeys = Util.tokenize(Util.getResourceString(resources, nm), " ");
     JToolBar toolBar = new JToolBar();
     toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE );
     for (int i = 0; i < itemKeys.length; i++) {

@@ -58,7 +58,7 @@ class ManagePluginsAction extends AbstractAction
   public void actionPerformed(ActionEvent e) {
     final Component source = (Component)e.getSource();
     PluginManagerDialog pmd = new PluginManagerDialog(JOptionPane.getFrameForComponent(source),
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources,
+        Util.getResourceString(SHTMLPanelImpl.resources,
         "pluginManagerDialogTitle"));
     Util.center(source, pmd);
     pmd.setModal(true);

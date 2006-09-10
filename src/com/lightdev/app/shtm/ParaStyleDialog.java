@@ -55,7 +55,7 @@ class ParaStyleDialog extends DialogShell
     implements AttributeComponent, ActionListener, ListSelectionListener, ChangeListener
 {
 
-  private String standardStyleName = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
+  private String standardStyleName = Util.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
 
   /** mode to edit named styles with this dialog */
   private static int MODE_NAMED_STYLES = 1;
@@ -161,7 +161,7 @@ class ParaStyleDialog extends DialogShell
     sp = new StylePanel(StylePanel.TYPE_PARAGRAPH);
     sp.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
-                  DynamicResource.getResourceString(
+                  Util.getResourceString(
                   SHTMLPanelImpl.resources, "cellGenTabLabel")));
     components.add(sp);
 
@@ -170,7 +170,7 @@ class ParaStyleDialog extends DialogShell
     components.add(mp);
     mp.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
-                  DynamicResource.getResourceString(
+                  Util.getResourceString(
                   SHTMLPanelImpl.resources, "cellMarginTabLabel")));
 
     if(mode == MODE_NAMED_STYLES) {
@@ -191,12 +191,12 @@ class ParaStyleDialog extends DialogShell
 
       // create a panel to control the styles
       JPanel btnPanel = new JPanel(new GridLayout(3, 1, 5, 5));
-      saveStyleBtn = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "saveStyleButtonLabel"));
+      saveStyleBtn = new JButton(Util.getResourceString(SHTMLPanelImpl.resources, "saveStyleButtonLabel"));
       saveStyleBtn.addActionListener(this);
       saveStyleBtn.setEnabled(false);
-      saveStyleAsBtn = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "saveStyleAsButtonLabel"));
+      saveStyleAsBtn = new JButton(Util.getResourceString(SHTMLPanelImpl.resources, "saveStyleAsButtonLabel"));
       saveStyleAsBtn.addActionListener(this);
-      deleteStyleBtn = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "deleteStyleButtonLabel"));
+      deleteStyleBtn = new JButton(Util.getResourceString(SHTMLPanelImpl.resources, "deleteStyleButtonLabel"));
       deleteStyleBtn.addActionListener(this);
       deleteStyleBtn.setEnabled(false);
       btnPanel.add(saveStyleBtn);
@@ -214,7 +214,7 @@ class ParaStyleDialog extends DialogShell
       nsPanel.add(hPanel, BorderLayout.EAST);
       nsPanel.setBorder(new TitledBorder(new EtchedBorder(
           EtchedBorder.LOWERED),
-          DynamicResource.getResourceString(
+          Util.getResourceString(
           SHTMLPanelImpl.resources, "stylePanelLabel")));
       nsPanel.setVisible(mode == MODE_NAMED_STYLES);
 
@@ -223,7 +223,7 @@ class ParaStyleDialog extends DialogShell
       hPanel.add(sp, BorderLayout.NORTH);
       hPanel.add(nsPanel, BorderLayout.CENTER);
 
-      okButton.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "closeLabel"));
+      okButton.setText(Util.getResourceString(SHTMLPanelImpl.resources, "closeLabel"));
     }
     else {
       hPanel = new JPanel(new BorderLayout());
@@ -237,7 +237,7 @@ class ParaStyleDialog extends DialogShell
     paraPanel.add(mp, BorderLayout.EAST);
 
     // add paragraph panel to tabbed pane
-    tp.add(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "paraTabLabel"), paraPanel);
+    tp.add(Util.getResourceString(SHTMLPanelImpl.resources, "paraTabLabel"), paraPanel);
 
     // create font panel and add to tabbed pane
     fp = new FontPanel();
@@ -252,7 +252,7 @@ class ParaStyleDialog extends DialogShell
       if(((mode == MODE_PARAGRAPH_STYLE) && (!writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32))) ||
           (mode == MODE_NAMED_STYLES))
       {
-        tp.add(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "fontTabLabel"), fp);
+        tp.add(Util.getResourceString(SHTMLPanelImpl.resources, "fontTabLabel"), fp);
       }
     }
     catch(ClassNotFoundException e) {}
@@ -276,16 +276,16 @@ class ParaStyleDialog extends DialogShell
    */
   private void initContentTypes() {
     cTypes = new Hashtable();
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNamePara"), HTML.Tag.P.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead1"), HTML.Tag.H1.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead2"), HTML.Tag.H2.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead3"), HTML.Tag.H3.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead4"), HTML.Tag.H4.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead5"), HTML.Tag.H5.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead6"), HTML.Tag.H6.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameLink"), HTML.Tag.A.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameUL"), HTML.Tag.UL.toString());
-    cTypes.put(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cTagNameOL"), HTML.Tag.OL.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNamePara"), HTML.Tag.P.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead1"), HTML.Tag.H1.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead2"), HTML.Tag.H2.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead3"), HTML.Tag.H3.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead4"), HTML.Tag.H4.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead5"), HTML.Tag.H5.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead6"), HTML.Tag.H6.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameLink"), HTML.Tag.A.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameUL"), HTML.Tag.UL.toString());
+    cTypes.put(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameOL"), HTML.Tag.OL.toString());
   }
 
   /**
@@ -439,7 +439,7 @@ class ParaStyleDialog extends DialogShell
   private void doSaveStyleAs() {
     String initialName = getSelectedStyleName();
     if(initialName == null) {
-      initialName = DynamicResource.getResourceString(
+      initialName = Util.getResourceString(
           SHTMLPanelImpl.resources, "newStyleDefaultName");
     }
     String newStyleName = Util.nameInput(null, initialName, "styleNameInputTitle", "styleNameInputText");

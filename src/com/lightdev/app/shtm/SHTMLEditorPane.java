@@ -1245,7 +1245,7 @@ class DeleteNextCharAction extends AbstractAction{
   private void setTextLink(Element e, String href, String className, String linkText, SHTMLDocument doc) {
     SimpleAttributeSet aSet = new SimpleAttributeSet();
     aSet.addAttribute(HTML.Attribute.HREF, href);
-    String sStyleName = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
+    String sStyleName = Util.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
     if(className != null && !className.equalsIgnoreCase(sStyleName)) {
       aSet.addAttribute(HTML.Attribute.CLASS, className);
     }

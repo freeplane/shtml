@@ -56,7 +56,7 @@ class MarginPanel extends AttributePanel {
     // set border and title and add margin panel
     margin.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "marginLabel")));
+        Util.getResourceString(SHTMLPanelImpl.resources, "marginLabel")));
     this.add(margin);
 
     // construct padding panel
@@ -65,7 +65,7 @@ class MarginPanel extends AttributePanel {
     // set border and title adn add padding panel
     padding.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "paddingLabel")));
+        Util.getResourceString(SHTMLPanelImpl.resources, "paddingLabel")));
     this.add(padding);
   }
 
