@@ -27,7 +27,7 @@ import com.lightdev.app.shtm.Util;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Locale;
-import com.lightdev.app.shtm.SHTMLPanel;
+import com.lightdev.app.shtm.SHTMLPanelImpl;
 import javax.swing.JFrame;
 import java.util.prefs.*;
 import javax.help.*;
@@ -87,7 +87,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * this is called by the PluginManager directly after instantiating the plug-in
    */
-  public void initPlugin(SHTMLPanel owner) { this.owner = owner; }
+  public void initPlugin(SHTMLPanelImpl owner) { this.owner = owner; }
 
   /**
    * create the plug-in menu
@@ -162,7 +162,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    * @param helpMenuId  the id of the help menu for this plug-in in the
    * ResourceBundle, or null if no help menu is to be created
    */
-  public void initPlugin(SHTMLPanel owner, String internalName, String pluginMenuId,
+  public void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId,
                         String helpMenuId) {
     this.owner = owner; 
     this.internalName = internalName;
@@ -170,8 +170,8 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
     this.helpMenuId = helpMenuId;
     try {
       //System.out.println("AbstractPlugin this.getClass.getName=" + this.getClass().getName());
-      if(SHTMLPanel.pluginManager != null) {
-        ClassLoader plLoader = SHTMLPanel.pluginManager.getPluginLoader();
+      if(SHTMLPanelImpl.pluginManager != null) {
+        ClassLoader plLoader = SHTMLPanelImpl.pluginManager.getPluginLoader();
         if(plLoader != null) {
           resources = ResourceBundle.getBundle(
               this.getClass().getName(), Locale.getDefault(), plLoader);
@@ -206,7 +206,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * @param owner  the main frame of the instance of SimplyHTML creating the plug-in
    */
-  public void setOwner(SHTMLPanel owner) {
+  public void setOwner(SHTMLPanelImpl owner) {
     this.owner = owner;
   }
 
@@ -215,7 +215,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * @return the owner of this plug-in
    */
-  public SHTMLPanel getOwner() {
+  public SHTMLPanelImpl getOwner() {
     return owner;
   }
 
@@ -400,7 +400,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
   protected Preferences prefs;
 
   /** the owner of this plug in */
-  protected SHTMLPanel owner;
+  protected SHTMLPanelImpl owner;
 
   /* ------------- class fields end ------------------ */
 }

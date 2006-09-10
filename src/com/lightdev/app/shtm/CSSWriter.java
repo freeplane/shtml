@@ -44,7 +44,7 @@ import java.util.Enumeration;
  * 
  */
 
-public class CSSWriter {
+class CSSWriter {
 
   /** spaces for indent */
   private char[] indentChars;

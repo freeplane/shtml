@@ -47,7 +47,7 @@ import javax.swing.text.AttributeSet;
  * 
  */
 
-public class FontDialog extends DialogShell {
+class FontDialog extends DialogShell {
 
   /** the font panel to use in this dialog */
   private FontPanel fontPanel;

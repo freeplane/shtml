@@ -31,7 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 
-import com.lightdev.app.shtm.SHTMLPanel;
+import com.lightdev.app.shtm.SHTMLPanelImpl;
 
 /**
  * Class that displays a splash screen
@@ -45,7 +45,7 @@ private static int counter;
     private SplashScreen() {
         try {
             JPanel panel = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(DynamicResource.getResourceString(SHTMLPanel.resources, "splashImage")));
+            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "splashImage")));
             panel.add(new JLabel(icon), BorderLayout.CENTER);
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getContentPane().add(panel);

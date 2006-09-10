@@ -42,7 +42,7 @@ import javax.swing.text.StyleConstants;
  * 
  */
 
-public class AttributeComboBox extends JComboBox implements
+class AttributeComboBox extends JComboBox implements
     AttributeComponent
 {
 

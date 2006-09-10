@@ -46,7 +46,7 @@ import java.io.IOException;
  * @see com.lightdev.app.shtm.HTMLText
  */
 
-public class HTMLTextSelection  implements Transferable
+class HTMLTextSelection  implements Transferable
 {
 
   /** index of HTML text data flavor */

@@ -47,7 +47,7 @@ import javax.swing.text.html.StyleSheet;
  *
  * 
  */
-public class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
+class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
 
   /** the component showing the chosen color */
   JTextField colorDisplay = new JTextField();

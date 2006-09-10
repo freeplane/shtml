@@ -52,7 +52,7 @@ import javax.swing.border.*;
  * 
  */
 
-public class AboutBox extends JDialog implements ActionListener {
+class AboutBox extends JDialog implements ActionListener {
 
   /** button to close the dialog */
   JButton closeButton = new JButton("Close");
@@ -69,9 +69,9 @@ public class AboutBox extends JDialog implements ActionListener {
     super(parent);
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     closeButton.addActionListener(this);
-    closeButton.setText(DynamicResource.getResourceString(SHTMLPanel.resources, "closeBtnName"));
+    closeButton.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "closeBtnName"));
     constructFrame();
-    setTitle(DynamicResource.getResourceString(SHTMLPanel.resources, "aboutFrameTitle"));
+    setTitle(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "aboutFrameTitle"));
     pack();
   }
 
@@ -89,7 +89,7 @@ public class AboutBox extends JDialog implements ActionListener {
     JPanel emptyPane = new JPanel();
     LicensePane licPane = new LicensePane(new Dimension(650,200), LICENSE);
     JLabel imageLabel = new JLabel(new ImageIcon(this.getClass().
-		      getResource(DynamicResource.getResourceString(SHTMLPanel.resources, "splashImage"))));
+		      getResource(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "splashImage"))));
     JLabel emptyLabel = new JLabel("");
     JLabel appTitleLabel = new JLabel(FrmMain.APP_NAME);
     JLabel appStageLabel = new JLabel(FrmMain.VERSION);

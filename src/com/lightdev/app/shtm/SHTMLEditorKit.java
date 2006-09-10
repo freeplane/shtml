@@ -57,7 +57,7 @@ import java.util.prefs.*;
  * 
  */
 
-public class SHTMLEditorKit extends HTMLEditorKit {
+class SHTMLEditorKit extends HTMLEditorKit {
 
   public SHTMLEditorKit() {
     super();

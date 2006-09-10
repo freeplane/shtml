@@ -42,7 +42,7 @@ import javax.swing.ImageIcon;
  * 
  */
 
-public class App {
+class App {
 
   //Construct the application
   public App() {

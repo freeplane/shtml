@@ -53,7 +53,7 @@ import javax.swing.text.html.HTML;
  * 
  */
 
-public class SizeSelectorPanel extends JPanel implements AttributeComponent,
+class SizeSelectorPanel extends JPanel implements AttributeComponent,
     ActionListener
 {
 

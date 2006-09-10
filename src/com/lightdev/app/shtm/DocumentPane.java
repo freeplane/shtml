@@ -66,7 +66,7 @@ import java.util.prefs.*;
  * 
  */
 
-public class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
+class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
   /** the editor displaying the document in layout view */
   private SHTMLEditorPane editor;
@@ -183,8 +183,8 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     tpView.setTabPlacement(JTabbedPane.BOTTOM);
     tpView.add(sp, VIEW_TAB_LAYOUT);
     tpView.add(htmlSp, VIEW_TAB_HTML);
-    tpView.setTitleAt(VIEW_TAB_LAYOUT, DynamicResource.getResourceString(SHTMLPanel.resources, "layoutTabTitle"));
-    tpView.setTitleAt(VIEW_TAB_HTML, DynamicResource.getResourceString(SHTMLPanel.resources, "htmlTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_LAYOUT, DynamicResource.getResourceString(SHTMLPanelImpl.resources, "layoutTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_HTML, DynamicResource.getResourceString(SHTMLPanelImpl.resources, "htmlTabTitle"));
     tpView.addChangeListener(this);
 
     // add comnponents to content pane
@@ -207,7 +207,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   public DocumentPane(URL docToLoad, int newDocNo/*, int renderMode*/) {
     this(/*renderMode*/);
     DEFAULT_DOC_NAME = DynamicResource.getResourceString(
-        SHTMLPanel.resources, "defaultDocName");
+        SHTMLPanelImpl.resources, "defaultDocName");
     if(docToLoad != null) {
       loadDocument(docToLoad);
     }
@@ -288,7 +288,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
    * @return URL of created temporary document directoy
    */
   private URL createTempDir() throws MalformedURLException {
-    docTempDir = new File(SHTMLPanel.getAppTempDir().getAbsolutePath() +
+    docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() +
                                File.separator +
                                getDocumentName() + File.separator);
     if(!docTempDir.exists()) {
@@ -451,7 +451,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
       srcDir = new File(
           docTempDir +
           File.separator +
-          SHTMLPanel.IMAGE_DIR +
+          SHTMLPanelImpl.IMAGE_DIR +
           File.separator);
     }
     else {
@@ -460,7 +460,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
         srcDir = new File(
             new File(sourceUrl.getPath()).getParent() +
             File.separator +
-            SHTMLPanel.IMAGE_DIR +
+            SHTMLPanelImpl.IMAGE_DIR +
             File.separator);
       }
       else {
@@ -471,7 +471,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
         srcDir = new File(
             new File(savedUrl.getPath()).getParent() +
             File.separator +
-            SHTMLPanel.IMAGE_DIR +
+            SHTMLPanelImpl.IMAGE_DIR +
             File.separator);
       }
     }
@@ -486,7 +486,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
     File destDir = new File(
         new File(sourceUrl.getPath()).getParent() +
         File.separator +
-        SHTMLPanel.IMAGE_DIR +
+        SHTMLPanelImpl.IMAGE_DIR +
         File.separator);
     try {
       if(srcDir.exists()) {
@@ -809,7 +809,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
           break;
       }
     }
-    SHTMLPanel.getOwnerSHTMLPanel(this).updateActions();
+    SHTMLPanelImpl.getOwnerSHTMLPanel(this).updateActions();
   }
 
 
@@ -870,7 +870,7 @@ public class DocumentPane extends JPanel implements DocumentListener, ChangeList
   }
 
   /** the event object definition for DocumentPaneEvents */
-  public class DocumentPaneEvent extends EventObject {
+  class DocumentPaneEvent extends EventObject {
     public DocumentPaneEvent(Object source) {
       super(source);
     }

@@ -44,7 +44,7 @@ import javax.swing.text.html.HTML;
  *
  * 
  */
-public class EffectPanel extends JPanel implements AttributeComponent {
+class EffectPanel extends JPanel implements AttributeComponent {
 
   /** a radio button for the underline attribute */
   JRadioButton uLine;
@@ -65,9 +65,9 @@ public class EffectPanel extends JPanel implements AttributeComponent {
     super(new GridLayout(3,1,3,3));
 
     /** initialize the line effects button group */
-    noLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "noLineLabel"));
-    uLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "uLineLabel"));
-    strike = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "strikeLabel"));
+    noLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "noLineLabel"));
+    uLine = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "uLineLabel"));
+    strike = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "strikeLabel"));
     ButtonGroup effectGroup = new ButtonGroup();
     effectGroup.add(noLine);
     effectGroup.add(uLine);
@@ -75,7 +75,7 @@ public class EffectPanel extends JPanel implements AttributeComponent {
 
     //JPanel linePanel = new JPanel(new GridLayout(3,1,3,3));
     setBorder(new TitledBorder(new EtchedBorder(
-            EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanel.resources, "effectLabel")));
+            EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanelImpl.resources, "effectLabel")));
     Font font = UIManager.getFont("TextField.font");
     uLine.setFont(font);
     strike.setFont(font);

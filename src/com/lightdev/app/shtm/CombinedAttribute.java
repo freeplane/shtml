@@ -61,7 +61,7 @@ import javax.swing.text.Style;
  * 
  */
 
-public class CombinedAttribute {
+class CombinedAttribute {
 
   /** index of top value */
   public static final int ATTR_TOP = 0;

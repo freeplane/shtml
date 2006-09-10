@@ -33,7 +33,7 @@ package com.lightdev.app.shtm;
  *
  * 
  */
-public class DocNameMissingException extends Exception {
+class DocNameMissingException extends Exception {
   /**
    * Constructs a <code>DocNameMissingException</code> with <code>null</code>
    * as its error detail message.

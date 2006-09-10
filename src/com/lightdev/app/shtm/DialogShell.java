@@ -30,7 +30,6 @@ import java.awt.Frame;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Container;
-import javax.swing.text.AttributeSet;
 import java.awt.Dialog;
 import javax.help.*;
 
@@ -165,8 +164,8 @@ public class DialogShell extends JDialog implements ActionListener {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
     // construct dialog buttons
-    okButton = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "okBtnName"));
-    cancelButton = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "cancelBtnName"));
+    okButton = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "okBtnName"));
+    cancelButton = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cancelBtnName"));
     cancelButton.addActionListener(this);
     okButton.addActionListener(this);
 
@@ -177,11 +176,11 @@ public class DialogShell extends JDialog implements ActionListener {
 
     // construct help button
     if(helpTopicId != null) {
-      helpButton = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "helpLabel"));
+      helpButton = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "helpLabel"));
       CSH.setHelpIDString(helpButton, helpTopicId);
       if(myHelpBroker == null) {
         helpButton.addActionListener(
-            new CSH.DisplayHelpFromSource(SHTMLPanel.getHelpBroker()));
+            new CSH.DisplayHelpFromSource(SHTMLPanelImpl.getHelpBroker()));
       }
       else {
         helpButton.addActionListener(

@@ -105,7 +105,7 @@ import javax.swing.text.html.HTML;
  * @see com.lightdev.app.shtm.HTMLTextSelection
  */
 
-public class SHTMLEditorPane extends JEditorPane  implements
+class SHTMLEditorPane extends JEditorPane  implements
     DropTargetListener, DragSourceListener, DragGestureListener
 {
     private static final boolean OLD_JAVA_VERSION = System
@@ -161,12 +161,12 @@ public class SHTMLEditorPane extends JEditorPane  implements
     InputMap myInputMap = new InputMap();
 
     KeyStroke tab = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
-    myActionMap.put(SHTMLPanel.nextTableCellAction, new NextTableCellAction(SHTMLPanel.nextTableCellAction));
-    myInputMap.put(tab, SHTMLPanel.nextTableCellAction);
+    myActionMap.put(SHTMLPanelImpl.nextTableCellAction, new NextTableCellAction(SHTMLPanelImpl.nextTableCellAction));
+    myInputMap.put(tab, SHTMLPanelImpl.nextTableCellAction);
 
     KeyStroke shiftTab = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_MASK);
-    myActionMap.put(SHTMLPanel.prevTableCellAction, new PrevTableCellAction(SHTMLPanel.prevTableCellAction));
-    myInputMap.put(shiftTab,SHTMLPanel.prevTableCellAction);
+    myActionMap.put(SHTMLPanelImpl.prevTableCellAction, new PrevTableCellAction(SHTMLPanelImpl.prevTableCellAction));
+    myInputMap.put(shiftTab,SHTMLPanelImpl.prevTableCellAction);
 
     KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
     myActionMap.put(newListItemAction, new NewListItemAction());
@@ -254,7 +254,7 @@ protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boo
       setCaretPosition(0);
       doc.endCompoundEdit();
       if(OLD_JAVA_VERSION){
-          SHTMLPanel.getOwnerSHTMLPanel(this).purgeUndos();
+          SHTMLPanelImpl.getOwnerSHTMLPanel(this).purgeUndos();
       }
   }
 
@@ -291,7 +291,7 @@ private int getValidPosition(int position) {
     return validPosition;
 }
 
-public class DeletePrevCharAction extends AbstractAction{
+class DeletePrevCharAction extends AbstractAction{
     public void actionPerformed(ActionEvent e) {
         final int selectionStart = getSelectionStart();
         final int selectionEnd = getSelectionEnd();
@@ -338,7 +338,7 @@ public class DeletePrevCharAction extends AbstractAction{
     }
 }
 
-public class DeleteNextCharAction extends AbstractAction{
+class DeleteNextCharAction extends AbstractAction{
     public void actionPerformed(ActionEvent e) {
         final int selectionStart = getSelectionStart();
         if(selectionStart == getSelectionEnd()){
@@ -427,7 +427,7 @@ public class DeleteNextCharAction extends AbstractAction{
   /**
    * <code>Action</code> to create a new list item.
    */
-  public class NewListItemAction extends AbstractAction {
+  class NewListItemAction extends AbstractAction {
 
     /** action to use when not inside a table */
     /* removed for changes in J2SE 1.4.1
@@ -1245,7 +1245,7 @@ public class DeleteNextCharAction extends AbstractAction{
   private void setTextLink(Element e, String href, String className, String linkText, SHTMLDocument doc) {
     SimpleAttributeSet aSet = new SimpleAttributeSet();
     aSet.addAttribute(HTML.Attribute.HREF, href);
-    String sStyleName = DynamicResource.getResourceString(SHTMLPanel.resources, "standardStyleName");
+    String sStyleName = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
     if(className != null && !className.equalsIgnoreCase(sStyleName)) {
       aSet.addAttribute(HTML.Attribute.CLASS, className);
     }
@@ -1757,7 +1757,7 @@ public class DeleteNextCharAction extends AbstractAction{
    * <code>Action</code> to move the caret from the current table cell
    * to the next table cell.
    */
-  public class NextTableCellAction extends AbstractAction {
+  class NextTableCellAction extends AbstractAction {
 
     /** action to use when not inside a table */
     /* removed for changes in J2SE 1.4.1
@@ -1814,7 +1814,7 @@ public class DeleteNextCharAction extends AbstractAction{
    * <code>Action</code> to move the caret from the current table cell
    * to the previous table cell.
    */
-  public class PrevTableCellAction extends AbstractAction {
+  class PrevTableCellAction extends AbstractAction {
 
     /** action to use when not inside a table */
     /* removed for changes in J2SE 1.4.1
@@ -2508,16 +2508,16 @@ public class DeleteNextCharAction extends AbstractAction{
       if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString())){
           if(toggleBulletListAction == null){
               Component c = (Component)e.getSource();
-              SHTMLPanel panel = SHTMLPanel.getOwnerSHTMLPanel(c);
-              toggleBulletListAction = panel.dynRes.getAction(SHTMLPanel.toggleBulletsAction);
+              SHTMLPanelImpl panel = SHTMLPanelImpl.getOwnerSHTMLPanel(c);
+              toggleBulletListAction = panel.dynRes.getAction(SHTMLPanelImpl.toggleBulletsAction);
           }
           toggleBulletListAction.actionPerformed(e);
       }
       else if(elemName.equalsIgnoreCase(HTML.Tag.OL.toString())){
           if(toggleNumberListAction == null){
               Component c = (Component)e.getSource();
-              SHTMLPanel panel = SHTMLPanel.getOwnerSHTMLPanel(c);
-              toggleNumberListAction = panel.dynRes.getAction(SHTMLPanel.toggleNumbersAction);
+              SHTMLPanelImpl panel = SHTMLPanelImpl.getOwnerSHTMLPanel(c);
+              toggleNumberListAction = panel.dynRes.getAction(SHTMLPanelImpl.toggleNumbersAction);
           }
           toggleNumberListAction.actionPerformed(e);
       }

@@ -23,7 +23,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
-import com.lightdev.app.shtm.SHTMLPanel;
+import com.lightdev.app.shtm.SHTMLPanelImpl;
 import javax.help.*;
 import javax.help.event.*;
 
@@ -146,14 +146,14 @@ public interface SHTMLPlugin {
    *
    * @param owner  the main frame of the instance of SimplyHTML creating the plug-in
    */
-  public void setOwner(SHTMLPanel owner);
+  public void setOwner(SHTMLPanelImpl owner);
 
   /**
    * get the owner of this plug-in
    *
    * @return   the main frame of the instance of SimplyHTML that created the plug-in
    */
-  public SHTMLPanel getOwner();
+  public SHTMLPanelImpl getOwner();
 
   /**
    * get a string from the resource bundle of the owner of this plug-in
@@ -184,7 +184,7 @@ public interface SHTMLPlugin {
    * @param helpMenuId  the id of the help menu for this plug-in in the
    * ResourceBundle, or null if no help menu is to be created
    */
-  public void initPlugin(SHTMLPanel owner, String internalName, String pluginMenuId, String helpMenuId);
+  public void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId, String helpMenuId);
 
   public void initHelpMenu();
 

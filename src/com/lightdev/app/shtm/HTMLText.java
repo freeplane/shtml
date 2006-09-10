@@ -52,7 +52,7 @@ import javax.swing.text.html.*;
  * 
  */
 
-public class HTMLText {
+class HTMLText {
 
   /** the HTML representation of the text */
   private String htmlText;

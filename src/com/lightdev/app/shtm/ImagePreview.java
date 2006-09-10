@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.actions;
+package com.lightdev.app.shtm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,9 +44,9 @@ import java.awt.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
-public class ImagePreview extends JComponent implements Scrollable {
+class ImagePreview extends JComponent implements Scrollable {
 
   /**
    * scroll increment (for Scrollable implementation)

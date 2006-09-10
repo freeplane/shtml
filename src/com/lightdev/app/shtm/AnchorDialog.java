@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.actions;
+package com.lightdev.app.shtm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,12 +27,12 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
-import com.lightdev.app.shtm.DialogShell;
-import com.lightdev.app.shtm.DocumentPane;
-import com.lightdev.app.shtm.DynamicResource;
-import com.lightdev.app.shtm.SHTMLEditorPane;
-import com.lightdev.app.shtm.SHTMLPanel;
-import com.lightdev.app.shtm.Util;
+
+
+
+
+
+
 
 
 import java.util.*;
@@ -51,10 +51,10 @@ import java.net.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 
-public class AnchorDialog extends DialogShell implements
+class AnchorDialog extends DialogShell implements
     ActionListener, CaretListener, ListSelectionListener, DocumentListener
 {
 
@@ -149,14 +149,14 @@ public class AnchorDialog extends DialogShell implements
     JPanel anchorPanel = new JPanel(new BorderLayout());
     anchorPanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanel.resources, "anchorPanelLabel")));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "anchorPanelLabel")));
     //getAnchors(doc);
     anchorList = new JList(/*anchorTable.keySet().toArray()*/);
     anchorPanel.add(new JScrollPane(anchorList), BorderLayout.CENTER);
     anchorList.addListSelectionListener(this);
-    addAnchor = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "addImgBtnTitle"));
+    addAnchor = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "addImgBtnTitle"));
     addAnchor.addActionListener(this);
-    delAnchor = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "delImgBtnTitle"));
+    delAnchor = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "delImgBtnTitle"));
     delAnchor.addActionListener(this);
 
     // use a help panel to add add/del buttons
@@ -188,7 +188,7 @@ public class AnchorDialog extends DialogShell implements
     JPanel docPanel = new JPanel(new BorderLayout());
     docPanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanel.resources, "docPanelLabel")));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "docPanelLabel")));
     docPanel.add(dp, BorderLayout.CENTER);
 
     // use a help panel to properly align anchorPanel and docPanel

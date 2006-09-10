@@ -74,7 +74,7 @@ import java.util.Enumeration;
  * 
  */
 
-public class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
+class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
       ColorPanel.ColorPanelListener
 {
 
@@ -92,11 +92,11 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     sample.setEditable(false);
     sample.setPreferredSize(new Dimension(200, 50));
     sample.setHorizontalAlignment(SwingConstants.CENTER);
-    sample.setText(DynamicResource.getResourceString(SHTMLPanel.resources, "previewText"));
+    sample.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "previewText"));
     JPanel previewPanel = new JPanel(new BorderLayout());
     previewPanel.add(sample, BorderLayout.CENTER);
     previewPanel.setBorder(new TitledBorder(new EtchedBorder(
-          EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanel.resources, "previewLabel")));
+          EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanelImpl.resources, "previewLabel")));
 
     /**
      * create a pick list for family filled with
@@ -104,14 +104,14 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
      */
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     FamilyPickList family = new FamilyPickList(ge.getAvailableFontFamilyNames(),
-                          DynamicResource.getResourceString(SHTMLPanel.resources, "familyLabel"));
+                          DynamicResource.getResourceString(SHTMLPanelImpl.resources, "familyLabel"));
     family.addTitledPickListListener(this);
     fontComponents.add(family);
 
     /** create a pick list for font size */
     String[] fontSizes = new String[] {"8", "10", "12", "14", "18", "24"};
     SizePickList size = new SizePickList(fontSizes,
-        DynamicResource.getResourceString(SHTMLPanel.resources, "sizeLabel"));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "sizeLabel"));
     size.addTitledPickListListener(this);
     fontComponents.add(size);
 
@@ -124,13 +124,13 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     JPanel fontPartsPanel = new JPanel(new BorderLayout(5,5));
     fontPartsPanel.add(familySizePanel, BorderLayout.CENTER);
     String[] fontStyles = new String[] {
-      DynamicResource.getResourceString(SHTMLPanel.resources, "plainName"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "boldName"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "italicName"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "boldItalicName")};
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "plainName"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "boldName"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "italicName"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "boldItalicName")};
     StylePickList style = new StylePickList(
         fontStyles,
-        DynamicResource.getResourceString(SHTMLPanel.resources, "styleLabel"));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "styleLabel"));
     style.addTitledPickListListener(this);
     fontPartsPanel.add(style, BorderLayout.EAST);
     fontComponents.add(style);
@@ -142,12 +142,12 @@ public class FontPanel extends JPanel implements TitledPickList.TitledPickListLi
     /** create a panel for color choices */
     JPanel colorPanel = new JPanel(new GridLayout(2,1,3,3));
     colorPanel.setBorder(new TitledBorder(new EtchedBorder(
-          EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanel.resources, "colorLabel")));
-    ColorPanel fCol = new ColorPanel(DynamicResource.getResourceString(SHTMLPanel.resources, "foregroundLabel"),
+          EtchedBorder.LOWERED), DynamicResource.getResourceString(SHTMLPanelImpl.resources, "colorLabel")));
+    ColorPanel fCol = new ColorPanel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "foregroundLabel"),
                                   Color.black, CSS.Attribute.COLOR);
     fCol.addColorPanelListener(this);
     fontComponents.add(fCol);
-    ColorPanel bCol = new ColorPanel(DynamicResource.getResourceString(SHTMLPanel.resources, "backgroundLabel"),
+    ColorPanel bCol = new ColorPanel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "backgroundLabel"),
                                     Color.white, CSS.Attribute.BACKGROUND_COLOR);
     bCol.addColorPanelListener(this);
     fontComponents.add(bCol);

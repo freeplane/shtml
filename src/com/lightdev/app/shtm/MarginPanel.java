@@ -39,7 +39,7 @@ import javax.swing.text.html.*;
  * 
  */
 
-public class MarginPanel extends AttributePanel {
+class MarginPanel extends AttributePanel {
 
   private BoundariesPanel margin;
   private BoundariesPanel padding;
@@ -56,7 +56,7 @@ public class MarginPanel extends AttributePanel {
     // set border and title and add margin panel
     margin.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanel.resources, "marginLabel")));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "marginLabel")));
     this.add(margin);
 
     // construct padding panel
@@ -65,7 +65,7 @@ public class MarginPanel extends AttributePanel {
     // set border and title adn add padding panel
     padding.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanel.resources, "paddingLabel")));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "paddingLabel")));
     this.add(padding);
   }
 

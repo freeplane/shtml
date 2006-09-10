@@ -52,24 +52,24 @@ import javax.swing.JFrame;
  *
  * 
  */
-public class FrmMain extends JFrame {
+class FrmMain extends JFrame {
     public static final String APP_NAME = "SimplyHTML";
     public static final String VERSION = "0.12.1 Alpha 1";
     /** static reference to this instance of class FrmMain */
     public static Frame mainFrame;
-    private SHTMLPanel mainPane;
+    private SHTMLPanelImpl mainPane;
 
     public FrmMain(){
         mainFrame = this;
-        SHTMLPanel.setResources(null);
-        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanel.resources, "appIcon")));
+        SHTMLPanelImpl.setResources(null);
+        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanelImpl.resources, "appIcon")));
         setTitle(APP_NAME);
 
         SplashScreen.showInstance();
         try {
             EventQueue.invokeAndWait(new Runnable(){
                 public void run() {
-                    mainPane = new SHTMLPanel();
+                    mainPane = new SHTMLPanelImpl();
                     getContentPane().add(mainPane);
                 }
                 

@@ -30,7 +30,7 @@ import java.util.jar.JarEntry;
 import java.io.File;
 import java.net.URI;
 import java.util.Hashtable;
-import com.lightdev.app.shtm.SHTMLPanel;
+import com.lightdev.app.shtm.SHTMLPanelImpl;
 import javax.help.*;
 import javax.help.event.*;
 
@@ -68,14 +68,14 @@ public class PluginManager {
   /** the URLs pointing to the classes in pluginClassNames */
   private Vector urls = new Vector();
 
-  private SHTMLPanel owner;
+  private SHTMLPanelImpl owner;
 
   /**
    * construct a new <code>PluginManager</code> and load
    * all available plug-ins.
    */
-  public PluginManager(SHTMLPanel owner) {
-    this.owner = (SHTMLPanel) owner;
+  public PluginManager(SHTMLPanelImpl owner) {
+    this.owner = (SHTMLPanelImpl) owner;
   }
 
   /**

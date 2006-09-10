@@ -45,7 +45,7 @@ import java.awt.Font;
  * 
  */
 
-public class LicensePane extends JPanel {
+class LicensePane extends JPanel {
 
   /* line separator character (sequence) */
   private String lineSeparator = System.getProperty("line.separator");

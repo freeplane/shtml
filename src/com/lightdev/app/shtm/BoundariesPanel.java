@@ -44,7 +44,7 @@ import java.util.Enumeration;
  * 
  */
 
-public class BoundariesPanel extends JPanel implements AttributeComponent {
+class BoundariesPanel extends JPanel implements AttributeComponent {
 
   /** the components used for single attributes */
   private Vector components = new Vector();
@@ -77,16 +77,16 @@ public class BoundariesPanel extends JPanel implements AttributeComponent {
     GridBagConstraints c = new GridBagConstraints();
 
     Util.addGridBagComponent(this, new JLabel(
-        DynamicResource.getResourceString(SHTMLPanel.resources, "topLabel")),
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "topLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        DynamicResource.getResourceString(SHTMLPanel.resources, "rightLabel")),
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "rightLabel")),
         g, c, 2, 0, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        DynamicResource.getResourceString(SHTMLPanel.resources, "bottomLabel")),
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "bottomLabel")),
         g, c, 0, 1, GridBagConstraints.EAST);
     Util.addGridBagComponent(this, new JLabel(
-        DynamicResource.getResourceString(SHTMLPanel.resources, "leftLabel")),
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "leftLabel")),
         g, c, 2, 1, GridBagConstraints.EAST);
 
     addSizeSelector(g, c, attrKey, 1, 0); // top

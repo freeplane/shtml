@@ -47,7 +47,7 @@ import javax.swing.text.html.HTML;
  * 
  */
 
-public class AttributeMapper extends SimpleAttributeSet {
+class AttributeMapper extends SimpleAttributeSet {
 
   public static final int toHTML = 1;
   public static final int toJava = 2;

@@ -246,8 +246,8 @@ public class Util {
     JOptionPane op = new JOptionPane();
     Object input = op.showInputDialog(
         null,
-        DynamicResource.getResourceString(SHTMLPanel.resources, text),
-        DynamicResource.getResourceString(SHTMLPanel.resources, title),
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, text),
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, title),
         JOptionPane.QUESTION_MESSAGE,
         null,
         null,
@@ -277,11 +277,11 @@ public class Util {
                             String item, String sep)
   {
     String message = item + sep + DynamicResource.getResourceString(
-        SHTMLPanel.resources, msg);
+        SHTMLPanelImpl.resources, msg);
     return JOptionPane.showConfirmDialog(
           null,
           message,
-          DynamicResource.getResourceString(SHTMLPanel.resources, title),
+          DynamicResource.getResourceString(SHTMLPanelImpl.resources, title),
           options,
           JOptionPane.QUESTION_MESSAGE);
   }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.actions;
+package com.lightdev.app.shtm;
 
 import java.awt.Frame;
 import java.awt.Dialog;
@@ -39,15 +39,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
 
-import com.lightdev.app.shtm.AttributeComboBox;
-import com.lightdev.app.shtm.AttributeComponent;
-import com.lightdev.app.shtm.DialogShell;
-import com.lightdev.app.shtm.DynamicResource;
-import com.lightdev.app.shtm.SHTMLDocument;
-import com.lightdev.app.shtm.SHTMLPanel;
-import com.lightdev.app.shtm.SHTMLWriter;
-import com.lightdev.app.shtm.SizeSelectorPanel;
-import com.lightdev.app.shtm.Util;
+
+
+
+
+
+
+
+
+
 import com.sun.demo.ExampleFileFilter;
 import java.io.File;
 import javax.swing.event.ListSelectionListener;
@@ -82,10 +82,10 @@ import javax.swing.JOptionPane;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 
-public class ImageDialog extends DialogShell
+class ImageDialog extends DialogShell
     implements ActionListener, ListSelectionListener, ChangeListener
 {
   /** directory this ImageDialog maintains */
@@ -197,7 +197,7 @@ public class ImageDialog extends DialogShell
     dirPanel.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
                   DynamicResource.getResourceString(
-                  SHTMLPanel.resources, "imgDirPanelTitle")));
+                  SHTMLPanelImpl.resources, "imgDirPanelTitle")));
 
     // create a list to disply image files in
     imgFileList = new JList();
@@ -212,10 +212,10 @@ public class ImageDialog extends DialogShell
 
     // create image directory action buttons
     addImgBtn = new JButton(DynamicResource.getResourceString(
-                  SHTMLPanel.resources, "addImgBtnTitle"));
+                  SHTMLPanelImpl.resources, "addImgBtnTitle"));
     addImgBtn.addActionListener(this);
     delImgBtn = new JButton(DynamicResource.getResourceString(
-                  SHTMLPanel.resources, "delImgBtnTitle"));
+                  SHTMLPanelImpl.resources, "delImgBtnTitle"));
     delImgBtn.addActionListener(this);
 
     // add action buttons to button panel
@@ -231,7 +231,7 @@ public class ImageDialog extends DialogShell
     previewPanel.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
                   DynamicResource.getResourceString(
-                  SHTMLPanel.resources, "imgPreviewPanelTitle")));
+                  SHTMLPanelImpl.resources, "imgPreviewPanelTitle")));
 
     // add a new ImagePreview object to the preview panel
     preview = new ImagePreview();
@@ -252,13 +252,13 @@ public class ImageDialog extends DialogShell
     eastPanel.setBorder(new TitledBorder(new EtchedBorder(
                   EtchedBorder.LOWERED),
                   DynamicResource.getResourceString(
-                  SHTMLPanel.resources, "imgPropertiesPanelTitle")));
+                  SHTMLPanelImpl.resources, "imgPropertiesPanelTitle")));
 
     // add scale component
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgScaleLabel")),
+                             SHTMLPanelImpl.resources, "imgScaleLabel")),
                              g, c, 0, 0,
                              GridBagConstraints.EAST);
     scale = new JTextField();
@@ -277,7 +277,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgWidthLabel")),
+                             SHTMLPanelImpl.resources, "imgWidthLabel")),
                              g, c, 0, 1,
                              GridBagConstraints.EAST);
     imgWidth = new SizeSelectorPanel(HTML.Attribute.WIDTH, null, false, SizeSelectorPanel.TYPE_LABEL);
@@ -290,7 +290,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgHeightLabel")),
+                             SHTMLPanelImpl.resources, "imgHeightLabel")),
                              g, c, 0, 2,
                              GridBagConstraints.EAST);
     imgHeight = new SizeSelectorPanel(HTML.Attribute.HEIGHT, null, false, SizeSelectorPanel.TYPE_LABEL);
@@ -303,7 +303,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgHSpaceLabel")),
+                             SHTMLPanelImpl.resources, "imgHSpaceLabel")),
                              g, c, 0, 3,
                              GridBagConstraints.EAST);
     SizeSelectorPanel hSpace = new SizeSelectorPanel(
@@ -316,7 +316,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgVSpaceLabel")),
+                             SHTMLPanelImpl.resources, "imgVSpaceLabel")),
                              g, c, 0, 4,
                              GridBagConstraints.EAST);
     SizeSelectorPanel vSpace = new SizeSelectorPanel(
@@ -328,15 +328,15 @@ public class ImageDialog extends DialogShell
     // add alignment component
     Util.addGridBagComponent(propertiesPanel, new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgAlignLabel")),
+                             SHTMLPanelImpl.resources, "imgAlignLabel")),
                              g, c, 0, 5, GridBagConstraints.EAST);
     String[] items = new String[] {
-      DynamicResource.getResourceString(SHTMLPanel.resources, "imgAlignTop"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "imgAlignMiddle"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "imgAlignBottom"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "imgAlignLeft"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "imgAlignCenter"),
-      DynamicResource.getResourceString(SHTMLPanel.resources, "imgAlignRight")};
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgAlignTop"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgAlignMiddle"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgAlignBottom"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgAlignLeft"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgAlignCenter"),
+      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgAlignRight")};
     String[] names = new String[] {"top", "middle", "bottom", "left",
       "center", "right"};
     AttributeComboBox imgAlign = new AttributeComboBox(
@@ -349,7 +349,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "oWidthLabel")),
+                             SHTMLPanelImpl.resources, "oWidthLabel")),
                              g, c, 0, 6,
                              GridBagConstraints.EAST);
     oWidth = new JLabel("");
@@ -360,7 +360,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "oHeightLabel")),
+                             SHTMLPanelImpl.resources, "oHeightLabel")),
                              g, c, 0, 7,
                              GridBagConstraints.EAST);
     oHeight = new JLabel("");
@@ -371,7 +371,7 @@ public class ImageDialog extends DialogShell
     Util.addGridBagComponent(propertiesPanel,
                              new JLabel(
                              DynamicResource.getResourceString(
-                             SHTMLPanel.resources, "imgBorderLabel")),
+                             SHTMLPanelImpl.resources, "imgBorderLabel")),
                              g, c, 0, 8,
                              GridBagConstraints.EAST);
     SizeSelectorPanel imgBorder = new SizeSelectorPanel(
@@ -483,7 +483,7 @@ public class ImageDialog extends DialogShell
     StringBuffer buf = new StringBuffer();
     Object value = imgFileList.getSelectedValue();
     if(value != null) {
-      buf.append(SHTMLPanel.IMAGE_DIR);
+      buf.append(SHTMLPanelImpl.IMAGE_DIR);
       buf.append(Util.URL_SEPARATOR);
       buf.append(value.toString());
     }
@@ -503,7 +503,7 @@ public class ImageDialog extends DialogShell
       filter.addExtension("jpg");
       filter.addExtension("jpeg");
       filter.setDescription(DynamicResource.getResourceString(
-          SHTMLPanel.resources, "imageFileDesc"));
+          SHTMLPanelImpl.resources, "imageFileDesc"));
       chooser.setFileFilter(filter);
       if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         File[] sFiles = chooser.getSelectedFiles();

@@ -44,7 +44,7 @@ import java.util.*;
  * 
  */
 
-public class StyleSelector extends JComboBox
+class StyleSelector extends JComboBox
     implements AttributeComponent, ChangeListener
 {
 
@@ -54,7 +54,7 @@ public class StyleSelector extends JComboBox
   /** indicates whether or not to ignore change events */
   private boolean ignoreChanges = false;
 
-  private String standardStyleName = DynamicResource.getResourceString(SHTMLPanel.resources, "standardStyleName");
+  private String standardStyleName = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
 
   /**
    * construct a <code>StyleSelector</code>

@@ -38,7 +38,7 @@ import java.awt.*;
  * 
  */
 
-public class InvisibleView extends View {
+class InvisibleView extends View {
 
   /** indicates whether or not this view is to be shown in its component */
   boolean isVisible = false;

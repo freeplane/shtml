@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.actions;
+package com.lightdev.app.shtm;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,11 +26,11 @@ import javax.swing.border.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
-import com.lightdev.app.shtm.DialogShell;
-import com.lightdev.app.shtm.DynamicResource;
-import com.lightdev.app.shtm.SHTMLDocument;
-import com.lightdev.app.shtm.SHTMLPanel;
-import com.lightdev.app.shtm.Util;
+
+
+
+
+
 
 
 import java.util.*;
@@ -49,10 +49,10 @@ import java.net.*;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 
-public class LinkDialog extends DialogShell implements ActionListener {
+class LinkDialog extends DialogShell implements ActionListener {
 
   /** table for link types: name -> type */
   private Hashtable linkTypes;
@@ -87,13 +87,13 @@ public class LinkDialog extends DialogShell implements ActionListener {
   /** some constants */
   private String LINK_TYPE_KEY = "linkType";
   private String LINK_TYPE_NAME_KEY = "linkTypeName";
-  private String LINK_TYPE_RELATIVE_KEY = DynamicResource.getResourceString(SHTMLPanel.resources, "linkType1");
-  private String LINK_TYPE_NEWS_KEY = DynamicResource.getResourceString(SHTMLPanel.resources, "linkType7");
-  private String LINK_TYPE_MAILTO_KEY = DynamicResource.getResourceString(SHTMLPanel.resources, "linkType8");
-  private String LINK_TYPE_RELATIVE = DynamicResource.getResourceString(SHTMLPanel.resources, "linkTypeName1");
-  private String LINK_TYPE_LOCAL = DynamicResource.getResourceString(SHTMLPanel.resources, "linkTypeName2");
-  private String LINK_TYPE_NEWS = DynamicResource.getResourceString(SHTMLPanel.resources, "linkTypeName7");
-  private String LINK_TYPE_MAILTO = DynamicResource.getResourceString(SHTMLPanel.resources, "linkTypeName8");
+  private String LINK_TYPE_RELATIVE_KEY = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkType1");
+  private String LINK_TYPE_NEWS_KEY = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkType7");
+  private String LINK_TYPE_MAILTO_KEY = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkType8");
+  private String LINK_TYPE_RELATIVE = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkTypeName1");
+  private String LINK_TYPE_LOCAL = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkTypeName2");
+  private String LINK_TYPE_NEWS = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkTypeName7");
+  private String LINK_TYPE_MAILTO = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkTypeName8");
 
   /** indicates, whether or not action handlers should react on events */
   private boolean ignoreActions = false;
@@ -138,16 +138,16 @@ public class LinkDialog extends DialogShell implements ActionListener {
 
     // create link style selector
     JPanel p = new JPanel(g);
-    JLabel lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "linkStyleLabel"));
+    JLabel lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkStyleLabel"));
     Util.addGridBagComponent(p, lb, g, c, 0, 0, GridBagConstraints.EAST);
     Vector styleNames = Util.getStyleNamesForTag(((SHTMLDocument) doc).getStyleSheet(), HTML.Tag.A.toString());
-    String standardStyleName = DynamicResource.getResourceString(SHTMLPanel.resources, "standardStyleName");
+    String standardStyleName = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "standardStyleName");
     styleNames.insertElementAt(standardStyleName, 0);
     linkStyle = new JComboBox(styleNames);
     Util.addGridBagComponent(p, linkStyle, g, c, 1, 0, GridBagConstraints.WEST);
 
     // create link type selector
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "linkTypeLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkTypeLabel"));
     Util.addGridBagComponent(p, lb, g, c, 0, 1, GridBagConstraints.EAST);
     buildLinkTypes();
     linkType = new JComboBox(linkTypeNames.values().toArray());
@@ -155,34 +155,34 @@ public class LinkDialog extends DialogShell implements ActionListener {
     Util.addGridBagComponent(p, linkType, g, c, 1, 1, GridBagConstraints.WEST);
 
     // create link address field
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "linkAddressLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkAddressLabel"));
     Util.addGridBagComponent(p, lb, g, c, 0, 2, GridBagConstraints.EAST);
     linkAddress = new JTextField();
     linkAddress.setPreferredSize(new Dimension(300, 20));
     linkAddress.setMaximumSize(new Dimension(500, 20));
     linkAddress.addActionListener(this);
     Util.addGridBagComponent(p, linkAddress, g, c, 1, 2, GridBagConstraints.WEST, 2, 1, GridBagConstraints.HORIZONTAL, 1, 0);
-    browseAddress = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "linkBrowseLabel"));
+    browseAddress = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkBrowseLabel"));
     browseAddress.addActionListener(this);
     Util.addGridBagComponent(p, browseAddress, g, c, 3, 2, GridBagConstraints.WEST);
 
     // create link anchor field
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "linkAnchorLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkAnchorLabel"));
     Util.addGridBagComponent(p, lb, g, c, 0, 3, GridBagConstraints.EAST);
     linkAnchor = new JTextField();
     linkAnchor.setPreferredSize(new Dimension(150, 20));
     linkAnchor.setMaximumSize(new Dimension(500, 20));
     Util.addGridBagComponent(p, linkAnchor, g, c, 1, 3, GridBagConstraints.WEST, 1, 1, GridBagConstraints.HORIZONTAL, 1, 0);
-    browseAnchor = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "linkBrowseLabel"));
+    browseAnchor = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkBrowseLabel"));
     browseAnchor.addActionListener(this);
     Util.addGridBagComponent(p, browseAnchor, g, c, 2, 3, GridBagConstraints.WEST);
 
     // create link display selector
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "linkDisplayLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkDisplayLabel"));
     Util.addGridBagComponent(p, lb, g, c, 0, 4, GridBagConstraints.EAST);
-    showAsText = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "showAsTextLabel"));
+    showAsText = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "showAsTextLabel"));
     showAsText.addActionListener(this);
-    showAsImage = new JRadioButton(DynamicResource.getResourceString(SHTMLPanel.resources, "showAsImageLabel"));
+    showAsImage = new JRadioButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "showAsImageLabel"));
     showAsImage.addActionListener(this);
     JPanel helpPanel = new JPanel();
     helpPanel.add(showAsText);
@@ -196,7 +196,7 @@ public class LinkDialog extends DialogShell implements ActionListener {
     linkTextPanel = new JPanel(new BorderLayout());
     linkTextPanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanel.resources, "linkTextLabel")));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkTextLabel")));
     linkText = new JTextField();
     linkText.setPreferredSize(new Dimension(400, 20));
     linkText.setMaximumSize(new Dimension(500, 20));
@@ -208,26 +208,26 @@ public class LinkDialog extends DialogShell implements ActionListener {
     linkImagePanel = new JPanel(new BorderLayout(5, 5));
     linkImagePanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
-        DynamicResource.getResourceString(SHTMLPanel.resources, "linkImageLabel")));
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources, "linkImageLabel")));
     linkImage = new ImagePreview();
     linkImage.setPreferredSize(new Dimension(70, 70));
     linkImagePanel.add(new JScrollPane(linkImage), BorderLayout.CENTER);
     helpPanel = new JPanel(g);
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "imgWidthLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgWidthLabel"));
     Util.addGridBagComponent(helpPanel, lb, g, c, 0, 0, GridBagConstraints.EAST);
     linkImgWidth = new JTextField();
     linkImgWidth.setPreferredSize(new Dimension(50, 20));
     linkImgWidth.setMinimumSize(new Dimension(50, 20));
     linkImgWidth.setEditable(false);
     Util.addGridBagComponent(helpPanel, linkImgWidth, g, c, 1, 0, GridBagConstraints.WEST);
-    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanel.resources, "imgHeightLabel"));
+    lb = new JLabel(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "imgHeightLabel"));
     Util.addGridBagComponent(helpPanel, lb, g, c, 0, 1, GridBagConstraints.EAST);
     linkImgHeight = new JTextField();
     linkImgHeight.setPreferredSize(new Dimension(50, 20));
     linkImgHeight.setMinimumSize(new Dimension(50, 20));
     linkImgHeight.setEditable(false);
     Util.addGridBagComponent(helpPanel, linkImgHeight, g, c, 1, 1, GridBagConstraints.WEST);
-    setImage = new JButton(DynamicResource.getResourceString(SHTMLPanel.resources, "setImageLabel"));
+    setImage = new JButton(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "setImageLabel"));
     setImage.addActionListener(this);
     Util.addGridBagComponent(helpPanel, setImage, g, c, 1, 2, GridBagConstraints.WEST);
     JPanel helpPanel2 = new JPanel(new BorderLayout());
@@ -444,8 +444,8 @@ public class LinkDialog extends DialogShell implements ActionListener {
     linkTypes = new Hashtable(); // key = type name -> value = type
     linkTypeNames = new Hashtable(); // key = type -> value = type name
     for(int i = 1; i < 9; i++) {
-      type = DynamicResource.getResourceString(SHTMLPanel.resources, LINK_TYPE_KEY + Integer.toString(i));
-      name = DynamicResource.getResourceString(SHTMLPanel.resources, LINK_TYPE_NAME_KEY + Integer.toString(i));
+      type = DynamicResource.getResourceString(SHTMLPanelImpl.resources, LINK_TYPE_KEY + Integer.toString(i));
+      name = DynamicResource.getResourceString(SHTMLPanelImpl.resources, LINK_TYPE_NAME_KEY + Integer.toString(i));
       linkTypes.put(name, type);
       linkTypeNames.put(type, name);
     }
@@ -677,7 +677,7 @@ public class LinkDialog extends DialogShell implements ActionListener {
    */
   private void handleLinkImageAction() {
     ImageDialog dlg = new ImageDialog(this,
-                                     DynamicResource.getResourceString(SHTMLPanel.resources,
+                                     DynamicResource.getResourceString(SHTMLPanelImpl.resources,
                                      "imageDialogTitle"),
                                      imgDir);
     if(imgFile != null) {
@@ -763,13 +763,13 @@ public class LinkDialog extends DialogShell implements ActionListener {
       if(linkAddrText == null || linkAddrText.length() < 1) {
         dlg = new AnchorDialog(
             this,
-            DynamicResource.getResourceString(SHTMLPanel.resources, "anchorDialogTitle"),
+            DynamicResource.getResourceString(SHTMLPanelImpl.resources, "anchorDialogTitle"),
             doc);
       }
       else {
         dlg = new AnchorDialog(
             this,
-            DynamicResource.getResourceString(SHTMLPanel.resources, "anchorDialogTitle"),
+            DynamicResource.getResourceString(SHTMLPanelImpl.resources, "anchorDialogTitle"),
             file.toURL());
       }
       Util.center(this, dlg);

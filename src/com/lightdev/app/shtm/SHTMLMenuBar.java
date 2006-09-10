@@ -26,7 +26,7 @@ import javax.swing.JMenuBar;
 import javax.swing.KeyStroke;
 
 /**
- * A menu bar for handling of key events coming from its parent SHTMLPanel
+ * A menu bar for handling of key events coming from its parent SHTMLPanelImpl
  *
  * @author Dimitri Polivaev
  * @author published under the terms and conditions of the

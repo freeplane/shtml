@@ -15,7 +15,7 @@ import java.util.prefs.Preferences;
  * 
  */
 
-public class SHTMLWriter extends HTMLWriter {
+class SHTMLWriter extends HTMLWriter {
     private Element elem;
 
     public SHTMLWriter(Writer w, HTMLDocument doc, int pos, int len) {

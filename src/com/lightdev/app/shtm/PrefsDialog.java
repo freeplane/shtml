@@ -41,7 +41,7 @@ import java.util.prefs.*;
  * 
  */
 
-public class PrefsDialog extends DialogShell implements ActionListener {
+class PrefsDialog extends DialogShell implements ActionListener {
 
   /** the look and feels avaliable in the system */
   private UIManager.LookAndFeelInfo[] lfinfo;
@@ -83,7 +83,7 @@ public class PrefsDialog extends DialogShell implements ActionListener {
         appPrefsPanel,
         new JLabel(
         DynamicResource.getResourceString(
-        SHTMLPanel.resources, "prfLafLabel")),
+        SHTMLPanelImpl.resources, "prfLafLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
     lafCombo = new JComboBox();
     initLfComboBox();
@@ -108,11 +108,11 @@ public class PrefsDialog extends DialogShell implements ActionListener {
 //    writeModePnl.setBorder(new TitledBorder(new EtchedBorder(
 //                  EtchedBorder.LOWERED),
 //                  DynamicResource.getResourceString(
-//                  SHTMLPanel.resources, "prfWriteModeLabel")));
+//                  SHTMLPanelImpl.resources, "prfWriteModeLabel")));
 //    saveHTML32 = new JRadioButton(DynamicResource.getResourceString(
-//                  SHTMLPanel.resources, "prfWriteModeHTML32Label"));
+//                  SHTMLPanelImpl.resources, "prfWriteModeHTML32Label"));
 //    saveHTML4 = new JRadioButton(DynamicResource.getResourceString(
-//                  SHTMLPanel.resources, "prfWriteModeHTML4Label"));
+//                  SHTMLPanelImpl.resources, "prfWriteModeHTML4Label"));
 //    ButtonGroup bg = new ButtonGroup();
 //    bg.add(saveHTML32);
 //    bg.add(saveHTML4);
@@ -132,7 +132,7 @@ public class PrefsDialog extends DialogShell implements ActionListener {
 
     // add option for standard stlye sheet
     useStdStyleSheet = new JCheckBox(DynamicResource.getResourceString(
-                  SHTMLPanel.resources, "linkDefaultStyleSheetLabel"));
+                  SHTMLPanelImpl.resources, "linkDefaultStyleSheetLabel"));
     boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
     useStdStyleSheet.setSelected(useStyle);
     Util.addGridBagComponent(layoutPanel, useStdStyleSheet, g, c, 0, 2, GridBagConstraints.WEST);

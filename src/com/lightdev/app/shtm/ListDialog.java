@@ -39,7 +39,7 @@ import javax.swing.text.AttributeSet;
  * 
  */
 
-public class ListDialog extends DialogShell {
+class ListDialog extends DialogShell {
 
   private ListPanel listPanel;
 

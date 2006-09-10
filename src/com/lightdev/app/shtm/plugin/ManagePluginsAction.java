@@ -27,7 +27,7 @@ import java.awt.event.*;
 
 import com.lightdev.app.shtm.DynamicResource;
 import com.lightdev.app.shtm.SHTMLAction;
-import com.lightdev.app.shtm.SHTMLPanel;
+import com.lightdev.app.shtm.SHTMLPanelImpl;
 import com.lightdev.app.shtm.Util;
 import javax.swing.Action;
 import com.lightdev.app.shtm.DialogShell;
@@ -63,7 +63,7 @@ public class ManagePluginsAction extends AbstractAction
   public void actionPerformed(ActionEvent e) {
     final Component source = (Component)e.getSource();
     PluginManagerDialog pmd = new PluginManagerDialog(JOptionPane.getFrameForComponent(source),
-        DynamicResource.getResourceString(SHTMLPanel.resources,
+        DynamicResource.getResourceString(SHTMLPanelImpl.resources,
         "pluginManagerDialogTitle"));
     Util.center(source, pmd);
     pmd.setModal(true);
@@ -71,22 +71,22 @@ public class ManagePluginsAction extends AbstractAction
 
     /** if the user made a selection, apply it to the document */
     if(pmd.getResult() == DialogShell.RESULT_OK) {
-      ((SHTMLPanel) source).clearDockPanels();
-      Enumeration plugins = SHTMLPanel.pluginManager.plugins();
+      ((SHTMLPanelImpl) source).clearDockPanels();
+      Enumeration plugins = SHTMLPanelImpl.pluginManager.plugins();
       SHTMLPlugin pi;
       while(plugins.hasMoreElements()) {
         pi = (SHTMLPlugin) plugins.nextElement();
-        ((SHTMLPanel) source).refreshPluginDisplay(pi);
+        ((SHTMLPanelImpl) source).refreshPluginDisplay(pi);
       }
-      ((SHTMLPanel) source).paintComponents(
-          ((SHTMLPanel) source).getGraphics());
+      ((SHTMLPanelImpl) source).paintComponents(
+          ((SHTMLPanelImpl) source).getGraphics());
     }
-    ((SHTMLPanel) source).adjustDividers();
-    ((SHTMLPanel) source).updateActions();
+    ((SHTMLPanelImpl) source).adjustDividers();
+    ((SHTMLPanelImpl) source).updateActions();
   }
   public void update() {
   }
   public void getProperties() {
-    SHTMLPanel.getActionProperties(this, (String) getValue(Action.NAME));
+    SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
   }
 }

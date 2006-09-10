@@ -45,7 +45,7 @@ import java.util.prefs.*;
  * 
  */
 
-public class SplitPanel extends JPanel {
+class SplitPanel extends JPanel {
 
   /**
    * Constructor

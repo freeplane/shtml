@@ -64,7 +64,7 @@ import java.awt.event.*;
  * 
  *
  */
-public class SyntaxPane extends JEditorPane implements CaretListener {
+class SyntaxPane extends JEditorPane implements CaretListener {
 
   /**
    * Creates a new <code>SyntaxPane</code>.
@@ -272,7 +272,7 @@ public class SyntaxPane extends JEditorPane implements CaretListener {
    * convenience class associating a pattern with a
    * set of attributes
    */
-  public class RegExStyle {
+  class RegExStyle {
 
     /**
      * construct a <code>RegExStyle</code> instance
