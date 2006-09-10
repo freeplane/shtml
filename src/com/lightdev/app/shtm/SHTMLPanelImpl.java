@@ -1348,7 +1348,7 @@ DocumentPane getDocumentPane() {
 /**
  * @return Returns the editor.
  */
-public SHTMLEditorPane getEditor() {
+SHTMLEditorPane getEditor() {
     return editor;
 }
 
