@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.plugin;
+package com.lightdev.app.shtm;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -25,12 +25,7 @@ import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.*;
 
-import com.lightdev.app.shtm.DynamicResource;
-import com.lightdev.app.shtm.SHTMLAction;
-import com.lightdev.app.shtm.SHTMLPanelImpl;
-import com.lightdev.app.shtm.Util;
 import javax.swing.Action;
-import com.lightdev.app.shtm.DialogShell;
 
 import java.util.Enumeration;
 
@@ -49,7 +44,7 @@ import java.util.Enumeration;
  * 
  */
 
-public class ManagePluginsAction extends AbstractAction
+class ManagePluginsAction extends AbstractAction
     implements SHTMLAction
 {
   public static final String managePluginsAction = "managePlugins";

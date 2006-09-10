@@ -8,7 +8,7 @@ import javax.swing.text.Document;
 import java.util.*;
 
 import com.lightdev.app.shtm.DynamicResource;
-import com.lightdev.app.shtm.SHTMLPanelImpl;
+import com.lightdev.app.shtm.SHTMLPanel;
 
 /**
  * Dialog to manage find and replace on a <code>Document</code> shown
@@ -258,7 +258,7 @@ public class FindReplaceDialog extends JDialog {
   public void terminateOperation() {
     switch(operation) {
       case OP_FIND:
-        message(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "noMoreOccurrencesFound"));
+        message(DynamicResource.getResourceString(SHTMLPanel.getResources(), "noMoreOccurrencesFound"));
         toggleState(STATE_UNLOCKED);
         jbtnReplace.setEnabled(true);
         break;
@@ -266,10 +266,10 @@ public class FindReplaceDialog extends JDialog {
         switch(replaceChoice) {
           case RO_YES:
           case RO_NO:
-            message(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "noMoreOccurrencesFound"));
+            message(DynamicResource.getResourceString(SHTMLPanel.getResources(), "noMoreOccurrencesFound"));
             break;
           case RO_ALL:
-            message(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "allOccurrencesReplaced"));
+            message(DynamicResource.getResourceString(SHTMLPanel.getResources(), "allOccurrencesReplaced"));
             break;
         }
         toggleState(STATE_UNLOCKED);
@@ -564,11 +564,11 @@ public class FindReplaceDialog extends JDialog {
    * @return the chosen option, one of RO_YES, RO_NO, RO_DONE and RO_ALL
    */
   private int getReplaceChoice() {
-    String msg = DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replaceThisQuery") + " '" + phrase + "'?";
+    String msg = DynamicResource.getResourceString(SHTMLPanel.getResources(), "replaceThisQuery") + " '" + phrase + "'?";
     return JOptionPane.showOptionDialog(
                 this,
                 msg,
-                DynamicResource.getResourceString(SHTMLPanelImpl.resources, "findReplaceDialogTitle"),
+                DynamicResource.getResourceString(SHTMLPanel.getResources(), "findReplaceDialogTitle"),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -661,7 +661,7 @@ public class FindReplaceDialog extends JDialog {
     JOptionPane.showMessageDialog(
                 this,
                 msgText,
-                DynamicResource.getResourceString(SHTMLPanelImpl.resources, "findReplaceDialogTitle"),
+                DynamicResource.getResourceString(SHTMLPanel.getResources(), "findReplaceDialogTitle"),
                 JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -676,14 +676,14 @@ public class FindReplaceDialog extends JDialog {
         jbtnFindNext_actionPerformed(e);
       }
     });
-    jbtnFindNext.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "findNext"));
+    jbtnFindNext.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "findNext"));
     jbtnFindNext.setPreferredSize(new Dimension(100, 27));
     jbtnFindNext.setMinimumSize(new Dimension(100, 27));
     jbtnFindNext.setMaximumSize(new Dimension(100, 27));
-    jcbStartOnTop.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "searchFromStart"));
+    jcbStartOnTop.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "searchFromStart"));
     jcbStartOnTop.setToolTipText("");
-    jrbDown.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "searchDown"));
-    jcbWholeWords.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "wholeWordsOnly"));
+    jrbDown.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "searchDown"));
+    jcbWholeWords.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "wholeWordsOnly"));
     jpnlBtn.setLayout(gridBagLayout4);
     jpnlOptions.setBorder(titledBorder1);
     jpnlOptions.setLayout(gridLayout2);
@@ -692,17 +692,17 @@ public class FindReplaceDialog extends JDialog {
     jtfReplace.setPreferredSize(new Dimension(59, 12));
     jtfReplace.setText("jtfReplace");
     jpnlMain.setLayout(gridBagLayout6);
-    jrbUp.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "searchUp"));
+    jrbUp.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "searchUp"));
     jtfPhrase.setMinimumSize(new Dimension(4, 12));
     jtfPhrase.setPreferredSize(new Dimension(63, 12));
     jtfPhrase.setText("jtfPhrase");
-    jcbMatchCase.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "matchCase"));
-    jLabel3.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replaceWith"));
-    jLabel4.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "textToFind"));
+    jcbMatchCase.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "matchCase"));
+    jLabel3.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "replaceWith"));
+    jLabel4.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "textToFind"));
     jbtnClose.setMaximumSize(new Dimension(100, 27));
     jbtnClose.setMinimumSize(new Dimension(100, 27));
     jbtnClose.setPreferredSize(new Dimension(100, 27));
-    jbtnClose.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "closeBtnName"));
+    jbtnClose.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "closeBtnName"));
     jbtnClose.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         jbtnClose_actionPerformed(e);
@@ -711,11 +711,11 @@ public class FindReplaceDialog extends JDialog {
     gridLayout2.setRows(4);
     gridLayout2.setColumns(2);
     this.setModal(true);
-    this.setTitle(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "findReplaceDialogTitle"));
+    this.setTitle(DynamicResource.getResourceString(SHTMLPanel.getResources(), "findReplaceDialogTitle"));
     jbtnReplace.setMaximumSize(new Dimension(100, 27));
     jbtnReplace.setMinimumSize(new Dimension(100, 27));
     jbtnReplace.setPreferredSize(new Dimension(100, 27));
-    jbtnReplace.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replace"));
+    jbtnReplace.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "replace"));
     jbtnReplace.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         jbtnReplace_actionPerformed(e);
@@ -724,7 +724,7 @@ public class FindReplaceDialog extends JDialog {
     jbtnCancel.setMaximumSize(new Dimension(100, 27));
     jbtnCancel.setMinimumSize(new Dimension(100, 27));
     jbtnCancel.setPreferredSize(new Dimension(100, 27));
-    jbtnCancel.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "cancelBtnName"));
+    jbtnCancel.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "cancelBtnName"));
     jbtnCancel.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
         jbtnCancel_actionPerformed(e);
@@ -732,7 +732,7 @@ public class FindReplaceDialog extends JDialog {
     });
     jcbUnused.setText("jcbUnused");
     jcbUnused.setVisible(false);
-    jcbProject.setText(DynamicResource.getResourceString(SHTMLPanelImpl.resources, "searchWholeProject"));
+    jcbProject.setText(DynamicResource.getResourceString(SHTMLPanel.getResources(), "searchWholeProject"));
     this.getContentPane().add(jpnlMain, BorderLayout.NORTH);
     jpnlBtn.add(jbtnFindNext,   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             ,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(4, 4, 0, 4), 0, 0));
@@ -816,10 +816,10 @@ public class FindReplaceDialog extends JDialog {
 
   /** options for replacing */
   private static final Object[] replaceOptions = {
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replaceYes"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replaceNo"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replaceAll"),
-      DynamicResource.getResourceString(SHTMLPanelImpl.resources, "replaceDone")
+      DynamicResource.getResourceString(SHTMLPanel.getResources(), "replaceYes"),
+      DynamicResource.getResourceString(SHTMLPanel.getResources(), "replaceNo"),
+      DynamicResource.getResourceString(SHTMLPanel.getResources(), "replaceAll"),
+      DynamicResource.getResourceString(SHTMLPanel.getResources(), "replaceDone")
   };
 
   /* Constants for method toggleState */

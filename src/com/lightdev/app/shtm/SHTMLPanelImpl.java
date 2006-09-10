@@ -37,9 +37,6 @@ import java.beans.PropertyChangeEvent;
 
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetStyleAction;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetTagAction;
-import com.lightdev.app.shtm.plugin.SHTMLPlugin;
-import com.lightdev.app.shtm.plugin.PluginManager;
-import com.lightdev.app.shtm.plugin.ManagePluginsAction;
 import java.util.prefs.*;
 
 
@@ -65,7 +62,7 @@ import java.util.prefs.*;
  *
  */
 
-public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener {
+class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener {
 
   //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
 
@@ -273,17 +270,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeL
    *
    * @return the DynamicResource
    */
-  public DynamicResource getDynRes() {
+  DynamicResource getDynRes() {
     return dynRes;
-  }
-
-  /**
-   * get the resource bundle of this instance of FrmMain
-   *
-   * @return the bundle of resources
-   */
-  public ResourceBundle getResources() {
-    return resources;
   }
 
   /**

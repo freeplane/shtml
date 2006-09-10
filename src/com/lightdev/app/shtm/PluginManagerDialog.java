@@ -17,12 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.plugin;
+package com.lightdev.app.shtm;
 
-import com.lightdev.app.shtm.DialogShell;
-import com.lightdev.app.shtm.DynamicResource;
-import com.lightdev.app.shtm.SHTMLPanelImpl;
-import com.lightdev.app.shtm.Util;
 import java.awt.Frame;
 import javax.swing.JPanel;
 import javax.swing.JList;

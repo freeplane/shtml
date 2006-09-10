@@ -17,17 +17,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.plugin;
+package com.lightdev.app.shtm;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JComponent;
-import com.lightdev.app.shtm.Util;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Locale;
-import com.lightdev.app.shtm.SHTMLPanelImpl;
 import javax.swing.JFrame;
 import java.util.prefs.*;
 import javax.help.*;
@@ -162,9 +160,9 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    * @param helpMenuId  the id of the help menu for this plug-in in the
    * ResourceBundle, or null if no help menu is to be created
    */
-  public void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId,
+  public void initPlugin(SHTMLPanel owner, String internalName, String pluginMenuId,
                         String helpMenuId) {
-    this.owner = owner; 
+    this.owner = (SHTMLPanelImpl)owner; 
     this.internalName = internalName;
     this.pluginMenuId = pluginMenuId;
     this.helpMenuId = helpMenuId;

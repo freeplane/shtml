@@ -34,4 +34,8 @@ public abstract class SHTMLPanel extends JPanel {
     }
 
     public abstract HTMLDocument getDocument();
+
+    public static ResourceBundle getResources() {
+        return SHTMLPanelImpl.resources;
+    }
 }

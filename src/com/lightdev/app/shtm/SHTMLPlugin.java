@@ -17,13 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.plugin;
+package com.lightdev.app.shtm;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
-import com.lightdev.app.shtm.SHTMLPanelImpl;
 import javax.help.*;
 import javax.help.event.*;
 

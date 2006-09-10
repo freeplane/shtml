@@ -17,10 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.lightdev.app.shtm.plugin;
+package com.lightdev.app.shtm;
 
 import java.awt.Frame;
-import com.lightdev.app.shtm.Util;
 import java.util.Vector;
 import java.net.URLClassLoader;
 import java.net.URL;
@@ -30,7 +29,6 @@ import java.util.jar.JarEntry;
 import java.io.File;
 import java.net.URI;
 import java.util.Hashtable;
-import com.lightdev.app.shtm.SHTMLPanelImpl;
 import javax.help.*;
 import javax.help.event.*;
 
@@ -49,7 +47,7 @@ import javax.help.event.*;
  * 
  */
 
-public class PluginManager {
+class PluginManager {
 
   /** name of sub-package where plug-ins are stored */
   private String PLUGIN_PACKAGE = "installed";
