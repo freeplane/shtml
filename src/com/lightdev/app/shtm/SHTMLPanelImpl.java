@@ -1039,13 +1039,20 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    */
   public void stateChanged(ChangeEvent e) {
     activeTabNo = jtpDocs.getSelectedIndex();
-    dp = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
-    editor = dp.getEditor();
-    //System.out.println("FrmMain stateChanged docName now " + dp.getDocumentName());
-    doc = (SHTMLDocument) getEditor().getDocument();
-    //fireDocumentChanged();
-    if(!ignoreActivateDoc) {
-      dp.fireActivated();
+    if(activeTabNo >= 0){
+        dp = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
+        editor = dp.getEditor();
+        //System.out.println("FrmMain stateChanged docName now " + dp.getDocumentName());
+        doc = (SHTMLDocument) getEditor().getDocument();
+        //fireDocumentChanged();
+        if(!ignoreActivateDoc) {
+            dp.fireActivated();
+        }
+    }
+    else{
+        dp = null;
+        editor = null;
+        doc = null;
     }
   }
 

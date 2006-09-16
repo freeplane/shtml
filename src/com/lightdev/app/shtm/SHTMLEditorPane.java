@@ -172,6 +172,10 @@ class SHTMLEditorPane extends JEditorPane  implements
     myActionMap.put(newListItemAction, new NewListItemAction());
     myInputMap.put(enter, newListItemAction);
 
+    KeyStroke lineBreak = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK);
+    myActionMap.put(insertLineBreakAction, new InsertLineBreakAction());
+    myInputMap.put(lineBreak, insertLineBreakAction);
+
     KeyStroke backspace = KeyStroke.getKeyStroke('\b');
     myActionMap.put(deletePrevCharAction, new DeletePrevCharAction());
     myInputMap.put(backspace, deletePrevCharAction);
@@ -428,27 +432,9 @@ class DeleteNextCharAction extends AbstractAction{
    * <code>Action</code> to create a new list item.
    */
   class NewListItemAction extends AbstractAction {
-
-    /** action to use when not inside a table */
-    /* removed for changes in J2SE 1.4.1
-    Action alternateAction;
-    */
-
     /** construct a <code>NewListItemAction</code> */
     public NewListItemAction() {
     }
-
-    /**
-     * construct a <code>NewListItemAction</code>
-     *
-     * @param altAction  the action to use when the caret
-     *      is not inside a list
-     */
-    /* removed for changes in J2SE 1.4.1
-    public NewListItemAction(Action altAction) {
-      alternateAction = altAction;
-    }
-    */
 
     /**
      * create a new list item, when the caret is inside a list
@@ -466,18 +452,21 @@ class DeleteNextCharAction extends AbstractAction{
                 int eo = listItemElement.getEndOffset();
                 if(so != eo) {
                     StringWriter writer = new StringWriter();
-                    SHTMLWriter htmlwriter = new SHTMLWriter(writer, doc);
-                    htmlwriter.write(listItemElement);
+                    writer.write("\n<li>\n");
+                    if(caretPosition > so){
+                        SHTMLWriter htmlStartWriter = new SHTMLWriter(writer, doc, so, caretPosition-so);
+                        htmlStartWriter.writeChildElements(listItemElement);
+                    }
+                    writer.write("\n</li>\n<li>\n");
+                    if(caretPosition < eo - 1){
+                        SHTMLWriter htmlEndWriter = new SHTMLWriter(writer, doc, caretPosition, eo - caretPosition);
+                        htmlEndWriter.writeChildElements(listItemElement);
+                    }
+                    writer.write("\n</li>\n");
                     String text = writer.toString();
                     try{
                         doc.startCompoundEdit();
-                        doc.setOuterHTML(listItemElement, text + "\n" + text);
-                        listItemElement = SHTMLDocument.getListItemElement(doc.getParagraphElement(caretPosition));
-                        int so2 = listItemElement.getStartOffset();
-                        caretPosition += so2 - so;
-                        int eo2 = listItemElement.getEndOffset();
-                        doc.remove(caretPosition, eo2 - caretPosition - 1);
-                        doc.remove(caretPosition + 1, caretPosition - so2);
+                        doc.setOuterHTML(listItemElement, text);
                     }
                     catch(Exception e) {
                         Util.errMsg(null, e.getMessage(), e);
@@ -495,7 +484,7 @@ class DeleteNextCharAction extends AbstractAction{
           if(key != null) {
             getActionMap().getParent().get(key).actionPerformed(ae);
           }
-
+    
           /* removed for changes in J2SE 1.4.1
           if(alternateAction != null) {
             alternateAction.actionPerformed(ae);
@@ -1863,7 +1852,61 @@ class DeleteNextCharAction extends AbstractAction{
     }
   }
 
-  public void goNextCell(Element cell) {
+  /**
+   * <code>Action</code> to create a new list item.
+   */
+  class InsertLineBreakAction extends AbstractAction {
+
+    /** construct a <code>NewListItemAction</code> */
+    public InsertLineBreakAction() {
+    }
+
+    /**
+     * create a new list item, when the caret is inside a list
+     *
+     * <p>The new item is created after the item at the caret position</p>
+     */
+    public void actionPerformed(ActionEvent ae) {
+      try {
+        SHTMLDocument doc = (SHTMLDocument) getDocument();
+        int caretPosition = getCaretPosition();
+        Element paragraphElement = doc.getParagraphElement(caretPosition);
+        if(paragraphElement != null) {
+                int so = paragraphElement.getStartOffset();
+                int eo = paragraphElement.getEndOffset();
+                if(so != eo) {
+                    StringWriter writer = new StringWriter();
+                    if(caretPosition > so){
+                        SHTMLWriter htmlStartWriter = new SHTMLWriter(writer, doc, so, caretPosition-so);
+                        htmlStartWriter.writeChildElements(paragraphElement);
+                    }
+                    writer.write("\n<br>\n");
+                    if(caretPosition < eo - 1){
+                        SHTMLWriter htmlEndWriter = new SHTMLWriter(writer, doc, caretPosition, eo - caretPosition);
+                        htmlEndWriter.writeChildElements(paragraphElement);
+                    }
+                    String text = writer.toString();
+                    try{
+                        doc.startCompoundEdit();
+                        doc.setInnerHTML(paragraphElement, text);
+                    }
+                    catch(Exception e) {
+                        Util.errMsg(null, e.getMessage(), e);
+                    }
+                    finally {
+                        doc.endCompoundEdit();
+                    }
+                    setCaretPosition(caretPosition + 1);
+                }
+          }
+      }
+      catch(Exception e) {
+        Util.errMsg(null, e.getMessage(), e);
+      }
+    }
+  }
+
+public void goNextCell(Element cell) {
     if(cell == getLastTableCell(cell)) {
       appendTableRow();
       cell = getCurTableCell();
@@ -2523,7 +2566,8 @@ class DeleteNextCharAction extends AbstractAction{
       }
   }
 
-public static final String newListItemAction = "newListItem";
+  public static final String newListItemAction = "newListItem";
+  public static final String insertLineBreakAction = "insertLineBreak";
 
   public static final String deletePrevCharAction = "deletePrevChar";
   public static final String deleteNextCharAction = "deleteNextChar";
