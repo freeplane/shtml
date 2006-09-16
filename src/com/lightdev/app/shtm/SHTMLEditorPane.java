@@ -284,8 +284,9 @@ private class MyNavigationFilter extends NavigationFilter{
 
 private int getValidPosition(int position) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
-    if(position > doc.getLastDocumentPosition() ){
-        position = doc.getLastDocumentPosition();
+    final int lastValidPosition = doc.getLastDocumentPosition()-1;
+    if(position > lastValidPosition ){
+        position = lastValidPosition;
     }
       int startPos = 0;
       if(doc.getDefaultRootElement().getElementCount() > 1){
