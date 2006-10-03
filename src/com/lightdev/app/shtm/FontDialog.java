@@ -63,7 +63,7 @@ class FontDialog extends DialogShell {
     super(parent, title);
 
     // construct font panel
-    fontPanel = new FontPanel(a);
+    fontPanel = new FontPanel(a, false);
 
     // add font panel to content pane of DialogShell
     Container contentPane = super.getContentPane();

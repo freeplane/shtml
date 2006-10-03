@@ -84,7 +84,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
   /** table for automatic font component value read/write */
   private Vector fontComponents = new Vector(0);
 
-  public FontPanel() {
+  public FontPanel(boolean pickBgColor) {
     setLayout(new BorderLayout(5,5));
 
     /** create a label for previewing font selections */
@@ -147,15 +147,17 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
                                   Color.black, CSS.Attribute.COLOR);
     fCol.addColorPanelListener(this);
     fontComponents.add(fCol);
-    ColorPanel bCol = new ColorPanel(Util.getResourceString(SHTMLPanelImpl.resources, "backgroundLabel"),
+    colorPanel.add(fCol);
+    sample.setForeground(Color.black);
+
+    if(pickBgColor){
+        ColorPanel bCol = new ColorPanel(Util.getResourceString(SHTMLPanelImpl.resources, "backgroundLabel"),
                                     Color.white, CSS.Attribute.BACKGROUND_COLOR);
     bCol.addColorPanelListener(this);
     fontComponents.add(bCol);
-    colorPanel.add(fCol);
     colorPanel.add(bCol);
-
-    sample.setForeground(Color.black);
     sample.setBackground(Color.white);
+    }
 
     /** create a panel to combine line and color choices */
     JPanel eastPanel = new JPanel(new BorderLayout());
@@ -176,8 +178,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
    * @param frame  the main frame having the ResourceBundle
    * @param a  the set of attributes to display
    */
-  public FontPanel(AttributeSet a) {
-    this();
+  public FontPanel(AttributeSet a, boolean pickBgColor) {
+    this(pickBgColor);
 
     /** set the new FontPanel to display our set of attributes */
     setAttributes(a);

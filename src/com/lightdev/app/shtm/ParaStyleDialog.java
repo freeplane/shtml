@@ -240,7 +240,7 @@ class ParaStyleDialog extends DialogShell
     tp.add(Util.getResourceString(SHTMLPanelImpl.resources, "paraTabLabel"), paraPanel);
 
     // create font panel and add to tabbed pane
-    fp = new FontPanel();
+    fp = new FontPanel(true);
 
     // add tabbed pane to content pane of dialog
     contentPane.add(tp, BorderLayout.CENTER);

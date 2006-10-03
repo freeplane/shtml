@@ -1,6 +1,6 @@
 /*
  * SimplyHTML, a word processor based on Java, HTML and CSS
- * Copyright (C) 2002 Ulrich Hilger
+ * Copyright (C) 2006 Ulrich Hilger, Dimitri Polivaev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1095,10 +1095,10 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
   void updateFormatControls() {
     updateAToolBar(formatToolBar);
     updateAToolBar(paraToolBar);
-    Element e = doc.getParagraphElement(getEditor().getCaretPosition());
     if(tagSelector != null){
         SetTagAction sta = (SetTagAction) tagSelector.getAction();
         sta.setIgnoreActions(true);
+          Element e = doc.getParagraphElement(getEditor().getCaretPosition());
         tagSelector.setSelectedTag(e.getName());
         sta.setIgnoreActions(false);
     }
@@ -1282,13 +1282,15 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
   AttributeSet getMaxAttributes(SHTMLEditorPane editor,
                                        String elemName)
   {
-    Element e = doc.getCharacterElement(editor.getSelectionStart());
     if(elemName != null && elemName.length() > 0) {
+          Element e = doc.getCharacterElement(editor.getSelectionStart());
       e = Util.findElementUp(elemName, e);
-    }
-    StyleSheet s = doc.getStyleSheet();//((SHTMLEditorKit) editor.getEditorKit()).getStyleSheet();
+        StyleSheet s = doc.getStyleSheet();
     return getMaxAttributes(e, s);
   }
+      final StyledEditorKit editorKit = (StyledEditorKit)editor.getEditorKit();
+      return editorKit.getInputAttributes().copyAttributes();
+    }
 
   Frame getMainFrame() {
     return JOptionPane.getFrameForComponent(SHTMLPanelImpl.this);
