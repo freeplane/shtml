@@ -395,11 +395,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    */
   private void initAppTempDir() {
     appTempDir = new File(System.getProperty("user.home") +
-                          File.separator + FrmMain.APP_NAME +
+                          File.separator + "." + FrmMain.APP_NAME.toLowerCase() +
                           File.separator + APP_TEMP_DIR + File.separator);
-    if(!appTempDir.exists()) {
-      appTempDir.mkdirs();
-    }
   }
 
   /**
