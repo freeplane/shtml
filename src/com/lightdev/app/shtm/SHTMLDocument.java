@@ -33,6 +33,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.*;
@@ -68,6 +69,7 @@ public class SHTMLDocument extends HTMLDocument {
   private CompoundEdit compoundEdit;
   private int compoundEditDepth;
   private boolean inSetParagraphAttributes = false;
+  private boolean baseDirChecked = false;
   /**
    * Constructs an SHTMLDocument.
    */
@@ -778,6 +780,29 @@ private SimpleAttributeSet getEndingAttributeSet() {
     final SimpleAttributeSet set = new SimpleAttributeSet();
     StyleConstants.setBackground(set, Color.GRAY);
     return set;
+}
+
+/* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#getBase()
+ */
+public URL getBase() {
+    final URL url = super.getBase();
+    if(false == baseDirChecked){
+        baseDirChecked = true;
+        File docDir = new File (url.getFile());
+        if(!docDir.exists()) {
+            docDir.mkdirs();
+          }
+    }
+    return url;
+}
+
+/* (non-Javadoc)
+ * @see javax.swing.text.html.HTMLDocument#setBase(java.net.URL)
+ */
+public void setBase(URL u) {
+    baseDirChecked = false;
+    super.setBase(u);
 }
 
 }

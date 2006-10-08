@@ -62,7 +62,7 @@ import java.util.prefs.*;
  *
  */
 
-class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener {
+class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
 
   //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
 
@@ -102,27 +102,20 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
       SHTMLPanelImpl.resources = resources;
   }
   private SHTMLMenuBar menuBar;
-
-  /** number of currently active tab */
-  private int activeTabNo;
-
     /** currently active DocumentPane */
-  private DocumentPane dp;
+  protected DocumentPane dp;
 
   /** currently active SHTMLEditorPane */
-  private SHTMLEditorPane editor;
+  protected SHTMLEditorPane editor;
 
   /** currently active SHTMLDocument */
-  private SHTMLDocument doc;
+  protected SHTMLDocument doc;
 
   /** tool bar for formatting commands */
   private JToolBar formatToolBar;
 
   /** tool bar for formatting commands */
   private JToolBar paraToolBar;
-
-  /** the tabbed pane for adding documents to show to */
-  private JTabbedPane jtpDocs;
 
   /** our help broker */
   private static HelpBroker hb;
@@ -145,9 +138,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
   /** reference to applicatin temp directory */
   private static File appTempDir;
 
-  /** tool bar selector for styles */
-  private StyleSelector styleSelector;
-
   /** tool bar selector for certain tags */
   private TagSelector tagSelector;
 
@@ -164,12 +154,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    * resource bundle to allow for dynamic
    * menu creation and control
    */
-  public static final String newAction = "new";
-  public static final String openAction = "open";
-  public static final String closeAction = "close";
-  public static final String closeAllAction = "closeAll";
-  public static  final String saveAction = "save";
-  public static final String saveAsAction = "saveAs";
   public static  final String exitAction = "exit";
   public static  final String undoAction = "undo";
   public static  final String redoAction = "redo";
@@ -207,7 +191,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
   public static final String editPrefsAction = "editPrefs";
   public static  final String insertImageAction = "insertImage";
   public static  final String formatImageAction = "formatImage";
-  public static  final String setStyleAction = "setStyle";
   public static  final String formatParaAction = "formatPara";
   public static  final String editNamedStyleAction = "editNamedStyle";
   public static  final String paraAlignLeftAction = "paraAlignLeft";
@@ -221,7 +204,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
   public static final String documentTitleAction = "documentTitle";
   public static final String setDefaultStyleRefAction = "setDefaultStyleRef";
   public static final String findReplaceAction = "findReplace";
-
+  
   public static SHTMLPanelImpl getOwnerSHTMLPanel(Component c){
       for(;;){
           if(c == null){
@@ -244,11 +227,10 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     customizeFrame();
     initAppTempDir();
     initPlugins();
+    initDocumentPane();
     updateActions();
     initJavaHelp();
     SplashScreen.hideInstance();
-    dynRes.getAction(newAction).actionPerformed(null);
-    dp.getEditor().setCaretPosition(0);
   }
 
   private void setJMenuBar(JMenuBar bar) {
@@ -341,9 +323,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     /**
      * Convenience method for setting the document text
      */
-    public void setCurrentDocumentContent(String docName, String sText) {
-        jtpDocs.setTitleAt(getActiveTabNo(), docName);
-        dp.setDocumentText(docName, sText);
+    public void setCurrentDocumentContent(String sText) {
+        dp.setDocumentText(sText);
         purgeUndos();
     }
 
@@ -665,6 +646,9 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     return hb;
   }
 
+  protected void initDocumentPane() {
+      //TODO
+  }
     /**
    * instantiate Actions and put them into the commands
    * Hashtable for later use along with their action commands.
@@ -673,11 +657,9 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    * hard coded anyway, so we do the storage in <code>commands</code>
    * right away.
    */
-  private void initActions() {
-    dynRes.addAction(findReplaceAction, new SHTMLEditorKitActions.FindReplaceAction(this));
+  protected void initActions() {
     dynRes.addAction(setDefaultStyleRefAction, new SHTMLEditorKitActions.SetDefaultStyleRefAction(this));
     dynRes.addAction(documentTitleAction, new SHTMLEditorKitActions.DocumentTitleAction(this));
-    dynRes.addAction(saveAllAction, new SHTMLEditorKitActions.SHTMLFileSaveAllAction(this));
     dynRes.addAction(editAnchorsAction, new SHTMLEditorKitActions.EditAnchorsAction(this));
     dynRes.addAction(setTagAction, new SHTMLEditorKitActions.SetTagAction(this));
     dynRes.addAction(editLinkAction, new SHTMLEditorKitActions.EditLinkAction(this));
@@ -686,7 +668,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     dynRes.addAction(editNamedStyleAction, new SHTMLEditorKitActions.EditNamedStyleAction(this));
     dynRes.addAction(clearFormatAction, new SHTMLEditorKitActions.ClearFormatAction(this));
     dynRes.addAction(formatParaAction, new SHTMLEditorKitActions.FormatParaAction(this));
-    dynRes.addAction(setStyleAction, new SHTMLEditorKitActions.SetStyleAction(this));
     dynRes.addAction(formatImageAction, new SHTMLEditorKitActions.FormatImageAction(this));
     dynRes.addAction(insertImageAction, new SHTMLEditorKitActions.InsertImageAction(this));
     dynRes.addAction(editPrefsAction, new SHTMLEditorKitActions.SHTMLEditPrefsAction(this));
@@ -695,16 +676,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     dynRes.addAction(formatListAction, new SHTMLEditorKitActions.FormatListAction(this));
     dynRes.addAction(ManagePluginsAction.managePluginsAction,
                      new ManagePluginsAction());
-    dynRes.addAction(newAction, new SHTMLEditorKitActions.SHTMLFileNewAction(this));
-    dynRes.addAction(openAction, new SHTMLEditorKitActions.SHTMLFileOpenAction(this));
-    dynRes.addAction(closeAction, new SHTMLEditorKitActions.SHTMLFileCloseAction(this));
-    dynRes.addAction(closeAllAction, new SHTMLEditorKitActions.SHTMLFileCloseAllAction(this));
-    dynRes.addAction(saveAction, new SHTMLEditorKitActions.SHTMLFileSaveAction(this));
-    dynRes.addAction(saveAsAction, new SHTMLEditorKitActions.SHTMLFileSaveAsAction(this));
-    dynRes.addAction(exitAction, new SHTMLEditorKitActions.SHTMLFileExitAction(this));
     dynRes.addAction(elemTreeAction, new SHTMLEditorKitActions.ShowElementTreeAction(this));
     dynRes.addAction(gcAction, new SHTMLEditorKitActions.GCAction(this));
-    dynRes.addAction(testAction, new SHTMLEditorKitActions.SHTMLFileTestAction(this));
     dynRes.addAction(undoAction, new SHTMLEditorKitActions.UndoAction(this));
     dynRes.addAction(redoAction, new SHTMLEditorKitActions.RedoAction(this));
     dynRes.addAction(cutAction, new SHTMLEditorKitActions.SHTMLEditCutAction(this));
@@ -749,7 +722,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
   }
 
   /** customize the frame to our needs */
-  private void customizeFrame() {
+  protected void customizeFrame() {
     Container contentPane = new JPanel();
     contentPane.setLayout(new BorderLayout());
 
@@ -759,10 +732,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
       p.setVisible(false);
       sp.addComponent(p, i);
     }
-
-    jtpDocs = new JTabbedPane();
-    jtpDocs.addChangeListener(this);
-    sp.addComponent(jtpDocs, SplitPanel.CENTER);
 
     JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
     toolBarPanel.add(createToolBar("toolBar"));
@@ -777,16 +746,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     add(contentPane, BorderLayout.CENTER);
   }
 
-  /**
-   * catch requests to close the application's main frame to
-   * ensure proper clean up before the application is
-   * actually terminated.
-   */
-  boolean close() {
-      dynRes.getAction(exitAction).actionPerformed(
-                new ActionEvent(this, 0, exitAction));
-      return jtpDocs.getTabCount() == 0;
-  }
 
   /**
    * Create a tool bar.  This reads the definition of a tool bar
@@ -797,122 +756,118 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    * @return the created tool bar
    */
   JToolBar createToolBar(String nm) {
-    ToggleBorderListener tbl = new ToggleBorderListener();
-    ButtonGroup bg = new ButtonGroup();
-    Action action;
-    AbstractButton newButton;
-    Dimension buttonSize = new Dimension(24, 24);
-    Dimension comboBoxSize = new Dimension(300, 24);
-    Dimension separatorSize = new Dimension(3, 24);
-    JSeparator separator;
     String[] itemKeys = Util.tokenize(
         Util.getResourceString(resources, nm), " ");
     JToolBar toolBar = new JToolBar();
     toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE );
     for (int i = 0; i < itemKeys.length; i++) {
       /** special handling for separators */
-      if (itemKeys[i].equals(dynRes.menuSeparatorKey)) {
-        separator = new JSeparator(JSeparator.VERTICAL);
-        separator.setMaximumSize(separatorSize);
-        toolBar.add(separator);
+      final String itemKey = itemKeys[i];
+      createToolbarItem(toolBar, itemKey);
+    }
+    return toolBar;
+  }
+protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
+    ToggleBorderListener tbl = new ToggleBorderListener();
+      ButtonGroup bg = new ButtonGroup();
+      Action action;
+      AbstractButton newButton;
+      final Dimension buttonSize = new Dimension(24, 24);
+      final Dimension comboBoxSize = new Dimension(300, 24);
+      final Dimension separatorSize = new Dimension(3, 24);
+      JSeparator separator;
+      if (itemKey.equals(dynRes.menuSeparatorKey)) {
+          separator = new JSeparator(JSeparator.VERTICAL);
+          separator.setMaximumSize(separatorSize);
+          toolBar.add(separator);
       }
       /**
        * special handling for list elements in the
        * tool bar
        */
-      else if(itemKeys[i].equalsIgnoreCase(fontFamilyAction)) {
-	FontFamilyPicker fontFamily = new FontFamilyPicker();
-        fontFamily.setPreferredSize(new Dimension(180, 23));
-        fontFamily.setAction(dynRes.getAction(fontFamilyAction));
-        fontFamily.setMaximumSize(comboBoxSize);
-	toolBar.add(fontFamily);
+      else if(itemKey.equalsIgnoreCase(fontFamilyAction)) {
+          FontFamilyPicker fontFamily = new FontFamilyPicker();
+          fontFamily.setPreferredSize(new Dimension(180, 23));
+          fontFamily.setAction(dynRes.getAction(fontFamilyAction));
+          fontFamily.setMaximumSize(comboBoxSize);
+          toolBar.add(fontFamily);
       }
-      else if(itemKeys[i].equalsIgnoreCase(fontSizeAction)) {
-	FontSizePicker fontSize = new FontSizePicker();
-        fontSize.setPreferredSize(new Dimension(50, 23));
-        fontSize.setAction(dynRes.getAction(fontSizeAction));
-        fontSize.setMaximumSize(comboBoxSize);
-	toolBar.add(fontSize);
+      else if(itemKey.equalsIgnoreCase(fontSizeAction)) {
+          FontSizePicker fontSize = new FontSizePicker();
+          fontSize.setPreferredSize(new Dimension(50, 23));
+          fontSize.setAction(dynRes.getAction(fontSizeAction));
+          fontSize.setMaximumSize(comboBoxSize);
+          toolBar.add(fontSize);
       }
-      else if(itemKeys[i].equalsIgnoreCase(setStyleAction)) {
-        styleSelector = new StyleSelector(HTML.Attribute.CLASS);
-        styleSelector.setPreferredSize(new Dimension(110, 23));
-        styleSelector.setAction(dynRes.getAction(setStyleAction));
-        styleSelector.setMaximumSize(comboBoxSize);
-        jtpDocs.addChangeListener(styleSelector);
-        toolBar.add(styleSelector);
+      else if(itemKey.equalsIgnoreCase(setTagAction)) {
+          tagSelector = new TagSelector();
+          tagSelector.setAction(dynRes.getAction(setTagAction));
+          /*
+           styleSelector = new StyleSelector(HTML.Attribute.CLASS);
+           styleSelector.setPreferredSize(new Dimension(110, 23));
+           styleSelector.setAction(dynRes.getAction(setStyleAction));
+           styleSelector.setMaximumSize(comboBoxSize);
+           jtpDocs.addChangeListener(styleSelector);
+           */
+          toolBar.add(tagSelector);
       }
-      else if(itemKeys[i].equalsIgnoreCase(setTagAction)) {
-        tagSelector = new TagSelector();
-        tagSelector.setAction(dynRes.getAction(setTagAction));
-        /*
-        styleSelector = new StyleSelector(HTML.Attribute.CLASS);
-        styleSelector.setPreferredSize(new Dimension(110, 23));
-        styleSelector.setAction(dynRes.getAction(setStyleAction));
-        styleSelector.setMaximumSize(comboBoxSize);
-        jtpDocs.addChangeListener(styleSelector);
-        */
-        toolBar.add(tagSelector);
-      }
-      else if(itemKeys[i].equalsIgnoreCase(helpTopicsAction)) {
-        newButton = new JButton();
-        try {
-          CSH.setHelpIDString(newButton, "item15");
-          newButton.addActionListener(
-              new CSH.DisplayHelpFromSource(getHelpBroker()));
-          newButton.setIcon(dynRes.getIconForCommand(resources, itemKeys[i]));
-          newButton.setToolTipText(Util.getResourceString(
-              resources, itemKeys[i] + dynRes.toolTipSuffix));
-          toolBar.add(newButton);
-        }
-        catch(Exception e) {}
+      else if(itemKey.equalsIgnoreCase(helpTopicsAction)) {
+          newButton = new JButton();
+          try {
+              CSH.setHelpIDString(newButton, "item15");
+              newButton.addActionListener(
+                      new CSH.DisplayHelpFromSource(getHelpBroker()));
+              newButton.setIcon(dynRes.getIconForCommand(resources, itemKey));
+              newButton.setToolTipText(Util.getResourceString(
+                      resources, itemKey + dynRes.toolTipSuffix));
+              toolBar.add(newButton);
+          }
+          catch(Exception e) {}
       }
       else {
-        action = dynRes.getAction(itemKeys[i]);
-        /**
-         * special handling for JToggleButtons in the tool bar
-         */
-        if(action instanceof AttributeComponent) {
-          newButton =
-              new JToggleButton("", (Icon) action.getValue(Action.SMALL_ICON));
-          newButton.addMouseListener(tbl);
-          newButton.setAction(action);
-          newButton.setText("");
-          //newButton.setActionCommand("");
-          newButton.setBorderPainted(false);
-          action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
-          Icon si = dynRes.getIconForName(resources, action.getValue(action.NAME) + DynamicResource.selectedIconSuffix);
-          if(si != null) {
-            newButton.setSelectedIcon(si);
+          action = dynRes.getAction(itemKey);
+          /**
+           * special handling for JToggleButtons in the tool bar
+           */
+          if(action instanceof AttributeComponent) {
+              newButton =
+                  new JToggleButton("", (Icon) action.getValue(Action.SMALL_ICON));
+              newButton.addMouseListener(tbl);
+              newButton.setAction(action);
+              newButton.setText("");
+              //newButton.setActionCommand("");
+              newButton.setBorderPainted(false);
+              action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
+              Icon si = dynRes.getIconForName(resources, action.getValue(action.NAME) + DynamicResource.selectedIconSuffix);
+              if(si != null) {
+                  newButton.setSelectedIcon(si);
+              }
+              newButton.setMargin(new Insets(0, 0, 0, 0));
+              newButton.setIconTextGap(0);
+              newButton.setContentAreaFilled(false);
+              newButton.setHorizontalAlignment(SwingConstants.CENTER);
+              newButton.setVerticalAlignment(SwingConstants.CENTER);
+              toolBar.add(newButton);
+              if(itemKey.equalsIgnoreCase(paraAlignLeftAction) ||
+                      itemKey.equalsIgnoreCase(paraAlignCenterAction) ||
+                      itemKey.equalsIgnoreCase(paraAlignRightAction))
+              {
+                  bg.add(newButton);
+              }
           }
-          newButton.setMargin(new Insets(0, 0, 0, 0));
-          newButton.setIconTextGap(0);
-          newButton.setContentAreaFilled(false);
-          newButton.setHorizontalAlignment(SwingConstants.CENTER);
-          newButton.setVerticalAlignment(SwingConstants.CENTER);
-          toolBar.add(newButton);
-          if(itemKeys[i].equalsIgnoreCase(paraAlignLeftAction) ||
-             itemKeys[i].equalsIgnoreCase(paraAlignCenterAction) ||
-             itemKeys[i].equalsIgnoreCase(paraAlignRightAction))
-          {
-            bg.add(newButton);
+          /**
+           * this is the usual way to add tool bar buttons finally
+           */
+          else {
+              newButton = toolBar.add(action);
           }
-        }
-        /**
-         * this is the usual way to add tool bar buttons finally
-         */
-        else {
-          newButton = toolBar.add(action);
-        }
-        newButton.setMinimumSize(buttonSize);
-        newButton.setPreferredSize(buttonSize);
-        newButton.setMaximumSize(buttonSize);
-        newButton.setFocusPainted(false);
-        newButton.setRequestFocusEnabled(false);
+          newButton.setMinimumSize(buttonSize);
+          newButton.setPreferredSize(buttonSize);
+          newButton.setMaximumSize(buttonSize);
+          newButton.setFocusPainted(false);
+          newButton.setRequestFocusEnabled(false);
       }
-    }
-    return toolBar;
-  }
+}
 
   /**
    * displays or removes an etched border around JToggleButtons
@@ -945,11 +900,10 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    * register FrmMain as an object which has interest
    * in events from a given document pane
    */
-  void registerDocument() {
+  protected void registerDocument() {
     doc.addUndoableEditListener(undoHandler);
     getEditor().addCaretListener(this);
     getEditor().addKeyListener(rkw);
-    ((SHTMLDocument) dp.getDocument()).getStyleSheet().addChangeListener(styleSelector);
   }
 
   /**
@@ -959,14 +913,13 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
    * remove all plug-ins owned by this FrmMain from
    * SimplyHTML objects too
    */
-  void unregisterDocument() {
+  protected void unregisterDocument() {
     getEditor().removeCaretListener(this);
     getEditor().removeKeyListener(rkw);
     if(doc != null) {
       doc.removeUndoableEditListener(undoHandler);
     }
     dp.removeAllListeners(); // for plug-in removal from any dp that is about to close
-    doc.getStyleSheet().removeChangeListener(styleSelector);
     //System.out.println("FrmMain unregister document dp.name=" + dp.getDocumentName());
   }
 
@@ -1018,40 +971,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener, ChangeListener
     }
   }
 
-  int getActiveTabNo() {
-    return activeTabNo;
-  }
-
-  /**
-   * @param activeTabNo The activeTabNo to set.
-   */
-  void setActiveTabNo(int activeTabNo) {
-      this.activeTabNo = activeTabNo;
-  }
-
-  /**
-   * change listener to be applied to our tabbed pane
-   * so that always the currently active components
-   * are known
-   */
-  public void stateChanged(ChangeEvent e) {
-    activeTabNo = jtpDocs.getSelectedIndex();
-    if(activeTabNo >= 0){
-        dp = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
-        editor = dp.getEditor();
-        //System.out.println("FrmMain stateChanged docName now " + dp.getDocumentName());
-        doc = (SHTMLDocument) getEditor().getDocument();
-        //fireDocumentChanged();
-        if(!ignoreActivateDoc) {
-            dp.fireActivated();
-        }
-    }
-    else{
-        dp = null;
-        editor = null;
-        doc = null;
-    }
-  }
 
   /* ---------- undo/redo implementation ----------------------- */
 
@@ -1366,13 +1285,6 @@ SHTMLDocument getSHTMLDocument() {
 }
 
 /**
- * @return Returns the jtpDocs.
- */
-JTabbedPane getTabbedPaneForDocuments() {
-    return jtpDocs;
-}
-
-/**
  * @param undo The undo to set.
  */
 void setUndo(UndoManager undo) {
@@ -1404,18 +1316,8 @@ void savePrefs() {
     sp.savePrefs();
 }
 
-void incNewDocCounter() {
-    newDocCounter++;
-}
-
-void createNewDocumentPane() {
-    setDocumentPane(new DocumentPane(null, ++newDocCounter));
-}
-
-void selectTabbedPane(int index) {
-    ignoreActivateDoc = true;
-    getTabbedPaneForDocuments().setSelectedIndex(index);
-    ignoreActivateDoc = false;
+boolean close() {
+    return true;
 }
 
   /* ---------- font manipulation code end ------------------ */

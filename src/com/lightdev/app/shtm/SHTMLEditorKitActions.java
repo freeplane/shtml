@@ -49,11 +49,11 @@ class SHTMLEditorKitActions {
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
+    private final SHTMLPanelMultipleDocImpl panel;
     private boolean ignoreActions = false;
 
-    public SetStyleAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.setStyleAction);
+    public SetStyleAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.setStyleAction);
     this.panel = panel;
       getProperties();
     }
@@ -80,7 +80,7 @@ class SHTMLEditorKitActions {
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -119,7 +119,8 @@ class SHTMLEditorKitActions {
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      final SHTMLEditorPane editor = this.panel.getEditor();
+    if(editor != null && editor.getCurTableCell() != null) {
         this.setEnabled(true);
       }
       else {
@@ -166,7 +167,7 @@ class SHTMLEditorKitActions {
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -205,7 +206,7 @@ class SHTMLEditorKitActions {
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -279,7 +280,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -508,7 +509,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -548,7 +549,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -592,7 +593,6 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
         });
         Container fContentPane = this.elementTreeFrame.getContentPane();
         fContentPane.setLayout(new BorderLayout());
-        int activeTabNo = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
         ElementTreePanel elementTreePanel = new ElementTreePanel(this.panel.getEditor());
         fContentPane.add(elementTreePanel);
         this.elementTreeFrame.pack();
@@ -633,7 +633,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -678,7 +678,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -728,7 +728,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -804,7 +804,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -909,7 +909,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -963,7 +963,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         if((this.panel.getEditor().getSelectionEnd() > this.panel.getEditor().getSelectionStart()) ||
            (Util.findLinkElementUp(this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getSelectionStart())) != null)) {
           this.setEnabled(true);
@@ -1061,7 +1061,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1119,15 +1119,114 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
   }
 
 /**
+ * action to find and replace a given text
+ */
+static class MultipleDocFindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener
+{
+  /**
+   *
+   */
+  private final SHTMLPanelMultipleDocImpl panel;
+  public MultipleDocFindReplaceAction(SHTMLPanelMultipleDocImpl panel) {
+    super(SHTMLPanelMultipleDocImpl.findReplaceAction);
+  this.panel = panel;
+    putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
+    getProperties();
+  }
+
+  public void actionPerformed(ActionEvent ae) {
+    currentTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
+    caretPos = this.panel.getDocumentPane().getEditor().getCaretPosition();
+    if(this.panel.getTabbedPaneForDocuments().getTabCount() > 1) {
+      System.out.println("FindReplaceAction.actionPerformed with Listener");
+      FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor(), this);
+    }
+    else {
+      System.out.println("FindReplaceAction.actionPerformed NO Listener");
+      FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor());
+    }
+  }
+
+  public void update() {
+      if(this.panel.isHtmlEditorActive()){
+          this.setEnabled(false);
+          return;
+      }
+    if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      this.setEnabled(true);
+    }
+    else {
+      this.setEnabled(false);
+    }
+  }
+
+  public void getProperties() {
+      SHTMLPanelMultipleDocImpl.getActionProperties(this, (String) getValue(Action.NAME));
+  }
+
+  public void getNextDocument(FindReplaceEvent e) {
+    FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
+    int tabCount = this.panel.getTabbedPaneForDocuments().getTabCount();
+    int curTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
+    System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
+    if(++curTab < tabCount) {
+      System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
+      resumeWithNewEditor(frd, curTab);
+      /*
+      jtpDocs.setSelectedIndex(curTab);
+      DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(curTab);
+      JEditorPane editor = docPane.getEditor();
+      editor.requestFocus();
+      frd.setEditor(editor);
+      frd.resumeOperation();
+      */
+    }
+    else {
+      frd.terminateOperation();
+    }
+  }
+
+  public void getFirstDocument(FindReplaceEvent e) {
+    FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
+    resumeWithNewEditor(frd, 0);
+    /*DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(0);
+    jtpDocs.setSelectedIndex(0);
+    JEditorPane editor = docPane.getEditor();
+    editor.requestFocus();
+    frd.setEditor(editor);
+    frd.resumeOperation();*/
+  }
+
+  public void findReplaceTerminated(FindReplaceEvent e) {
+    this.panel.getTabbedPaneForDocuments().setSelectedIndex(currentTab);
+    DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getSelectedComponent();
+    JEditorPane editor = docPane.getEditor();
+    editor.setCaretPosition(caretPos);
+    editor.requestFocus();
+  }
+
+  private void resumeWithNewEditor(FindReplaceDialog frd, int tabNo) {
+    this.panel.getTabbedPaneForDocuments().setSelectedIndex(tabNo);
+    DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(tabNo);
+    JEditorPane editor = docPane.getEditor();
+    editor.requestFocus();
+    frd.setEditor(editor);
+    frd.resumeOperation();
+  }
+
+  private int caretPos;
+  private int currentTab;
+}
+/**
    * action to find and replace a given text
    */
-  static class FindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener
+  static class SingleDocFindReplaceAction extends AbstractAction implements SHTMLAction
   {
     /**
      *
      */
     private final SHTMLPanelImpl panel;
-    public FindReplaceAction(SHTMLPanelImpl panel) {
+    public SingleDocFindReplaceAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.findReplaceAction);
     this.panel = panel;
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
@@ -1135,14 +1234,10 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
     }
 
     public void actionPerformed(ActionEvent ae) {
-      currentTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
-      caretPos = this.panel.getDocumentPane().getEditor().getCaretPosition();
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 1) {
-        System.out.println("FindReplaceAction.actionPerformed with Listener");
-        FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor(), this);
-      }
-      else {
-        System.out.println("FindReplaceAction.actionPerformed NO Listener");
+      currentDocumentPane = this.panel.getDocumentPane();
+      if(currentDocumentPane != null) {
+          caretPos = currentDocumentPane.getEditor().getCaretPosition();
+        // System.out.println("FindReplaceAction.actionPerformed without Listener");
         FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor());
       }
     }
@@ -1152,7 +1247,7 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getDocumentPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1164,58 +1259,16 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
 
-    public void getNextDocument(FindReplaceEvent e) {
-      FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-      int tabCount = this.panel.getTabbedPaneForDocuments().getTabCount();
-      int curTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
-      System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
-      if(++curTab < tabCount) {
-        System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
-        resumeWithNewEditor(frd, curTab);
-        /*
-        jtpDocs.setSelectedIndex(curTab);
-        DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(curTab);
-        JEditorPane editor = docPane.getEditor();
-        editor.requestFocus();
-        frd.setEditor(editor);
-        frd.resumeOperation();
-        */
-      }
-      else {
-        frd.terminateOperation();
-      }
-    }
-
-    public void getFirstDocument(FindReplaceEvent e) {
-      FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-      resumeWithNewEditor(frd, 0);
-      /*DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(0);
-      jtpDocs.setSelectedIndex(0);
-      JEditorPane editor = docPane.getEditor();
-      editor.requestFocus();
-      frd.setEditor(editor);
-      frd.resumeOperation();*/
-    }
-
     public void findReplaceTerminated(FindReplaceEvent e) {
-      this.panel.getTabbedPaneForDocuments().setSelectedIndex(currentTab);
-      DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getSelectedComponent();
-      JEditorPane editor = docPane.getEditor();
-      editor.setCaretPosition(caretPos);
-      editor.requestFocus();
-    }
-
-    private void resumeWithNewEditor(FindReplaceDialog frd, int tabNo) {
-      this.panel.getTabbedPaneForDocuments().setSelectedIndex(tabNo);
-      DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(tabNo);
-      JEditorPane editor = docPane.getEditor();
-      editor.requestFocus();
-      frd.setEditor(editor);
-      frd.resumeOperation();
+        if(currentDocumentPane.isVisible()){
+            JEditorPane editor = currentDocumentPane.getEditor();
+            editor.setCaretPosition(caretPos);
+            editor.requestFocus();
+        }
     }
 
     private int caretPos;
-    private int currentTab;
+    private DocumentPane currentDocumentPane;
   }
 
 /**
@@ -1259,7 +1312,7 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1301,7 +1354,7 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1343,7 +1396,7 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1406,7 +1459,7 @@ static class FormatImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getCaretPosition());
         if(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
           this.setEnabled(true);
@@ -1482,7 +1535,7 @@ static class FormatImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1534,7 +1587,7 @@ static class FormatImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1599,7 +1652,7 @@ static class FormatImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -1690,7 +1743,7 @@ static class InsertImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1738,7 +1791,7 @@ static class InsertImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1777,7 +1830,7 @@ static class InsertImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -1816,7 +1869,7 @@ static class InsertImageAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -1887,7 +1940,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1996,7 +2049,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
             this.setEnabled(false);
             return;
         }
-      if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -2040,7 +2093,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
             this.setEnabled(false);
             return;
         }
-     if((this.panel.getTabbedPaneForDocuments().getTabCount() > 0) && (this.panel.getEditor().getCurTableCell() != null)) {
+     if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -2117,7 +2170,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       this.panel.updateActions();
     }
     public void update() {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         setEnabled(true);
       }
       else {
@@ -2150,7 +2203,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       this.panel.updateActions();
     }
     public void update() {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         setEnabled(true);
       }
       else {
@@ -2186,7 +2239,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       try {
         Clipboard cb = this.panel.getToolkit().getSystemClipboard();
         Transferable data = cb.getContents(this);
-        if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0 && data != null) {
+        if(this.panel.getEditor() != null && data != null) {
           setEnabled(true);
         }
         else {
@@ -2265,7 +2318,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void update() {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2294,20 +2347,20 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
+    private final SHTMLPanelMultipleDocImpl panel;
     private boolean exitApp = false;
 
     /** constructor
      * @param panel TODO*/
-    public SHTMLFileCloseAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.closeAction);
+    public SHTMLFileCloseAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.closeAction);
     this.panel = panel;
       getProperties();
     }
 
     /** close the currently active document, if there is one */
     public void actionPerformed(ActionEvent ae) {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {                   // if documents are open
+      if(this.panel.getEditor() != null) {                   // if documents are open
         closeDocument(this.panel.getActiveTabNo(), ae, false);  // close the active one
       }
       this.panel.updateActions();
@@ -2340,10 +2393,10 @@ static class SHTMLEditSelectAllAction extends AbstractAction
             switch(choice) {
               case JOptionPane.YES_OPTION:           // if the user wanted to save
                 if(dp.isNewDoc()) {                     //if the document is new
-                  panel.dynRes.getAction(SHTMLPanelImpl.saveAsAction).actionPerformed(ae); // 'save as'
+                  panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAsAction).actionPerformed(ae); // 'save as'
                 }
                 else {                                             // else
-                    panel.dynRes.getAction(SHTMLPanelImpl.saveAction).actionPerformed(ae);   // 'save'
+                    panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae);   // 'save'
                 }
                 scheduleClose(dp);    //..and wait until it is finshed, then close
                 break;
@@ -2422,7 +2475,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private void catchCloseErr(DocumentPane dp) {
       try {
         int i = this.panel.getTabbedPaneForDocuments().indexOfComponent(dp);       // get the current tab index
-        if(i < 0 && this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+        if(i < 0 && this.panel.getEditor() != null) {
           this.panel.setActiveTabNo(this.panel.getTabbedPaneForDocuments().getSelectedIndex());
           dp = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(this.panel.getActiveTabNo());
           i = this.panel.getTabbedPaneForDocuments().indexOfComponent(dp);   // get the current tab index again
@@ -2444,7 +2497,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
 
     /** update the state of this action */
     public void update() {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2469,18 +2522,18 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
+    private final SHTMLPanelMultipleDocImpl panel;
     /** constructor
      * @param panel TODO*/
-    public SHTMLFileCloseAllAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.closeAllAction);
+    public SHTMLFileCloseAllAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.closeAllAction);
     this.panel = panel;
       getProperties();
     }
 
     /** close all open documents */
     public void actionPerformed(ActionEvent ae) {
-      SHTMLFileCloseAction a = (SHTMLFileCloseAction)panel.dynRes.getAction(SHTMLPanelImpl.closeAction);
+      SHTMLFileCloseAction a = (SHTMLFileCloseAction)panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.closeAction);
       for(int i = this.panel.getTabbedPaneForDocuments().getTabCount(); i > 0; i--) {
         //System.out.println("CloseAll, close tab no " + i);
         a.closeDocument(i-1, ae, false);
@@ -2489,7 +2542,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void update() {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2518,8 +2571,8 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
-    public SHTMLFileExitAction(SHTMLPanelImpl panel) {
+    private final SHTMLPanelMultipleDocImpl panel;
+    public SHTMLFileExitAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelImpl.exitAction);
     this.panel = panel;
       getProperties();
@@ -2562,9 +2615,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
-    public SHTMLFileNewAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.newAction);
+    private final SHTMLPanelMultipleDocImpl panel;
+    public SHTMLFileNewAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.newAction);
     this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2596,9 +2649,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
-    public SHTMLFileOpenAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.openAction);
+    private final SHTMLPanelMultipleDocImpl panel;
+    public SHTMLFileOpenAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.openAction);
     this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2723,7 +2776,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
      */
     private final SHTMLPanelImpl panel;
     public SHTMLFileSaveAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.saveAction);
+      super(SHTMLPanelMultipleDocImpl.saveAction);
     this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2737,7 +2790,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
         saver.start();
       }
       else {
-          panel.dynRes.getAction(SHTMLPanelImpl.saveAsAction).actionPerformed(ae);
+          panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAsAction).actionPerformed(ae);
       }
       this.panel.updateActions();
     }
@@ -2760,7 +2813,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void update() {
-      boolean isEnabled = this.panel.getTabbedPaneForDocuments().getTabCount() > 0;
+      boolean isEnabled = this.panel.getEditor() != null;
       boolean saveInProgress = false;
       boolean needsSaving = false;
       if(isEnabled) {
@@ -2780,10 +2833,10 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
+    private final SHTMLPanelMultipleDocImpl panel;
 
-    public SHTMLFileSaveAllAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.saveAllAction);
+    public SHTMLFileSaveAllAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.saveAllAction);
     this.panel = panel;
       getProperties();
       /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2796,14 +2849,14 @@ static class SHTMLFileSaveAllAction extends AbstractAction
         this.panel.getTabbedPaneForDocuments().setSelectedIndex(i);
         this.panel.setDocumentPane((DocumentPane) this.panel.getTabbedPaneForDocuments().getSelectedComponent());
         if(this.panel.getDocumentPane().needsSaving()) {
-            panel.dynRes.getAction(SHTMLPanelImpl.saveAction).actionPerformed(ae);
+            panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae);
         }
       }
       this.panel.updateActions();
     }
 
     public void update() {
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+      if(this.panel.getEditor() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2828,9 +2881,9 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     /**
      *
      */
-    private final SHTMLPanelImpl panel;
-    public SHTMLFileSaveAsAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.saveAsAction);
+    private final SHTMLPanelMultipleDocImpl panel;
+    public SHTMLFileSaveAsAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.saveAsAction);
     this.panel = panel;
       getProperties();
     }
@@ -2942,7 +2995,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
 
     public void update() {
-      boolean isEnabled = this.panel.getTabbedPaneForDocuments().getTabCount() > 0;
+      boolean isEnabled = this.panel.getEditor() != null;
       boolean saveInProgress = false;
       if(isEnabled) {
         saveInProgress = this.panel.getDocumentPane().saveInProgress();
@@ -3067,7 +3120,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
             this.setEnabled(false);
             return;
         }
-      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0 && !this.panel.getSHTMLDocument().hasStyleRef()) {
+      if(this.panel.getEditor() != null && !this.panel.getSHTMLDocument().hasStyleRef()) {
         this.setEnabled(true);
       }
       else {

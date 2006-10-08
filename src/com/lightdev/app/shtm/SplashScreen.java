@@ -64,7 +64,7 @@ private static int counter;
         if(counter > 0)
             counter--;
         if(counter == 0)
-            instance.hide();
+            instance.setVisible(false);
     }
 
     /**

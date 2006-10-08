@@ -234,7 +234,7 @@ class SplitPanel extends JPanel {
    * @param c  the plug-in container to add
    * @param location  the location to add to (SplitPanel.NORTH, SOUTH, etc.)
    */
-  public void addComponent(JTabbedPane c, int location) {
+  public void addComponent(JComponent c, int location) {
     if(majorAxis == this.MAJOR_AXIS_VERTICAL) {
       //System.out.println("SplitPanel.addComponent majorAxis = vertical");
       switch(location) {

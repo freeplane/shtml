@@ -34,6 +34,7 @@ import java.awt.GridBagConstraints;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -460,7 +461,7 @@ class ImageDialog extends DialogShell
   public String getImageHTML() {
     SimpleAttributeSet set = new SimpleAttributeSet(originalAttributes);
     StringWriter sw = new StringWriter();
-    SHTMLWriter w = new SHTMLWriter(sw, doc);
+    SHTMLWriter w = new SHTMLWriter(sw, doc == null ? new HTMLDocument() : doc);
     for(int i = 0; i < attributeComponents.size(); i++) {
       set.addAttributes(((AttributeComponent) attributeComponents.get(i)).getValue());
     }

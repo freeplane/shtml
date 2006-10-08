@@ -291,9 +291,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() +
                                File.separator +
                                getDocumentName() + File.separator);
-    if(!docTempDir.exists()) {
-      docTempDir.mkdirs();
-    }
     return docTempDir.toURL();
   }
 
@@ -780,8 +777,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   /**
    * Convenience method for setting the document text
    */
-  void setDocumentText(String docName, String sText) {
-      this.docName = docName;
+  void setDocumentText(String sText) {
       switch(tpView.getSelectedIndex()) {
       case VIEW_TAB_LAYOUT:
           editor.setText(sText);

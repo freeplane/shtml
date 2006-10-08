@@ -18,7 +18,7 @@ public abstract class SHTMLPanel extends JPanel {
     }
     
     public static SHTMLPanel createSHTMLPanel(){
-        return new SHTMLPanelImpl();
+        return new SHTMLPanelSingleDocImpl();
     }
 
    public abstract String getDocumentText();
@@ -27,7 +27,7 @@ public abstract class SHTMLPanel extends JPanel {
 
     public abstract void setContentPanePreferredSize(Dimension dimension);
 
-    public abstract void setCurrentDocumentContent(String string, String note);
+    public abstract void setCurrentDocumentContent(String sText);
 
     public static void setResources(ResourceBundle resources) {
         SHTMLPanelImpl.setResources(resources);        
