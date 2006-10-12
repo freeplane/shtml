@@ -1319,6 +1319,14 @@ void savePrefs() {
 boolean close() {
     return true;
 }
+/* (non-Javadoc)
+ * @see javax.swing.JComponent#requestFocus()
+ */
+public void requestFocus() {
+    if(dp != null){
+        dp.requestFocus();
+    }
+}
 
   /* ---------- font manipulation code end ------------------ */
 

@@ -923,5 +923,20 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     dpListeners.clear();
   }
 
+/* (non-Javadoc)
+ * @see javax.swing.JComponent#requestFocus()
+ */
+public void requestFocus() {
+    switch(tpView.getSelectedIndex()) {
+    case VIEW_TAB_LAYOUT:
+      editor.requestFocus();
+      break;
+    case VIEW_TAB_HTML:
+        editor.requestFocus();
+      break;
+  }
+    
+}
+
   /* -------- DocumentPaneListener definition end --------------- */
 }
