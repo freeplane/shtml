@@ -1030,9 +1030,12 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
       if(c instanceof AttributeComponent) {
         if(c instanceof StyleSelector) {
           SetStyleAction ssa = (SetStyleAction) ((StyleSelector) c).getAction();
-          ssa.setIgnoreActions(true);
-          ((AttributeComponent) c).setValue(a);
-          ssa.setIgnoreActions(false);
+          final AttributeSet oldAttibuteSet = ((AttributeComponent) c).getValue();
+          if(! a.isEqual(oldAttibuteSet)){
+              ssa.setIgnoreActions(true);
+              ((AttributeComponent) c).setValue(a);
+              ssa.setIgnoreActions(false);
+          }
         }
         else {
           ((AttributeComponent) c).setValue(a);

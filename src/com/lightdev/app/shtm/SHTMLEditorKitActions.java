@@ -2236,20 +2236,12 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       this.panel.updateActions();
     }
     public void update() {
-      try {
-        Clipboard cb = this.panel.getToolkit().getSystemClipboard();
-        Transferable data = cb.getContents(this);
-        if(this.panel.getEditor() != null && data != null) {
-          setEnabled(true);
+        if(this.panel.getEditor() != null) {
+            setEnabled(true);
         }
         else {
-          setEnabled(false);
+            setEnabled(false);
         }
-      }
-      catch(Exception e) {
-        setEnabled(false);
-        Util.errMsg(null, null, e);
-      }
     }
     public void getProperties() {
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
