@@ -390,11 +390,6 @@ class DeleteNextCharAction extends AbstractAction{
     }
 }
 /* ------- list manipulation start ------------------- */
-  /** start block to remove */
-  private Element removeStart;
-
-  /** end of block to remove */
-  private int removeCount;
 
   /**
    * apply a set of attributes to the list the caret is
@@ -517,59 +512,344 @@ class DeleteNextCharAction extends AbstractAction{
    * off. If false, the method decides, if list formatting for the parts
    * inside the selection needs to be switched on or off.
    */
-  public void toggleList(String listTag, AttributeSet a, boolean forceOff) {
-      Element parent;
-      SHTMLDocument doc = (SHTMLDocument) getDocument();
-      try {
-      doc.startCompoundEdit();
-      Element first = doc.getParagraphElement(getSelectionStart());
-      int oStart = getSelectionStart();
-      int oEnd = getSelectionEnd();
-      if(oEnd > doc.getLastDocumentPosition()- 1){
-          return;
-      }
-      int start = first.getStartOffset();
-      int end = doc.getParagraphElement(oEnd).getEndOffset();
-      Element list = SHTMLDocument.getListElement(first);
-      if(list == null) {
-        parent = first.getParentElement();
-      }
-      else {
-        parent = list.getParentElement();
-      }
-      StringWriter sw = new StringWriter();
-      if(forceOff) {
-        listOff(new SHTMLWriter(sw, doc), listTag, parent, start, end, first);
-      }
-      else {
-        if(switchOn(listTag, parent, start, end)) {
-          listOn(new SHTMLWriter(sw, doc), listTag, parent,
-                 start, end, first, a);
+  public void toggleList(final String listTag, final AttributeSet a, final boolean forceOff) {
+      class ListManager{
+          private Element removeStart;
+          private int removeCount;
+          private Element parent;
+          private SHTMLDocument doc;
+          private Element first;
+          private int start;
+          private int end;
+          StringWriter sw;
+          private int oStart;
+          private int oEnd;
+          class SwitchListException extends Exception {
+              
+          }
+          ListManager(){
+              removeStart = null;
+              removeCount = 0;
+              doc = (SHTMLDocument) getDocument();
+              oStart = getSelectionStart();
+              oEnd = getSelectionEnd();
+              if(oEnd > doc.getLastDocumentPosition()- 1){
+                  return;
+              }
+              first = getParagraphElement(oStart);
+              start = first.getStartOffset();
+              end = getParagraphElement(oEnd).getEndOffset();
+              parent = getListParent(first);
+              sw = new StringWriter();
+          }
+          
+          private Element getParagraphElement(int pos) {
+             Element paragraphElement = doc.getParagraphElement(pos);
+             if(paragraphElement.getName().equalsIgnoreCase("p-implied")){
+                 paragraphElement = paragraphElement.getParentElement();
+             }
+             return paragraphElement;
         }
-        else {
-          listOff(new SHTMLWriter(sw, doc), listTag, parent,
-                  start, end, first);
-        }
+
+        private Element getListParent(Element elem) {
+              Element listParent = elem.getParentElement();
+              if(elem.getName().equalsIgnoreCase(HTML.Tag.LI.toString())) {
+                  listParent = listParent.getParentElement();
+              }
+              return listParent;
+          }
+          
+          private boolean isValidParentElement(Element e){
+              final String name = e.getName();
+              return name.equalsIgnoreCase(HTML.Tag.BODY.toString())
+              || name.equalsIgnoreCase(HTML.Tag.TD.toString())
+              || name.equalsIgnoreCase(HTML.Tag.LI.toString());
+          }
+
+          private boolean isValidElement(Element e){
+              final String name = e.getName();
+              return name.equalsIgnoreCase(HTML.Tag.P.toString())
+              || name.equalsIgnoreCase(HTML.Tag.UL.toString())
+              || name.equalsIgnoreCase(HTML.Tag.OL.toString())
+              || name.equalsIgnoreCase(HTML.Tag.H1.toString())
+              || name.equalsIgnoreCase(HTML.Tag.H2.toString())
+              || name.equalsIgnoreCase(HTML.Tag.H3.toString())
+              || name.equalsIgnoreCase(HTML.Tag.H4.toString())
+              || name.equalsIgnoreCase(HTML.Tag.H5.toString())
+              || name.equalsIgnoreCase(HTML.Tag.H6.toString());
+          }
+
+          private boolean isListRootElement(Element e){
+              final String name = e.getName();
+              return name.equalsIgnoreCase(HTML.Tag.UL.toString())
+              || name.equalsIgnoreCase(HTML.Tag.OL.toString());
+          }
+/**
+           * switch OFF list formatting for a given block of elements.
+           *
+           * <p>switches off all list formatting inside the block for the
+           * given tag.</p>
+           *
+           * <p>Splits lists if the selection covers only part of a list.</p>
+ * @throws BadLocationException 
+ * @throws IOException 
+           */
+          private void listOff() throws IOException, BadLocationException
+          {
+              SHTMLWriter writer = new SHTMLWriter(sw, doc);
+              int i ;
+              Element next = null;
+              for (i = 0; i < parent.getElementCount(); i++){
+                  next = parent.getElement(i);
+                  if(next.getEndOffset() > start){
+                      break;
+                  }
+              }
+              removeStart = next;
+              int j = 0;
+              Element li = null;
+              if(next.getStartOffset() < start){
+                  writer.startTag(next);
+                  removeCount++;
+                  i++;
+                  for(;;j++){
+                      li = next.getElement(j);
+                      if(li.getStartOffset() == start){
+                          break;
+                      }
+                      writer.write(li);
+                  }
+                  writer.endTag(next);                 
+                  for(;j < next.getElementCount();j++){
+                      li = next.getElement(j);
+                      if(li.getStartOffset() >= end){
+                          break;
+                      }
+                      writer.startTag("p", null);
+                      writer.writeChildElements(li);
+                      writer.endTag("p");
+                  }
+              }
+              if(next.getEndOffset() <= end){
+                  for (; i < parent.getElementCount(); i++){
+                      next = parent.getElement(i);
+                      if(next.getEndOffset() > end){
+                          break;
+                      }
+                      if(next.getStartOffset() < end){
+                          removeCount++;
+                      }
+                      if(isListRootElement(next)){
+                          for(j = 0; j < next.getElementCount(); j++){
+                              writer.startTag("p", null);
+                              writer.writeChildElements(next.getElement(j));                          
+                              writer.endTag("p");
+                          }
+                      }
+                      else{
+                          writer.startTag("p", null);
+                          writer.writeChildElements(next);
+                          writer.endTag("p");
+                      }
+                  }
+              }
+
+              if(i < parent.getElementCount() && next.getStartOffset() < end){ 
+                  removeCount++;
+                  for(; j < next.getElementCount();j++){
+                      li = next.getElement(j);
+                      if(li.getStartOffset() >= end){
+                          break;
+                      }
+                      writer.startTag("p", null);
+                      writer.writeChildElements(li);
+                      writer.endTag("p");
+                  }
+                  if(j < next.getElementCount()){
+                      writer.startTag(next);
+                      for(;j < next.getElementCount();j++){
+                          li = next.getElement(j);
+                          writer.write(li);
+                      }
+                      writer.endTag(next);
+                  }
+              }
+          }
+          
+          /**
+           * switch ON list formatting for a given block of elements.
+           *
+           * <p>Takes care of merging existing lists before, after and inside
+           * respective element block.</p>
+         * @throws BadLocationException 
+         * @throws IOException 
+           *
+           */
+          private void listOn() throws IOException, BadLocationException
+          {
+              SHTMLWriter writer = new SHTMLWriter(sw, doc);
+              if(start > 0){
+                  Element before = getParagraphElement(start - 1);
+                  if(before.getName().equalsIgnoreCase(HTML.Tag.LI.toString())){
+                      final Element listRoot = before.getParentElement();
+                      if(listRoot.getParentElement()== parent && listRoot.getName().equalsIgnoreCase(listTag)){
+                          start = listRoot.getStartOffset();
+                      }
+                  }
+              }
+              if(end < doc.getLength() - 1){
+                  Element after = getParagraphElement(end);
+                  if(after.getName().equalsIgnoreCase(HTML.Tag.LI.toString())){
+                      final Element listRoot = after.getParentElement();
+                      if(listRoot.getParentElement()== parent && listRoot.getName().equalsIgnoreCase(listTag)){
+                          end = listRoot.getEndOffset();
+                      }
+                  }
+              }
+              int i ;
+              Element next = null;
+              for (i = 0; i < parent.getElementCount(); i++){
+                  next = parent.getElement(i);
+                  if(next.getEndOffset() > start){
+                      break;
+                  }
+              }
+              removeStart = next;
+              int j = 0;
+              Element li = null;
+              if(next.getStartOffset() < start){
+                  removeCount++;
+                  i++;
+                  writer.startTag(next);
+                  for(;;j++){
+                      li = next.getElement(j);
+                      if(li.getStartOffset() == start){
+                          break;
+                      }
+                      writer.write(li);
+                  }
+                  writer.endTag(next);
+                  writer.startTag(listTag,a);
+                  for(;j < next.getElementCount();j++){
+                      li = next.getElement(j);
+                      writer.write(li);
+                  }
+              }
+              else{
+                  writer.startTag(listTag,a);
+              }
+              
+              if(next.getEndOffset() <= end){
+                  for (; i < parent.getElementCount(); i++){
+                      next = parent.getElement(i);
+                      if(next.getEndOffset() > end){
+                          break;
+                      }
+                      removeCount++;
+                      if(isListRootElement(next)){
+                          writer.writeChildElements(next);
+                      }
+                      else{
+                          writer.startTag("li", null);
+                          writer.writeChildElements(next);
+                          writer.endTag("li");
+                      }
+                  }
+              }
+              if(i < parent.getElementCount() && next.getStartOffset() < end){
+                  removeCount++;
+                  for(j = 0;;j++){
+                      li = next.getElement(j);
+                      if(li.getStartOffset() >= end){
+                          break;
+                      }
+                      writer.write(li);
+                  }
+                  writer.endTag(listTag);
+                  writer.startTag(next);
+                  for(;j < next.getElementCount();j++){
+                      li = next.getElement(j);
+                      writer.write(li);
+                  }
+              }
+              else{
+                  writer.endTag(listTag);
+              }
+
+          }
+          
+          /**
+           * decide to switch on or off list formatting
+            * @return  true, if list formatting is to be switched on, false if not
+         * @throws SwitchListException 
+           */
+          private boolean switchOn() throws SwitchListException
+          {
+              boolean listOn = false;
+              int count = parent.getElementCount();
+              for(int i = 0; i < count && !listOn; i++) {
+                  Element elem = parent.getElement(i);
+                  if(! isValidElement(elem)){
+                      throw new SwitchListException();
+                  }
+                  int eStart = elem.getStartOffset();
+                  int eEnd = elem.getEndOffset();
+                  if(!elem.getName().equalsIgnoreCase(listTag)) {
+                      if(((eStart > start) && (eStart < end)) ||
+                              ((eEnd > start) && (eEnd < end)) ||
+                              ((start >= eStart) && (end <= eEnd)))
+                      {
+                          listOn = true;
+                      }
+                  }
+              }
+              return listOn;
+          }
+          
+          void toggleList() 
+          {
+              try {
+                  doc.startCompoundEdit();
+                  if(! isValidParentElement(parent)){
+                      throw new SwitchListException();
+                  }
+                  if(oStart != oEnd){
+                      Element last = getParagraphElement(end-1);
+                      if(parent != getListParent(last)){
+                          throw new SwitchListException();
+                      }
+                  }
+                  if(! switchOn() || forceOff) {
+                      listOff();
+                  }
+                  else {
+                      listOn();
+                  }
+                  StringBuffer newHTML = sw.getBuffer();
+                  if(newHTML.length() > 0) {
+                      //System.out.println("newHTML=\r\n\r\n" + newHTML.toString());
+                      doc.replaceHTML(removeStart, removeCount, newHTML.toString());
+                      if(oStart == oEnd) {
+                          setCaretPosition(oStart);
+                      }
+                      else {
+                          select(oStart, oEnd);
+                      }
+                      requestFocus();
+                  }
+              }
+              catch(SwitchListException e) {
+              }
+              catch(Exception e) {
+                  Util.errMsg(null, e.getMessage(), e);
+              }
+              finally{
+                  doc.endCompoundEdit();
+              }
+          }
       }
-      StringBuffer newHTML = sw.getBuffer();
-      if(newHTML.length() > 0) {
-        //System.out.println("newHTML=\r\n\r\n" + newHTML.toString());
-          doc.replaceHTML(removeStart, removeCount, newHTML.toString());
-        if(oStart == oEnd) {
-          setCaretPosition(oStart);
-        }
-        else {
-          select(oStart, oEnd);
-        }
-        requestFocus();
-      }
-    }
-    catch(Exception e) {
-      Util.errMsg(null, e.getMessage(), e);
-    }
-    finally{
-        doc.endCompoundEdit();
-    }
+      ListManager listMan = new ListManager();
+      listMan.toggleList();
   }
 
   private void mergeListItemElements(Element first, Element second) {
@@ -597,410 +877,6 @@ class DeleteNextCharAction extends AbstractAction{
 
 
   }
-  /**
-   * decide to switch on or off list formatting
-   *
-   * @param listTag  the tag name to sitch on or off
-   * @param parent  the parent element of the selection
-   * @param start  the start of the selection
-   * @param end the end of the selection
-   *
-   * @return  true, if list formatting is to be switched on, false if not
-   */
-  private boolean switchOn(String listTag, Element parent,
-                              int start, int end)
-  {
-    boolean listOn = false;
-    int i = 0;
-    int count = parent.getElementCount();
-    Element elem = parent.getElement(i);
-    int eStart;
-    int eEnd;
-    while(i < count && !listOn) {
-      eStart = elem.getStartOffset();
-      eEnd = elem.getEndOffset();
-      if(!elem.getName().equalsIgnoreCase(listTag)) {
-        if(((eStart > start) && (eStart < end)) ||
-           ((eEnd > start) && (eEnd < end)) ||
-           ((start >= eStart) && (end <= eEnd)))
-        {
-          listOn = true;
-        }
-      }
-      i++;
-      if(i < count) {
-        elem = parent.getElement(i);
-      }
-    }
-    return listOn;
-  }
-
-  /**
-   * switch OFF list formatting for a given block of elements.
-   *
-   * <p>switches off all list formatting inside the block for the
-   * given tag.</p>
-   *
-   * <p>Splits lists if the selection covers only part of a list.</p>
-   *
-   * @param w  the SHTMLWriter to write to
-   * @param tag  the list tag to switch list formitting off for (UL or OL)
-   * @param parent  the parent element having the list
-   * @param start  the start of the selected block
-   * @param end  the end of the selected block
-   * @param doc  the document containing the list
-   * @param first  the first element in the block of elements to turn
-   * list formatting off for
-   */
-  private void listOff(SHTMLWriter w, String tag, Element parent,
-          int start, int end, Element first)
-  {
-      int elemIndex;
-      int firstReplacedElemIndex = -1;
-      int count;
-      Element elem;
-      String elemName;
-      String listName = null;
-      boolean inTag = false;
-      try {
-          Element list = SHTMLDocument.getListElement(first);
-          if(list == null) {
-              parent = first.getParentElement();
-          }
-          else {
-              parent = list.getParentElement();
-          }
-          for(int i = 0; i < parent.getElementCount(); i++) {
-              elem = parent.getElement(i);
-              elemName = elem.getName();
-              if((elemName.equalsIgnoreCase(HTML.Tag.UL.toString()) ||
-                      elemName.equalsIgnoreCase(HTML.Tag.OL.toString())) &&
-                      (elem.getStartOffset() <= end) && (elem.getEndOffset() >= start))
-              {
-                  if(firstReplacedElemIndex == -1){
-                      firstReplacedElemIndex = i;
-                      removeStart = elem;
-                      removeCount = 1;
-                  }
-                  else{
-                      removeCount = i - firstReplacedElemIndex;
-                  }
-                  list = elem;
-                  listName = elem.getName();
-                  count = list.getElementCount();
-
-                  elemIndex = 0;
-                  elem = list.getElement(elemIndex);
-                  while(elemIndex < count && elem.getStartOffset() < start) {
-                      if(!inTag) {
-                          inTag = true;
-                          w.startTag(listName, null);
-                      }
-                      w.write(elem);
-                      elemIndex++;
-                      if(elemIndex < count) {
-                          elem = list.getElement(elemIndex);
-                      }
-                  }
-                  if(inTag) {
-                      inTag = false;
-                      w.endTag(listName);
-                  }
-
-                  while(elemIndex < count &&
-                          elem.getStartOffset() >= start &&
-                          elem.getEndOffset() <= end)
-                  {
-                      SimpleAttributeSet pSet = null;
-                      if(list.getParentElement().getName().equalsIgnoreCase(HTML.Tag.TD.toString())){
-                          pSet = new SimpleAttributeSet();
-                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_TOP, "1");
-                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_RIGHT, "1");
-                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_BOTTOM, "1");
-                          Util.styleSheet().addCSSAttribute(pSet, CSS.Attribute.MARGIN_LEFT, "1");
-                      }
-                      w.startTag(HTML.Tag.P.toString(), pSet);
-                      w.writeChildElements(elem);
-                      w.endTag(HTML.Tag.P.toString());
-                      elemIndex++;
-                      if(elemIndex < count) {
-                          elem = list.getElement(elemIndex);
-                      }
-                  }
-
-                  while(elemIndex < count && elem.getEndOffset() > end) {
-                      if(!inTag) {
-                          inTag = true;
-                          w.startTag(listName, null);
-                      }
-                      w.write(elem);
-                      elemIndex++;
-                      if(elemIndex < count) {
-                          elem = list.getElement(elemIndex);
-                      }
-                  }
-                  if(elemIndex >= count && inTag) {
-                      inTag = false;
-                      w.endTag(listName);
-                  }
-              }
-          }
-      }
-      catch(Exception e) {
-          Util.errMsg(null, e.getMessage(), e);
-      }
-  }
-
-  /**
-   * switch ON list formatting for a given block of elements.
-   *
-   * <p>Takes care of merging existing lists before, after and inside
-   * respective element block.</p>
-   *
-   * <p>Working but ugly code, optimization welcome!</p>
-   *
-   * @param w  the SHTMLWriter to write to
-   * @param tag  the list tag to switch the selection to (UL or OL)
-   * @param parent  the parent element having the selection
-   * @param start  the start of the selected block
-   * @param end  the end of the selected block
-   * @param doc  the document containing the selection
-   * @param first  the first element of the block to switch
-   * list formatting on for
-   */
-  private void listOn(SHTMLWriter w, String tag, Element parent,
-                      int start, int end, Element first, AttributeSet la)
-  {
-    int k;
-    int count;
-    int firstReplacedElemIndex = -1;
-    Element elem;
-    String elemName;
-    String listName = null;
-    int eStart;
-    int eEnd;
-    boolean bStarted = false;
-    boolean iStarted = false;
-    boolean aStarted = false;
-    boolean mergeList = false;
-    try {
-      Element list = SHTMLDocument.getListElement(first);
-      if(list == null) {
-        parent = first.getParentElement();
-      }
-      else {
-        parent = list.getParentElement();
-      }
-      for(int i = 0; i < parent.getElementCount(); i++) {
-          // for every element of the parent
-          elem = parent.getElement(i);
-          elemName = elem.getName();
-          eStart = elem.getStartOffset();
-          eEnd = elem.getEndOffset();
-          if(firstReplacedElemIndex == -1 && eEnd > start){
-              firstReplacedElemIndex = i;
-              removeStart = elem;
-              removeCount = 0;
-          }
-          if(firstReplacedElemIndex != -1 && eStart < end){
-              removeCount++;
-          }
-          if(elemName.equalsIgnoreCase(HTML.Tag.UL.toString()) ||
-                  elemName.equalsIgnoreCase(HTML.Tag.OL.toString()))
-          {
-              // elem is a list
-              list = elem;
-              listName = elem.getName();
-              count = list.getElementCount();
-              if(eEnd == start && listName.equalsIgnoreCase(tag))
-              {
-                  // a list of the same name directly before the selection
-                  firstReplacedElemIndex = i;
-                  removeStart = elem;
-                  removeCount = 1;
-                  mergeList = true;
-                  if(!bStarted) {
-                      bStarted = true;
-                      w.startTag(listName, list.getAttributes());
-                  }
-                  k = 0;
-                  elem = list.getElement(k);
-                  while(k < count) {
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-              }
-              else if(eStart < start && eEnd >= start) {
-                  // list starts outside the selection before
-                  if(!bStarted) {
-                      bStarted = true;
-                      w.startTag(listName, list.getAttributes());
-                  }
-                  k = 0;
-                  elem = list.getElement(k);
-                  while(k < count && elem.getStartOffset() < start) {
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-                  while(k < count &&
-                          elem.getStartOffset() >= start &&
-                          elem.getEndOffset() <= end) {
-                      if(bStarted) {
-                          bStarted = false;
-                          if(!listName.equalsIgnoreCase(tag)) {
-                              w.endTag(listName);
-                          }
-                      }
-                      if(!iStarted) {
-                          iStarted = true;
-                          if(!listName.equalsIgnoreCase(tag)) {
-                              w.startTag(tag, la);
-                          }
-                      }
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-                  while(k < count && elem.getEndOffset() > end) {
-                      if(iStarted) {
-                          iStarted = false;
-                          if(!listName.equalsIgnoreCase(tag)) {
-                              w.endTag(tag);
-                          }
-                      }
-                      if(!aStarted) {
-                          aStarted = true;
-                          if(!listName.equalsIgnoreCase(tag)) {
-                              w.startTag(listName, list.getAttributes());
-                          }
-                      }
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-              }
-              else if(eStart >= start && eStart < end) {
-                  // list starts inside the selection
-                  k = 0;
-                  elem = list.getElement(k);
-                  while(k < count &&
-                          elem.getStartOffset() >= start &&
-                          elem.getEndOffset() <= end) {
-                      if(bStarted) {
-                          bStarted = false;
-                          if((!mergeList) && (!listName.equalsIgnoreCase(tag))) {
-                              w.endTag(listName);
-                          }
-                      }
-                      if(!iStarted) {
-                          iStarted = true;
-                          if(!mergeList) {
-                              w.startTag(tag, la);
-                          }
-                      }
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-                  while(k < count && elem.getEndOffset() > end) {
-                      if(iStarted) {
-                          iStarted = false;
-                          if(!listName.equalsIgnoreCase(tag)) {
-                              w.endTag(tag);
-                          }
-                      }
-                      if(!aStarted) {
-                          aStarted = true;
-                          if(!listName.equalsIgnoreCase(tag)) {
-                              w.startTag(listName, list.getAttributes());
-                          }
-                      }
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-              }
-              else if(eStart == end && listName.equalsIgnoreCase(tag)) {
-                  // list with same name directly after selection
-                  removeCount++;
-                  k = 0;
-                  elem = list.getElement(k);
-                  while(k < count) {
-                      w.write(elem);
-                      k++;
-                      if(k < count) {
-                          elem = list.getElement(k);
-                      }
-                  }
-                  w.endTag(tag);
-                  aStarted = false;
-                  iStarted = false;
-              }
-          }
-          else {
-              // elem is not a list
-              list = null;
-              if(eStart >= start && eEnd <= end) {
-                  // element is inside the selection
-                  if(!iStarted) {
-                      iStarted = true;
-                      if(!bStarted) {
-                          w.startTag(tag, la);
-                      }
-                      else {
-                          if(!tag.equalsIgnoreCase(listName)) {
-                              w.endTag(listName);
-                              bStarted = false;
-                              w.startTag(tag, la);
-                          }
-                      }
-                  }
-                  w.startTag(HTML.Tag.LI.toString(), null);
-                  if(elem.getName().equalsIgnoreCase(HTML.Tag.P.toString())){
-                      w.writeChildElements(elem);
-                  }
-                  else{
-                      w.write(elem);
-                  }
-                  w.endTag(HTML.Tag.LI.toString());
-              }
-          }
-      }
-      if(iStarted) {
-          iStarted = false;
-          if(list == null) {
-              w.endTag(tag);
-          }
-          else {
-              if(!aStarted) {
-                  w.endTag(listName);
-              }
-          }
-      }
-      if(aStarted) {
-          aStarted = false;
-          w.endTag(listName);
-      }
-    }
-    catch(Exception e) {
-        Util.errMsg(null, e.getMessage(), e);
-    }
-  }
-
   /** range indicator for applying attributes to the current cell only */
   public static final int THIS_CELL = 0;
 
