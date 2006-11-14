@@ -118,7 +118,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 	};
 	tree.addTreeSelectionListener(this);
 
-	/* commented out for use in SimplyHTML */ // tree.setDragEnabled(true);
+	/* comment out for use in SimplyHTML */ // tree.setDragEnabled(true);
 
 	// Don't show the root, it is fake.
 	tree.setRootVisible(false);
