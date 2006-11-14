@@ -245,8 +245,7 @@ public class Util {
   public static String nameInput(Frame parent, String initialName, String title,
                                       String text)
   {
-    JOptionPane op = new JOptionPane();
-    Object input = op.showInputDialog(
+    Object input = JOptionPane.showInputDialog(
         null,
         Util.getResourceString(SHTMLPanelImpl.resources, text),
         Util.getResourceString(SHTMLPanelImpl.resources, title),
