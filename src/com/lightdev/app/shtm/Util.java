@@ -35,7 +35,6 @@ import java.awt.GridBagConstraints;
 import javax.swing.JComponent;
 import java.awt.Insets;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Vector;
 import javax.swing.text.ElementIterator;
 import java.util.Enumeration;
@@ -247,8 +246,8 @@ public class Util {
   {
     Object input = JOptionPane.showInputDialog(
         null,
-        Util.getResourceString(SHTMLPanelImpl.resources, text),
-        Util.getResourceString(SHTMLPanelImpl.resources, title),
+        Util.getResourceString(SHTMLPanelImpl.textResources, text),
+        Util.getResourceString(SHTMLPanelImpl.textResources, title),
         JOptionPane.QUESTION_MESSAGE,
         null,
         null,
@@ -278,11 +277,11 @@ public class Util {
                             String item, String sep)
   {
     String message = item + sep + Util.getResourceString(
-        SHTMLPanelImpl.resources, msg);
+        SHTMLPanelImpl.textResources, msg);
     return JOptionPane.showConfirmDialog(
           null,
           message,
-          Util.getResourceString(SHTMLPanelImpl.resources, title),
+          Util.getResourceString(SHTMLPanelImpl.textResources, title),
           options,
           JOptionPane.QUESTION_MESSAGE);
   }
@@ -986,11 +985,11 @@ public class Util {
   /**
    * get a string from the resources file
    *
-   * @param resources  the ResourceBundle to get the string from
+   * @param resources  the TextResources to get the string from
    * @param nm  the key of the string
    * @return the string for the given key or null if not found
    */
-  static public String getResourceString(ResourceBundle resources, String nm) {
+  static public String getResourceString(TextResources resources, String nm) {
       return DynamicResource.getResourceString(resources, nm);      
   }
 }

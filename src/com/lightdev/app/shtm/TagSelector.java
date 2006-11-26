@@ -100,13 +100,13 @@ class TagSelector extends JComboBox {
     tags.addElement(HTML.Tag.H5.toString());
     tags.addElement(HTML.Tag.H6.toString());
 
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNamePara"));
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead1"));
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead2"));
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead3"));
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead4"));
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead5"));
-    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.resources, "cTagNameHead6"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNamePara"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead1"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead2"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead3"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead4"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead5"));
+    tagNames.addElement(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead6"));
   }
 
 }

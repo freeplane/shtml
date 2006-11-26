@@ -82,24 +82,24 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       new DynamicResource();
 
   /** SimplyHTML's main resource bundle (plug-ins use their own) */
-  public static ResourceBundle resources = null;
+  public static TextResources textResources = null;
 
   /** the plug-in manager of SimplyHTML */
   public static PluginManager pluginManager; // = new PluginManager(mainFrame);
-
-  public static void setResources(ResourceBundle resources){
-      if(SHTMLPanelImpl.resources != null) return;
-      if(resources == null)
+  
+  public static void setTextResources(TextResources textResources){
+      if(SHTMLPanelImpl.textResources != null) return;
+      if(textResources == null)
       {
           try {
-              resources = ResourceBundle.getBundle(
-                      "com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
+              final ResourceBundle resourceBundle = ResourceBundle.getBundle("com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
+              textResources = new DefaultTextResources(resourceBundle);
           }
           catch(MissingResourceException mre) {
               Util.errMsg(null, "resources/SimplyHTML.properties not found", mre);
           }
       }
-      SHTMLPanelImpl.resources = resources;
+      SHTMLPanelImpl.textResources = textResources;
   }
   private SHTMLMenuBar menuBar;
     /** currently active DocumentPane */
@@ -126,7 +126,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   /** help menu ID */
   public final String helpMenuId = "help";
 
-  /** id in ResourceBundle for a relative path to an empty menu icon */
+  /** id in TextResources for a relative path to an empty menu icon */
   private String emptyIcon = "emptyIcon";
 
   /** watch for repeated key events */
@@ -222,7 +222,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     SplashScreen.showInstance();
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     initActions();
-    menuBar = dynRes.createMenubar(resources, "menubar");
+    menuBar = dynRes.createMenubar(textResources, "menubar");
     setJMenuBar(menuBar);
     customizeFrame();
     initAppTempDir();
@@ -566,7 +566,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       if(pluginMenu != null) {
         Icon menuIcon = pluginMenu.getIcon();
         if(menuIcon == null) {
-          URL url = dynRes.getResource(resources, emptyIcon);
+          URL url = dynRes.getResource(textResources, emptyIcon);
           if (url != null) {
             menuIcon = new ImageIcon(url);
             pluginMenu.setIcon(new ImageIcon(url));
@@ -579,7 +579,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
         if(helpMenu.getSubElements().length > 0) {
           Icon menuIcon = helpMenu.getIcon();
           if(menuIcon == null) {
-            URL url = dynRes.getResource(resources, emptyIcon);
+            URL url = dynRes.getResource(textResources, emptyIcon);
             if (url != null) {
               menuIcon = new ImageIcon(url);
               helpMenu.setIcon(new ImageIcon(url));
@@ -626,13 +626,13 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
           HelpSet hs = new HelpSet(null, url);
           hb = hs.createHelpBroker();
           mi.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
-          mi.setIcon(dynRes.getIconForCommand(resources, helpTopicsAction));
+          mi.setIcon(dynRes.getIconForCommand(textResources, helpTopicsAction));
           mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
           mi.setEnabled(true);
       }
       catch (Exception e) {
           Util.errMsg(this,
-                  Util.getResourceString(resources, "helpNotFoundError"),
+                  Util.getResourceString(textResources, "helpNotFoundError"),
                   e);
       }
   }
@@ -757,7 +757,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    */
   JToolBar createToolBar(String nm) {
     String[] itemKeys = Util.tokenize(
-        Util.getResourceString(resources, nm), " ");
+        Util.getResourceString(textResources, nm), " ");
     JToolBar toolBar = new JToolBar();
     toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE );
     for (int i = 0; i < itemKeys.length; i++) {
@@ -817,9 +817,9 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
               CSH.setHelpIDString(newButton, "item15");
               newButton.addActionListener(
                       new CSH.DisplayHelpFromSource(getHelpBroker()));
-              newButton.setIcon(dynRes.getIconForCommand(resources, itemKey));
+              newButton.setIcon(dynRes.getIconForCommand(textResources, itemKey));
               newButton.setToolTipText(Util.getResourceString(
-                      resources, itemKey + dynRes.toolTipSuffix));
+                      textResources, itemKey + dynRes.toolTipSuffix));
               toolBar.add(newButton);
           }
           catch(Exception e) {}
@@ -838,7 +838,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
               //newButton.setActionCommand("");
               newButton.setBorderPainted(false);
               action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
-              Icon si = dynRes.getIconForName(resources, action.getValue(action.NAME) + DynamicResource.selectedIconSuffix);
+              Icon si = dynRes.getIconForName(textResources, action.getValue(action.NAME) + DynamicResource.selectedIconSuffix);
               if(si != null) {
                   newButton.setSelectedIcon(si);
               }
@@ -943,7 +943,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
      * that way, we catch the exception here.
      */
     catch(DocNameMissingException e) {
-      Util.errMsg(this, Util.getResourceString(resources, "docNameMissingError"), e);
+      Util.errMsg(this, Util.getResourceString(textResources, "docNameMissingError"), e);
     }
   }
 
@@ -958,14 +958,14 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    * @param cmd the name of the action to get properties for
    */
   public static void getActionProperties(Action action, String cmd) {
-    Icon icon = DynamicResource.getIconForCommand(resources, cmd);
+    Icon icon = DynamicResource.getIconForCommand(textResources, cmd);
     if (icon != null) {
       action.putValue(Action.SMALL_ICON, icon);
     }
     /*else {
       action.putValue(Action.SMALL_ICON, emptyIcon);
     }*/
-    String toolTip = Util.getResourceString(resources, cmd + DynamicResource.toolTipSuffix);
+    String toolTip = Util.getResourceString(textResources, cmd + DynamicResource.toolTipSuffix);
     if(toolTip != null) {
       action.putValue(Action.SHORT_DESCRIPTION, toolTip);
     }

@@ -178,10 +178,10 @@ public interface SHTMLPlugin {
    * this is called by the PluginManager directly after instantiating the plug-in
    * @param owner  the owner of this plug-in
    * @param internalName  the internal name this plug-in shall have
-   * @param pluginMenuId  the id of the plug-in menu in the ResourceBundle,
+   * @param pluginMenuId  the id of the plug-in menu in the TextResources,
    * or null if no plugin-in menu is to be created
    * @param helpMenuId  the id of the help menu for this plug-in in the
-   * ResourceBundle, or null if no help menu is to be created
+   * TextResources, or null if no help menu is to be created
    */
   public void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId, String helpMenuId);
 

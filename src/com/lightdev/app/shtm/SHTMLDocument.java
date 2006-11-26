@@ -647,7 +647,7 @@ public void startCompoundEdit() {
      * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
      */
     public void handleText(char[] data, int pos) {
-        if(! paragraphCreated && paragraphLevel == 0){
+        if(inBody && ! paragraphCreated && paragraphLevel == 0){
             insertParagraphStartTag(pos);
         }
         super.handleText(data, pos);

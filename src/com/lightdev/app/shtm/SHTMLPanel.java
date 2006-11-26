@@ -6,7 +6,6 @@ package com.lightdev.app.shtm;
 
 import java.awt.Dimension;
 import java.awt.LayoutManager;
-import java.util.ResourceBundle;
 
 import javax.swing.JPanel;
 import javax.swing.text.html.HTMLDocument;
@@ -29,13 +28,13 @@ public abstract class SHTMLPanel extends JPanel {
 
     public abstract void setCurrentDocumentContent(String sText);
 
-    public static void setResources(ResourceBundle resources) {
-        SHTMLPanelImpl.setResources(resources);        
+    public static void setResources(TextResources resources) {
+        SHTMLPanelImpl.setTextResources(resources);        
     }
 
     public abstract HTMLDocument getDocument();
 
-    public static ResourceBundle getResources() {
-        return SHTMLPanelImpl.resources;
+    public static TextResources getResources() {
+        return SHTMLPanelImpl.textResources;
     }
 }

@@ -45,7 +45,7 @@ private static int counter;
     private SplashScreen() {
         try {
             JPanel panel = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(Util.getResourceString(SHTMLPanelImpl.resources, "splashImage")));
+            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(Util.getResourceString(SHTMLPanelImpl.textResources, "splashImage")));
             panel.add(new JLabel(icon), BorderLayout.CENTER);
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getContentPane().add(panel);

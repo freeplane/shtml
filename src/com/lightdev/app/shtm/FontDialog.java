@@ -55,7 +55,7 @@ class FontDialog extends DialogShell {
   /**
    * constructor
    *
-   * @param parent  the main frame having the ResourceBundle
+   * @param parent  the main frame having the TextResources
    * @param title  the title for this dialog
    * @param a  the set of attributes to show and manipulate
    */

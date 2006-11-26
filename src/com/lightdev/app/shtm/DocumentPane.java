@@ -183,8 +183,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     tpView.setTabPlacement(JTabbedPane.BOTTOM);
     tpView.add(sp, VIEW_TAB_LAYOUT);
     tpView.add(htmlSp, VIEW_TAB_HTML);
-    tpView.setTitleAt(VIEW_TAB_LAYOUT, Util.getResourceString(SHTMLPanelImpl.resources, "layoutTabTitle"));
-    tpView.setTitleAt(VIEW_TAB_HTML, Util.getResourceString(SHTMLPanelImpl.resources, "htmlTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_LAYOUT, Util.getResourceString(SHTMLPanelImpl.textResources, "layoutTabTitle"));
+    tpView.setTitleAt(VIEW_TAB_HTML, Util.getResourceString(SHTMLPanelImpl.textResources, "htmlTabTitle"));
     tpView.addChangeListener(this);
 
     // add comnponents to content pane
@@ -207,7 +207,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   public DocumentPane(URL docToLoad, int newDocNo/*, int renderMode*/) {
     this(/*renderMode*/);
     DEFAULT_DOC_NAME = Util.getResourceString(
-        SHTMLPanelImpl.resources, "defaultDocName");
+        SHTMLPanelImpl.textResources, "defaultDocName");
     if(docToLoad != null) {
       loadDocument(docToLoad);
     }

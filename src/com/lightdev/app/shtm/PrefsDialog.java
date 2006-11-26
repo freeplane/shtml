@@ -83,7 +83,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
         appPrefsPanel,
         new JLabel(
         Util.getResourceString(
-        SHTMLPanelImpl.resources, "prfLafLabel")),
+        SHTMLPanelImpl.textResources, "prfLafLabel")),
         g, c, 0, 0, GridBagConstraints.EAST);
     lafCombo = new JComboBox();
     initLfComboBox();
@@ -132,7 +132,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
 
     // add option for standard stlye sheet
     useStdStyleSheet = new JCheckBox(Util.getResourceString(
-                  SHTMLPanelImpl.resources, "linkDefaultStyleSheetLabel"));
+                  SHTMLPanelImpl.textResources, "linkDefaultStyleSheetLabel"));
     boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
     useStdStyleSheet.setSelected(useStyle);
     Util.addGridBagComponent(layoutPanel, useStdStyleSheet, g, c, 0, 2, GridBagConstraints.WEST);

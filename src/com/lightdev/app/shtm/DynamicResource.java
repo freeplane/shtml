@@ -21,7 +21,6 @@ package com.lightdev.app.shtm;
 
 import java.awt.Component;
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Locale;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -42,13 +41,13 @@ import java.net.URL;
  *
  * <p><b>IMPORTANT:</b> Action command names must be unique, if actions
  * or menus are added to an instance of this class and if the actions or
- * menus are defined in different ResourceBundles, the action names
- * must be unique over all ResourceBundles involved, because the action
+ * menus are defined in different TextResourcess, the action names
+ * must be unique over all TextResourcess involved, because the action
  * names are used as identifiers for connection of actions to compnents
  * such as menus and menu items.</p>
  *
  * <p>Component creation methods such as createMenu or createMenuItem
- * expect definitions coming from a ResourceBundle, typically a
+ * expect definitions coming from a TextResources, typically a
  * text file ending with '.properties'.</p>
  *
  * <p>
@@ -140,12 +139,12 @@ class DynamicResource {
    * Create a menu bar.  This reads the
    * definition of the menu from the associated resource file.
    *
-   * @param resources  the ResourceBundle to get the menu definition from
+   * @param resources  the TextResources to get the menu definition from
    * @param name  name of the menu bar definition
    *
    * @return the created menu bar
    */
-  public SHTMLMenuBar createMenubar(ResourceBundle resources, String name) {
+  public SHTMLMenuBar createMenubar(TextResources resources, String name) {
     SHTMLMenuBar mb = new SHTMLMenuBar();
     String[] menuKeys = Util.tokenize(Util.getResourceString(resources, name), " ");
     for (int i = 0; i < menuKeys.length; i++) {
@@ -161,11 +160,11 @@ class DynamicResource {
    * Create a menu for the app.  This reads the
    * definition of the menu from the associated resource file.
    *
-   * @param resources  the ResourceBundle to get the menu definition from
+   * @param resources  the TextResources to get the menu definition from
    * @param key  the key of the menu definition in the resource file
    * @return the created menu
    */
-  public JMenu createMenu(ResourceBundle resources, String key) {
+  public JMenu createMenu(TextResources resources, String key) {
     JMenu menu = null;
     String def = Util.getResourceString(resources, key);
     if(def == null) {
@@ -197,12 +196,12 @@ class DynamicResource {
   /**
    * create a menu item
    *
-   * @param resources  the ResourceBundle to get the item definition from
+   * @param resources  the TextResources to get the item definition from
    * @param cmd the action command to be associated
    *      with the new menu item
    * @return the created menu item
    */
-  public JMenuItem createMenuItem(ResourceBundle resources, String cmd) {
+  public JMenuItem createMenuItem(TextResources resources, String cmd) {
     /**
      * create a new menu item with the appropriate label from the
      * resource file. This label later is set from the action this
@@ -271,11 +270,11 @@ class DynamicResource {
   /**
    * get a string from the resources file
    *
-   * @param resources  the ResourceBundle to get the string from
+   * @param resources  the TextResources to get the string from
    * @param nm  the key of the string
    * @return the string for the given key or null if not found
    */
-  static public String getResourceString(ResourceBundle resources, String nm) {
+  static public String getResourceString(TextResources resources, String nm) {
     String str = null;
     try {
       //System.out.println("getResourceString nm=" + nm);
@@ -394,17 +393,17 @@ class DynamicResource {
    * given commamd, an icon is created for the respective image resource.
    * otherwise, null is returned.</p>
    *
-   * @param resources  the ResourceBundle to get the icon from
+   * @param resources  the TextResources to get the icon from
    * @param cmd  the command an icon is requested for
    *
    * @return the icon for that command or null, if none is present
    *        for this command
    */
-  static public Icon getIconForCommand(ResourceBundle resources, String cmd) {
+  static public Icon getIconForCommand(TextResources resources, String cmd) {
     return getIconForName(resources, cmd + imageSuffix);
   }
 
-  static public Icon getIconForName(ResourceBundle resources, String name) {
+  static public Icon getIconForName(TextResources resources, String name) {
     Icon icon = null;
     URL url = getResource(resources, name);
     //System.out.println("getIconForName name=" + name + ", url=" + url);
@@ -422,11 +421,11 @@ class DynamicResource {
    * coming with SimplyHTML has a key for every resource pointing to
    * the subdirectory relative to the class path.</p>
    *
-   * @param resources  the ResourceBundle to get the resource from
+   * @param resources  the TextResources to get the resource from
    * @param key  the key of the resource in the resource file
    * @return the resource location as a URL
    */
-  static public URL getResource(ResourceBundle resources, String key) {
+  static public URL getResource(TextResources resources, String key) {
     String name = Util.getResourceString(resources, key);
     if (name != null/* && !name.endsWith(IMAGE_EMPTY)*/) {
       URL url = DynamicResource.class.getResource(name);
@@ -439,12 +438,12 @@ class DynamicResource {
    * Create a tool bar.  This reads the definition of a tool bar
    * from the associated resource file.
    *
-   * @param resources  the ResourceBundle to get the tool bar definition from
+   * @param resources  the TextResources to get the tool bar definition from
    * @param nm  the name of the tool bar definition in the resource file
    *
    * @return the created tool bar
    */
-  public JToolBar createToolBar(ResourceBundle resources, String nm) {
+  public JToolBar createToolBar(TextResources resources, String nm) {
     Action action;
     AbstractButton newButton;
     java.awt.Dimension buttonSize = new java.awt.Dimension(24,24);

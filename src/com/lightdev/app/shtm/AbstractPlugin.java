@@ -23,9 +23,10 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JComponent;
-import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javax.swing.JFrame;
 import java.util.prefs.*;
 import javax.help.*;
@@ -92,7 +93,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   protected void createPluginMenu() {
     if(pluginMenuId != null) {
-      pMenu = owner.dynRes.createMenu(this.resources, pluginMenuId);
+      pMenu = owner.dynRes.createMenu(this.textResources, pluginMenuId);
     }
   }
 
@@ -101,7 +102,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   protected void createHelpMenu() {
     if(helpMenuId != null) {
-      hMenu = owner.dynRes.createMenu(this.resources, helpMenuId);
+      hMenu = owner.dynRes.createMenu(this.textResources, helpMenuId);
       initHelpMenu();
     }
   }
@@ -155,10 +156,10 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    *
    * @param owner  the owner of this plug-in
    * @param internalName  the internal name this plug-in shall have
-   * @param pluginMenuId  the id of the plug-in menu in the ResourceBundle,
+   * @param pluginMenuId  the id of the plug-in menu in the TextResources,
    * or null if no plugin-in menu is to be created
    * @param helpMenuId  the id of the help menu for this plug-in in the
-   * ResourceBundle, or null if no help menu is to be created
+   * TextResources, or null if no help menu is to be created
    */
   public void initPlugin(SHTMLPanel owner, String internalName, String pluginMenuId,
                         String helpMenuId) {
@@ -169,21 +170,21 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
     try {
       //System.out.println("AbstractPlugin this.getClass.getName=" + this.getClass().getName());
       if(SHTMLPanelImpl.pluginManager != null) {
-        ClassLoader plLoader = SHTMLPanelImpl.pluginManager.getPluginLoader();
-        if(plLoader != null) {
-          resources = ResourceBundle.getBundle(
-              this.getClass().getName(), Locale.getDefault(), plLoader);
-          //System.out.println("AbstractPlugin plLoader != null, resources=" + resources);
+          ClassLoader plLoader = SHTMLPanelImpl.pluginManager.getPluginLoader();
+          if(plLoader != null) {
+              final ResourceBundle resourceBundle = ResourceBundle.getBundle(this.getClass().getName(), Locale.getDefault(), plLoader);
+              textResources = new DefaultTextResources(resourceBundle);
+              //System.out.println("AbstractPlugin plLoader != null, resources=" + resources);
         }
         else {
-          resources = ResourceBundle.getBundle(
-              this.getClass().getName(), Locale.getDefault());
+          DefaultTextResources  instance = new DefaultTextResources(ResourceBundle.getBundle(this.getClass().getName(), Locale.getDefault()));
+        textResources = instance;
           //System.out.println("AbstractPlugin plLoader == null, resources=" + resources);
         }
       }
       else {
-        resources = ResourceBundle.getBundle(
-            this.getClass().getName(), Locale.getDefault());
+        DefaultTextResources  instance = new DefaultTextResources(ResourceBundle.getBundle(this.getClass().getName(), Locale.getDefault()));
+        textResources = instance;
         //System.out.println("AbstractPlugin pluginManager = null, resources=" + resources);
       }
       this.active = prefs.getBoolean(internalName + PREFSID_PLUGIN_ACTIVE, true);
@@ -358,8 +359,8 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
 
   /* --------------- class fields start --------------------- */
 
-  /** ResourceBundle of plug-in */
-  public static ResourceBundle resources;
+  /** TextResources of plug-in */
+  public static TextResources textResources;
 
   /** constant for active setting in preferences file */
   public static final String PREFSID_PLUGIN_ACTIVE = "Active";

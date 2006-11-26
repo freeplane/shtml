@@ -164,8 +164,8 @@ class DialogShell extends JDialog implements ActionListener {
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
     // construct dialog buttons
-    okButton = new JButton(Util.getResourceString(SHTMLPanelImpl.resources, "okBtnName"));
-    cancelButton = new JButton(Util.getResourceString(SHTMLPanelImpl.resources, "cancelBtnName"));
+    okButton = new JButton(Util.getResourceString(SHTMLPanelImpl.textResources, "okBtnName"));
+    cancelButton = new JButton(Util.getResourceString(SHTMLPanelImpl.textResources, "cancelBtnName"));
     cancelButton.addActionListener(this);
     okButton.addActionListener(this);
 
@@ -176,7 +176,7 @@ class DialogShell extends JDialog implements ActionListener {
 
     // construct help button
     if(helpTopicId != null) {
-      helpButton = new JButton(Util.getResourceString(SHTMLPanelImpl.resources, "helpLabel"));
+      helpButton = new JButton(Util.getResourceString(SHTMLPanelImpl.textResources, "helpLabel"));
       CSH.setHelpIDString(helpButton, helpTopicId);
       if(myHelpBroker == null) {
         helpButton.addActionListener(
