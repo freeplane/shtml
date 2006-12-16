@@ -19,12 +19,13 @@
 
 package com.lightdev.app.shtm;
 
+import javax.help.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
-import javax.help.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -67,10 +68,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
 
   /* some public constants */
-  public static final String APP_HELP_NAME = "help";
   public static final String APP_TEMP_DIR = "temp";
   public static final String IMAGE_DIR = "images";
-  public static final String JAVA_HELP_EXT = ".hs";
   public static final String ACTION_SELECTED_KEY = "selected";
   public static final String ACTION_SELECTED = "true";
   public static final String ACTION_UNSELECTED = "false";
@@ -116,9 +115,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
 
   /** tool bar for formatting commands */
   private JToolBar paraToolBar;
-
-  /** our help broker */
-  private static HelpBroker hb;
 
   /** plugin menu ID */
   public final String pluginMenuId = "plugin";
@@ -168,7 +164,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static  final String fontBoldAction = "fontBold";
   public static  final String fontItalicAction = "fontItalic";
   public static  final String fontUnderlineAction = "fontUnderline";
-  public final String helpTopicsAction = "helpTopics";
+  public static  final String helpTopicsAction = "helpTopics";
   public static  final String aboutAction = "about";
   public static  final String gcAction = "gc";
   public static  final String elemTreeAction = "elemTree";
@@ -620,33 +616,15 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
           if(mi == null){
               return;
           }
-          CSH.setHelpIDString(mi, "item15");
-          URL url = this.getClass().getResource(APP_HELP_NAME +
-                  Util.URL_SEPARATOR + APP_HELP_NAME + JAVA_HELP_EXT);
-          HelpSet hs = new HelpSet(null, url);
-          hb = hs.createHelpBroker();
-          mi.addActionListener(new CSH.DisplayHelpFromSource(getHelpBroker()));
-          mi.setIcon(dynRes.getIconForCommand(textResources, helpTopicsAction));
-          mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-          mi.setEnabled(true);
+          SHTMLHelpBroker.initJavaHelpItem(mi, "item15");
       }
-      catch (Exception e) {
+      catch (Throwable  e) {
           Util.errMsg(this,
                   Util.getResourceString(textResources, "helpNotFoundError"),
                   e);
       }
   }
-
-  /**
-   * get the <code>HelpBroker</code> of our application
-   *
-   * @return the <code>HelpBroker</code> to be used for help display
-   */
-  static HelpBroker getHelpBroker() {
-    return hb;
-  }
-
-  protected void initDocumentPane() {
+protected void initDocumentPane() {
       //TODO
   }
     /**
@@ -812,14 +790,12 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
           toolBar.add(tagSelector);
       }
       else if(itemKey.equalsIgnoreCase(helpTopicsAction)) {
-          newButton = new JButton();
           try {
-              CSH.setHelpIDString(newButton, "item15");
-              newButton.addActionListener(
-                      new CSH.DisplayHelpFromSource(getHelpBroker()));
-              newButton.setIcon(dynRes.getIconForCommand(textResources, itemKey));
+              newButton = SHTMLHelpBroker.createHelpButton("item15");
+              final Icon icon = DynamicResource.getIconForCommand(textResources, helpTopicsAction);
+              newButton.setIcon(icon);
               newButton.setToolTipText(Util.getResourceString(
-                      textResources, itemKey + dynRes.toolTipSuffix));
+                      textResources, helpTopicsAction + dynRes.toolTipSuffix));
               toolBar.add(newButton);
           }
           catch(Exception e) {}
@@ -868,8 +844,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
           newButton.setRequestFocusEnabled(false);
       }
 }
-
-  /**
+/**
    * displays or removes an etched border around JToggleButtons
    * this listener is registered with.
    */

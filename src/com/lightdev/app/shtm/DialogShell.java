@@ -23,6 +23,8 @@ import java.awt.event.ActionListener;
 import java.awt.AWTEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractButton;
 import javax.swing.JDialog;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -31,7 +33,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Container;
 import java.awt.Dialog;
-import javax.help.*;
 
 /**
  * Base class for other dialogs of application SimplyHTML.
@@ -54,13 +55,13 @@ class DialogShell extends JDialog implements ActionListener {
   protected JPanel buttonPanel;
 
   /** button to confirm the operation */
-  protected JButton okButton;
+  protected AbstractButton okButton;
 
   /** button to cancel the operation */
-  protected JButton cancelButton;
+  protected AbstractButton cancelButton;
 
   /** button to display context sensitive help */
-  protected JButton helpButton;
+  protected AbstractButton helpButton;
 
   /**
    * the result of the operation, one of RESULT_CANCEL and RESULT_OK
@@ -75,9 +76,6 @@ class DialogShell extends JDialog implements ActionListener {
 
   /** id of associated help topic (if any) */
   protected String helpTopicId = null;
-
-  private HelpBroker myHelpBroker;
-
   /**
    * constructor
    *
@@ -127,36 +125,6 @@ class DialogShell extends JDialog implements ActionListener {
   }
 
   /**
-   * constructor
-   *
-   * @param parent  the parent dialog
-   * @param title  the title for this dialog
-   * @param helpTopicId  the id of the help topic to display for this dialog
-   * @param helpBroker  the helpBroker to use for context sensitive help
-   */
-  public DialogShell(Dialog parent, String title, String helpTopicId, HelpBroker broker) {
-    super(parent, title);
-    this.helpTopicId = helpTopicId;
-    this.myHelpBroker = broker;
-    buildDialog();
-  }
-
-  /**
-   * constructor
-   *
-   * @param parent  the parent dialog
-   * @param title  the title for this dialog
-   * @param helpTopicId  the id of the help topic to display for this dialog
-   * @param helpBroker  the helpBroker to use for context sensitive help
-   */
-  public DialogShell(Frame parent, String title, String helpTopicId, HelpBroker broker) {
-    super(parent, title);
-    this.helpTopicId = helpTopicId;
-    this.myHelpBroker = broker;
-    buildDialog();
-  }
-
-  /**
    * create dialog components
    */
   private void buildDialog() {
@@ -176,17 +144,13 @@ class DialogShell extends JDialog implements ActionListener {
 
     // construct help button
     if(helpTopicId != null) {
-      helpButton = new JButton(Util.getResourceString(SHTMLPanelImpl.textResources, "helpLabel"));
-      CSH.setHelpIDString(helpButton, helpTopicId);
-      if(myHelpBroker == null) {
-        helpButton.addActionListener(
-            new CSH.DisplayHelpFromSource(SHTMLPanelImpl.getHelpBroker()));
-      }
-      else {
-        helpButton.addActionListener(
-            new CSH.DisplayHelpFromSource(myHelpBroker));
-      }
-      buttonPanel.add(helpButton);
+        try {
+            helpButton = SHTMLHelpBroker.createHelpButton(helpTopicId);
+            helpButton.setText(Util.getResourceString(SHTMLPanelImpl.textResources, "helpLabel"));
+            buttonPanel.add(helpButton);
+        } catch (NoClassDefFoundError e) {
+            helpTopicId = null;
+        }
     }
 
     // add all to content pane of dialog

@@ -921,7 +921,7 @@ public class Util {
    * @param msg the message to display, or null
    * @param e the exception object describing the error, or null
    */
-  public static void errMsg(Component owner, String msg, Exception e) {
+  public static void errMsg(Component owner, String msg, Throwable e) {
       if(e != null) {
           e.printStackTrace();
       }
