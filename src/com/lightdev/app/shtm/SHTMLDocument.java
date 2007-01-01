@@ -786,13 +786,19 @@ private SimpleAttributeSet getEndingAttributeSet() {
  * @see javax.swing.text.html.HTMLDocument#getBase()
  */
 public URL getBase() {
-    final URL url = super.getBase();
+    URL url = super.getBase();
     if(false == baseDirChecked){
         baseDirChecked = true;
         File docDir = new File (url.getFile());
         if(!docDir.exists()) {
             docDir.mkdirs();
           }
+        try {
+            url = docDir.toURL();
+            super.setBase(url);
+            return url;
+        } catch (MalformedURLException e) {
+        }
     }
     return url;
 }
