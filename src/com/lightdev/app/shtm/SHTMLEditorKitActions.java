@@ -1050,7 +1050,8 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       Util.center(parent, dlg);
       dlg.setModal(true);
       //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-      dlg.setValue(SHTMLPanelImpl.getMaxAttributes(this.panel.getSHTMLDocument().getParagraphElement(this.panel.getEditor().getCaretPosition()), this.panel.getSHTMLDocument().getStyleSheet()));
+      final int caretPosition = panel.getEditor().getCaretPosition();
+      dlg.setValue(this.panel.getMaxAttributes(caretPosition));
       //dlg.setValue(getMaxAttributes(editor, null));
       dlg.show();
       this.panel.updateActions();
@@ -1572,7 +1573,8 @@ static class FormatImageAction extends AbstractAction
       Util.center(parent, dlg);
       dlg.setModal(true);
       //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-      dlg.setValue(SHTMLPanelImpl.getMaxAttributes(this.panel.getSHTMLDocument().getParagraphElement(this.panel.getEditor().getCaretPosition()), this.panel.getSHTMLDocument().getStyleSheet()));
+      final int caretPosition = panel.getEditor().getCaretPosition();
+      dlg.setValue(this.panel.getMaxAttributes(caretPosition));
       dlg.show();
 
       /** if the user made a selection, apply it to the document */

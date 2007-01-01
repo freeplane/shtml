@@ -82,6 +82,18 @@ class SHTMLEditorKit extends HTMLEditorKit {
    * @return the model
    */
   public Document createDefaultDocument() {
+    SHTMLDocument doc = (SHTMLDocument)createEmptyDocument();
+    try {
+        doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ doc.SUFFIX +"\n</p>\n");
+    } catch (BadLocationException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return doc;
+  }
+
+public Document createEmptyDocument() {
     StyleSheet styles = getStyleSheet();
     StyleSheet ss = new StyleSheet();
     try {
@@ -92,15 +104,8 @@ class SHTMLEditorKit extends HTMLEditorKit {
     doc.setParser(getParser());
     doc.setAsynchronousLoadPriority(-1);
     doc.setTokenThreshold(1);
-    try {
-        doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ doc.SUFFIX +"\n</p>\n");
-    } catch (BadLocationException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
     return doc;
-  }
+}
 
   /**
    * Inserts content from the given stream. If <code>doc</code> is

@@ -312,7 +312,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   public void loadDocument(URL url) {
     try {
       SHTMLEditorKit kit = (SHTMLEditorKit) editor.getEditorKit();
-      SHTMLDocument doc = (SHTMLDocument) kit.createDefaultDocument();
+      SHTMLDocument doc = (SHTMLDocument) kit.createEmptyDocument();
       doc.putProperty("IgnoreCharsetDirective", new Boolean(true));
       doc.setBase(new File(url.getPath()).getParentFile().toURL()); // set the doc base
       InputStream in = url.openStream(); // get an input stream

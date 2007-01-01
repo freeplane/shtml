@@ -1086,6 +1086,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     /**
    * a JComboBox for selecting a font size
    */
+  static final String[] FONT_SIZES = new String[] {"8", "10", "12", "14", "18", "24"};
   class FontSizePicker extends JComboBox  implements AttributeComponent {
     private boolean ignoreActions = false;
     final private Object key;
@@ -1093,7 +1094,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
       /**
        * add font sizes to the combo box
        */
-      super(new String[] {"8", "10", "12", "14", "18", "24"} );
+      super(FONT_SIZES );
       this.key = CSS.Attribute.FONT_SIZE;
     }
 
@@ -1163,6 +1164,13 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     }
   }
 
+
+  public AttributeSet getMaxAttributes(final int caretPosition) {
+    final Element paragraphElement = getSHTMLDocument().getParagraphElement(caretPosition);
+      final StyleSheet styleSheet = getSHTMLDocument().getStyleSheet();
+      return SHTMLPanelImpl.getMaxAttributes(paragraphElement, styleSheet);
+}
+
   /**
    * Get all attributes that can be found in the element tree
    * starting at the highest parent down to the character element
@@ -1174,17 +1182,20 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    * @return the resulting set of combined attributes
    */
   AttributeSet getMaxAttributes(SHTMLEditorPane editor,
-                                       String elemName)
+          String elemName)
   {
-    if(elemName != null && elemName.length() > 0) {
-          Element e = doc.getCharacterElement(editor.getSelectionStart());
-      e = Util.findElementUp(elemName, e);
-        StyleSheet s = doc.getStyleSheet();
-    return getMaxAttributes(e, s);
-  }
+      Element e = doc.getCharacterElement(editor.getSelectionStart());
+      StyleSheet s = doc.getStyleSheet();
+      if(elemName != null && elemName.length() > 0) {
+          e = Util.findElementUp(elemName, e);
+          return getMaxAttributes(e, s);
+      }
+      final MutableAttributeSet maxAttributes = (MutableAttributeSet)getMaxAttributes(e, s);
       final StyledEditorKit editorKit = (StyledEditorKit)editor.getEditorKit();
-      return editorKit.getInputAttributes().copyAttributes();
-    }
+      final MutableAttributeSet inputAttributes = editorKit.getInputAttributes();
+      maxAttributes.addAttributes(inputAttributes);
+      return maxAttributes;
+  }
 
   Frame getMainFrame() {
     return JOptionPane.getFrameForComponent(SHTMLPanelImpl.this);
@@ -1305,7 +1316,6 @@ public void requestFocus() {
         dp.requestFocus();
     }
 }
-
   /* ---------- font manipulation code end ------------------ */
 
 }

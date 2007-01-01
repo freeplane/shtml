@@ -592,7 +592,7 @@ public void startCompoundEdit() {
      * to handleStartTag and handleEndTag respectively.
      */
     public void handleSimpleTag(HTML.Tag t, MutableAttributeSet a, int pos) {
-        if(! paragraphCreated && paragraphLevel == 0){
+        if(inBody && ! paragraphCreated && paragraphLevel == 0){
             insertParagraphStartTag(pos);
         }
       if(t == HTML.Tag.SPAN) {

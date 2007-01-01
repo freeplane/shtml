@@ -108,8 +108,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
     fontComponents.add(family);
 
     /** create a pick list for font size */
-    String[] fontSizes = new String[] {"8", "10", "12", "14", "18", "24"};
-    SizePickList size = new SizePickList(fontSizes,
+    SizePickList size = new SizePickList(SHTMLPanelImpl.FONT_SIZES,
         Util.getResourceString(SHTMLPanelImpl.textResources, "sizeLabel"));
     size.addTitledPickListListener(this);
     fontComponents.add(size);

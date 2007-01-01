@@ -49,7 +49,8 @@ import javax.swing.text.html.HTML;
 
 class AttributeMapper extends SimpleAttributeSet {
 
-  public static final int toHTML = 1;
+    public static final int toCSS = 0;
+    public static final int toHTML = 1;
   public static final int toJava = 2;
 
   public AttributeMapper() {
@@ -62,7 +63,10 @@ class AttributeMapper extends SimpleAttributeSet {
 
   public AttributeSet getMappedAttributes(int direction) {
     switch(direction) {
-      case toHTML:
+    case toCSS:
+        mapToCSSAttributes();
+        break;
+    case toHTML:
         mapToHTMLAttributes();
         break;
       case toJava:
@@ -75,7 +79,17 @@ class AttributeMapper extends SimpleAttributeSet {
     return this;
   }
 
-  private void mapToHTMLAttributes() {
+  private void mapToCSSAttributes() {
+      Object cssFontSize = getAttribute(CSS.Attribute.FONT_SIZE);
+      if(cssFontSize != null) {
+          int fontNumber = Integer.parseInt(cssFontSize.toString()); 
+          addAttribute(CSS.Attribute.FONT_SIZE, SHTMLPanelImpl.FONT_SIZES[fontNumber-1] + "pt");
+      }
+      mapToHTMLAttributes();
+    
+}
+
+private void mapToHTMLAttributes() {
     Object cssFontFamily = getAttribute(CSS.Attribute.FONT_FAMILY);
     if(cssFontFamily != null) {
       if(cssFontFamily.toString().equalsIgnoreCase("SansSerif")) {

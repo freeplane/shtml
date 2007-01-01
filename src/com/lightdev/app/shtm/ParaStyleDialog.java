@@ -493,7 +493,7 @@ class ParaStyleDialog extends DialogShell
       System.out.println(" \r\n");
       */
 
-      a.addAttributes(new AttributeMapper(getValue(true)).getMappedAttributes(AttributeMapper.toHTML));
+      a.addAttributes(new AttributeMapper(getValue(true)).getMappedAttributes(AttributeMapper.toCSS));
 
       // hd.listAttributes(a, 4);
 
