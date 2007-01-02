@@ -19,8 +19,6 @@
 
 package com.lightdev.app.shtm;
 
-import javax.help.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;

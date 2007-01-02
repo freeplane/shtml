@@ -1050,8 +1050,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       Util.center(parent, dlg);
       dlg.setModal(true);
       //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-      final int caretPosition = panel.getEditor().getCaretPosition();
-      dlg.setValue(this.panel.getMaxAttributes(caretPosition));
+      dlg.setValue(this.panel.getMaxAttributes(panel.getEditor(), null));
       //dlg.setValue(getMaxAttributes(editor, null));
       dlg.show();
       this.panel.updateActions();

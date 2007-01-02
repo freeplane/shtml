@@ -2403,8 +2403,10 @@ public void goNextCell(Element cell) {
         }
       }
       //System.out.println("SHTMLEditorPane applyTag remove index=" + index + ", removeCount=" + removeCount);
-      doc.insertAfterEnd(elem.getElement(index), sw.getBuffer().toString());
-      doc.removeElements(elem, index, removeCount);
+      if(index>-1){
+          doc.insertAfterEnd(elem.getElement(index), sw.getBuffer().toString());
+          doc.removeElements(elem, index, removeCount);
+      }
       //SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
       //System.out.println("SHTMLEditorPane applyTag new HTML=\r\n" + sw.getBuffer().toString() );
       //kit.read(new StringReader(sw.getBuffer().toString()), doc, getCaretPosition());
