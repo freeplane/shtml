@@ -247,17 +247,22 @@ class SHTMLWriter extends HTMLWriter {
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             String attribute = from.getAttribute(key).toString();
-            if (key instanceof CSS.Attribute) {
-                // default is to store in a HTML style attribute
-                if (attribute.length() > 0) {
-                    if(key == CSS.Attribute.FONT_SIZE) {
-                        int fontNumber = Integer.parseInt(attribute); 
-                        attribute = SHTMLPanelImpl.FONT_SIZES[fontNumber-1] + "pt";
-                    }
+            if (key == CSS.Attribute.FONT_SIZE
+                    || key == CSS.Attribute.FONT_WEIGHT
+                    || key == CSS.Attribute.FONT_STYLE
+                    || key == CSS.Attribute.FONT_FAMILY
+                    || key == CSS.Attribute.COLOR
+                    || key == CSS.Attribute.BACKGROUND_COLOR) {
+                if(key == CSS.Attribute.FONT_SIZE) {
+                    int fontNumber = Integer.parseInt(attribute); 
+                    attribute = SHTMLPanelImpl.FONT_SIZES[fontNumber-1] + "pt";
+                }
+                if (value.length() > 0) {
                     value = value + "; ";
                 }
                 value = value + key + ": " + attribute;
-            } else {
+            } 
+            else {
                 to.addAttribute(key, attribute);
             }
         }
