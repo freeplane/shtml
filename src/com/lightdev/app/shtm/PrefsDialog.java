@@ -51,7 +51,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
 
   /** constant for dock location setting in preferences file */
   public static final String PREFSID_LOOK_AND_FEEL = "Laf";
-  public static final String PREFSID_WRITE_MODE = "writeMode";
+  static final String PREFSID_WRITE_MODE = "htmlmode";
 
   public static final String PREFS_WRITE_MODE_HTML32 = "html32";
   public static final String PREFS_WRITE_MODE_HTML4 = "html4";
@@ -61,9 +61,9 @@ class PrefsDialog extends DialogShell implements ActionListener {
   private String lafName = UIManager.getLookAndFeel().getName();
 
   private JComboBox lafCombo;
-//  JRadioButton saveHTML32;
-//  JRadioButton saveHTML4;
-  JCheckBox useStdStyleSheet;
+  private JRadioButton saveHTML32;
+  private JRadioButton saveHTML4;
+  private JCheckBox useStdStyleSheet;
 
   /** the help id for this dialog */
   private static final String helpTopicId = "item167";
@@ -103,32 +103,33 @@ class PrefsDialog extends DialogShell implements ActionListener {
                              GridBagConstraints.EAST);
     */
 
-//    // build panel for writing mode
-//    JPanel writeModePnl = new JPanel(g);
-//    writeModePnl.setBorder(new TitledBorder(new EtchedBorder(
-//                  EtchedBorder.LOWERED),
-//                  DynamicResource.getResourceString(
-//                  SHTMLPanelImpl.resources, "prfWriteModeLabel")));
-//    saveHTML32 = new JRadioButton(DynamicResource.getResourceString(
-//                  SHTMLPanelImpl.resources, "prfWriteModeHTML32Label"));
-//    saveHTML4 = new JRadioButton(DynamicResource.getResourceString(
-//                  SHTMLPanelImpl.resources, "prfWriteModeHTML4Label"));
-//    ButtonGroup bg = new ButtonGroup();
-//    bg.add(saveHTML32);
-//    bg.add(saveHTML4);
-//    Util.addGridBagComponent(writeModePnl, saveHTML32, g, c, 0, 0, GridBagConstraints.WEST);
-//    Util.addGridBagComponent(writeModePnl, saveHTML4, g, c, 0, 1, GridBagConstraints.WEST);
-//    String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
-//    if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
-//      saveHTML32.setSelected(true);
-//    }
-//    else {
-//      saveHTML4.setSelected(true);
-//    }
-//
+    // build panel for writing mode
+    JPanel writeModePnl = new JPanel(g);
+    writeModePnl.setBorder(new TitledBorder(new EtchedBorder(
+                  EtchedBorder.LOWERED),
+                  Util.getResourceString(
+                          SHTMLPanelImpl.textResources, "prfWriteModeLabel")));
+    saveHTML32 = new JRadioButton(Util.getResourceString(
+            SHTMLPanelImpl.textResources, "prfWriteModeHTML32Label"));
+    saveHTML4 = new JRadioButton(Util.getResourceString(
+            SHTMLPanelImpl.textResources, "prfWriteModeHTML4Label"));
+    
+    ButtonGroup bg = new ButtonGroup();
+    bg.add(saveHTML32);
+    bg.add(saveHTML4);
+    Util.addGridBagComponent(writeModePnl, saveHTML32, g, c, 0, 0, GridBagConstraints.WEST);
+    Util.addGridBagComponent(writeModePnl, saveHTML4, g, c, 0, 1, GridBagConstraints.WEST);
+    String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
+    if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
+      saveHTML32.setSelected(true);
+    }
+    else {
+      saveHTML4.setSelected(true);
+    }
+
     Util.addGridBagComponent(layoutPanel, appPrefsPanel, g, c, 0, 0, GridBagConstraints.WEST);
     //Util.addGridBagComponent(layoutPanel, docPrefsPanel, g, c, 0, 1, GridBagConstraints.WEST);
-//    Util.addGridBagComponent(layoutPanel, writeModePnl, g, c, 0, 1, GridBagConstraints.WEST);
+    Util.addGridBagComponent(layoutPanel, writeModePnl, g, c, 0, 1, GridBagConstraints.WEST);
 
     // add option for standard stlye sheet
     useStdStyleSheet = new JCheckBox(Util.getResourceString(
@@ -178,12 +179,12 @@ class PrefsDialog extends DialogShell implements ActionListener {
         UIManager.setLookAndFeel(newLaf);
         SwingUtilities.updateComponentTreeUI(JOptionPane.getFrameForComponent(src));
       }
-//      if(saveHTML32.isSelected()) {
-//        prefs.put(PREFSID_WRITE_MODE, PREFS_WRITE_MODE_HTML32);
-//      }
-//      else {
-//        prefs.put(PREFSID_WRITE_MODE, PREFS_WRITE_MODE_HTML4);
-//      }
+      if(saveHTML32.isSelected()) {
+        prefs.put(PREFSID_WRITE_MODE, PREFS_WRITE_MODE_HTML32);
+      }
+      else {
+        prefs.put(PREFSID_WRITE_MODE, PREFS_WRITE_MODE_HTML4);
+      }
       prefs.putBoolean(PREFS_USE_STD_STYLE_SHEET, useStdStyleSheet.isSelected());
     }
     catch(Exception ex) {

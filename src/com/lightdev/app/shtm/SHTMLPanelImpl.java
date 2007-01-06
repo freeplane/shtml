@@ -323,9 +323,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     }
 
     public void setContentPanePreferredSize(Dimension prefSize){
-        dp.getEditor().setPreferredSize(prefSize);
-        dp.getHtmlEditor().setPreferredSize(prefSize);
-        dp.setPreferredSize(null);
+        dp.setContentPanePreferredSize(prefSize);
     }
     /**
      * @return returns the currently used ExtendedHTMLDocument Object

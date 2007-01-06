@@ -61,16 +61,6 @@ class SHTMLEditorKit extends HTMLEditorKit {
 
   public SHTMLEditorKit() {
     super();
-    try {
-      Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
-      this.renderMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
-    }
-    catch(Exception e) {}
-  }
-
-  public SHTMLEditorKit(String renderMode) {
-    this();
-    this.renderMode = renderMode;
   }
 
   /* --------------- SHTMLDocument implementation start ------------ */
@@ -231,19 +221,6 @@ public Document createEmptyDocument() {
       return view;
     }
   }
-
-  /**
-   * set the render mode
-   *
-   * <p>This influences how the ViewFactory creates view to render content</p>
-   *
-   * @param mode the mode, one of PrefsDialog.PREFS_WRITE_MODE_HTML32 or _HTML4
-   */
-  public void setRenderMode(String mode) {
-    this.renderMode = mode;
-  }
-
-  private static String renderMode = PrefsDialog.PREFS_WRITE_MODE_HTML32;
 
   /* --------------- ViewFactory implementation end -------------- */
 

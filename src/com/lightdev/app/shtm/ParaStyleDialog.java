@@ -246,16 +246,12 @@ class ParaStyleDialog extends DialogShell
     contentPane.add(tp, BorderLayout.CENTER);
 
     cancelButton.setVisible(mode != MODE_NAMED_STYLES);
-    try {
-      Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
-      String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
-      if(((mode == MODE_PARAGRAPH_STYLE) && (!writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32))) ||
-          (mode == MODE_NAMED_STYLES))
-      {
+    String writeMode = Util.getWriteMode();
+    if(((mode == MODE_PARAGRAPH_STYLE) && (!writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32))) ||
+            (mode == MODE_NAMED_STYLES))
+    {
         tp.add(Util.getResourceString(SHTMLPanelImpl.textResources, "fontTabLabel"), fp);
-      }
     }
-    catch(ClassNotFoundException e) {}
 
     // cause optimal placement of all elements
     pack();

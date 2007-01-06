@@ -151,12 +151,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
         bWidth.setAttribute(i, bs.getBorderWidth());
       }
       String newValue = bColor.getAttribute();
-      String writeMode = PrefsDialog.PREFS_WRITE_MODE_HTML32;
-      try {
-        Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
-        writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, writeMode);
-      }
-      catch(Exception ex) {}
+      String writeMode = Util.getWriteMode();
       if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
         newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
@@ -187,12 +182,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
           bWidth.setAttribute(i, bs.getBorderWidth());
         }
         String newValue = bColor.getAttribute();
-        String writeMode = PrefsDialog.PREFS_WRITE_MODE_HTML32;
-        try {
-          Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
-          writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, writeMode);
-        }
-        catch(Exception ex) {}
+        String writeMode = Util.getWriteMode();
         if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
           newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
           Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);

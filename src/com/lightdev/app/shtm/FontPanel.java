@@ -53,6 +53,7 @@ import javax.swing.text.html.StyleSheet;
 import javax.swing.text.MutableAttributeSet;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.prefs.Preferences;
 
 /**
  * A panel for showing and manipulating font information.
@@ -84,6 +85,13 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
   private Vector fontComponents = new Vector(0);
 
   public FontPanel(boolean pickBgColor) {
+      if(pickBgColor == false)
+      {
+          String writeMode = Util.getWriteMode();
+          if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4)) {
+              pickBgColor = true;
+          }
+      }
     setLayout(new BorderLayout(5,5));
 
     /** create a label for previewing font selections */

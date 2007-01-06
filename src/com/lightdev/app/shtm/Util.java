@@ -40,6 +40,7 @@ import javax.swing.text.ElementIterator;
 import java.util.Enumeration;
 import javax.swing.text.html.HTML;
 import java.util.StringTokenizer;
+import java.util.prefs.Preferences;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -991,5 +992,19 @@ public class Util {
    */
   static public String getResourceString(TextResources resources, String nm) {
       return DynamicResource.getResourceString(resources, nm);      
+  }
+  
+  static String getWriteMode(){
+      String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), PrefsDialog.PREFSID_WRITE_MODE);
+      if(writeMode != null){
+          return writeMode;
+      }
+      writeMode = PrefsDialog.PREFS_WRITE_MODE_HTML32;
+      try {
+          Preferences prefs = Preferences.userNodeForPackage(PrefsDialog.class);
+          writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, writeMode);
+      }
+      catch(Exception ex) {}
+      return writeMode;
   }
 }

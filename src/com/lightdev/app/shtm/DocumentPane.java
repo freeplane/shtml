@@ -373,18 +373,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
           SHTMLDocument doc = (SHTMLDocument) getDocument();
           OutputStream os = new FileOutputStream(sourceUrl.getPath());
           OutputStreamWriter osw = new OutputStreamWriter(os);
-          Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
-          String writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
-          if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4)) {
-            SHTMLWriter hw = new SHTMLWriter(osw, doc);
-            hw.write();
-          }
-          else {
-            SHTMLWriter hw = new SHTMLWriter(osw, doc);
-            //HTMLWriter hw = new HTMLWriter(osw, doc);
-            //System.out.println("DocumentPane.saveDocument saving with title=" + doc.getProperty(Document.TitleProperty));
-            hw.write();
-          }
+          SHTMLWriter hw = new SHTMLWriter(osw, doc);
+          hw.write();
           osw.flush();
           osw.close();
           os.flush();
@@ -936,6 +926,15 @@ public void requestFocus() {
       break;
   }
     
+}
+
+public void setContentPanePreferredSize(Dimension prefSize) {
+    setPreferredSize(null);
+    for(int i = 0; i < tpView.getComponentCount(); i++){
+        final JScrollPane scrollPane = (JScrollPane) tpView.getComponent(i);
+        scrollPane.getViewport().setPreferredSize(prefSize);
+        scrollPane.invalidate();
+    }
 }
 
   /* -------- DocumentPaneListener definition end --------------- */
