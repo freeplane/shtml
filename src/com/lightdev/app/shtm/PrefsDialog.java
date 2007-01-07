@@ -55,7 +55,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
 
   public static final String PREFS_WRITE_MODE_HTML32 = "html32";
   public static final String PREFS_WRITE_MODE_HTML4 = "html4";
-  public static final String PREFS_USE_STD_STYLE_SHEET = "useStdStyles";
+  public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";
 
 
   private String lafName = UIManager.getLookAndFeel().getName();

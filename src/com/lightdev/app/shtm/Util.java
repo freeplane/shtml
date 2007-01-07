@@ -994,17 +994,26 @@ public class Util {
       return DynamicResource.getResourceString(resources, nm);      
   }
   
-  static String getWriteMode(){
+  static String getPreference(String key, String defaultValue){
       String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), PrefsDialog.PREFSID_WRITE_MODE);
       if(writeMode != null){
           return writeMode;
       }
-      writeMode = PrefsDialog.PREFS_WRITE_MODE_HTML32;
+      writeMode = defaultValue;
       try {
           Preferences prefs = Preferences.userNodeForPackage(PrefsDialog.class);
-          writeMode = prefs.get(PrefsDialog.PREFSID_WRITE_MODE, writeMode);
+          writeMode = prefs.get(key, writeMode);
       }
       catch(Exception ex) {}
-      return writeMode;
+      return writeMode;     
   }
+  
+  static String getWriteMode(){
+      return getPreference(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
+   }
+  
+  static boolean useSteStyleSheet() {
+      return getPreference(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, "false").equalsIgnoreCase("true");
+  }
+
 }

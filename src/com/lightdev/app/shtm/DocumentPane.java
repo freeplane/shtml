@@ -254,8 +254,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
       doc.setBase(createTempDir());
       editor.setDocument(doc); // let the document be edited in our editor
       //doc.putProperty(Document.TitleProperty, getDocumentName());
-      Preferences prefs = Preferences.userNodeForPackage(getClass().forName("com.lightdev.app.shtm.PrefsDialog"));
-      boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
+      boolean useStyle = Util.useSteStyleSheet();
       if(useStyle) {
         doc.insertStyleRef();
       }
