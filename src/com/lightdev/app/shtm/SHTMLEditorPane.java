@@ -2307,6 +2307,14 @@ public void goNextCell(Element cell) {
           doc.endCompoundEdit();
       }
   }
+  public void removeParagraphAttributes() {
+      int p0 = getSelectionStart();
+      int p1 = getSelectionEnd();
+      SHTMLDocument doc = (SHTMLDocument)getDocument();
+      doc.removeParagraphAttributes(p0, p1-p0 + 1);
+      select(p0, p1);
+  }
+  
   public void applyAttributes(AttributeSet a, boolean para) {
     applyAttributes(a, para, false);
   }

@@ -775,6 +775,36 @@ public void setParagraphAttributes(int offset, int length, AttributeSet s, boole
     inSetParagraphAttributes = false;
     endCompoundEdit();
 }
+public void removeParagraphAttributes(int offset, int length) {
+    startCompoundEdit();
+    // clear all paragraph attributes in selection
+    for(int i = offset; i < offset + length; ) {
+        final Element paragraphElement = super.getParagraphElement(i);
+        removeParagraphAtributes(paragraphElement);
+        final int endOffset = paragraphElement.getEndOffset();
+        i = endOffset;
+    }
+    endCompoundEdit();
+}
+
+private void removeParagraphAtributes(final Element paragraphElement) {
+    if(paragraphElement != null && paragraphElement.getName().equalsIgnoreCase("p-implied")){
+        removeParagraphAtributes(paragraphElement.getParentElement());
+        return;
+    }
+    StringWriter writer = new StringWriter();
+    SHTMLWriter htmlStartWriter = new SHTMLWriter(writer, this);
+    try {
+        htmlStartWriter.startTag(paragraphElement.getName(), null);
+        htmlStartWriter.writeChildElements(paragraphElement);
+        htmlStartWriter.endTag(paragraphElement.getName());
+        setOuterHTML(paragraphElement, writer.toString());
+    } catch (IOException e) {
+        e.printStackTrace();
+    } catch (BadLocationException e) {
+        e.printStackTrace();
+    }
+}
 
 private SimpleAttributeSet getEndingAttributeSet() {
     final SimpleAttributeSet set = new SimpleAttributeSet();

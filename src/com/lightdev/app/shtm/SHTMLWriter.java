@@ -18,26 +18,12 @@ import java.util.prefs.Preferences;
 class SHTMLWriter extends HTMLWriter {
     private Element elem;
 
-    /**
-     * If true, the writer will emit CSS attributes in preference
-     * to HTML tags/attributes (i.e. It will emit an HTML 4.0
-     * style).
-     */
-    private boolean writeCSS;
-
     final private MutableAttributeSet oConvAttr  = new SimpleAttributeSet();
 
     final private MutableAttributeSet convAttr  = new SimpleAttributeSet();
     
     public SHTMLWriter(Writer w, HTMLDocument doc, int pos, int len) {
         super(w, doc, pos, len);
-        String writeMode = Util.getWriteMode();
-        if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML4)) {
-            writeCSS = true;
-        }
-        else{
-            writeCSS = false;
-        }
     }
 
     public SHTMLWriter(Writer w, HTMLDocument doc) {
@@ -61,8 +47,6 @@ class SHTMLWriter extends HTMLWriter {
      *
      */
     synchronized public void write(Element elem) throws IOException, BadLocationException {
-        boolean writeCSSBackUp = writeCSS;
-        writeCSS = false;
         this.elem = elem;
         try{
             write();
@@ -74,9 +58,6 @@ class SHTMLWriter extends HTMLWriter {
         catch(IOException e){
             elem = null;
             throw e;
-        }
-        finally{
-            writeCSS = writeCSSBackUp; 
         }
     }
     /**
@@ -192,89 +173,5 @@ class SHTMLWriter extends HTMLWriter {
         }
         write('>');
         writeLineSeparator();
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLWriter#closeOutUnwantedEmbeddedTags(javax.swing.text.AttributeSet)
-     */
-    protected void closeOutUnwantedEmbeddedTags(AttributeSet attr) throws IOException {
-        if(writeCSS){            
-            convertToHTML40(attr, convAttr);
-            super.closeOutUnwantedEmbeddedTags(convAttr);
-        }
-        else{
-            super.closeOutUnwantedEmbeddedTags(attr);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLWriter#writeAttributes(javax.swing.text.AttributeSet)
-     */
-    protected void writeAttributes(AttributeSet attr) throws IOException {
-        if(writeCSS){            
-            convertToHTML40(attr, convAttr);
-            super.writeAttributes(convAttr);
-        }
-        else{
-            super.writeAttributes(attr);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLWriter#writeEmbeddedTags(javax.swing.text.AttributeSet)
-     */
-    protected void writeEmbeddedTags(AttributeSet attr) throws IOException {
-        if(writeCSS){            
-            convertToHTML40(attr, oConvAttr);
-            super.writeEmbeddedTags(oConvAttr);
-        }
-        else{
-            super.writeEmbeddedTags(attr);
-        }
-    }
-
-    private void convertToHTML40(AttributeSet from, MutableAttributeSet to) {
-        if( from == to){
-            return;
-        }
-        if(from == null){
-            to = null;
-            return;
-        }
-        to.removeAttributes(to);
-        Enumeration keys = from.getAttributeNames();
-        String value = "";
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            String attribute = from.getAttribute(key).toString();
-            if (key == CSS.Attribute.FONT_SIZE
-                    || key == CSS.Attribute.FONT_WEIGHT
-                    || key == CSS.Attribute.FONT_STYLE
-                    || key == CSS.Attribute.FONT_FAMILY
-                    || key == CSS.Attribute.COLOR
-                    || key == CSS.Attribute.BACKGROUND_COLOR) {
-                if(key == CSS.Attribute.FONT_SIZE) {
-                    int fontNumber = Integer.parseInt(attribute); 
-                    attribute = SHTMLPanelImpl.FONT_SIZES[fontNumber-1] + "pt";
-                }
-                if (value.length() > 0) {
-                    value = value + "; ";
-                }
-                value = value + key + ": " + attribute;
-            } 
-            else {
-                to.addAttribute(key, attribute);
-            }
-        }
-        if (value.length() > 0) {
-            MutableAttributeSet spanAttr = (MutableAttributeSet) 
-            to.getAttribute(HTML.Tag.SPAN);
-            if (spanAttr == null) {
-                spanAttr = new SimpleAttributeSet();
-                to.addAttribute(HTML.Tag.SPAN, spanAttr);
-            }
-            spanAttr.addAttribute(HTML.Attribute.STYLE, value);
-        }
-    }
-    
+    }    
 }

@@ -995,7 +995,7 @@ public class Util {
   }
   
   static String getPreference(String key, String defaultValue){
-      String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), PrefsDialog.PREFSID_WRITE_MODE);
+      String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), key);
       if(writeMode != null){
           return writeMode;
       }
@@ -1007,10 +1007,6 @@ public class Util {
       catch(Exception ex) {}
       return writeMode;     
   }
-  
-  static String getWriteMode(){
-      return getPreference(PrefsDialog.PREFSID_WRITE_MODE, PrefsDialog.PREFS_WRITE_MODE_HTML32);
-   }
   
   static boolean useSteStyleSheet() {
       return getPreference(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, "false").equalsIgnoreCase("true");

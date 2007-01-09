@@ -1099,7 +1099,12 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
     public void actionPerformed(ActionEvent e) {
       final SHTMLEditorPane editor = this.panel.getEditor();
       if(editor != null) {
-          editor.removeCharacterAttributes();
+          if(editor.getSelectionStart() != editor.getSelectionEnd()){
+              editor.removeCharacterAttributes();
+          }
+          else{
+              editor.removeParagraphAttributes();
+          }
       }
       this.panel.updateActions();
     }
@@ -1113,7 +1118,7 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
             return;
         }
         final SHTMLEditorPane editor = this.panel.getEditor();
-        this.setEnabled(editor != null && editor.getSelectionStart() != editor.getSelectionEnd());
+        this.setEnabled(editor != null);
     }
 
   }

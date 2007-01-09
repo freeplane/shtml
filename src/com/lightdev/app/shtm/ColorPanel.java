@@ -169,6 +169,9 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
       }
       if(getAttributeKey() == CSS.Attribute.BACKGROUND_COLOR){
           newSelection  = Util.styleSheet().getBackground(a);
+          if(newSelection == null){
+              newSelection = SystemColor.text;
+          }
       }
       if(newSelection != null){
           setColor(newSelection);

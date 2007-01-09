@@ -143,7 +143,6 @@ class BorderPanel extends JPanel implements AttributeComponent {
      */
     public AttributeSet getValue() {
       SimpleAttributeSet set = new SimpleAttributeSet();
-      Enumeration e = components.elements();
       BorderSettings bs;
       for(int i = 0; i < components.size(); i++) {
         bs = (BorderSettings) components.elementAt(i);
@@ -151,30 +150,18 @@ class BorderPanel extends JPanel implements AttributeComponent {
         bWidth.setAttribute(i, bs.getBorderWidth());
       }
       String newValue = bColor.getAttribute();
-      String writeMode = Util.getWriteMode();
-      if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
         newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, newValue);
-      }
-      else {
-        if((((oColor == null) && (newValue != null)) || (!oColor.equalsIgnoreCase(newValue)))) {
-          set.addAttribute(CSS.Attribute.BORDER_COLOR, newValue);
-        }
-        newValue = bWidth.getAttribute();
-        if(!oWidth.equalsIgnoreCase(newValue)) {
-          set.addAttribute(CSS.Attribute.BORDER_WIDTH, newValue);
-        }
-      }
+
       return set;
     }
 
     public AttributeSet getValue(boolean includeUnchanged) {
       if(includeUnchanged) {
         SimpleAttributeSet set = new SimpleAttributeSet();
-        Enumeration e = components.elements();
         BorderSettings bs;
         for(int i = 0; i < components.size(); i++) {
           bs = (BorderSettings) components.elementAt(i);
@@ -182,19 +169,11 @@ class BorderPanel extends JPanel implements AttributeComponent {
           bWidth.setAttribute(i, bs.getBorderWidth());
         }
         String newValue = bColor.getAttribute();
-        String writeMode = Util.getWriteMode();
-        if(writeMode.equalsIgnoreCase(PrefsDialog.PREFS_WRITE_MODE_HTML32)) {
           newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
           Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
           Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
           Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);
           Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, newValue);
-        }
-        else {
-          set.addAttribute(CSS.Attribute.BORDER_COLOR, newValue);
-          newValue = bWidth.getAttribute();
-          set.addAttribute(CSS.Attribute.BORDER_WIDTH, newValue);
-        }
         return set;
       }
       else {

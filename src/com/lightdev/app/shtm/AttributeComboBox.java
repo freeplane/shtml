@@ -91,64 +91,71 @@ class AttributeComboBox extends JComboBox implements
    *            false if not
    */
   public boolean setValue(AttributeSet a) {
-    //System.out.println("AttributeComboBox setValue");
-    //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-    //hd.listAttributes(a, 2);
-    boolean success = false;
-    Object valObj;
-    if(attributeKey != null)
-    {
-      valObj = a.getAttribute(attributeKey);
-      if(valObj == null && htmlAttributeKey != null)
+      //System.out.println("AttributeComboBox setValue");
+      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
+      //hd.listAttributes(a, 2);
+      boolean success = false;
+      Object valObj;
+      if(attributeKey != null)
       {
-        valObj = a.getAttribute(htmlAttributeKey);
-        if(valObj != null)
-        {
-          setValue(valObj);
-          success = true;
-        }
+          valObj = a.getAttribute(attributeKey);
+          if(valObj == null && htmlAttributeKey != null)
+          {
+              valObj = a.getAttribute(htmlAttributeKey);
+              if(valObj != null)
+              {
+                  setValue(valObj);
+                  success = true;
+              }
+          }
+          /*
+           correction start: missing list-style-type attribute from style sheet
+           */
+          else if(valObj == null &&
+                  attributeKey.equals(CSS.Attribute.LIST_STYLE_TYPE))
+          {
+              Object name = a.getAttribute(StyleConstants.NameAttribute);
+              if(name != null &&
+                      name.toString().equalsIgnoreCase(HTML.Tag.UL.toString()))
+              {
+                  setValue("disc");
+              }
+              else if(name != null &&
+                      name.toString().equalsIgnoreCase(HTML.Tag.OL.toString()))
+              {
+                  setValue("decimal");
+              }
+          }
+          if(valObj == null)
+          {
+              if(htmlAttributeKey.equals(HTML.Attribute.ALIGN)
+                      || htmlAttributeKey.equals(HTML.Attribute.VALIGN)){
+                  setValue(names[0]);
+              }
+          }
+          /*
+           correction end: missing list-style-type attribute from style sheet
+           */
+          else {
+              //System.out.println("AttributeComboBox setValue value=" + valObj);
+              setValue(valObj);
+              success = true;
+          }
       }
-      /*
-      correction start: missing list-style-type attribute from style sheet
-      */
-      else if(valObj == null &&
-              attributeKey.equals(CSS.Attribute.LIST_STYLE_TYPE))
+      else
       {
-        Object name = a.getAttribute(StyleConstants.NameAttribute);
-        if(name != null &&
-           name.toString().equalsIgnoreCase(HTML.Tag.UL.toString()))
-        {
-          setValue("disc");
-        }
-        else if(name != null &&
-                name.toString().equalsIgnoreCase(HTML.Tag.OL.toString()))
-        {
-          setValue("decimal");
-        }
+          if(htmlAttributeKey != null)
+          {
+              valObj = a.getAttribute(htmlAttributeKey);
+              if(valObj != null) {
+                  setValue(valObj);
+                  success = true;
+              }
+          }
       }
-      /*
-      correction end: missing list-style-type attribute from style sheet
-      */
-      else {
-        //System.out.println("AttributeComboBox setValue value=" + valObj);
-        setValue(valObj);
-        success = true;
-      }
-    }
-    else
-    {
-      if(htmlAttributeKey != null)
-      {
-        valObj = a.getAttribute(htmlAttributeKey);
-        if(valObj != null) {
-          setValue(valObj);
-          success = true;
-        }
-      }
-    }
-    return success;
+      return success;
   }
-
+  
   public void reset() {
     setValCount = 0;
     originalIndex = -2;
