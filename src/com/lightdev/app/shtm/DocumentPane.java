@@ -837,6 +837,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   public void changedUpdate(DocumentEvent e) {
       //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
       if (tpView.getSelectedIndex() == VIEW_TAB_LAYOUT) {
+          editor.updateInputAttributes();
           setDocumentChanged(true);
       }
   }

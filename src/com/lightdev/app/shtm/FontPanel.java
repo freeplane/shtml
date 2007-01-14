@@ -456,18 +456,24 @@ ColorPanel.ColorPanelListener
         }
         
         public AttributeSet getValue() {
-            String value = Util.CSS_ATTRIBUTE_NORMAL;
             SimpleAttributeSet set = new SimpleAttributeSet();
             int styleNo = getIndex();
             switch(styleNo) {
             case 0:
-                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE, value);
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
+                        Util.CSS_ATTRIBUTE_NORMAL);
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE, 
+                        Util.CSS_ATTRIBUTE_NORMAL);
                 break;
             case 1:
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
                         StyleConstants.Bold.toString());
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE, 
+                        Util.CSS_ATTRIBUTE_NORMAL);
                 break;
             case 2:
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
+                        Util.CSS_ATTRIBUTE_NORMAL);
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
                         StyleConstants.Italic.toString());
                 break;

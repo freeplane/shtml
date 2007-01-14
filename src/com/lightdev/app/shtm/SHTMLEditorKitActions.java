@@ -1,18 +1,9 @@
 package com.lightdev.app.shtm;
 
-import com.lightdev.app.shtm.SHTMLPanelImpl.FontFamilyPicker;
-import com.lightdev.app.shtm.SHTMLPanelImpl.FontSizePicker;
-import com.sun.demo.ElementTreePanel;
-import com.sun.demo.ExampleFileFilter;
-import de.calcom.cclib.text.FindReplaceDialog;
-import de.calcom.cclib.text.FindReplaceEvent;
-import de.calcom.cclib.text.FindReplaceListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -22,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JEditorPane;
@@ -39,6 +31,15 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 import javax.swing.undo.CannotRedoException;
+
+import com.lightdev.app.shtm.SHTMLPanelImpl.FontFamilyPicker;
+import com.lightdev.app.shtm.SHTMLPanelImpl.FontSizePicker;
+import com.sun.demo.ElementTreePanel;
+import com.sun.demo.ExampleFileFilter;
+
+import de.calcom.cclib.text.FindReplaceDialog;
+import de.calcom.cclib.text.FindReplaceEvent;
+import de.calcom.cclib.text.FindReplaceListener;
 
 class SHTMLEditorKitActions {
 
@@ -730,8 +731,6 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
           AttributeSet a = doc.getCharacterElement(this.panel.getEditor().getSelectionStart()).
               getAttributes();
           boolean isUnderlined = StyleConstants.isUnderline(a);
-          //if(a.isDefined(attributeKey)) {
-          //Object value = a.getAttribute(attributeKey);
           if (isUnderlined) {
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
           }
@@ -740,10 +739,6 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
           }
         }
       }
-      /*}
-      else {
-        putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
-      }*/
       this.panel.updateActions();
     }
 
@@ -772,53 +767,37 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
      *            false if not
      */
     public boolean setValue(AttributeSet a) {
-      boolean success = false;
-      boolean isUnderlined = StyleConstants.isUnderline(a);
-      if(a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
-        Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
-        if (value.toString().equalsIgnoreCase(Util.CSS_ATTRIBUTE_UNDERLINE /*StyleConstants.Underline.toString()*/)) {
-          isUnderlined = true;
+        boolean success = false;
+        boolean isUnderlined = StyleConstants.isUnderline(a);
+        if(a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
+            Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
+            if (value.toString().equalsIgnoreCase(Util.CSS_ATTRIBUTE_UNDERLINE /*StyleConstants.Underline.toString()*/)) {
+                isUnderlined = true;
+            }
         }
-      }
-      //System.out.println("ItalicAction setValue isItalic=" + isItalic);
-      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      //hd.listAttributes(a, 6);
-      //if(a.isDefined(attributeKey)) {
-        //Object value = a.getAttribute(attributeKey);
         if(isUnderlined) {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
         }
         else {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
         }
         success = true;
-      //}
-      //else {
-      //  putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_UNSELECTED);
-      //}
-      return success;
+        return success;
     }
-
+    
     /**
      * get the value of this <code>AttributeComponent</code>
      *
      * @return the value selected from this component
      */
     public AttributeSet getValue() {
-      //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
       SimpleAttributeSet set = new SimpleAttributeSet();
-      //if(unselectedValue != null) {
       if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(SHTMLPanelImpl.ACTION_SELECTED)) {
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, Util.CSS_ATTRIBUTE_UNDERLINE);
       }
       else {
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, Util.CSS_ATTRIBUTE_NONE);
       }
-      /*}
-             else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-             }*/
       return set;
     }
     public AttributeSet getValue(boolean includeUnchanged) {
@@ -957,7 +936,6 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       try {
         this.panel.getUndo().undo();
         final SHTMLEditorPane editor = this.panel.getEditor();
-        editor.updateInputAttributes();
       }
       catch(Exception ex) {
         Util.errMsg((Component) e.getSource(),
@@ -1003,9 +981,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
                                        this.panel.getSHTMLDocument());
       Util.center(parent, dlg);
       dlg.setModal(true);
-      //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
       dlg.setValue(this.panel.getMaxAttributes(panel.getEditor(), null));
-      //dlg.setValue(getMaxAttributes(editor, null));
       dlg.show();
       this.panel.updateActions();
     }
@@ -1034,7 +1010,6 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
      */
     private final SHTMLPanelImpl panel;
     public ClearFormatAction(SHTMLPanelImpl panel) {
-      //Action act = new StyledEditorKit.BoldAction();
       super();
     this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.clearFormatAction);
@@ -1131,14 +1106,6 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
     if(++curTab < tabCount) {
       System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
       resumeWithNewEditor(frd, curTab);
-      /*
-      jtpDocs.setSelectedIndex(curTab);
-      DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(curTab);
-      JEditorPane editor = docPane.getEditor();
-      editor.requestFocus();
-      frd.setEditor(editor);
-      frd.resumeOperation();
-      */
     }
     else {
       frd.terminateOperation();
@@ -1148,12 +1115,6 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
   public void getFirstDocument(FindReplaceEvent e) {
     FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
     resumeWithNewEditor(frd, 0);
-    /*DocumentPane docPane = (DocumentPane) jtpDocs.getComponentAt(0);
-    jtpDocs.setSelectedIndex(0);
-    JEditorPane editor = docPane.getEditor();
-    editor.requestFocus();
-    frd.setEditor(editor);
-    frd.resumeOperation();*/
   }
 
   public void findReplaceTerminated(FindReplaceEvent e) {
@@ -1196,7 +1157,6 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
       currentDocumentPane = this.panel.getDocumentPane();
       if(currentDocumentPane != null) {
           caretPos = currentDocumentPane.getEditor().getCaretPosition();
-        // System.out.println("FindReplaceAction.actionPerformed without Listener");
         FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor());
       }
     }
@@ -1381,8 +1341,6 @@ static class FormatImageAction extends AbstractAction
     this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.formatImageAction);
       getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));*/
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -1401,7 +1359,6 @@ static class FormatImageAction extends AbstractAction
 
         /** if the user made a selection, apply it to the document */
         if(dlg.getResult() == DialogShell.RESULT_OK) {
-          //System.out.println("imageHTML=\r\n\r\n" + dlg.getImageHTML());
           try {
             this.panel.getSHTMLDocument().setOuterHTML(img, dlg.getImageHTML());
           }
@@ -1669,8 +1626,6 @@ static class InsertImageAction extends AbstractAction
     this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.insertImageAction);
       getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));*/
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -1685,7 +1640,6 @@ static class InsertImageAction extends AbstractAction
 
       /** if the user made a selection, apply it to the document */
       if(dlg.getResult() == DialogShell.RESULT_OK) {
-        //System.out.println("imageHTML=\r\n\r\n" + dlg.getImageHTML());
         try {
           this.panel.getSHTMLDocument().insertBeforeStart(
               this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getSelectionEnd()),
@@ -1865,18 +1819,13 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
      * @param  e  the ActionEvent describing the cause for this action
      */
     public void actionPerformed(ActionEvent e) {
-      //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      //editor.applyAttributes(getValue(), (unselectedValue == null));
       super.actionPerformed(e);
-      //if(unselectedValue != null) {
       if(this.panel.getEditor() != null) {
         SHTMLDocument doc = (SHTMLDocument) this.panel.getEditor().getDocument();
         if (doc != null) {
           AttributeSet a = doc.getCharacterElement(this.panel.getEditor().getSelectionStart()).
               getAttributes();
           boolean isItalic = StyleConstants.isItalic(a);
-          //if(a.isDefined(attributeKey)) {
-          //Object value = a.getAttribute(attributeKey);
           if (isItalic) {
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
           }
@@ -1885,10 +1834,6 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
           }
         }
       }
-      /*}
-      else {
-        putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
-      }*/
       this.panel.updateActions();
     }
 
@@ -1925,11 +1870,6 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
           isItalic = true;
         }
       }
-      //System.out.println("ItalicAction setValue isItalic=" + isItalic);
-      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      //hd.listAttributes(a, 6);
-      //if(a.isDefined(attributeKey)) {
-        //Object value = a.getAttribute(attributeKey);
         if(isItalic) {
           putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
         }
@@ -1937,10 +1877,6 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
           putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
         }
         success = true;
-      //}
-      //else {
-      //  putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_UNSELECTED);
-      //}
       return success;
     }
 
@@ -1950,10 +1886,8 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
      * @return the value selected from this component
      */
     public AttributeSet getValue() {
-      //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
       SimpleAttributeSet set = new SimpleAttributeSet();
-      //if(unselectedValue != null) {
-      if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
+       if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
           SHTMLPanelImpl.ACTION_SELECTED)) {
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
                                           Util.CSS_ATTRIBUTE_NORMAL.toString());
@@ -1962,11 +1896,6 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
                                           StyleConstants.Italic.toString());
       }
-      /*}
-             else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-             }*/
       return set;
     }
     public AttributeSet getValue(boolean includeUnchanged) {
@@ -2090,7 +2019,6 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       try {
         this.panel.getUndo().redo();
         final SHTMLEditorPane editor = this.panel.getEditor();
-        editor.updateInputAttributes();
       }
       catch(CannotRedoException ex) {
         Util.errMsg((Component) e.getSource(),
@@ -2223,8 +2151,6 @@ static class SHTMLEditPrefsAction extends AbstractAction
     this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.editPrefsAction);
       getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_A, KeyEvent.CTRL_MASK));*/
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -2330,18 +2256,15 @@ static class SHTMLEditSelectAllAction extends AbstractAction
      * @return true, if the document was closed successfully.
      */
     public void closeDocument(final int index, ActionEvent ae, boolean ignoreChanges) {
-      //System.out.println("closeDocument index=" + index);
       exitApp = ae.getActionCommand().indexOf(SHTMLPanelImpl.exitAction) > -1;
       final DocumentPane dp = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(index);
       if(!dp.saveInProgress()) {            // if no save is going on and..
-        //System.out.println("closeDocument: no save is going on");
         if(ignoreChanges) {
           closeDoc(dp);
         }
         else {
           if(dp.needsSaving()) {              // ..the document needs to be saved
-            //System.out.println("closeDocument: " + dp.getDocumentName() + " needsSaving");
-            this.panel.selectTabbedPane(index);
+             this.panel.selectTabbedPane(index);
             String docName = dp.getDocumentName();
             int choice = Util.msgChoice(JOptionPane.YES_NO_CANCEL_OPTION, "confirmClosing", "saveChangesQuery", docName, "\r\n\r\n");
             switch(choice) {
@@ -2358,18 +2281,15 @@ static class SHTMLEditSelectAllAction extends AbstractAction
                 closeDoc(dp);       // close the document without saving
                 break;
               case JOptionPane.CANCEL_OPTION:             // if the user cancelled
-                //System.out.println("closeDocument: save cancelled for " + dp.getDocumentName());
-                break;                                    // do nothing
+                 break;                                    // do nothing
             }
           }
           else {                      // if the document does not need to be saved
-            //System.out.println("closeDocument: " + dp.getDocumentName() + " NOT needsSaving");
             closeDoc(dp);             // close the document
           }
         }
       }
       else {                  // save was going on upon close request, so
-        //System.out.println("closeDocument: a save is going on, wait");
         scheduleClose(dp);    // wait for completion, then close
       }
     }
@@ -2389,7 +2309,6 @@ static class SHTMLEditSelectAllAction extends AbstractAction
      * @param index  the number of the tab for that document
      */
     private void scheduleClose(final DocumentPane dp) {
-      //System.out.println("scheduleClose for " + dp.getDocumentName());
       final java.util.Timer timer = new java.util.Timer();
       TimerTask task = new TimerTask() {
         public void run() {
@@ -2409,11 +2328,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
      * convenience method for closing a document
      */
     private void closeDoc(DocumentPane dp) {
-      //System.out.println("closeDoc for document " + dp.getDocumentName());
       try {
         dp.deleteTempDir();
         this.panel.unregisterDocument();
-        //jtpDocs.remove(jtpDocs.indexOfComponent(dp));   // try to close the doc
         this.panel.getTabbedPaneForDocuments().remove(dp);
       }
       catch(IndexOutOfBoundsException e) { // if the tabs have changed meanwhile
@@ -2535,19 +2452,16 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void actionPerformed(ActionEvent ae) {
-      //System.out.println("FrmMain.SHTMLFileExitAction.actionPerformed");
       saveRelevantPrefs();
       new SHTMLFileCloseAllAction(this.panel).actionPerformed(ae);
       if(this.panel.getTabbedPaneForDocuments().getTabCount() == 0) {
-        //removeAllListeners();
         System.exit(0);
       }
       this.panel.updateActions();
     }
 
     public void saveRelevantPrefs() {
-      //System.out.println("FrmMain.SHTMLFileExitAction.saveRelevantPrefs");
-
+ 
       /* ---- save splitpane sizes start -------------- */
 
       this.panel.savePrefs();
@@ -2645,11 +2559,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
       }
       catch(MalformedURLException mue) {}
       if(openDocNo > -1) {
-        //System.out.println("FrmMain.SHTMLFileOpenAction.openAction setting to open doc no " + openDocNo);
         this.panel.getTabbedPaneForDocuments().setSelectedIndex(openDocNo);
       }
       else {
-        //System.out.println("FrmMain.SHTMLFileOpenAction.openAction loading file " + file);
         FileLoader loader = new FileLoader(file, null, listener);
         loader.start();
       }
@@ -2793,8 +2705,6 @@ static class SHTMLFileSaveAllAction extends AbstractAction
       super(SHTMLPanelMultipleDocImpl.saveAllAction);
     this.panel = panel;
       getProperties();
-      /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_S, KeyEvent.CTRL_MASK));*/
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -2862,9 +2772,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
       }
       else {
         fName = this.panel.getDocumentPane().getDocumentName();
-        //System.out.println("SHTMLFileSaveAsAction fName=" + fName);
         fName = Util.removeChar(fName, ' ');
-        //System.out.println("SHTMLFileSaveAsAction fName=" + fName);
       }
       if(fName.indexOf(Util.CLASS_SEPARATOR) < 0) {
         chooser.setSelectedFile(new File(fName + ".htm"));
@@ -2972,43 +2880,12 @@ static class SHTMLFileSaveAllAction extends AbstractAction
      */
     private final SHTMLPanelImpl panel;
     public SHTMLFileTestAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.testAction);
-    this.panel = panel;
-      getProperties();
+        super(SHTMLPanelImpl.testAction);
+        this.panel = panel;
+        getProperties();
     }
     public void actionPerformed(ActionEvent ae) {
-
-      //Util.errMsg(null, "no test action is implemented.", null);
-
-      this.panel.getEditor().insertBreak();
-
-      //GregorianCalendar gc = new GregorianCalendar(2003, 4, 31);
-      //System.out.println(gc.getTime().getTime());
-
-      /* list attributes
-      Element elem = doc.getParagraphElement(editor.getCaretPosition());
-
-      //System.out.println("\r\n\r\n element name=" + elem.getName());
-      AttributeSet attrs = doc.getStyleSheet().getStyle(elem.getName());
-      de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      hd.listAttributes(attrs, 4);
-
-      System.out.println("\r\n\r\n resolved element name=" + elem.getName());
-      attrs = Util.resolveAttributes(doc.getStyleSheet().getStyle(elem.getName()));
-      hd = new de.calcom.cclib.html.HTMLDiag();
-      hd.listAttributes(attrs, 4);
-
-      System.out.println("\r\n\r\n maxAttributes element name=" + elem.getName());
-      attrs = getMaxAttributes(elem, doc.getStyleSheet());
-      hd = new de.calcom.cclib.html.HTMLDiag();
-      hd.listAttributes(attrs, 4);
-      */
-
-      /* switch editable
-      SHTMLEditorPane editor = dp.getEditor();
-      editor.setEditable(!editor.isEditable());
-      updateActions();
-      */
+        this.panel.getEditor().insertBreak();
     }
     public void update() {
     }
