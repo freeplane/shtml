@@ -4,7 +4,7 @@
  */
 package com.lightdev.app.shtm;
 
-public class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
+class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
 
     public SHTMLPanelSingleDocImpl() {
         super();

@@ -17,7 +17,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.html.HTML;
 
-public class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener  {
+class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener  {
     public static  final String setStyleAction = "setStyle";
     public static final String newAction = "new";
     public static final String openAction = "open";
