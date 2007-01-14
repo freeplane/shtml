@@ -61,6 +61,7 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
+import javax.swing.event.CaretEvent;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
@@ -2467,6 +2468,21 @@ public void goNextCell(Element cell) {
   private Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
   private Cursor defaultCursor =
                   Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+
+  void updateInputAttributes() {
+      ((SHTMLEditorKit)getEditorKit()).updateInputAttributes(this);
+      fireCaretUpdate(new CaretEvent(this){
+
+          public int getDot() {
+              return getSelectionStart();
+          }
+
+          public int getMark() {
+              return getSelectionEnd();
+          }
+          
+      });
+  }
 
 /* (non-Javadoc)
  * @see javax.swing.JComponent#getTransferHandler()

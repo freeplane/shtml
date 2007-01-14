@@ -964,7 +964,12 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    */
   public void caretUpdate(CaretEvent e) {
     if(!rkw.isRepeating()) {
-      updateFormatControls();
+        EventQueue.invokeLater(new Runnable(){
+
+            public void run() {
+                updateFormatControls();
+            }            
+        });
     }
   }
 

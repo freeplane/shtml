@@ -176,6 +176,31 @@ public Document createEmptyDocument() {
   }
 
   /* --------------- SHTMLDocument implementaion end --------------- */
+    void updateInputAttributes(SHTMLEditorPane e) {
+        // EditorKit might not have installed the StyledDocument yet.
+        Document aDoc = e.getDocument();
+        if (!(aDoc instanceof StyledDocument)) {
+        return ;
+        }
+        int start = e.getSelectionStart();
+        // record current character attributes.
+        StyledDocument doc = (StyledDocument)aDoc;
+        // If nothing is selected, get the attributes from the character
+        // before the start of the selection, otherwise get the attributes
+        // from the character element at the start of the selection.
+        Element run;
+        Element currentParagraph = doc.getParagraphElement(start);
+        if (currentParagraph.getStartOffset() == start || start != e.getSelectionEnd()) {
+        // Get the attributes from the character at the selection
+        // if in a different paragrah!
+        run = doc.getCharacterElement(start);
+        }
+        else {
+        run = doc.getCharacterElement(Math.max(start-1, 0));
+        }
+        createInputAttributes(run, getInputAttributes());
+       
+    }
 
   /* --------------- ViewFactory implementation start -------------- */
 

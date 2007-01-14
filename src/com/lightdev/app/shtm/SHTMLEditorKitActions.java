@@ -298,33 +298,24 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      *            false if not
      */
     public boolean setValue(AttributeSet a) {
-      boolean success = false;
-      boolean isBold = StyleConstants.isBold(a);
-      if(a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
-        Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
-        if (value.toString().equalsIgnoreCase(StyleConstants.Bold.toString())) {
-          isBold = true;
+        boolean success = false;
+        boolean isBold = StyleConstants.isBold(a);
+        if(a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
+            Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
+            if (value.toString().equalsIgnoreCase(StyleConstants.Bold.toString())) {
+                isBold = true;
+            }
         }
-      }
-      //System.out.println("ItalicAction setValue isItalic=" + isItalic);
-      //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-      //hd.listAttributes(a, 6);
-      //if(a.isDefined(attributeKey)) {
-        //Object value = a.getAttribute(attributeKey);
         if(isBold) {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
         }
         else {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
         }
         success = true;
-      //}
-      //else {
-      //  putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_UNSELECTED);
-      //}
-      return success;
+        return success;
     }
-
+    
     /**
      * get the value of this <code>AttributeComponent</code>
      *
@@ -336,12 +327,12 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
       //if(unselectedValue != null) {
       if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
           SHTMLPanelImpl.ACTION_SELECTED)) {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
-                                          Util.CSS_ATTRIBUTE_NORMAL.toString());
+          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
+                  StyleConstants.Bold.toString());
       }
       else {
-        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
-                                          StyleConstants.Bold.toString());
+          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
+                  Util.CSS_ATTRIBUTE_NORMAL.toString());
       }
       /*}
              else {
@@ -965,7 +956,8 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       }
       try {
         this.panel.getUndo().undo();
-        this.panel.updateFormatControls();
+        final SHTMLEditorPane editor = this.panel.getEditor();
+        editor.updateInputAttributes();
       }
       catch(Exception ex) {
         Util.errMsg((Component) e.getSource(),
@@ -2097,7 +2089,8 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       }
       try {
         this.panel.getUndo().redo();
-        this.panel.updateFormatControls();
+        final SHTMLEditorPane editor = this.panel.getEditor();
+        editor.updateInputAttributes();
       }
       catch(CannotRedoException ex) {
         Util.errMsg((Component) e.getSource(),
