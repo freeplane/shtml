@@ -10,6 +10,12 @@ import java.awt.LayoutManager;
 import javax.swing.JPanel;
 import javax.swing.text.html.HTMLDocument;
 
+/**
+ * Class for using SimplyHTML as as component  
+ * 
+ * @author Dimitri Polivaev
+ * 14.01.2007
+ */
 public abstract class SHTMLPanel extends JPanel {
 
     SHTMLPanel(LayoutManager layout) {

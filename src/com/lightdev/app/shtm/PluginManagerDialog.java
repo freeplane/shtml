@@ -55,7 +55,7 @@ import java.awt.Dimension;
  * 
  */
 
-public class PluginManagerDialog extends DialogShell implements
+class PluginManagerDialog extends DialogShell implements
     ListSelectionListener, ActionListener
 {
   /** combo box for selecting the dock location */
