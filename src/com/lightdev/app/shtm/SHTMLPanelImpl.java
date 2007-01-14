@@ -743,7 +743,6 @@ protected void initDocumentPane() {
   }
 protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     ToggleBorderListener tbl = new ToggleBorderListener();
-      ButtonGroup bg = new ButtonGroup();
       Action action;
       AbstractButton newButton;
       final Dimension buttonSize = new Dimension(24, 24);
@@ -820,12 +819,6 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
               newButton.setHorizontalAlignment(SwingConstants.CENTER);
               newButton.setVerticalAlignment(SwingConstants.CENTER);
               toolBar.add(newButton);
-              if(itemKey.equalsIgnoreCase(paraAlignLeftAction) ||
-                      itemKey.equalsIgnoreCase(paraAlignCenterAction) ||
-                      itemKey.equalsIgnoreCase(paraAlignRightAction))
-              {
-                  bg.add(newButton);
-              }
           }
           /**
            * this is the usual way to add tool bar buttons finally

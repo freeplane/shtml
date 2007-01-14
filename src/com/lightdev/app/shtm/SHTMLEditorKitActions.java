@@ -28,6 +28,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
@@ -370,10 +371,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     Object attributeKey;
 
     /** the value for the attribute being selected */
-    private Object selectedValue = null;
-
-    /** the value for the attribute not being selected */
-    private Object unselectedValue = null;
+    final private Object selectedValue;
 
     /**
      * construct a ToggleFontAction
@@ -384,29 +382,14 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      * @param uVal the value for the attribute not being selected
      * @param panel TODO
      */
-    public ToggleAction(SHTMLPanelImpl panel, String name, Object key, Object sVal, Object uVal)
-    {
-      super(name);
-    this.panel = panel;
-      putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-      attributeKey = key;
-      selectedValue = sVal;
-      unselectedValue = uVal;
-      getProperties();
-    }
-
-    /**
-     * construct a ToggleFontAction
-     *
-     * @param name  the name and command for this action
-     * @param key the attribute this action represents values for
-     * @param sVal the value for the attribute being selected
-     * @param panel TODO
-     */
     public ToggleAction(SHTMLPanelImpl panel, String name, Object key, Object sVal)
     {
-      this(panel, name, key, sVal, null);
-      //System.out.println("ToggleAction constructor sVal=" + sVal);
+        super(name);
+        this.panel = panel;
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+        attributeKey = key;
+        selectedValue = sVal;
+        getProperties();
     }
 
     /**
@@ -418,20 +401,13 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      */
     public void actionPerformed(ActionEvent e) {
       //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      this.panel.getEditor().applyAttributes(getValue(), (unselectedValue == null));
-      if(unselectedValue != null) {
-        if(getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(SHTMLPanelImpl.ACTION_UNSELECTED))
-        {
+      final JToggleButton btn = (JToggleButton)e.getSource();
+      if(btn.isSelected()){
+          this.panel.getEditor().applyAttributes(getValue(), true);
           putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-        }
+          this.panel.updateActions();
       }
-      else {
-        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-      }
-      this.panel.updateActions();
+      this.panel.updateFormatControls();
     }
 
     /**
@@ -478,24 +454,8 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     public AttributeSet getValue() {
       //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
       SimpleAttributeSet set = new SimpleAttributeSet();
-      if(unselectedValue != null) {
-        if(getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
-            SHTMLPanelImpl.ACTION_SELECTED))
-        {
-          if(unselectedValue != null) {
-            Util.styleSheet().addCSSAttribute(set,
-                (CSS.Attribute) getAttributeKey(), unselectedValue.toString());
-          }
-        }
-        else {
-          Util.styleSheet().addCSSAttribute(set,
+      Util.styleSheet().addCSSAttribute(set,
               (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-        }
-      }
-      else {
-        Util.styleSheet().addCSSAttribute(set,
-            (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-      }
       return set;
     }
 
@@ -1005,12 +965,14 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       }
       try {
         this.panel.getUndo().undo();
+        this.panel.updateFormatControls();
       }
       catch(Exception ex) {
         Util.errMsg((Component) e.getSource(),
 		  Util.getResourceString(SHTMLPanelImpl.textResources, "unableToUndoError") + ex, ex);
       }
       this.panel.updateActions();
+
     }
 
     public void update() {
@@ -2135,6 +2097,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       }
       try {
         this.panel.getUndo().redo();
+        this.panel.updateFormatControls();
       }
       catch(CannotRedoException ex) {
         Util.errMsg((Component) e.getSource(),
