@@ -694,7 +694,7 @@ public class Util {
    * element tree above a given <code>Element</code>
    *
    * @param name the name of the <code>Element</code> to search for
-   * @param parent the <code>Element</code> to start looking
+   * @param start the <code>Element</code> to start looking
    *
    * @return the found <code>Element</code> or null if none is found
    */
@@ -873,7 +873,7 @@ public class Util {
    * get the path to a given file relative to a given directory
    *
    * @param fromDir  the directory having the file from which the link refers
-   * @param toDir  the directory to which a link refers
+   * @param toFile  the file to which a link refers
    *
    * @return the relative path
    */

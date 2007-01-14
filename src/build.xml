@@ -4,6 +4,8 @@
 	<property name="src_base_for_post" value="../" />
 	<property name="build" value="../bin/classes" />
 	<property name="dist" value="../bin/dist" />
+	<property name="dist.api" value="${dist}/api" />
+	<property name="dist.src" value="${dist}/src" />
 	<property name="dist.lib" value="${dist}/lib" />
 	<property name="SimplyHTML.jar" value="${dist.lib}/SimplyHTML.jar"/>
 	<property name="SimplyHTMLHelp.jar" value="${dist.lib}/SimplyHTMLHelp.jar"/>
@@ -30,9 +32,33 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="jar">
-
+	<target name="dist" depends="clean,jar,doc,dist-src">
 	</target>
+	<target name="dist-src">
+		<mkdir dir="${dist.src}" />
+		<copy todir="${dist.src}">
+			<fileset dir="${src}">
+				<include name="**/MANIFEST.MF"/>
+				<include name="**/*.java"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.gif"/>
+				<include name="**/*.jpg"/>
+				<include name="**/*.htm"/>
+				<include name="**/*.html"/>
+				<include name="**/*.css"/>
+				<include name="**/*.hs"/>
+				<include name="**/*.jhm"/>
+				<include name="**/*.prf"/>
+				<include name="**/*.TAB"/>
+				<include name="**/*.txt"/>
+				<include name="**/*.jar"/>
+				<include name="**/SCHEMA"/>
+				<include name="**/TMAP"/>
+			</fileset>	
+		</copy>
+	</target>
+
 	<target name="jar" depends="build">
 		<mkdir dir="${dist.lib}" />
 		<jar jarfile="${SimplyHTML.jar}"
@@ -61,6 +87,15 @@
 		<delete>
 			<fileset defaultexcludes="no" dir="${src}" includes="**/*~"/>
 		</delete>
+	</target>
+	<target name="doc">
+		<mkdir dir="${dist.api}" />
+		<javadoc
+			sourcepath="${src}"
+			destdir="${dist.api}"
+			packagenames="com.lightdev.*,de.calcom.*"
+			classpath="${classpath}"
+		/>
 	</target>
 
 </project>

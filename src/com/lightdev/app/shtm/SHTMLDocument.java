@@ -20,27 +20,33 @@
 
 package com.lightdev.app.shtm;
 
-import javax.swing.text.AbstractDocument.AbstractElement;
-import javax.swing.text.AbstractDocument.DefaultDocumentEvent;
-import javax.swing.text.html.CSS;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
-
-import javax.swing.text.html.*;
-import javax.swing.text.html.HTML.Tag;
-import javax.swing.text.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.UndoableEditEvent;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.swing.undo.*;
-import javax.swing.event.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.GapContent;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+import javax.swing.text.html.HTML.Tag;
+import javax.swing.undo.CompoundEdit;
+import javax.swing.undo.UndoableEdit;
 
 
 /**
@@ -479,7 +485,7 @@ public void startCompoundEdit() {
 
     /**
      * Constructor
-     * @param emttyDocument 
+     * 
      */
     public SHTMLReader(int offset, boolean emptyDocument) {
       super(offset, 0, 0, null);

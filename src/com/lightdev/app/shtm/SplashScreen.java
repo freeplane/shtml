@@ -57,8 +57,8 @@ private static int counter;
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.Window#dispose()
+    /**
+     * Hides the splash screen.
      */
     synchronized  public static void hideInstance() {
         if(counter > 0)
@@ -68,7 +68,7 @@ private static int counter;
     }
 
     /**
-     * @return Returns the instance.
+     * Shows the splash screen.
      */
     synchronized public static void showInstance() {
         if(instance == null){
