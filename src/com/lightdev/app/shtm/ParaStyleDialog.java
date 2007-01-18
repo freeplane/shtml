@@ -106,7 +106,7 @@ class ParaStyleDialog extends DialogShell
   private MarginPanel mp;
 
   /** table to map between HTML tags and 'content types' */
-  private Hashtable cTypes;
+  static private NamedObject[] cTypes = null;
 
   /** selector for content type */
   private JComboBox cType;
@@ -178,7 +178,7 @@ class ParaStyleDialog extends DialogShell
 
       // create a combo box for content type
       initContentTypes();
-      cType = new JComboBox(cTypes.keySet().toArray());
+      cType = new JComboBox(cTypes);
       cType.addActionListener(this);
 
       // create a list of styles
@@ -266,17 +266,18 @@ class ParaStyleDialog extends DialogShell
    * initialize content types hashtable
    */
   private void initContentTypes() {
-    cTypes = new Hashtable();
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNamePara"), HTML.Tag.P.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead1"), HTML.Tag.H1.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead2"), HTML.Tag.H2.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead3"), HTML.Tag.H3.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead4"), HTML.Tag.H4.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead5"), HTML.Tag.H5.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead6"), HTML.Tag.H6.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameLink"), HTML.Tag.A.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameUL"), HTML.Tag.UL.toString());
-    cTypes.put(Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameOL"), HTML.Tag.OL.toString());
+      cTypes = new NamedObject[10];
+      int i = 0;
+    cTypes[i++] = new NamedObject(HTML.Tag.P.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNamePara"));
+    cTypes[i++] = new NamedObject(HTML.Tag.H1.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead1"));
+    cTypes[i++] = new NamedObject(HTML.Tag.H2.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead2"));
+    cTypes[i++] = new NamedObject(HTML.Tag.H3.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead3"));
+    cTypes[i++] = new NamedObject(HTML.Tag.H4.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead4"));
+    cTypes[i++] = new NamedObject(HTML.Tag.H5.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead5"));
+    cTypes[i++] = new NamedObject(HTML.Tag.H6.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameHead6"));
+    cTypes[i++] = new NamedObject(HTML.Tag.A.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameLink"));
+    cTypes[i++] = new NamedObject(HTML.Tag.UL.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameUL"));
+    cTypes[i++] = new NamedObject(HTML.Tag.OL.toString(), Util.getResourceString(SHTMLPanelImpl.textResources, "cTagNameOL"));
   }
 
   /**
@@ -285,8 +286,7 @@ class ParaStyleDialog extends DialogShell
    * @return the tag name currently selected
    */
   private String getContentType() {
-    Object key = cType.getSelectedItem();
-    return cTypes.get(key).toString();
+    return ((NamedObject)cType.getSelectedItem()).getObject().toString();
   }
 
   /**
@@ -379,7 +379,10 @@ class ParaStyleDialog extends DialogShell
           styleName = getContentType() + Util.CLASS_SEPARATOR + className;
         }
         //Style style = styles.getStyle(styleName);
-        AttributeSet style = (AttributeSet) styles.getStyle(styleName);
+        AttributeSet style = styles.getStyle(styleName);
+        if(style == null){
+            style = new SimpleAttributeSet();
+        }
         MutableAttributeSet allStyles = (MutableAttributeSet) SHTMLPanelImpl.getMaxAttributes(((SHTMLDocument) doc).getCharacterElement(doc.getEndPosition().getOffset()),
                                  ((SHTMLDocument) doc).getStyleSheet());
         allStyles.addAttributes(style);
@@ -433,7 +436,7 @@ class ParaStyleDialog extends DialogShell
       initialName = Util.getResourceString(
           SHTMLPanelImpl.textResources, "newStyleDefaultName");
     }
-    String newStyleName = Util.nameInput(null, initialName, "styleNameInputTitle", "styleNameInputText");
+    String newStyleName = Util.nameInput(null, initialName, "\\w[\\w ]*", "styleNameInputTitle", "styleNameInputText").trim();
     if(newStyleName != null) {
       if(styleNameExists(newStyleName) || newStyleName.equalsIgnoreCase(standardStyleName)) {
         if(Util.msg(JOptionPane.YES_NO_OPTION, "confirmSaveAs", "fileExistsQuery", newStyleName, " ")) {

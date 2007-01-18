@@ -21,6 +21,7 @@ package com.lightdev.app.shtm;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -47,7 +48,7 @@ import java.util.*;
 class StyleSelector extends JComboBox
     implements AttributeComponent, ChangeListener
 {
-
+    private SHTMLPanelImpl shtmlPanel;
   /** the CSS attribute key this AttributeComponent object represents */
   private HTML.Attribute key;
 
@@ -55,14 +56,18 @@ class StyleSelector extends JComboBox
   private boolean ignoreChanges = false;
 
   private String standardStyleName = Util.getResourceString(SHTMLPanelImpl.textResources, "standardStyleName");
+private String paragraphType;
+private boolean updateRunning;
 
   /**
    * construct a <code>StyleSelector</code>
    *
    * @param key  the attribute this component represents
    */
-  public StyleSelector(HTML.Attribute key) {
+  public StyleSelector(SHTMLPanelImpl shtmlPanel, HTML.Attribute key) {
     this.key = key;
+    this.shtmlPanel = shtmlPanel;
+    updateRunning = false;
   }
 
   /**
@@ -99,14 +104,7 @@ class StyleSelector extends JComboBox
   }
 
   public AttributeSet getValue(boolean includeUnchanged) {
-    if(includeUnchanged) {
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      set.addAttribute(key, getSelectedItem());
-      return set;
-    }
-    else {
       return getValue();
-    }
   }
 
   /* --------------- ChangeListener implementation start --------------- */
@@ -117,24 +115,41 @@ class StyleSelector extends JComboBox
    * the list of styles of this componment is refreshed accordingly.
    */
   public void stateChanged(ChangeEvent e) {
-    Object src = e.getSource();
-    if(src instanceof JTabbedPane)
-    {
-      Component c = ((JTabbedPane) src).getSelectedComponent();
-      if(c != null) {
-        int activeTabNo = ((JTabbedPane) src).getSelectedIndex();
-        DocumentPane dp = (DocumentPane) ((JTabbedPane) src).getComponentAt(activeTabNo);
-        Vector styleNames = Util.getStyleNamesForTag(((SHTMLDocument) dp.getDocument()).getStyleSheet(), HTML.Tag.P.toString());
-        styleNames.insertElementAt(standardStyleName, 0);
-        setModel(new DefaultComboBoxModel(styleNames));
-      }
+      paragraphType = null;
+      update(); 
+  }
+  
+  /* (non-Javadoc)
+ * @see javax.swing.JComboBox#fireActionEvent()
+ */
+protected void fireActionEvent() {
+    if(updateRunning){
+        return;
     }
-    else if(src instanceof StyleContext.NamedStyle) {
-      Vector styleNames = Util.getStyleNamesForTag((AttributeSet) src, HTML.Tag.P.toString());
-      styleNames.insertElementAt(standardStyleName, 0);
-      setModel(new DefaultComboBoxModel(styleNames));
-    }
+    super.fireActionEvent();
+}
 
+public void update() {
+      try{
+          updateRunning = true;
+          final DocumentPane currentDocumentPane = shtmlPanel.getCurrentDocumentPane();
+          final int selectionStart = currentDocumentPane.getEditor().getSelectionStart();
+          final SHTMLDocument document = (SHTMLDocument)currentDocumentPane.getDocument();
+          final String newParagraphType = document.getParagraphElement(selectionStart, true).getName();
+          if(paragraphType == newParagraphType){
+              return;
+          }
+          paragraphType = newParagraphType;
+          Vector styleNames = Util.getStyleNamesForTag(( document).getStyleSheet(), paragraphType);
+          styleNames.insertElementAt(standardStyleName, 0);
+          setModel(new DefaultComboBoxModel(styleNames));
+      }
+      catch(NullPointerException ex){
+          setModel(new DefaultComboBoxModel());
+      }
+      finally{
+          updateRunning = false;
+      }
   }
 
   /* --------------- ChangeListener implementation end ----------------- */

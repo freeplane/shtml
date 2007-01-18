@@ -261,6 +261,7 @@ class AnchorDialog extends DialogShell implements
     String anchorName = Util.nameInput(
         null,
         "",
+        ".*",
         "addAnchorTitle",
         "addAnchorText");
     if(anchorName != null) {

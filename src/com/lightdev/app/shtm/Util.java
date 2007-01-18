@@ -242,23 +242,22 @@ public class Util {
    *
    * @return the entered name or null if action was cancelled
    */
-  public static String nameInput(Frame parent, String initialName, String title,
-                                      String text)
+  public static String nameInput(Frame parent, String initialName, 
+          String regex, String title, String text)
   {
-    Object input = JOptionPane.showInputDialog(
-        null,
-        Util.getResourceString(SHTMLPanelImpl.textResources, text),
-        Util.getResourceString(SHTMLPanelImpl.textResources, title),
-        JOptionPane.QUESTION_MESSAGE,
-        null,
-        null,
-        initialName);
-    if(input != null) {
-      return input.toString();
-    }
-    else {
-      return null;
-    }
+      String name;
+      do{
+          Object input = JOptionPane.showInputDialog(
+                  null,
+                  Util.getResourceString(SHTMLPanelImpl.textResources, text),
+                  Util.getResourceString(SHTMLPanelImpl.textResources, title),
+                  JOptionPane.QUESTION_MESSAGE,
+                  null,
+                  null,
+                  initialName);
+          name = input == null ? null : input.toString();
+      } while (name != null && ! name.matches(regex));
+      return name;
   }
 
   /**

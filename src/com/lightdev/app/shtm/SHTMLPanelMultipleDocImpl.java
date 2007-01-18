@@ -79,7 +79,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
      */
     protected void createToolbarItem(JToolBar toolBar, String itemKey) {
         if(itemKey.equalsIgnoreCase(setStyleAction)) {
-            styleSelector = new StyleSelector(HTML.Attribute.CLASS);
+            styleSelector = new StyleSelector(this, HTML.Attribute.CLASS);
             styleSelector.setPreferredSize(new Dimension(110, 23));
             styleSelector.setAction(dynRes.getAction(setStyleAction));
             final Dimension comboBoxSize = new Dimension(300, 24);
@@ -149,6 +149,14 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         return jtpDocs;
     }
 
+
+    /* (non-Javadoc)
+     * @see com.lightdev.app.shtm.SHTMLPanelImpl#updateFormatControls()
+     */
+    void updateFormatControls() {
+        super.updateFormatControls();
+        styleSelector.update();
+    }
 
     void incNewDocCounter() {
         newDocCounter++;

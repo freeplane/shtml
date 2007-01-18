@@ -399,7 +399,6 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
           putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
           this.panel.updateActions();
       }
-      this.panel.updateFormatControls();
     }
 
     /**
@@ -669,7 +668,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
       else {
         newTitle = "";
       }
-      newTitle = Util.nameInput(JOptionPane.getFrameForComponent(this.panel), newTitle, "docTitleTitle", "docTitleQuery");
+      newTitle = Util.nameInput(JOptionPane.getFrameForComponent(this.panel), newTitle, ".*", "docTitleTitle", "docTitleQuery");
       if(newTitle != null && newTitle.length() > 0) {
         this.panel.getSHTMLDocument().setDocumentTitle(newTitle);
       }
@@ -1690,7 +1689,7 @@ static class InsertImageAction extends AbstractAction
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      Object input = Util.nameInput(parent, "3", "insertTableTitle","insertTableMsg");
+      Object input = Util.nameInput(parent, "3", "\\d+", "insertTableTitle","insertTableMsg");
       if(input != null) {
         int choice = Integer.parseInt(input.toString());
         if(choice > 0) {

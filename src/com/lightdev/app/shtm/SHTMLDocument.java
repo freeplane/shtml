@@ -752,12 +752,16 @@ public void startCompoundEdit() {
       return result;
   }
 
+  public Element getParagraphElement(int pos) {
+      return getParagraphElement(pos, inSetParagraphAttributes);
+  }
+
 /* (non-Javadoc)
  * @see javax.swing.text.DefaultStyledDocument#getParagraphElement(int)
  */
-public Element getParagraphElement(int pos) {
+public Element getParagraphElement(int pos, boolean noImplied) {
      Element element = super.getParagraphElement(pos);
-     if(inSetParagraphAttributes){
+     if(noImplied){
          while(element != null && element.getName().equalsIgnoreCase("p-implied")){
              element = element.getParentElement();
          }

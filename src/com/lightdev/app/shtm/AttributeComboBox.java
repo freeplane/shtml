@@ -126,7 +126,7 @@ class AttributeComboBox extends JComboBox implements
                   setValue("decimal");
               }
           }
-          if(valObj == null)
+          if(valObj == null && htmlAttributeKey !=  null)
           {
               if(htmlAttributeKey.equals(HTML.Attribute.ALIGN)
                       || htmlAttributeKey.equals(HTML.Attribute.VALIGN)){
