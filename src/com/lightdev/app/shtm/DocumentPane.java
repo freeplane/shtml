@@ -794,6 +794,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
           break;
       }
     }
+    requestFocus();
     SHTMLPanelImpl.getOwnerSHTMLPanel(this).updateActions();
   }
 
@@ -922,7 +923,7 @@ public void requestFocus() {
       editor.requestFocus();
       break;
     case VIEW_TAB_HTML:
-        editor.requestFocus();
+        htmlEditor.requestFocus();
       break;
   }
     
