@@ -43,4 +43,6 @@ public abstract class SHTMLPanel extends JPanel {
     public static TextResources getResources() {
         return SHTMLPanelImpl.textResources;
     }
+
+    abstract public int getCaretPosition();
 }

@@ -24,9 +24,6 @@ import java.io.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
-
-import java.util.prefs.*;
-
 /**
  * Extensions to <code>HTMLEditorKit</code> for application SimplyHTML.
  *
@@ -59,7 +56,7 @@ import java.util.prefs.*;
 
 class SHTMLEditorKit extends HTMLEditorKit {
 
-  public SHTMLEditorKit() {
+  SHTMLEditorKit() {
     super();
   }
 
@@ -83,7 +80,7 @@ class SHTMLEditorKit extends HTMLEditorKit {
     return doc;
   }
 
-public Document createEmptyDocument() {
+  Document createEmptyDocument() {
     StyleSheet styles = getStyleSheet();
     StyleSheet ss = new StyleSheet();
     try {

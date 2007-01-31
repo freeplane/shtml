@@ -1311,5 +1311,8 @@ public void requestFocus() {
     }
 }
   /* ---------- font manipulation code end ------------------ */
+public int getCaretPosition() {
+    return getEditor().getCaretPosition();
+}
 
 }
