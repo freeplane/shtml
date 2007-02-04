@@ -24,6 +24,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -88,15 +89,29 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       if(SHTMLPanelImpl.textResources != null) return;
       if(textResources == null)
       {
-          try {
-              final ResourceBundle resourceBundle = ResourceBundle.getBundle("com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
-              textResources = new DefaultTextResources(resourceBundle);
-          }
-          catch(MissingResourceException mre) {
-              Util.errMsg(null, "resources/SimplyHTML.properties not found", mre);
-          }
+          SHTMLPanelImpl.textResources = readDefaultResources();
       }
-      SHTMLPanelImpl.textResources = textResources;
+      else{
+          SHTMLPanelImpl.textResources = textResources;
+      }
+  }
+  
+  private static TextResources readDefaultResources() {
+      try {
+          String propsLoc = "com/lightdev/app/shtm/resources/SimplyHTML_common.properties";
+          URL defaultPropsURL = ClassLoader.getSystemResource(propsLoc);
+          final Properties props = new Properties();
+          InputStream in = null;
+          in = defaultPropsURL.openStream();
+          props.load(in);
+          in.close();
+          final ResourceBundle resourceBundle = ResourceBundle.getBundle("com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
+          return new DefaultTextResources(resourceBundle, props);
+      }
+      catch(Exception ex) {
+          Util.errMsg(null, "resources not found", ex);
+          return null;
+      }
   }
   private SHTMLMenuBar menuBar;
     /** currently active DocumentPane */
@@ -198,6 +213,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static final String documentTitleAction = "documentTitle";
   public static final String setDefaultStyleRefAction = "setDefaultStyleRef";
   public static final String findReplaceAction = "findReplace";
+  public static  final String setStyleAction = "setStyle";
   
   public static SHTMLPanelImpl getOwnerSHTMLPanel(Component c){
       for(;;){
@@ -679,6 +695,7 @@ protected void initDocumentPane() {
               CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_CENTER));
     dynRes.addAction(paraAlignRightAction, new SHTMLEditorKitActions.ToggleAction(this, paraAlignRightAction,
               CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_RIGHT));
+    dynRes.addAction(testAction, new SHTMLEditorKitActions.SHTMLTestAction(this));
   }
 
   /**

@@ -51,11 +51,11 @@ class SHTMLEditorKitActions {
     /**
      *
      */
-    private final SHTMLPanelMultipleDocImpl panel;
+    private final SHTMLPanelImpl panel;
     private boolean ignoreActions = false;
 
-    public SetStyleAction(SHTMLPanelMultipleDocImpl panel) {
-      super(SHTMLPanelMultipleDocImpl.setStyleAction);
+    public SetStyleAction(SHTMLPanelImpl panel) {
+      super(SHTMLPanelImpl.setStyleAction);
     this.panel = panel;
       getProperties();
     }
@@ -2871,14 +2871,14 @@ static class SHTMLFileSaveAllAction extends AbstractAction
 /**
    * a slot for testing certain things conveniently during development
    */
-  static class SHTMLFileTestAction extends AbstractAction
+  static class SHTMLTestAction extends AbstractAction
 	implements SHTMLAction
   {
     /**
      *
      */
     private final SHTMLPanelImpl panel;
-    public SHTMLFileTestAction(SHTMLPanelImpl panel) {
+    public SHTMLTestAction(SHTMLPanelImpl panel) {
         super(SHTMLPanelImpl.testAction);
         this.panel = panel;
         getProperties();

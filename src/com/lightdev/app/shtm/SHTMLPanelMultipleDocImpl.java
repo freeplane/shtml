@@ -18,7 +18,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.html.HTML;
 
 class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener  {
-    public static  final String setStyleAction = "setStyle";
     public static final String newAction = "new";
     public static final String openAction = "open";
     public static final String closeAction = "close";
@@ -61,7 +60,6 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         dynRes.addAction(saveAllAction, new SHTMLEditorKitActions.SHTMLFileSaveAllAction(this));
         dynRes.addAction(saveAsAction, new SHTMLEditorKitActions.SHTMLFileSaveAsAction(this));
         dynRes.addAction(exitAction, new SHTMLEditorKitActions.SHTMLFileExitAction(this));
-        dynRes.addAction(testAction, new SHTMLEditorKitActions.SHTMLFileTestAction(this));
     }
 
     /* (non-Javadoc)
