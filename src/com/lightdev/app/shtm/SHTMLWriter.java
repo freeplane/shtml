@@ -46,7 +46,7 @@ class SHTMLWriter extends HTMLWriter {
      *            location within the document.
      *
      */
-    synchronized public void write(Element elem) throws IOException, BadLocationException {
+    synchronized void write(Element elem) throws IOException, BadLocationException {
         this.elem = elem;
         try{
             write();
@@ -89,18 +89,59 @@ class SHTMLWriter extends HTMLWriter {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLWriter#endTag(javax.swing.text.Element)
+    /**
+     * Create an older style of HTML attributes.  This will 
+     * convert character level attributes that have a StyleConstants
+     * mapping over to an HTML tag/attribute.  Other CSS attributes
+     * will be placed in an HTML style attribute.
      */
-    public void endTag(Element elem) throws IOException {
-        super.endTag(elem);
+    private static void convertToHTML(AttributeSet from, MutableAttributeSet to) {
+    if (from == null) {
+        return;
     }
-
+    Enumeration keys = from.getAttributeNames();
+    String value = "";
+    while (keys.hasMoreElements()) {
+        Object key = keys.nextElement();
+        if (key instanceof CSS.Attribute) {
+            // default is to store in a HTML style attribute
+            if (value.length() > 0) {
+            value = value + "; ";
+            }
+            value = value + key + ": " + from.getAttribute(key);
+        } else {
+        to.addAttribute(key, from.getAttribute(key));
+        }
+    }
+    if (value.length() > 0) {
+        to.addAttribute(HTML.Attribute.STYLE, value);
+    }
+    }
     /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLWriter#startTag(javax.swing.text.Element)
+     * @see javax.swing.text.html.HTMLWriter#writeAttributes(javax.swing.text.AttributeSet)
      */
-    public void startTag(Element elem) throws IOException, BadLocationException {
-        super.startTag(elem);
+    protected void writeAttributes(AttributeSet attr) throws IOException {
+        // translate css attributes to html
+        if(attr instanceof Element){
+            Element elem = (Element) attr;
+            if(elem.isLeaf() || elem.getName().equalsIgnoreCase("p-implied")){
+                super.writeAttributes(attr);
+                return;
+            }
+        }
+        convAttr.removeAttributes(convAttr);
+        convertToHTML(attr, convAttr);
+
+        Enumeration names = convAttr.getAttributeNames();
+        while (names.hasMoreElements()) {
+            Object name = names.nextElement();
+            if (name instanceof HTML.Tag || 
+            name instanceof StyleConstants || 
+            name == HTML.Attribute.ENDTAG) {
+            continue;
+            }
+            write(" " + name + "=\"" + convAttr.getAttribute(name) + "\"");
+        }
     }
 
     /**
@@ -112,7 +153,7 @@ class SHTMLWriter extends HTMLWriter {
      * @param end  the last leaf element to write or the branch element
      * to stop writing at (whatever applies)
      */
-    public void writeElementsUntil(Element e, Element end) throws IOException, BadLocationException
+    private void writeElementsUntil(Element e, Element end) throws IOException, BadLocationException
     {
       if(e.isLeaf()) {
         write(e);
@@ -140,7 +181,7 @@ class SHTMLWriter extends HTMLWriter {
      * @param start  the element to start writing with
      * @param end  the last element to write
      */
-    public void write(Element start, Element end) throws IOException, BadLocationException
+    void write(Element start, Element end) throws IOException, BadLocationException
     {
       Element parent = start.getParentElement();
       int count = parent.getElementCount();
@@ -155,7 +196,24 @@ class SHTMLWriter extends HTMLWriter {
       }
     }
 
-    public void endTag(String elementName) throws IOException{
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLWriter#startTag(javax.swing.text.Element)
+     */
+    void writeStartTag(Element elem) throws IOException, BadLocationException {
+        // TODO Auto-generated method stub
+        super.startTag(elem);
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.text.html.HTMLWriter#endTag(javax.swing.text.Element)
+     */
+    void writeEndTag(Element elem) throws IOException {
+        // TODO Auto-generated method stub
+        super.endTag(elem);
+    }
+
+
+    void writeEndTag(String elementName) throws IOException{
         indent();
         write('<');
         write('/');
@@ -164,7 +222,7 @@ class SHTMLWriter extends HTMLWriter {
         writeLineSeparator();
     }
 
-    public void startTag(String elementName, AttributeSet attributes) throws IOException{
+    void writeStartTag(String elementName, AttributeSet attributes) throws IOException{
         indent();
         write('<');
         write(elementName);

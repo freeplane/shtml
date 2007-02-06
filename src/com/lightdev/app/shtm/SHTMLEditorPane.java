@@ -610,7 +610,7 @@ class DeleteNextCharAction extends AbstractAction{
               int j = 0;
               Element li = null;
               if(next.getStartOffset() < start){
-                  writer.startTag(next);
+                  writer.writeStartTag(next);
                   removeCount++;
                   i++;
                   for(;;j++){
@@ -620,15 +620,15 @@ class DeleteNextCharAction extends AbstractAction{
                       }
                       writer.write(li);
                   }
-                  writer.endTag(next);                 
+                  writer.writeEndTag(next);                 
                   for(;j < next.getElementCount();j++){
                       li = next.getElement(j);
                       if(li.getStartOffset() >= end){
                           break;
                       }
-                      writer.startTag("p", null);
+                      writer.writeStartTag("p", null);
                       writer.writeChildElements(li);
-                      writer.endTag("p");
+                      writer.writeEndTag("p");
                   }
               }
               if(next.getEndOffset() <= end){
@@ -642,15 +642,15 @@ class DeleteNextCharAction extends AbstractAction{
                       }
                       if(isListRootElement(next)){
                           for(j = 0; j < next.getElementCount(); j++){
-                              writer.startTag("p", null);
+                              writer.writeStartTag("p", null);
                               writer.writeChildElements(next.getElement(j));                          
-                              writer.endTag("p");
+                              writer.writeEndTag("p");
                           }
                       }
                       else{
-                          writer.startTag("p", null);
+                          writer.writeStartTag("p", null);
                           writer.writeChildElements(next);
-                          writer.endTag("p");
+                          writer.writeEndTag("p");
                       }
                   }
               }
@@ -662,17 +662,17 @@ class DeleteNextCharAction extends AbstractAction{
                       if(li.getStartOffset() >= end){
                           break;
                       }
-                      writer.startTag("p", null);
+                      writer.writeStartTag("p", null);
                       writer.writeChildElements(li);
-                      writer.endTag("p");
+                      writer.writeEndTag("p");
                   }
                   if(j < next.getElementCount()){
-                      writer.startTag(next);
+                      writer.writeStartTag(next);
                       for(;j < next.getElementCount();j++){
                           li = next.getElement(j);
                           writer.write(li);
                       }
-                      writer.endTag(next);
+                      writer.writeEndTag(next);
                   }
               }
           }
@@ -721,7 +721,7 @@ class DeleteNextCharAction extends AbstractAction{
               if(next.getStartOffset() < start){
                   removeCount++;
                   i++;
-                  writer.startTag(next);
+                  writer.writeStartTag(next);
                   for(;;j++){
                       li = next.getElement(j);
                       if(li.getStartOffset() == start){
@@ -729,15 +729,15 @@ class DeleteNextCharAction extends AbstractAction{
                       }
                       writer.write(li);
                   }
-                  writer.endTag(next);
-                  writer.startTag(listTag,a);
+                  writer.writeEndTag(next);
+                  writer.writeStartTag(listTag,a);
                   for(;j < next.getElementCount();j++){
                       li = next.getElement(j);
                       writer.write(li);
                   }
               }
               else{
-                  writer.startTag(listTag,a);
+                  writer.writeStartTag(listTag,a);
               }
               
               if(next.getEndOffset() <= end){
@@ -751,9 +751,9 @@ class DeleteNextCharAction extends AbstractAction{
                           writer.writeChildElements(next);
                       }
                       else{
-                          writer.startTag("li", null);
+                          writer.writeStartTag("li", null);
                           writer.writeChildElements(next);
-                          writer.endTag("li");
+                          writer.writeEndTag("li");
                       }
                   }
               }
@@ -766,15 +766,15 @@ class DeleteNextCharAction extends AbstractAction{
                       }
                       writer.write(li);
                   }
-                  writer.endTag(listTag);
-                  writer.startTag(next);
+                  writer.writeEndTag(listTag);
+                  writer.writeStartTag(next);
                   for(;j < next.getElementCount();j++){
                       li = next.getElement(j);
                       writer.write(li);
                   }
               }
               else{
-                  writer.endTag(listTag);
+                  writer.writeEndTag(listTag);
               }
 
           }
@@ -858,14 +858,14 @@ class DeleteNextCharAction extends AbstractAction{
       final StringWriter sw = new StringWriter();
       final SHTMLWriter w = new SHTMLWriter(sw, doc);
       try {
-        w.startTag(first);
+        w.writeStartTag(first);
         w.writeChildElements(first);
         int l = sw.getBuffer().length();
         while(sw.getBuffer().charAt(--l) <= 13){
             sw.getBuffer().deleteCharAt(l);
         }
         w.writeChildElements(second);
-        w.endTag(first);
+        w.writeEndTag(first);
         String htmlText = sw.toString();
         doc.replaceHTML(first, 2, htmlText);
     } catch (IOException e) {
@@ -923,9 +923,9 @@ class DeleteNextCharAction extends AbstractAction{
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, "0");
         set.addAttribute(HTML.Attribute.BORDER, "0");
         try {
-          w.startTag(table, set);
+          w.writeStartTag(table, set);
           // start row tag
-          w.startTag(tr, null);
+          w.writeStartTag(tr, null);
           // get width of each cell according to column count
           // build cell width attribute
           Util.styleSheet().addCSSAttribute(set,
@@ -944,14 +944,14 @@ class DeleteNextCharAction extends AbstractAction{
           set.removeAttribute(HTML.Attribute.BORDER);
           // add cells
           for(int i=0; i<colCount; i++) {
-            w.startTag(td, set);
-            w.startTag(p, pSet);
-            w.endTag(p);
-            w.endTag(td);
+            w.writeStartTag(td, set);
+            w.writeStartTag(p, pSet);
+            w.writeEndTag(p);
+            w.writeEndTag(td);
           }
           // end row and table tags
-          w.endTag(tr);
-          w.endTag(table);
+          w.writeEndTag(tr);
+          w.writeEndTag(table);
           // read table html into document
           Element para = doc.getParagraphElement(selectionStart);
           if(para == null) {
@@ -1071,7 +1071,7 @@ class DeleteNextCharAction extends AbstractAction{
     StringWriter sw = new StringWriter();
     SHTMLWriter w = new SHTMLWriter(sw, doc);
     try {
-      w.startTag(a, set);
+      w.writeStartTag(a, set);
       set = new SimpleAttributeSet();
       set.addAttribute(HTML.Attribute.SRC,
                        Util.getRelativePath(new File(doc.getBase().getFile()), new File(linkImage)));
@@ -1080,8 +1080,8 @@ class DeleteNextCharAction extends AbstractAction{
         set.addAttribute(HTML.Attribute.WIDTH, Integer.toString(new Double(size.getWidth()).intValue()));
         set.addAttribute(HTML.Attribute.HEIGHT, Integer.toString(new Double(size.getHeight()).intValue()));
       }
-      w.startTag(HTML.Tag.IMG.toString(), set);
-      w.endTag(a);
+      w.writeStartTag(HTML.Tag.IMG.toString(), set);
+      w.writeEndTag(a);
       if(e != null) {
         System.out.println("SHTMLEditorPane.setImageLink setOuterHTML html='" + sw.getBuffer() + "'");
         doc.setOuterHTML(e, sw.getBuffer().toString());
@@ -1339,14 +1339,14 @@ class DeleteNextCharAction extends AbstractAction{
     StringWriter sw = new StringWriter();
     SHTMLWriter w = new SHTMLWriter(sw, (SHTMLDocument)getDocument());
     try {
-      w.startTag(tr, srcRow.getAttributes());
+      w.writeStartTag(tr, srcRow.getAttributes());
       for(int i = 0; i < srcRow.getElementCount(); i++) {
-        w.startTag(td, srcRow.getElement(i).getAttributes());
-        w.startTag(p, srcRow.getElement(i).getElement(0).getAttributes());
-        w.endTag(p);
-        w.endTag(td);
+        w.writeStartTag(td, srcRow.getElement(i).getAttributes());
+        w.writeStartTag(p, srcRow.getElement(i).getElement(0).getAttributes());
+        w.writeEndTag(p);
+        w.writeEndTag(td);
       }
-      w.endTag(tr);
+      w.writeEndTag(tr);
     }
     catch(IOException ex) {
       Util.errMsg(null, ex.getMessage(), ex);
@@ -1372,10 +1372,10 @@ class DeleteNextCharAction extends AbstractAction{
     String td = HTML.Tag.TD.toString();
     String p = HTML.Tag.P.toString();
     try {
-      w.startTag(td, srcCell.getAttributes());
-      w.startTag(p, null);
-      w.endTag(p);
-      w.endTag(td);
+      w.writeStartTag(td, srcCell.getAttributes());
+      w.writeStartTag(p, null);
+      w.writeEndTag(p);
+      w.writeEndTag(td);
     }
     catch(IOException e) {
       Util.errMsg(null, e.getMessage(), e);
@@ -2393,9 +2393,9 @@ public void goNextCell(Element cell) {
           ++removeCount;
           if(allowedTags.contains(child.getName())) {
             //System.out.println("SHTMLEditorPane applyTag element is in selection");
-            w.startTag(tag.toString(), child.getAttributes());
+            w.writeStartTag(tag.toString(), child.getAttributes());
             w.writeChildElements(child);
-            w.endTag(tag.toString());
+            w.writeEndTag(tag.toString());
             if(index < 0) {
               index = i;
             }

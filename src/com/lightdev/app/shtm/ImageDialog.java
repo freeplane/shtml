@@ -467,7 +467,7 @@ class ImageDialog extends DialogShell
     }
     set.addAttribute(HTML.Attribute.SRC, getImageSrc());
     try {
-      w.startTag(HTML.Tag.IMG.toString(), set);
+      w.writeStartTag(HTML.Tag.IMG.toString(), set);
     }
     catch(Exception e) {
       Util.errMsg(this, e.getMessage(), e);

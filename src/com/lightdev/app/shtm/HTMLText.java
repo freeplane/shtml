@@ -177,7 +177,7 @@ class HTMLText {
     try {
       int count = pElem.getElementCount();
       Element e;
-      w.startTag(pElem.getName(), pElem.getAttributes());
+      w.writeStartTag(pElem.getName(), pElem.getAttributes());
       for(int i = 0; i < count; i++) {
         e = pElem.getElement(i);
         if(e.equals(elem)) {
@@ -188,22 +188,22 @@ class HTMLText {
           int splitStart = splitSw.getBuffer().toString().indexOf(textToSplit);
           int splitEnd = splitStart + pos - start;
           if(i > 0) {
-            w.startTag(pElem.getName(), pElem.getAttributes());
+            w.writeStartTag(pElem.getName(), pElem.getAttributes());
           }
           sw.write(splitHtml.substring(0, splitEnd));
-          w.endTag(pElem.getName());
+          w.writeEndTag(pElem.getName());
           sw.write(html);
-          w.startTag(pElem.getName(), pElem.getAttributes());
+          w.writeStartTag(pElem.getName(), pElem.getAttributes());
           sw.write(splitHtml.substring(splitEnd));
           if(i > 0) {
-            w.endTag(pElem.getName());
+            w.writeEndTag(pElem.getName());
           }
         }
         else {
           w.write(e);
         }
       }
-      w.endTag(pElem.getName());
+      w.writeEndTag(pElem.getName());
     }
     catch(Exception e) {
       e.printStackTrace();

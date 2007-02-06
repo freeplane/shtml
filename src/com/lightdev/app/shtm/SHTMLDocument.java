@@ -805,9 +805,9 @@ private void removeParagraphAtributes(final Element paragraphElement) {
     StringWriter writer = new StringWriter();
     SHTMLWriter htmlStartWriter = new SHTMLWriter(writer, this);
     try {
-        htmlStartWriter.startTag(paragraphElement.getName(), null);
+        htmlStartWriter.writeStartTag(paragraphElement.getName(), null);
         htmlStartWriter.writeChildElements(paragraphElement);
-        htmlStartWriter.endTag(paragraphElement.getName());
+        htmlStartWriter.writeEndTag(paragraphElement.getName());
         setOuterHTML(paragraphElement, writer.toString());
     } catch (IOException e) {
         e.printStackTrace();
