@@ -2200,13 +2200,13 @@ public void goNextCell(Element cell) {
             }
             try
             {
-                Clipboard temp = new Clipboard("");
-                defaultTransferHandler.exportToClipboard(comp, temp, action);
-                final Transferable defaultContents = temp.getContents(this);
                 HTMLText st = new HTMLText();
                 int start = getSelectionStart();
                 st.copyHTML(SHTMLEditorPane.this, start, getSelectionEnd() - start);
                 final Transferable additionalContents = new HTMLTextSelection(st);
+                Clipboard temp = new Clipboard("");
+                defaultTransferHandler.exportToClipboard(comp, temp, action);
+                final Transferable defaultContents = temp.getContents(this);
                 clip.setContents(new Transferable(){
                     public DataFlavor[] getTransferDataFlavors() {
                         DataFlavor[] defaultFlavors = defaultContents.getTransferDataFlavors();
