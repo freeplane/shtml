@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
+import javax.swing.JEditorPane;
+import javax.swing.JMenuBar;
 import javax.swing.text.html.HTMLDocument;
 
 /**
@@ -40,9 +42,13 @@ public abstract class SHTMLPanel extends JPanel {
 
     public abstract HTMLDocument getDocument();
 
+    public abstract JEditorPane getEditorPane();
+
     public static TextResources getResources() {
-        return SHTMLPanelImpl.textResources;
-    }
+       return SHTMLPanelImpl.getResources(); }
 
     abstract public int getCaretPosition();
+
+    public abstract JMenuBar getMenuBar();
+
 }

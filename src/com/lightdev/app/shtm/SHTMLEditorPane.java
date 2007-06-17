@@ -201,9 +201,6 @@ class SHTMLEditorPane extends JEditorPane  implements
                             KeyEvent.VK_TAB, InputEvent.SHIFT_MASK);
     map.addActionForKeyStroke(shiftTab,
                     new PrevTableCellAction(map.getAction(shiftTab)));
-    KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-    map.addActionForKeyStroke(enter,
-                              new NewListItemAction(map.getAction(enter)));
     setKeymap(map);
     */
   }
@@ -327,8 +324,8 @@ class DeletePrevCharAction extends AbstractAction{
                 int nextPosition = selectionStart - 1;
                 Element elem = SHTMLDocument.getTableCellElement(doc.getParagraphElement(nextPosition));
                 if(elem != null && elem.getEndOffset() == selectionStart){
-                    KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
-                    Object key = getInputMap().getParent().get(enter);
+                    KeyStroke left = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
+                    Object key = getInputMap().getParent().get(left);
                     if(key != null) {
                       getActionMap().getParent().get(key).actionPerformed(e);
                     }
@@ -336,8 +333,8 @@ class DeletePrevCharAction extends AbstractAction{
                 }
             }
         }
-        KeyStroke enter = KeyStroke.getKeyStroke('\b');
-        Object key = getInputMap().getParent().get(enter);
+        KeyStroke backb = KeyStroke.getKeyStroke('\b');
+        Object key = getInputMap().getParent().get(backb);
         if(key != null) {
           getActionMap().getParent().get(key).actionPerformed(e);
         }
@@ -383,8 +380,8 @@ class DeleteNextCharAction extends AbstractAction{
                 }
             }
         }
-        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
-        Object key = getInputMap().getParent().get(enter);
+        KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+        Object key = getInputMap().getParent().get(delete);
         if(key != null) {
           getActionMap().getParent().get(key).actionPerformed(e);
         }
@@ -427,6 +424,7 @@ class DeleteNextCharAction extends AbstractAction{
 
   /**
    * <code>Action</code> to create a new list item.
+   * THIS ACTION ALSO CREATES A NEW PARAGRAPH. --Dan
    */
   class NewListItemAction extends AbstractAction {
     /** construct a <code>NewListItemAction</code> */
@@ -1112,7 +1110,7 @@ class DeleteNextCharAction extends AbstractAction{
   private void setTextLink(Element e, String href, String className, String linkText, SHTMLDocument doc) {
     SimpleAttributeSet aSet = new SimpleAttributeSet();
     aSet.addAttribute(HTML.Attribute.HREF, href);
-    String sStyleName = Util.getResourceString(SHTMLPanelImpl.textResources, "standardStyleName");
+    String sStyleName = Util.getResourceString("standardStyleName");
     if(className != null && !className.equalsIgnoreCase(sStyleName)) {
       aSet.addAttribute(HTML.Attribute.CLASS, className);
     }

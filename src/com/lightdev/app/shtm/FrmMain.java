@@ -62,7 +62,7 @@ class FrmMain extends JFrame {
     public FrmMain(){
         mainFrame = this;
         SHTMLPanelImpl.setTextResources(null);
-        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanelImpl.textResources, "appIcon")));
+        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanelImpl.getResources(),"appIcon")));
         setTitle(APP_NAME);
 
         SplashScreen.showInstance();

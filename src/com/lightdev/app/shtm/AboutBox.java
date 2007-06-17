@@ -69,9 +69,9 @@ class AboutBox extends JDialog implements ActionListener {
     super(parent);
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     closeButton.addActionListener(this);
-    closeButton.setText(Util.getResourceString(SHTMLPanelImpl.textResources, "closeBtnName"));
+    closeButton.setText(Util.getResourceString("closeBtnName"));
     constructFrame();
-    setTitle(Util.getResourceString(SHTMLPanelImpl.textResources, "aboutFrameTitle"));
+    setTitle(Util.getResourceString("aboutFrameTitle"));
     pack();
   }
 
@@ -89,7 +89,7 @@ class AboutBox extends JDialog implements ActionListener {
     JPanel emptyPane = new JPanel();
     LicensePane licPane = new LicensePane(new Dimension(650,200), LICENSE);
     JLabel imageLabel = new JLabel(new ImageIcon(this.getClass().
-		      getResource(Util.getResourceString(SHTMLPanelImpl.textResources, "splashImage"))));
+		      getResource(Util.getResourceString("splashImage"))));
     JLabel emptyLabel = new JLabel("");
     JLabel appTitleLabel = new JLabel(FrmMain.APP_NAME);
     JLabel appStageLabel = new JLabel(FrmMain.VERSION);

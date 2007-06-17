@@ -818,7 +818,8 @@ private void removeParagraphAtributes(final Element paragraphElement) {
 
 private SimpleAttributeSet getEndingAttributeSet() {
     final SimpleAttributeSet set = new SimpleAttributeSet();
-    StyleConstants.setBackground(set, Color.GRAY);
+    if (Util.getPreference("gray_row_below_end", "true").equalsIgnoreCase("true"))
+       StyleConstants.setBackground(set, Color.GRAY);
     return set;
 }
 

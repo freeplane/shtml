@@ -127,7 +127,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   private URL sourceUrl = null;
 
   /** JTabbedPane for our views */
-  private JTabbedPane tpView;
+  private JTabbedPane tabbedPane;
 
   public static final int VIEW_TAB_LAYOUT = 0;
   public static final int VIEW_TAB_HTML = 1;
@@ -179,17 +179,17 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     htmlSp.getViewport().setView(htmlEditor);
 
     // tabbed pane for HTML and layout views
-    tpView = new JTabbedPane();
-    tpView.setTabPlacement(JTabbedPane.BOTTOM);
-    tpView.add(sp, VIEW_TAB_LAYOUT);
-    tpView.add(htmlSp, VIEW_TAB_HTML);
-    tpView.setTitleAt(VIEW_TAB_LAYOUT, Util.getResourceString(SHTMLPanelImpl.textResources, "layoutTabTitle"));
-    tpView.setTitleAt(VIEW_TAB_HTML, Util.getResourceString(SHTMLPanelImpl.textResources, "htmlTabTitle"));
-    tpView.addChangeListener(this);
+    tabbedPane = new JTabbedPane();
+    tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
+    tabbedPane.add(sp, VIEW_TAB_LAYOUT);
+    tabbedPane.add(htmlSp, VIEW_TAB_HTML);
+    tabbedPane.setTitleAt(VIEW_TAB_LAYOUT, Util.getResourceString("layoutTabTitle"));
+    tabbedPane.setTitleAt(VIEW_TAB_HTML, Util.getResourceString("htmlTabTitle"));
+    tabbedPane.addChangeListener(this);
 
     // add comnponents to content pane
     setLayout(new BorderLayout());        // a simple border layout is enough
-    add(tpView, BorderLayout.CENTER);         // ..and add both to this DocumentPane
+    add(tabbedPane, BorderLayout.CENTER);         // ..and add both to this DocumentPane
     setDocumentChanged(false);                  // no changes so far
     setPreferredSize(new Dimension(550, 550));
   }
@@ -207,7 +207,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   public DocumentPane(URL docToLoad, int newDocNo/*, int renderMode*/) {
     this(/*renderMode*/);
     DEFAULT_DOC_NAME = Util.getResourceString(
-        SHTMLPanelImpl.textResources, "defaultDocName");
+        "defaultDocName");
     if(docToLoad != null) {
       loadDocument(docToLoad);
     }
@@ -239,7 +239,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * @return the selected tab index
    */
   public int getSelectedTab(){
-      return tpView.getSelectedIndex();
+      return tabbedPane.getSelectedIndex();
   }
   /**
    * create a new HTMLDocument and attach it to the editor
@@ -366,7 +366,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
       try {
         if(sourceUrl != null) {
           /* write the HTML document */
-          if(tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+          if(tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
             editor.setText(htmlEditor.getText());
           }
           SHTMLDocument doc = (SHTMLDocument) getDocument();
@@ -757,7 +757,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * @return returns the document text as string.
    */
   String getDocumentText() {
-      if(tpView.getSelectedIndex() == VIEW_TAB_HTML){
+      if(tabbedPane.getSelectedIndex() == VIEW_TAB_HTML){
           editor.setText(htmlEditor.getText());
       }
       return editor.getText();
@@ -767,7 +767,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * Convenience method for setting the document text
    */
   void setDocumentText(String sText) {
-      switch(tpView.getSelectedIndex()) {
+      switch(tabbedPane.getSelectedIndex()) {
       case VIEW_TAB_LAYOUT:
           editor.setText(sText);
         break;
@@ -784,8 +784,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
-    if(src.equals(tpView)) {
-      switch(tpView.getSelectedIndex()) {
+    if(src.equals(tabbedPane)) {
+      switch(tabbedPane.getSelectedIndex()) {
         case VIEW_TAB_LAYOUT:
           setLayoutView();
           break;
@@ -809,11 +809,11 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void insertUpdate(DocumentEvent e) {
     //System.out.println("insertUpdate setting textChanged=true for " + getDocumentName());
-      if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+      if (tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
           setHtmlChanged(true);
       }
       setDocumentChanged(true);
-      /*if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+      /*if (tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
        StyledDocument sDoc = (StyledDocument) e.getDocument();
        htmlEditor.setMarks(sDoc, 0, sDoc.getLength(), this);
        }*/
@@ -825,7 +825,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void removeUpdate(DocumentEvent e) {
       //System.out.println("removeUpdate setting textChanged=true for " + getDocumentName());
-      if (tpView.getSelectedIndex() == VIEW_TAB_HTML) {
+      if (tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
           setHtmlChanged(true);
       }
       setDocumentChanged(true);
@@ -837,7 +837,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void changedUpdate(DocumentEvent e) {
       //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
-      if (tpView.getSelectedIndex() == VIEW_TAB_LAYOUT) {
+      if (tabbedPane.getSelectedIndex() == VIEW_TAB_LAYOUT) {
           editor.updateInputAttributes();
           setDocumentChanged(true);
       }
@@ -918,7 +918,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
  * @see javax.swing.JComponent#requestFocus()
  */
 public void requestFocus() {
-    switch(tpView.getSelectedIndex()) {
+    switch(tabbedPane.getSelectedIndex()) {
     case VIEW_TAB_LAYOUT:
       editor.requestFocus();
       break;
@@ -931,9 +931,10 @@ public void requestFocus() {
 
 public void setContentPanePreferredSize(Dimension prefSize) {
     setPreferredSize(null);
-    for(int i = 0; i < tpView.getComponentCount(); i++){
-        final JScrollPane scrollPane = (JScrollPane) tpView.getComponent(i);
-        scrollPane.getViewport().setPreferredSize(prefSize);
+    tabbedPane.setPreferredSize(null);
+    for(int i = 0; i < tabbedPane.getComponentCount(); i++){
+        final JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponent(i);
+        scrollPane.setPreferredSize(prefSize);
         scrollPane.invalidate();
     }
 }

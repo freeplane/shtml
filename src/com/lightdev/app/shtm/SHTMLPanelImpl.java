@@ -76,24 +76,24 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static final String FILE_LAST_SAVE = "lastSaveFileName";
 
   /** single instance of a dynamic resource for use by all */
-  public DynamicResource dynRes =
-      new DynamicResource();
+  public DynamicResource dynRes =  new DynamicResource();
 
   /** SimplyHTML's main resource bundle (plug-ins use their own) */
-  public static TextResources textResources = null;
+  private static TextResources textResources = null;
+
+  public static TextResources getResources() {
+     if (textResources==null)
+        textResources = readDefaultResources();
+     return textResources; }
 
   /** the plug-in manager of SimplyHTML */
   public static PluginManager pluginManager; // = new PluginManager(mainFrame);
   
   public static void setTextResources(TextResources textResources){
-      if(SHTMLPanelImpl.textResources != null) return;
-      if(textResources == null)
-      {
-          SHTMLPanelImpl.textResources = readDefaultResources();
-      }
-      else{
-          SHTMLPanelImpl.textResources = textResources;
-      }
+      if (SHTMLPanelImpl.textResources != null) return;
+      SHTMLPanelImpl.textResources = textResources != null ? 
+         textResources :
+         readDefaultResources();
   }
   
   private static TextResources readDefaultResources() {
@@ -105,7 +105,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
           in = defaultPropsURL.openStream();
           props.load(in);
           in.close();
-          final ResourceBundle resourceBundle = ResourceBundle.getBundle("com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
+          final ResourceBundle resourceBundle =
+             ResourceBundle.getBundle("com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
           return new DefaultTextResources(resourceBundle, props);
       }
       catch(Exception ex) {
@@ -151,7 +152,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   private TagSelector tagSelector;
 
   /** panel for plug-in display */
-  SplitPanel sp;
+  SplitPanel splitPanel;
 
   /** indicates, whether document activation shall be handled */
   boolean ignoreActivateDoc = false;
@@ -339,7 +340,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     }
 
     public void setContentPanePreferredSize(Dimension prefSize){
-        dp.setContentPanePreferredSize(prefSize);
+       dp.setContentPanePreferredSize(prefSize);  //dp=DocumentPane
     }
     /**
      * @return returns the currently used ExtendedHTMLDocument Object
@@ -420,7 +421,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * according to visibility
    */
   public void adjustDividers() {
-    sp.adjustDividerSizes();
+    splitPanel.adjustDividerSizes();
   }
 
   /**
@@ -525,7 +526,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   }
 
   public void clearDockPanels() {
-    sp.removeAllOuterPanels();
+    splitPanel.removeAllOuterPanels();
   }
 
   /**
@@ -560,15 +561,15 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
             panelNo = SplitPanel.NORTH;
             break;
         }
-        p = (JTabbedPane) sp.getPanel(panelNo);
+        p = (JTabbedPane) splitPanel.getPanel(panelNo);
         p.setVisible(true);
         p.add(pi.getGUIName(), pc);
-        if(((panelNo == SplitPanel.WEST) && sp.getDivLoc(panelNo) < this.getWidth() / 10) ||
-           ((panelNo == SplitPanel.NORTH) && sp.getDivLoc(panelNo) < this.getHeight() / 10) ||
-           ((panelNo == SplitPanel.EAST) && sp.getDivLoc(panelNo) > this.getWidth() - (this.getWidth() / 10)) ||
-           ((panelNo == SplitPanel.SOUTH) && sp.getDivLoc(panelNo) > this.getHeight() - (this.getHeight() / 10)))
+        if(((panelNo == SplitPanel.WEST) && splitPanel.getDivLoc(panelNo) < this.getWidth() / 10) ||
+           ((panelNo == SplitPanel.NORTH) && splitPanel.getDivLoc(panelNo) < this.getHeight() / 10) ||
+           ((panelNo == SplitPanel.EAST) && splitPanel.getDivLoc(panelNo) > this.getWidth() - (this.getWidth() / 10)) ||
+           ((panelNo == SplitPanel.SOUTH) && splitPanel.getDivLoc(panelNo) > this.getHeight() - (this.getHeight() / 10)))
         {
-          sp.setDivLoc(panelNo, loc);
+          splitPanel.setDivLoc(panelNo, loc);
         }
       }
       if(pluginMenu != null) {
@@ -625,15 +626,14 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   private void initJavaHelp() {
       try {
           JMenuItem mi = dynRes.getMenuItem(helpTopicsAction);
-          if(mi == null){
-              return;
-          }
-          SHTMLHelpBroker.initJavaHelpItem(mi, "item15");
-      }
+          if (mi == null) return;
+          SHTMLHelpBroker.initJavaHelpItem(mi, "item15"); }
       catch (Throwable  e) {
-          Util.errMsg(this,
-                  Util.getResourceString(textResources, "helpNotFoundError"),
-                  e);
+         System.err.println("Simply HTML : Warning : loading help failed.");
+          // --Dan
+          //Util.errMsg(this,
+          //            Util.getResourceString("helpNotFoundError"),
+          //            e);
       }
   }
 protected void initDocumentPane() {
@@ -717,11 +717,11 @@ protected void initDocumentPane() {
     Container contentPane = new JPanel();
     contentPane.setLayout(new BorderLayout());
 
-    sp = new SplitPanel();
+    splitPanel = new SplitPanel();
     for(int i = 0; i < 4; i++) {
       JTabbedPane p = new JTabbedPane();
       p.setVisible(false);
-      sp.addComponent(p, i);
+      splitPanel.addComponent(p, i);
     }
 
     JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
@@ -730,9 +730,11 @@ protected void initDocumentPane() {
     paraToolBar = createToolBar("paraToolBar");
     toolBarPanel.add(formatToolBar);
     toolBarPanel.add(paraToolBar);
-    contentPane.add(toolBarPanel, BorderLayout.NORTH);
+    if (Util.getPreference("show_toolbars", "true").equalsIgnoreCase("true")) // --Dan
+       contentPane.add(toolBarPanel, BorderLayout.NORTH);
+
     //contentPane.add(workPanel, BorderLayout.CENTER);
-    contentPane.add(sp, BorderLayout.CENTER);
+    contentPane.add(splitPanel, BorderLayout.CENTER);
     //contentPane.add(workPanel);
     add(contentPane, BorderLayout.CENTER);
   }
@@ -804,13 +806,13 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
       else if(itemKey.equalsIgnoreCase(helpTopicsAction)) {
           try {
               newButton = SHTMLHelpBroker.createHelpButton("item15");
-              final Icon icon = DynamicResource.getIconForCommand(textResources, helpTopicsAction);
+              final Icon icon = DynamicResource.getIconForCommand(getResources(), helpTopicsAction);
               newButton.setIcon(icon);
-              newButton.setToolTipText(Util.getResourceString(
-                      textResources, helpTopicsAction + dynRes.toolTipSuffix));
+              newButton.setToolTipText(Util.getResourceString(helpTopicsAction + dynRes.toolTipSuffix));
               toolBar.add(newButton);
           }
-          catch(Exception e) {}
+          catch(Exception ex) {}
+          catch(java.lang.NoClassDefFoundError e) {} //When one of the help components is not there
       }
       else {
           action = dynRes.getAction(itemKey);
@@ -1277,6 +1279,10 @@ SHTMLEditorPane getEditor() {
     return editor;
 }
 
+public JEditorPane getEditorPane() {
+    return editor;
+}
+
 /**
  * @return Returns the doc.
  */
@@ -1313,7 +1319,7 @@ TagSelector getTagSelector() {
 }
 
 void savePrefs() {
-    sp.savePrefs();
+    splitPanel.savePrefs();
 }
 
 boolean close() {
@@ -1330,6 +1336,10 @@ public void requestFocus() {
   /* ---------- font manipulation code end ------------------ */
 public int getCaretPosition() {
     return getEditor().getCaretPosition();
+}
+
+public JMenuBar getMenuBar() {
+    return menuBar;
 }
 
 }

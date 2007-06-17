@@ -55,7 +55,7 @@ class StyleSelector extends JComboBox
   /** indicates whether or not to ignore change events */
   private boolean ignoreChanges = false;
 
-  private String standardStyleName = Util.getResourceString(SHTMLPanelImpl.textResources, "standardStyleName");
+  private String standardStyleName = Util.getResourceString("standardStyleName");
 private String paragraphType;
 private boolean updateRunning;
 

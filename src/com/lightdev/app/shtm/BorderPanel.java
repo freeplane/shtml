@@ -79,25 +79,25 @@ class BorderPanel extends JPanel implements AttributeComponent {
 
       addSettings(g,
                   c,
-                  Util.getResourceString(SHTMLPanelImpl.textResources, "topLabel"),
+                  Util.getResourceString("topLabel"),
                   CombinedAttribute.ATTR_TOP,
                   0,
                   0);
       addSettings(g,
                   c,
-                  Util.getResourceString(SHTMLPanelImpl.textResources, "rightLabel"),
+                  Util.getResourceString("rightLabel"),
                   CombinedAttribute.ATTR_RIGHT,
                   1,
                   1);
       addSettings(g,
                   c,
-                  Util.getResourceString(SHTMLPanelImpl.textResources, "bottomLabel"),
+                  Util.getResourceString("bottomLabel"),
                   CombinedAttribute.ATTR_BOTTOM,
                   1,
                   0);
       addSettings(g,
                   c,
-                  Util.getResourceString(SHTMLPanelImpl.textResources, "leftLabel"),
+                  Util.getResourceString("leftLabel"),
                   CombinedAttribute.ATTR_LEFT,
                   0,
                   1);
@@ -221,7 +221,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
                     title));
         // add the width control and label
         Util.addGridBagComponent(this,
-                   new JLabel(Util.getResourceString(SHTMLPanelImpl.textResources, "borderWidthLabel")),
+                   new JLabel(Util.getResourceString("borderWidthLabel")),
                    g, c, 0, 0, GridBagConstraints.EAST);
         bWidth = new SizeSelectorPanel(CSS.Attribute.BORDER_WIDTH, null, false, SizeSelectorPanel.TYPE_LABEL);
         Util.addGridBagComponent(this,bWidth,
@@ -229,7 +229,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
 
         // add the color control and label
         Util.addGridBagComponent(this,
-                   new JLabel(Util.getResourceString(SHTMLPanelImpl.textResources, "borderColorLabel")),
+                   new JLabel(Util.getResourceString("borderColorLabel")),
                    g, c, 0, 1, GridBagConstraints.EAST);
         bColor = new ColorPanel(null, Color.black, CSS.Attribute.BORDER_COLOR);
         Util.addGridBagComponent(this,bColor,

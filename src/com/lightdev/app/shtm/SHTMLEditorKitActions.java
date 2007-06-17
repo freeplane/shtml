@@ -534,7 +534,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
     public void actionPerformed(ActionEvent e) {
       if(this.elementTreeFrame == null) {
-        String title = Util.getResourceString(SHTMLPanelImpl.textResources, "elementTreeTitle");
+        String title = Util.getResourceString("elementTreeTitle");
         this.elementTreeFrame = new JFrame(title);
         this.elementTreeFrame.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent we) {
@@ -825,7 +825,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       AnchorDialog dlg = new AnchorDialog(
           parent,
-          Util.getResourceString(SHTMLPanelImpl.textResources, "anchorDialogTitle"),
+          Util.getResourceString("anchorDialogTitle"),
           this.panel.getSHTMLDocument());
       Util.center(parent, dlg);
       dlg.setModal(true);
@@ -870,8 +870,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       LinkDialog dlg = new LinkDialog(parent,
-                                       Util.getResourceString(SHTMLPanelImpl.textResources,
-                                       "linkDialogTitle"),
+                                       Util.getResourceString("linkDialogTitle"),
                                        this.panel.getSHTMLDocument(),
                                        this.panel.getEditor().getSelectionStart(),
                                        this.panel.getEditor().getSelectionEnd(),
@@ -938,7 +937,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       }
       catch(Exception ex) {
         Util.errMsg((Component) e.getSource(),
-		  Util.getResourceString(SHTMLPanelImpl.textResources, "unableToUndoError") + ex, ex);
+		  Util.getResourceString("unableToUndoError") + ex, ex);
       }
       this.panel.updateActions();
 
@@ -975,8 +974,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ParaStyleDialog dlg = new ParaStyleDialog(parent,
-                                       Util.getResourceString(SHTMLPanelImpl.textResources,
-                                       "namedStyleDialogTitle"),
+                                       Util.getResourceString("namedStyleDialogTitle"),
                                        this.panel.getSHTMLDocument());
       Util.center(parent, dlg);
       dlg.setModal(true);
@@ -1211,7 +1209,7 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
 
       /** create a modal FontDialog, center and show it */
       FontDialog fd = new FontDialog(parent,
-				    Util.getResourceString(SHTMLPanelImpl.textResources, "fontDialogTitle"),
+				    Util.getResourceString("fontDialogTitle"),
                                     this.panel.getMaxAttributes(this.panel.getEditor(), null));
       Util.center(parent, fd);
       fd.setModal(true);
@@ -1345,8 +1343,7 @@ static class FormatImageAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ImageDialog dlg = new ImageDialog(parent,
-                                       Util.getResourceString(SHTMLPanelImpl.textResources,
-                                       "imageDialogTitle"),
+                                       Util.getResourceString("imageDialogTitle"),
                                        this.panel.getDocumentPane().getImageDir(),
                                        (SHTMLDocument) this.panel.getDocumentPane().getDocument());
       Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getCaretPosition());
@@ -1416,7 +1413,7 @@ static class FormatImageAction extends AbstractAction
       this.panel.getEditor().requestFocus();
       int pos = this.panel.getEditor().getSelectionStart();
       ListDialog dlg = new ListDialog(parent,
-                     Util.getResourceString(SHTMLPanelImpl.textResources, "listDialogTitle"));
+                     Util.getResourceString("listDialogTitle"));
       SimpleAttributeSet set = new SimpleAttributeSet(
           this.panel.getMaxAttributes(this.panel.getEditor(), HTML.Tag.UL.toString()));
       set.addAttributes(this.panel.getMaxAttributes(this.panel.getEditor(), HTML.Tag.OL.toString()));
@@ -1482,8 +1479,7 @@ static class FormatImageAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ParaStyleDialog dlg = new ParaStyleDialog(parent,
-                                       Util.getResourceString(SHTMLPanelImpl.textResources,
-                                       "paraStyleDialogTitle"));
+                                       Util.getResourceString("paraStyleDialogTitle"));
       Util.center(parent, dlg);
       dlg.setModal(true);
       //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
@@ -1539,7 +1535,7 @@ static class FormatImageAction extends AbstractAction
     editor.requestFocus();
       int pos = editor.getSelectionStart();
       TableDialog td = new TableDialog(parent,
-                     Util.getResourceString(SHTMLPanelImpl.textResources, "tableDialogTitle"));
+                     Util.getResourceString("tableDialogTitle"));
       td.setTableAttributes(this.panel.getMaxAttributes(editor, HTML.Tag.TABLE.toString()));
       td.setCellAttributes(this.panel.getMaxAttributes(editor, HTML.Tag.TD.toString()));
       Util.center(parent, td);
@@ -1630,8 +1626,7 @@ static class InsertImageAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ImageDialog dlg = new ImageDialog(parent,
-                                       Util.getResourceString(SHTMLPanelImpl.textResources,
-                                       "imageDialogTitle"),
+                                       Util.getResourceString("imageDialogTitle"),
                                        this.panel.getDocumentPane().getImageDir());
       Util.center(parent, dlg);
       dlg.setModal(true);
@@ -2021,7 +2016,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       }
       catch(CannotRedoException ex) {
         Util.errMsg((Component) e.getSource(),
-	      Util.getResourceString(SHTMLPanelImpl.textResources, "unableToRedoError") + ex, ex);
+	      Util.getResourceString("unableToRedoError") + ex, ex);
       }
       this.panel.updateActions();
     }
@@ -2155,8 +2150,7 @@ static class SHTMLEditPrefsAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       PrefsDialog dlg = new PrefsDialog(parent,
-                                       Util.getResourceString(SHTMLPanelImpl.textResources,
-                                       "prefsDialogTitle"));
+                                       Util.getResourceString("prefsDialogTitle"));
       Util.center(parent, dlg);
       dlg.setModal(true);
       dlg.show();
@@ -2531,7 +2525,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
       ExampleFileFilter filter = new ExampleFileFilter();     // create a filter
       filter.addExtension("htm");
       filter.addExtension("html");
-      filter.setDescription(Util.getResourceString(SHTMLPanelImpl.textResources, "htmlFileDesc"));
+      filter.setDescription(Util.getResourceString("htmlFileDesc"));
       chooser.setFileFilter(filter);                    // apply the file filter
       String lastFileName = prefs.get(SHTMLPanelImpl.FILE_LAST_OPEN, "");
       if(lastFileName.length() > 0) {
@@ -2620,7 +2614,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
 	  SHTMLFileOpenAction.this.panel.registerDocument();
         }
         catch(Exception e) {
-          Util.errMsg(owner, Util.getResourceString(SHTMLPanelImpl.textResources, "unableToOpenFileError"), e);
+          Util.errMsg(owner, Util.getResourceString("unableToOpenFileError"), e);
         }
       }
     }
@@ -2758,7 +2752,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
       ExampleFileFilter filter = new ExampleFileFilter();
       filter.addExtension("htm");
       filter.addExtension("html");
-      filter.setDescription(Util.getResourceString(SHTMLPanelImpl.textResources, "htmlFileDesc"));
+      filter.setDescription(Util.getResourceString("htmlFileDesc"));
       chooser.setFileFilter(filter);
       String lastSaveFileName = prefs.get(SHTMLPanelImpl.FILE_LAST_SAVE, "");
       if(lastSaveFileName.length() > 0) {
@@ -2796,7 +2790,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
           }
           catch(Exception ex) {
             Util.errMsg((Component) ae.getSource(),
-                Util.getResourceString(SHTMLPanelImpl.textResources, "cantCreateURLError") +
+                Util.getResourceString("cantCreateURLError") +
                     selection.getAbsolutePath(),
                 ex);
           }

@@ -69,7 +69,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         jtpDocs = new JTabbedPane();
         super.customizeFrame();
         jtpDocs.addChangeListener(this);
-        sp.addComponent(jtpDocs, SplitPanel.CENTER);
+        splitPanel.addComponent(jtpDocs, SplitPanel.CENTER);
      }
 
     /* (non-Javadoc)

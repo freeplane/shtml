@@ -20,7 +20,7 @@ class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
         doc = (SHTMLDocument) editor.getDocument();
         registerDocument();
         dp.getEditor().setCaretPosition(0);
-        sp.addComponent(dp, SplitPanel.CENTER);
+        splitPanel.addComponent(dp, SplitPanel.CENTER);
     }
     protected void initActions() {
         super.initActions();

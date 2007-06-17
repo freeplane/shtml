@@ -22,11 +22,10 @@ class SHTMLHelpBroker {
     public static final String APP_HELP_NAME = "help";
     public static final String JAVA_HELP_EXT = ".hs";
 
-    private SHTMLHelpBroker() {
-    }
+    private SHTMLHelpBroker() {}
 
     /** our help broker */
-    private static HelpBroker hb;
+    private static HelpBroker helpBroker;
 
     /**
      * get the <code>HelpBroker</code> of our application
@@ -34,8 +33,7 @@ class SHTMLHelpBroker {
      * @return the <code>HelpBroker</code> to be used for help display
      */
     private static HelpBroker getHelpBroker() {
-        if(hb == null)
-        {
+        if (helpBroker == null) {
             URL url = SHTMLPanelImpl.class.getResource(APP_HELP_NAME +
                     Util.URL_SEPARATOR + APP_HELP_NAME + JAVA_HELP_EXT);
             HelpSet hs;
@@ -44,24 +42,23 @@ class SHTMLHelpBroker {
             } catch (HelpSetException e) {
                 return null;
             }
-            hb = hs.createHelpBroker();
+            helpBroker = hs.createHelpBroker();
         }
-        return hb;
+        return helpBroker;
     }
 
     static AbstractButton createHelpButton(String helpTopicId) {
         AbstractButton newButton;
         newButton = new JButton();
         CSH.setHelpIDString(newButton, helpTopicId);
-        newButton.addActionListener(
-                new CSH.DisplayHelpFromSource(SHTMLHelpBroker.getHelpBroker()));
+        newButton.addActionListener(new CSH.DisplayHelpFromSource(SHTMLHelpBroker.getHelpBroker()));
         return newButton;
     }
 
     static void initJavaHelpItem(JMenuItem mi, String helpTopicId) {
           CSH.setHelpIDString(mi, helpTopicId);
           mi.addActionListener(new CSH.DisplayHelpFromSource(SHTMLHelpBroker.getHelpBroker()));
-          mi.setIcon(DynamicResource.getIconForCommand(SHTMLPanelImpl.textResources, SHTMLPanelImpl.helpTopicsAction));
+          mi.setIcon(DynamicResource.getIconForCommand(SHTMLPanelImpl.getResources(), SHTMLPanelImpl.helpTopicsAction));
           mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
           mi.setEnabled(true);
     }

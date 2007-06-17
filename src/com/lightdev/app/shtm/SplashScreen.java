@@ -45,7 +45,7 @@ private static int counter;
     private SplashScreen() {
         try {
             JPanel panel = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(Util.getResourceString(SHTMLPanelImpl.textResources, "splashImage")));
+            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(Util.getResourceString("splashImage")));
             panel.add(new JLabel(icon), BorderLayout.CENTER);
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getContentPane().add(panel);
@@ -61,6 +61,8 @@ private static int counter;
      * Hides the splash screen.
      */
     synchronized  public static void hideInstance() {
+        if (!Util.getPreference("show_splash_screen", "true").equalsIgnoreCase("true"))
+           return;
         if(counter > 0)
             counter--;
         if(counter == 0)
@@ -71,6 +73,9 @@ private static int counter;
      * Shows the splash screen.
      */
     synchronized public static void showInstance() {
+        if (!Util.getPreference("show_splash_screen", "true").equalsIgnoreCase("true"))
+           return;
+        
         if(instance == null){
             instance = new SplashScreen();
             counter = 0;

@@ -249,8 +249,8 @@ public class Util {
       do{
           Object input = JOptionPane.showInputDialog(
                   null,
-                  Util.getResourceString(SHTMLPanelImpl.textResources, text),
-                  Util.getResourceString(SHTMLPanelImpl.textResources, title),
+                  Util.getResourceString(text),
+                  Util.getResourceString(title),
                   JOptionPane.QUESTION_MESSAGE,
                   null,
                   null,
@@ -277,11 +277,11 @@ public class Util {
                             String item, String sep)
   {
     String message = item + sep + Util.getResourceString(
-        SHTMLPanelImpl.textResources, msg);
+        msg);
     return JOptionPane.showConfirmDialog(
           null,
           message,
-          Util.getResourceString(SHTMLPanelImpl.textResources, title),
+          Util.getResourceString(title),
           options,
           JOptionPane.QUESTION_MESSAGE);
   }
@@ -993,6 +993,10 @@ public class Util {
       return DynamicResource.getResourceString(resources, nm);      
   }
   
+  static public String getResourceString(String nm) {     
+      return DynamicResource.getResourceString(SHTMLPanelImpl.getResources(), nm);      
+  }
+
   static String getPreference(String key, String defaultValue){
       String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), key);
       if(writeMode != null){

@@ -76,11 +76,11 @@ ColorPanel.ColorPanelListener
         sample.setEditable(false);
         sample.setPreferredSize(new Dimension(200, 50));
         sample.setHorizontalAlignment(SwingConstants.CENTER);
-        sample.setText(Util.getResourceString(SHTMLPanelImpl.textResources, "previewText"));
+        sample.setText(Util.getResourceString("previewText"));
         JPanel previewPanel = new JPanel(new BorderLayout());
         previewPanel.add(sample, BorderLayout.CENTER);
         previewPanel.setBorder(new TitledBorder(new EtchedBorder(
-                EtchedBorder.LOWERED), Util.getResourceString(SHTMLPanelImpl.textResources, "previewLabel")));
+                EtchedBorder.LOWERED), Util.getResourceString("previewLabel")));
         
         /**
          * create a pick list for family filled with
@@ -88,13 +88,13 @@ ColorPanel.ColorPanelListener
          */
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         FamilyPickList family = new FamilyPickList(ge.getAvailableFontFamilyNames(),
-                Util.getResourceString(SHTMLPanelImpl.textResources, "familyLabel"));
+                Util.getResourceString("familyLabel"));
         family.addTitledPickListListener(this);
         fontComponents.add(family);
         
         /** create a pick list for font size */
         SizePickList size = new SizePickList(SHTMLPanelImpl.FONT_SIZES,
-                Util.getResourceString(SHTMLPanelImpl.textResources, "sizeLabel"));
+                Util.getResourceString("sizeLabel"));
         size.addTitledPickListListener(this);
         fontComponents.add(size);
         
@@ -107,13 +107,13 @@ ColorPanel.ColorPanelListener
         JPanel fontPartsPanel = new JPanel(new BorderLayout(5,5));
         fontPartsPanel.add(familySizePanel, BorderLayout.CENTER);
         String[] fontStyles = new String[] {
-                Util.getResourceString(SHTMLPanelImpl.textResources, "plainName"),
-                Util.getResourceString(SHTMLPanelImpl.textResources, "boldName"),
-                Util.getResourceString(SHTMLPanelImpl.textResources, "italicName"),
-                Util.getResourceString(SHTMLPanelImpl.textResources, "boldItalicName")};
+                Util.getResourceString("plainName"),
+                Util.getResourceString("boldName"),
+                Util.getResourceString("italicName"),
+                Util.getResourceString("boldItalicName")};
         StylePickList style = new StylePickList(
                 fontStyles,
-                Util.getResourceString(SHTMLPanelImpl.textResources, "styleLabel"));
+                Util.getResourceString("styleLabel"));
         style.addTitledPickListListener(this);
         fontPartsPanel.add(style, BorderLayout.EAST);
         fontComponents.add(style);
@@ -125,8 +125,8 @@ ColorPanel.ColorPanelListener
         /** create a panel for color choices */
         JPanel colorPanel = new JPanel(new GridLayout(2,1,3,3));
         colorPanel.setBorder(new TitledBorder(new EtchedBorder(
-                EtchedBorder.LOWERED), Util.getResourceString(SHTMLPanelImpl.textResources, "colorLabel")));
-        ColorPanel fCol = new ColorPanel(Util.getResourceString(SHTMLPanelImpl.textResources, "foregroundLabel"),
+                EtchedBorder.LOWERED), Util.getResourceString("colorLabel")));
+        ColorPanel fCol = new ColorPanel(Util.getResourceString("foregroundLabel"),
                 Color.black, CSS.Attribute.COLOR);
         fCol.addColorPanelListener(this);
         fontComponents.add(fCol);
@@ -134,7 +134,7 @@ ColorPanel.ColorPanelListener
         sample.setForeground(Color.black);
         
         if(pickBgColor){
-            ColorPanel bCol = new ColorPanel(Util.getResourceString(SHTMLPanelImpl.textResources, "backgroundLabel"),
+            ColorPanel bCol = new ColorPanel(Util.getResourceString("backgroundLabel"),
                     Color.white, CSS.Attribute.BACKGROUND_COLOR);
             bCol.addColorPanelListener(this);
             fontComponents.add(bCol);

@@ -62,8 +62,7 @@ class ManagePluginsAction extends AbstractAction
     final JPopupMenu menu = (JPopupMenu)((Component)e.getSource()).getParent();
     final SHTMLPanelImpl shtmlPanel = (SHTMLPanelImpl)SwingUtilities.getAncestorOfClass(SHTMLPanelImpl.class, menu.getInvoker());
     PluginManagerDialog pmd = new PluginManagerDialog(JOptionPane.getFrameForComponent(shtmlPanel),
-        Util.getResourceString(SHTMLPanelImpl.textResources,
-        "pluginManagerDialogTitle"));
+        Util.getResourceString("pluginManagerDialogTitle"));
     Util.center(shtmlPanel, pmd);
     pmd.setModal(true);
     pmd.show();

@@ -274,14 +274,17 @@ class DynamicResource {
    * @param nm  the key of the string
    * @return the string for the given key or null if not found
    */
-  static public String getResourceString(TextResources resources, String nm) {
-    String str = null;
+  static public String getResourceString(TextResources resources, String key) {
     try {
       //System.out.println("getResourceString nm=" + nm);
-      str = resources.getString(nm);
-    }
-    catch (MissingResourceException mre) { }
-    return str;
+       if (resources!=null)
+          return resources.getString(key);
+       System.err.println("SimplyHTML : Warning : resources are null.");
+       new Throwable("Dummy").printStackTrace();
+       return key; }
+    catch (MissingResourceException mre) {
+       System.err.println("SimplyHTML : Warning : resource is missing: "+key );
+       return key; }
   }
   /**
    * listen to menu select events for proper updating of menu items
