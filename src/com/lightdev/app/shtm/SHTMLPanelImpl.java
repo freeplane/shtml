@@ -116,10 +116,10 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   }
   private SHTMLMenuBar menuBar;
     /** currently active DocumentPane */
-  protected DocumentPane dp;
+  protected DocumentPane documentPane;
 
   /** currently active SHTMLEditorPane */
-  protected SHTMLEditorPane editor;
+  protected SHTMLEditorPane editorPane;
 
   /** currently active SHTMLDocument */
   protected SHTMLDocument doc;
@@ -283,7 +283,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    */
   File getCurrentFile() {
     File file = null;
-    URL url = dp.getSource();
+    URL url = documentPane.getSource();
     if(url != null) {
       file = new File(url.getFile());
     }
@@ -296,7 +296,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * @return the document name
    */
   String getCurrentDocName() {
-    return dp.getDocumentName();
+    return documentPane.getDocumentName();
   }
 
     /**
@@ -304,12 +304,12 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
      * @return returns the document text as string.
      */
   public String getDocumentText() {
-        return dp.getDocumentText();
+        return documentPane.getDocumentText();
     }
 
 
     Document getCurrentDocument() {
-        return dp.getDocument();
+        return documentPane.getDocument();
     }
 
     /**
@@ -318,7 +318,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
      * @return  true, if changes need to be saved
      */
     public boolean needsSaving() {
-      return dp.needsSaving();
+      return documentPane.needsSaving();
     }
     /**
      * Convenience method for clearing out the UndoManager
@@ -335,12 +335,12 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
      * Convenience method for setting the document text
      */
     public void setCurrentDocumentContent(String sText) {
-        dp.setDocumentText(sText);
+        documentPane.setDocumentText(sText);
         purgeUndos();
     }
 
     public void setContentPanePreferredSize(Dimension prefSize){
-       dp.setContentPanePreferredSize(prefSize);  //dp=DocumentPane
+       documentPane.setContentPanePreferredSize(prefSize);
     }
     /**
      * @return returns the currently used ExtendedHTMLDocument Object
@@ -355,19 +355,19 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * @return the active DocumentPane
    */
   DocumentPane getCurrentDocumentPane() {
-    return dp;
+    return documentPane;
   }
 
   /**
    * add a DocumentPaneListener from the currently active DocumentPane (if any)
    */
   void addDocumentPaneListener(DocumentPane.DocumentPaneListener listener) {
-    if(dp != null) {
-      //System.out.println("FrmMain.addDocumentPaneListener dp.source=" + dp.getSource());
-      dp.addDocumentPaneListener(listener);
+    if(documentPane != null) {
+      //System.out.println("FrmMain.addDocumentPaneListener documentPane.source=" + documentPane.getSource());
+      documentPane.addDocumentPaneListener(listener);
     }
     else {
-      //System.out.println("FrmMain.addDocumentPaneListener dp is null, did not add");
+      //System.out.println("FrmMain.addDocumentPaneListener documentPane is null, did not add");
     }
   }
 
@@ -375,8 +375,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * remove a DocumentPaneListener from the currently active DocumentPane (if any)
    */
   void removeDocumentPaneListener(DocumentPane.DocumentPaneListener listener) {
-    if(dp != null) {
-      dp.removeDocumentPaneListener(listener);
+    if(documentPane != null) {
+      documentPane.removeDocumentPaneListener(listener);
     }
   }
 
@@ -636,7 +636,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
           //            e);
       }
   }
-protected void initDocumentPane() {
+   protected void initDocumentPane() {
       //TODO
   }
     /**
@@ -902,8 +902,8 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     if(doc != null) {
       doc.removeUndoableEditListener(undoHandler);
     }
-    dp.removeAllListeners(); // for plug-in removal from any dp that is about to close
-    //System.out.println("FrmMain unregister document dp.name=" + dp.getDocumentName());
+    documentPane.removeAllListeners(); // for plug-in removal from any documentPane that is about to close
+    //System.out.println("FrmMain unregister document documentPane.name=" + documentPane.getDocumentName());
   }
 
   /**
@@ -911,11 +911,11 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    *
    * this is shared by save and saveAs so we put it here to avoid redundancy
    *
-   * @param dp  the document pane containing the document to save
+   * @param documentPane  the document pane containing the document to save
    */
-  void doSave(DocumentPane dp) {
+  void doSave(DocumentPane documentPane) {
     try {
-      dp.saveDocument();
+      documentPane.saveDocument();
     }
     /**
      * this exception should never happen as the menu allows to save a
@@ -931,7 +931,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
   }
 
   boolean isHtmlEditorActive() {
-      return dp != null && dp.getSelectedTab() == DocumentPane.VIEW_TAB_HTML;
+      return documentPane != null && documentPane.getSelectedTab() == DocumentPane.VIEW_TAB_HTML;
   }
 
   /**
@@ -1190,21 +1190,21 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    * at the current position in the document. Combine element
    * attributes with attributes from the style sheet.
    *
-   * @param editor  the editor pane to combine attributes from
+   * @param editorPane  the editor pane to combine attributes from
    *
    * @return the resulting set of combined attributes
    */
-  AttributeSet getMaxAttributes(SHTMLEditorPane editor,
+  AttributeSet getMaxAttributes(SHTMLEditorPane editorPane,
           String elemName)
   {
-      Element e = doc.getCharacterElement(editor.getSelectionStart());
+      Element e = doc.getCharacterElement(editorPane.getSelectionStart());
       StyleSheet s = doc.getStyleSheet();
       if(elemName != null && elemName.length() > 0) {
           e = Util.findElementUp(elemName, e);
           return getMaxAttributes(e, s);
       }
       final MutableAttributeSet maxAttributes = (MutableAttributeSet)getMaxAttributes(e, s);
-      final StyledEditorKit editorKit = (StyledEditorKit)editor.getEditorKit();
+      final StyledEditorKit editorKit = (StyledEditorKit)editorPane.getEditorKit();
       final MutableAttributeSet inputAttributes = editorKit.getInputAttributes();
       maxAttributes.addAttributes(inputAttributes);
       return maxAttributes;
@@ -1259,28 +1259,32 @@ static AttributeSet getMaxAttributes(Element e, StyleSheet s) {
   }
 
 /**
- * @param dp The dp to set.
+ * @param documentPane The documentPane to set.
  */
-void setDocumentPane(DocumentPane dp) {
-    this.dp = dp;
+void setDocumentPane(DocumentPane documentPane) {
+    this.documentPane = documentPane;
 }
 
 /**
- * @return Returns the dp.
+ * @return Returns the documentPane.
  */
 DocumentPane getDocumentPane() {
-    return dp;
+    return documentPane;
 }
 
 /**
- * @return Returns the editor.
+ * @return Returns the editorPane.
  */
 SHTMLEditorPane getEditor() {
-    return editor;
+    return editorPane;
 }
 
 public JEditorPane getEditorPane() {
-    return editor;
+    return editorPane;
+}
+
+public JEditorPane getSourceEditorPane() {
+   return (JEditorPane)documentPane.getHtmlEditor();
 }
 
 /**
@@ -1329,8 +1333,8 @@ boolean close() {
  * @see javax.swing.JComponent#requestFocus()
  */
 public void requestFocus() {
-    if(dp != null){
-        dp.requestFocus();
+    if(documentPane != null){
+        documentPane.requestFocus();
     }
 }
   /* ---------- font manipulation code end ------------------ */
@@ -1340,6 +1344,11 @@ public int getCaretPosition() {
 
 public JMenuBar getMenuBar() {
     return menuBar;
+}
+
+
+public void switchViews() {
+   documentPane.switchViews();
 }
 
 }

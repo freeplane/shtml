@@ -922,10 +922,10 @@ public class Util {
    * @param e the exception object describing the error, or null
    */
   public static void errMsg(Component owner, String msg, Throwable e) {
-      if(e != null) {
+      if (e != null) {
           e.printStackTrace();
       }
-      if(msg != null) {
+      if (msg != null) {
           JOptionPane.showMessageDialog(owner, msg, ERR_TITLE, JOptionPane.ERROR_MESSAGE);
       }
   }
@@ -992,11 +992,11 @@ public class Util {
   static public String getResourceString(TextResources resources, String nm) {
       return DynamicResource.getResourceString(resources, nm);      
   }
-  
+
   static public String getResourceString(String nm) {     
       return DynamicResource.getResourceString(SHTMLPanelImpl.getResources(), nm);      
   }
-
+  
   static String getPreference(String key, String defaultValue){
       String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), key);
       if(writeMode != null){
@@ -1011,8 +1011,25 @@ public class Util {
       return writeMode;     
   }
   
+
+  static boolean preferenceIsTrue(String key){
+      return getPreference(key,"false").equalsIgnoreCase("true");
+  }
+
+  static boolean preferenceIsTrue(String key, String defaultValue){
+      return getPreference(key,defaultValue).equalsIgnoreCase("true");
+  }
+
   static boolean useSteStyleSheet() {
       return getPreference(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, "false").equalsIgnoreCase("true");
   }
+
+
+  /** Tells whether rich view and source view should be used in tabs. */
+
+  static boolean showViewsInTabs() {
+	  return preferenceIsTrue("show_views_in_tabs","true");
+  }
+
 
 }

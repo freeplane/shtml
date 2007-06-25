@@ -44,11 +44,20 @@ public abstract class SHTMLPanel extends JPanel {
 
     public abstract JEditorPane getEditorPane();
 
+    public abstract JEditorPane getSourceEditorPane();
+
     public static TextResources getResources() {
        return SHTMLPanelImpl.getResources(); }
 
     abstract public int getCaretPosition();
 
     public abstract JMenuBar getMenuBar();
+
+   /**
+    * Switches between the rich text view and the source view, given
+    * tabbed panes are not used. Has no corresponding action; calling
+    * this method is up to the caller application of SimplyHTML.
+    */
+    public abstract void switchViews();
 
 }

@@ -533,7 +533,7 @@ public void startCompoundEdit() {
 
     private void insertParagraphStartTag(int pos) {
         super.handleStartTag(HTML.Tag.P, new SimpleAttributeSet(), pos);
-        paragraphCreated =true;
+        paragraphCreated = true;
     }
 
     private void insertParagraphEndTag(int pos) {
@@ -544,28 +544,32 @@ public void startCompoundEdit() {
     private boolean isParagraphTag(Tag t) {
         if(paragraphElements == null){
             paragraphElements = new HashSet();
-            paragraphElements.add(HTML.Tag.DIR);
-            paragraphElements.add(HTML.Tag.DIV);
-            paragraphElements.add(HTML.Tag.DL);
-            paragraphElements.add(HTML.Tag.DT);
-            paragraphElements.add(HTML.Tag.FRAMESET);
-            paragraphElements.add(HTML.Tag.H1);
-            paragraphElements.add(HTML.Tag.H2);
-            paragraphElements.add(HTML.Tag.H3);
-            paragraphElements.add(HTML.Tag.H4);
-            paragraphElements.add(HTML.Tag.H5);
-            paragraphElements.add(HTML.Tag.H6);
-            paragraphElements.add(HTML.Tag.HR);
-            paragraphElements.add(HTML.Tag.LI);
-            paragraphElements.add(HTML.Tag.MENU);
-            paragraphElements.add(HTML.Tag.OL);
-            paragraphElements.add(HTML.Tag.P);
-            paragraphElements.add(HTML.Tag.PRE);
-            paragraphElements.add(HTML.Tag.TABLE);
-            paragraphElements.add(HTML.Tag.TD);
-            paragraphElements.add(HTML.Tag.TH);
-            paragraphElements.add(HTML.Tag.TR);
-            paragraphElements.add(HTML.Tag.UL);
+            Object[] elementList = new Object[] {
+               HTML.Tag.BLOCKQUOTE,
+               HTML.Tag.DIR,
+               HTML.Tag.DIV,
+               HTML.Tag.DL,
+               HTML.Tag.DT,
+               HTML.Tag.FRAMESET,
+               HTML.Tag.H1,
+               HTML.Tag.H2,
+               HTML.Tag.H3,
+               HTML.Tag.H4,
+               HTML.Tag.H5,
+               HTML.Tag.H6,
+               HTML.Tag.HR,
+               HTML.Tag.LI,
+               HTML.Tag.MENU,
+               HTML.Tag.OL,
+               HTML.Tag.P,
+               HTML.Tag.PRE,
+               HTML.Tag.TABLE,
+               HTML.Tag.TD,
+               HTML.Tag.TH,
+               HTML.Tag.TR,
+               HTML.Tag.UL };
+            for (int i=0; i<elementList.length;i++)
+               paragraphElements.add(elementList[i]);
         }
         return paragraphElements.contains(t);
     }
@@ -619,25 +623,26 @@ public void startCompoundEdit() {
      * otherwise, let HTMLDocument.HTMLReader do the work
      */
     public void handleEndTag(HTML.Tag t, int pos) {
-        if(t == HTML.Tag.BODY ){
+        if (t == HTML.Tag.BODY ){
             if (paragraphCreated){
                 insertParagraphEndTag(pos);
             }
             inBody = false;
+            if(emptyDocument) {
+               if(Util.preferenceIsTrue("gray_row_below_end")) {
+                  super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);  
+                  super.handleText(" ".toCharArray(), pos);
+                  super.handleEndTag(HTML.Tag.P, pos);  
+               }
+            }
+            super.handleEndTag(t, pos);
         }
-      if(t == HTML.Tag.SPAN) {
-        handleEndSpan();
-      }
-      else {
-          if(emptyDocument && t == HTML.Tag.BODY){
-              char data[] = " ".toCharArray();
-            final SimpleAttributeSet set = getEndingAttributeSet();
-            super.handleStartTag(HTML.Tag.P, set, pos);  
-            super.handleText(data, pos);
-            super.handleEndTag(HTML.Tag.P, pos);  
-          }
-        super.handleEndTag(t, pos);
-      }
+        else if(t == HTML.Tag.SPAN) {
+           handleEndSpan();
+        }
+        else {           
+           super.handleEndTag(t, pos);
+        }
     }
 
     /* (non-Javadoc)
@@ -771,7 +776,9 @@ public Element getParagraphElement(int pos, boolean noImplied) {
 
 public int getLastDocumentPosition(){
     final int length = getLength();
-    final int suffixLength = 1;
+    final int suffixLength = Util.preferenceIsTrue("gray_row_below_end") ?
+       1 :
+       -1;
     return length > suffixLength ? length - suffixLength : length;
 }
 /* (non-Javadoc)
@@ -818,8 +825,7 @@ private void removeParagraphAtributes(final Element paragraphElement) {
 
 private SimpleAttributeSet getEndingAttributeSet() {
     final SimpleAttributeSet set = new SimpleAttributeSet();
-    if (Util.getPreference("gray_row_below_end", "true").equalsIgnoreCase("true"))
-       StyleConstants.setBackground(set, Color.GRAY);
+    StyleConstants.setBackground(set, Color.GRAY);
     return set;
 }
 

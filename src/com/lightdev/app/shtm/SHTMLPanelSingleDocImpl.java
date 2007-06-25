@@ -4,6 +4,8 @@
  */
 package com.lightdev.app.shtm;
 
+import java.awt.BorderLayout;
+
 class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
 
     public SHTMLPanelSingleDocImpl() {
@@ -15,12 +17,12 @@ class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
      */
     protected void initDocumentPane() {
         super.initDocumentPane();
-        dp = new DocumentPane(null, 1);
-        editor = dp.getEditor();
-        doc = (SHTMLDocument) editor.getDocument();
+        documentPane = new DocumentPane(null, 1);
+        editorPane = documentPane.getEditor();
+        doc = (SHTMLDocument) editorPane.getDocument();
         registerDocument();
-        dp.getEditor().setCaretPosition(0);
-        splitPanel.addComponent(dp, SplitPanel.CENTER);
+        documentPane.getEditor().setCaretPosition(0);
+        splitPanel.addComponent(documentPane, SplitPanel.CENTER);
     }
     protected void initActions() {
         super.initActions();

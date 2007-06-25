@@ -42,7 +42,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
 
     protected void initDocumentPane() {
         dynRes.getAction(newAction).actionPerformed(null);
-        dp.getEditor().setCaretPosition(0);
+        documentPane.getEditor().setCaretPosition(0);
     }
 
     /* (non-Javadoc)
@@ -125,18 +125,18 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
     public void stateChanged(ChangeEvent e) {
       activeTabNo = jtpDocs.getSelectedIndex();
       if(activeTabNo >= 0){
-          dp = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
-          editor = dp.getEditor();
-          //System.out.println("FrmMain stateChanged docName now " + dp.getDocumentName());
+          documentPane = (DocumentPane) jtpDocs.getComponentAt(activeTabNo);
+          editorPane = documentPane.getEditor();
+          //System.out.println("FrmMain stateChanged docName now " + documentPane.getDocumentName());
           doc = (SHTMLDocument) getEditor().getDocument();
           //fireDocumentChanged();
           if(!ignoreActivateDoc) {
-              dp.fireActivated();
+              documentPane.fireActivated();
           }
       }
       else{
-          dp = null;
-          editor = null;
+          documentPane = null;
+          editorPane = null;
           doc = null;
       }
     }

@@ -72,7 +72,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   private SHTMLEditorPane editor;
 
   /** the editor displaying the document in HTML code view */
-  private SyntaxPane htmlEditor;
+  private SyntaxPane sourceEditorPane;
 
   /** temporary storage location for this document */
   private File docTempDir = null;
@@ -127,7 +127,10 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   private URL sourceUrl = null;
 
   /** JTabbedPane for our views */
-  private JTabbedPane tabbedPane;
+  private JComponent paneHoldingScrollPanes;
+
+  private JScrollPane richViewScrollPane;
+  private JScrollPane sourceViewScrollPane;
 
   public static final int VIEW_TAB_LAYOUT = 0;
   public static final int VIEW_TAB_HTML = 1;
@@ -150,6 +153,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   /** number for title of a new document */
   private int newDocNo;
 
+  private int activeView;
 
   //private int renderMode;
 
@@ -168,28 +172,44 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     SHTMLEditorKit kit = new SHTMLEditorKit(/*renderMode*/);
     //kit.resetStyleSheet();
     editor.setEditorKit(kit);
-    JScrollPane sp = new JScrollPane();   // create a new JScrollPane,
-    sp.getViewport().setView(editor);     // ..add the editor pane to it
+    richViewScrollPane = new JScrollPane();   // create a new JScrollPane,
+    richViewScrollPane.getViewport().setView(editor);     // ..add the editor pane to it
 
     // EditorPane and ScrollPane for html view
-    htmlEditor = new SyntaxPane();
-    htmlEditor.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    //htmlEditor.addKeyListener(rkw);
-    JScrollPane htmlSp = new JScrollPane();
-    htmlSp.getViewport().setView(htmlEditor);
+    sourceEditorPane = new SyntaxPane();
+    sourceEditorPane.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    //sourceEditorPane.addKeyListener(rkw);
+    sourceViewScrollPane = new JScrollPane();
+    sourceViewScrollPane.getViewport().setView(sourceEditorPane);
 
-    // tabbed pane for HTML and layout views
-    tabbedPane = new JTabbedPane();
-    tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
-    tabbedPane.add(sp, VIEW_TAB_LAYOUT);
-    tabbedPane.add(htmlSp, VIEW_TAB_HTML);
-    tabbedPane.setTitleAt(VIEW_TAB_LAYOUT, Util.getResourceString("layoutTabTitle"));
-    tabbedPane.setTitleAt(VIEW_TAB_HTML, Util.getResourceString("htmlTabTitle"));
-    tabbedPane.addChangeListener(this);
+    // Tabbed pane for HTML and layout views
+    if (Util.showViewsInTabs()) {
+       paneHoldingScrollPanes = new JTabbedPane();
+       paneHoldingScrollPanes.add(richViewScrollPane, VIEW_TAB_LAYOUT);    
+       paneHoldingScrollPanes.add(sourceViewScrollPane, VIEW_TAB_HTML);
 
-    // add comnponents to content pane
-    setLayout(new BorderLayout());        // a simple border layout is enough
-    add(tabbedPane, BorderLayout.CENTER);         // ..and add both to this DocumentPane
+       JTabbedPane tabbedPane = (JTabbedPane)paneHoldingScrollPanes; 
+       tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
+       tabbedPane.setTitleAt(VIEW_TAB_LAYOUT, Util.getResourceString("layoutTabTitle"));
+       tabbedPane.setTitleAt(VIEW_TAB_HTML, Util.getResourceString("htmlTabTitle"));
+       tabbedPane.addChangeListener(this);
+
+       setLayout(new BorderLayout()); 
+       add(paneHoldingScrollPanes, BorderLayout.CENTER);
+    }
+    else {
+       paneHoldingScrollPanes = new JPanel(new BorderLayout());
+       paneHoldingScrollPanes.add(richViewScrollPane, BorderLayout.CENTER);
+       activeView = VIEW_TAB_LAYOUT;
+       //BorderLayout DOES NOT allow two parts with ..CENTER.
+       //paneHoldingScrollPanes.add(sourceViewScrollPane, BorderLayout.CENTER);
+       //sourceViewScrollPane.setVisible(false);
+       //paneHoldingScrollPanes.addChangeListener(this);
+
+       setLayout(new BorderLayout()); 
+       add(paneHoldingScrollPanes, BorderLayout.CENTER);
+    }
+
     setDocumentChanged(false);                  // no changes so far
     setPreferredSize(new Dimension(550, 550));
   }
@@ -232,14 +252,16 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * @return the SyntaxPane of this DocumentPane
    */
   public SyntaxPane getHtmlEditor() {
-    return htmlEditor;
+    return sourceEditorPane;
   }
 
   /**
    * @return the selected tab index
    */
   public int getSelectedTab(){
-      return tabbedPane.getSelectedIndex();
+     if (paneHoldingScrollPanes instanceof JTabbedPane)
+        return ((JTabbedPane)paneHoldingScrollPanes).getSelectedIndex();
+     return activeView;
   }
   /**
    * create a new HTMLDocument and attach it to the editor
@@ -366,8 +388,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
       try {
         if(sourceUrl != null) {
           /* write the HTML document */
-          if(tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
-            editor.setText(htmlEditor.getText());
+          if(getSelectedTab() == VIEW_TAB_HTML) {
+            editor.setText(sourceEditorPane.getText());
           }
           SHTMLDocument doc = (SHTMLDocument) getDocument();
           OutputStream os = new FileOutputStream(sourceUrl.getPath());
@@ -715,11 +737,36 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   }
 
   HTMLDocument getHTMLDocument() {
-    return (HTMLDocument)htmlEditor.getDocument();
+    return (HTMLDocument)sourceEditorPane.getDocument();
   }
 
+   /**
+    * Switches between the rich text view and the source view, given
+    * tabbed panes are not used. Has no corresponding action; calling
+    * this method is up to the caller application of SimplyHTML; the
+    * application should call the method of the same name available at
+    * SHTMLPanel.
+    */
+  public void switchViews() {
+     if (paneHoldingScrollPanes instanceof JTabbedPane) return;
+     // [ Tabbed pane not used ]
+     if (activeView == VIEW_TAB_LAYOUT) {
+        setHTMLView();
+        paneHoldingScrollPanes.remove(richViewScrollPane);
+        paneHoldingScrollPanes.add(sourceViewScrollPane);
+        activeView = VIEW_TAB_HTML;
+     }
+     else {
+        setLayoutView();
+        paneHoldingScrollPanes.remove(sourceViewScrollPane);
+        paneHoldingScrollPanes.add(richViewScrollPane);
+        activeView = VIEW_TAB_LAYOUT;
+     }
+  }
+
+
   /**
-   * switch the DocumentPane to HTML view
+   * Switches the DocumentPane to HTML view.
    */
   private void setHTMLView() {
     try {
@@ -729,9 +776,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
       SHTMLEditorKit kit = (SHTMLEditorKit) editor.getEditorKit();
       kit.write(sw, lDoc, 0, lDoc.getLength());
       sw.close();
-      htmlEditor.setText(sw.toString());
-      htmlEditor.getDocument().addDocumentListener(this);
-      htmlEditor.addCaretListener(htmlEditor);
+      sourceEditorPane.setText(sw.toString());
+      sourceEditorPane.getDocument().addDocumentListener(this);
+      sourceEditorPane.addCaretListener(sourceEditorPane);
       setHtmlChanged(false);
     }
     catch(Exception ex) {
@@ -740,13 +787,13 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   }
 
   /**
-   * switch the DocumentPane to layout view
+   * Switches the DocumentPane to layout view.
    */
   private void setLayoutView() {
-    htmlEditor.getDocument().removeDocumentListener(this);
-    htmlEditor.removeCaretListener(htmlEditor);
+    sourceEditorPane.getDocument().removeDocumentListener(this);
+    sourceEditorPane.removeCaretListener(sourceEditorPane);
     if(isHtmlChanged()){
-        editor.setText(htmlEditor.getText());
+        editor.setText(sourceEditorPane.getText());
     }
     editor.setCaretPosition(0);
     editor.getDocument().addDocumentListener(this);
@@ -757,8 +804,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * @return returns the document text as string.
    */
   String getDocumentText() {
-      if(tabbedPane.getSelectedIndex() == VIEW_TAB_HTML){
-          editor.setText(htmlEditor.getText());
+      if(getSelectedTab() == VIEW_TAB_HTML){
+          editor.setText(sourceEditorPane.getText());
       }
       return editor.getText();
   }
@@ -767,12 +814,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * Convenience method for setting the document text
    */
   void setDocumentText(String sText) {
-      switch(tabbedPane.getSelectedIndex()) {
+      switch(getSelectedTab()) {
       case VIEW_TAB_LAYOUT:
           editor.setText(sText);
         break;
       case VIEW_TAB_HTML:
-          htmlEditor.setText(sText);
+          sourceEditorPane.setText(sText);
           setHtmlChanged(true);
         break;
     }
@@ -784,8 +831,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
-    if(src.equals(tabbedPane)) {
-      switch(tabbedPane.getSelectedIndex()) {
+    if(src.equals(paneHoldingScrollPanes)) {
+      switch(getSelectedTab()) {
         case VIEW_TAB_LAYOUT:
           setLayoutView();
           break;
@@ -809,13 +856,13 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void insertUpdate(DocumentEvent e) {
     //System.out.println("insertUpdate setting textChanged=true for " + getDocumentName());
-      if (tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
+      if (getSelectedTab() == VIEW_TAB_HTML) {
           setHtmlChanged(true);
       }
       setDocumentChanged(true);
-      /*if (tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
+      /*if (getSelectedTab() == VIEW_TAB_HTML) {
        StyledDocument sDoc = (StyledDocument) e.getDocument();
-       htmlEditor.setMarks(sDoc, 0, sDoc.getLength(), this);
+       sourceEditorPane.setMarks(sDoc, 0, sDoc.getLength(), this);
        }*/
   }
   
@@ -825,7 +872,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void removeUpdate(DocumentEvent e) {
       //System.out.println("removeUpdate setting textChanged=true for " + getDocumentName());
-      if (tabbedPane.getSelectedIndex() == VIEW_TAB_HTML) {
+      if (getSelectedTab() == VIEW_TAB_HTML) {
           setHtmlChanged(true);
       }
       setDocumentChanged(true);
@@ -837,7 +884,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void changedUpdate(DocumentEvent e) {
       //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
-      if (tabbedPane.getSelectedIndex() == VIEW_TAB_LAYOUT) {
+      if (getSelectedTab() == VIEW_TAB_LAYOUT) {
           editor.updateInputAttributes();
           setDocumentChanged(true);
       }
@@ -918,12 +965,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
  * @see javax.swing.JComponent#requestFocus()
  */
 public void requestFocus() {
-    switch(tabbedPane.getSelectedIndex()) {
+    switch(getSelectedTab()) {
     case VIEW_TAB_LAYOUT:
       editor.requestFocus();
       break;
     case VIEW_TAB_HTML:
-        htmlEditor.requestFocus();
+        sourceEditorPane.requestFocus();
       break;
   }
     
@@ -931,9 +978,9 @@ public void requestFocus() {
 
 public void setContentPanePreferredSize(Dimension prefSize) {
     setPreferredSize(null);
-    tabbedPane.setPreferredSize(null);
-    for(int i = 0; i < tabbedPane.getComponentCount(); i++){
-        final JScrollPane scrollPane = (JScrollPane) tabbedPane.getComponent(i);
+    paneHoldingScrollPanes.setPreferredSize(null);
+    for(int i = 0; i < paneHoldingScrollPanes.getComponentCount(); i++){
+        final JScrollPane scrollPane = (JScrollPane)paneHoldingScrollPanes.getComponent(i);
         scrollPane.setPreferredSize(prefSize);
         scrollPane.invalidate();
     }
