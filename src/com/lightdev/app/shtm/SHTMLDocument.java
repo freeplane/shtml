@@ -629,11 +629,9 @@ public void startCompoundEdit() {
             }
             inBody = false;
             if(emptyDocument) {
-               if(Util.preferenceIsTrue("gray_row_below_end")) {
                   super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);  
                   super.handleText(" ".toCharArray(), pos);
                   super.handleEndTag(HTML.Tag.P, pos);  
-               }
             }
             super.handleEndTag(t, pos);
         }
@@ -776,9 +774,7 @@ public Element getParagraphElement(int pos, boolean noImplied) {
 
 public int getLastDocumentPosition(){
     final int length = getLength();
-    final int suffixLength = Util.preferenceIsTrue("gray_row_below_end") ?
-       1 :
-       -1;
+    final int suffixLength = 1;
     return length > suffixLength ? length - suffixLength : length;
 }
 /* (non-Javadoc)
@@ -825,7 +821,9 @@ private void removeParagraphAtributes(final Element paragraphElement) {
 
 private SimpleAttributeSet getEndingAttributeSet() {
     final SimpleAttributeSet set = new SimpleAttributeSet();
-    StyleConstants.setBackground(set, Color.GRAY);
+    if(Util.preferenceIsTrue("gray_row_below_end")) {
+    	StyleConstants.setBackground(set, Color.GRAY);
+    }
     return set;
 }
 

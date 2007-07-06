@@ -71,7 +71,14 @@ class SHTMLEditorKit extends HTMLEditorKit {
   public Document createDefaultDocument() {
     SHTMLDocument doc = (SHTMLDocument)createEmptyDocument();
     try {
-        doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ doc.SUFFIX +"\n</p>\n");
+        final String standardContent;
+        if(Util.preferenceIsTrue("gray_row_below_end")){
+            standardContent = "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ doc.SUFFIX +"\n</p>\n";
+        }
+        else{
+            standardContent = "<p>\n</p>\n<p>\n"+ doc.SUFFIX +"\n</p>\n";
+        }
+		doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), standardContent);
     } catch (BadLocationException e) {
         e.printStackTrace();
     } catch (IOException e) {
