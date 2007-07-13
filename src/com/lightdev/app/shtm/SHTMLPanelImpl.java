@@ -256,7 +256,9 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
           return true;
       menuBar.handleKeyBinding(ks, e, condition, pressed);
       // if ctrl or shift or alt halted assume that the event has been handled
-      return e.getModifiersEx() != 0 || e.getKeyChar() == KeyEvent.CHAR_UNDEFINED;
+      return e.getModifiersEx() != 0 
+      || e.getKeyChar() == KeyEvent.CHAR_UNDEFINED
+      || e.getKeyChar() == KeyEvent.VK_SPACE;
   }
 
 /**
