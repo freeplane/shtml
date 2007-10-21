@@ -189,6 +189,34 @@ class DynamicResource {
     return menu;
   }
 
+  /**
+   * Create a menu for the app.  This reads the
+   * definition of the menu from the associated resource file.
+   *
+   * @param resources  the TextResources to get the menu definition from
+   * @param key  the key of the menu definition in the resource file
+   * @return the created menu
+   */
+  public JPopupMenu createPopupMenu(TextResources resources, String key) {
+    JPopupMenu menu = null;
+    String def = Util.getResourceString(resources, key);
+    if(def == null) {
+      def = "";
+    }
+    String[] itemKeys = Util.tokenize(def, " ");
+    menu = new JPopupMenu();
+    for (int i = 0; i < itemKeys.length; i++) {
+      if (itemKeys[i].equals(menuSeparatorKey)) {
+        menu.addSeparator();
+      }
+      else {
+        JMenuItem mi = createMenuItem(resources, itemKeys[i]);
+        menu.add(mi);
+      }
+    }
+    return menu;
+  }
+
   public JMenu getMenu(String cmd) {
     return (JMenu) menus.get(cmd);
   }

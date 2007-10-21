@@ -116,10 +116,10 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   }
   private SHTMLMenuBar menuBar;
     /** currently active DocumentPane */
-  protected DocumentPane documentPane;
+  private DocumentPane documentPane;
 
   /** currently active SHTMLEditorPane */
-  protected SHTMLEditorPane editorPane;
+  private SHTMLEditorPane editorPane;
 
   /** currently active SHTMLDocument */
   protected SHTMLDocument doc;
@@ -156,6 +156,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
 
   /** indicates, whether document activation shall be handled */
   boolean ignoreActivateDoc = false;
+  private JPopupMenu editorPopup;
 
   /**
    * action names
@@ -234,6 +235,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
     initActions();
     menuBar = dynRes.createMenubar(textResources, "menubar");
+    editorPopup = dynRes.createPopupMenu(textResources, "popup");
     setJMenuBar(menuBar);
     customizeFrame();
     initAppTempDir();
@@ -282,7 +284,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    */
   File getCurrentFile() {
     File file = null;
-    URL url = documentPane.getSource();
+    URL url = getDocumentPane().getSource();
     if(url != null) {
       file = new File(url.getFile());
     }
@@ -295,7 +297,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * @return the document name
    */
   String getCurrentDocName() {
-    return documentPane.getDocumentName();
+    return getDocumentPane().getDocumentName();
   }
 
     /**
@@ -303,12 +305,12 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
      * @return returns the document text as string.
      */
   public String getDocumentText() {
-        return documentPane.getDocumentText();
+        return getDocumentPane().getDocumentText();
     }
 
 
     Document getCurrentDocument() {
-        return documentPane.getDocument();
+        return getDocumentPane().getDocument();
     }
 
     /**
@@ -317,7 +319,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
      * @return  true, if changes need to be saved
      */
     public boolean needsSaving() {
-      return documentPane.needsSaving();
+      return getDocumentPane().needsSaving();
     }
     /**
      * Convenience method for clearing out the UndoManager
@@ -334,12 +336,12 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
      * Convenience method for setting the document text
      */
     public void setCurrentDocumentContent(String sText) {
-        documentPane.setDocumentText(sText);
+        getDocumentPane().setDocumentText(sText);
         purgeUndos();
     }
 
     public void setContentPanePreferredSize(Dimension prefSize){
-       documentPane.setContentPanePreferredSize(prefSize);
+       getDocumentPane().setContentPanePreferredSize(prefSize);
     }
     /**
      * @return returns the currently used ExtendedHTMLDocument Object
@@ -354,16 +356,16 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * @return the active DocumentPane
    */
   DocumentPane getCurrentDocumentPane() {
-    return documentPane;
+    return getDocumentPane();
   }
 
   /**
    * add a DocumentPaneListener from the currently active DocumentPane (if any)
    */
   void addDocumentPaneListener(DocumentPane.DocumentPaneListener listener) {
-    if(documentPane != null) {
+    if(getDocumentPane() != null) {
       //System.out.println("FrmMain.addDocumentPaneListener documentPane.source=" + documentPane.getSource());
-      documentPane.addDocumentPaneListener(listener);
+      getDocumentPane().addDocumentPaneListener(listener);
     }
     else {
       //System.out.println("FrmMain.addDocumentPaneListener documentPane is null, did not add");
@@ -374,8 +376,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
    * remove a DocumentPaneListener from the currently active DocumentPane (if any)
    */
   void removeDocumentPaneListener(DocumentPane.DocumentPaneListener listener) {
-    if(documentPane != null) {
-      documentPane.removeDocumentPaneListener(listener);
+    if(getDocumentPane() != null) {
+      getDocumentPane().removeDocumentPaneListener(listener);
     }
   }
 
@@ -901,7 +903,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     if(doc != null) {
       doc.removeUndoableEditListener(undoHandler);
     }
-    documentPane.removeAllListeners(); // for plug-in removal from any documentPane that is about to close
+    getDocumentPane().removeAllListeners(); // for plug-in removal from any documentPane that is about to close
     //System.out.println("FrmMain unregister document documentPane.name=" + documentPane.getDocumentName());
   }
 
@@ -930,7 +932,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
   }
 
   boolean isHtmlEditorActive() {
-      return documentPane != null && documentPane.getSelectedTab() == DocumentPane.VIEW_TAB_HTML;
+      return getDocumentPane() != null && getDocumentPane().getSelectedTab() == DocumentPane.VIEW_TAB_HTML;
   }
 
   /**
@@ -1271,11 +1273,18 @@ DocumentPane getDocumentPane() {
     return documentPane;
 }
 
+protected void setEditorPane(SHTMLEditorPane editorPane) {
+	if(editorPane != null){
+		editorPane.setPopup(editorPopup);
+	}
+	this.editorPane = editorPane;
+}
+
 /**
  * @return Returns the editorPane.
  */
 SHTMLEditorPane getEditor() {
-    return editorPane;
+    return (SHTMLEditorPane)getEditorPane();
 }
 
 public JEditorPane getEditorPane() {
@@ -1283,7 +1292,7 @@ public JEditorPane getEditorPane() {
 }
 
 public JEditorPane getSourceEditorPane() {
-   return (JEditorPane)documentPane.getHtmlEditor();
+   return (JEditorPane)getDocumentPane().getHtmlEditor();
 }
 
 /**
@@ -1332,8 +1341,8 @@ boolean close() {
  * @see javax.swing.JComponent#requestFocus()
  */
 public void requestFocus() {
-    if(documentPane != null){
-        documentPane.requestFocus();
+    if(getDocumentPane() != null){
+        getDocumentPane().requestFocus();
     }
 }
   /* ---------- font manipulation code end ------------------ */
@@ -1347,7 +1356,7 @@ public JMenuBar getMenuBar() {
 
 
 public void switchViews() {
-   documentPane.switchViews();
+   getDocumentPane().switchViews();
 }
 
 }

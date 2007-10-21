@@ -17,12 +17,12 @@ class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
      */
     protected void initDocumentPane() {
         super.initDocumentPane();
-        documentPane = new DocumentPane(null, 1);
-        editorPane = documentPane.getEditor();
-        doc = (SHTMLDocument) editorPane.getDocument();
+        setDocumentPane(new DocumentPane(null, 1));
+        setEditorPane(getDocumentPane().getEditor());
+        doc = (SHTMLDocument) getEditorPane().getDocument();
         registerDocument();
-        documentPane.getEditor().setCaretPosition(0);
-        splitPanel.addComponent(documentPane, SplitPanel.CENTER);
+        getDocumentPane().getEditor().setCaretPosition(0);
+        splitPanel.addComponent(getDocumentPane(), SplitPanel.CENTER);
     }
     protected void initActions() {
         super.initActions();

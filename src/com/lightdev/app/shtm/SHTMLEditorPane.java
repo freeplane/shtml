@@ -59,6 +59,7 @@ import javax.swing.Icon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.event.CaretEvent;
@@ -111,6 +112,7 @@ class SHTMLEditorPane extends JEditorPane  implements
 {
     private static final boolean OLD_JAVA_VERSION = System
     .getProperty("java.version").compareTo("1.5.0") < 0;
+	private JPopupMenu popup;
 
   /**
    * construct a new <code>SHTMLEditorPane</code>
@@ -118,7 +120,7 @@ class SHTMLEditorPane extends JEditorPane  implements
   public SHTMLEditorPane() {
     super();
     setCaretColor(Color.black);
-    setNavigationFilter(new MyNavigationFilter());
+    
     /**
      * set the cursor by adding
      * a MouseListener that allows to display a text cursor when the
@@ -139,6 +141,21 @@ class SHTMLEditorPane extends JEditorPane  implements
           gp.setCursor(defaultCursor);
           gp.setVisible(false);
         }
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        private void maybeShowPopup(MouseEvent e) {
+            if (popup != null && e.isPopupTrigger()) {
+                popup.show(e.getComponent(),
+                           e.getX(), e.getY());
+            }
+        }
+
       }
     );
 
@@ -2481,6 +2498,14 @@ public void goNextCell(Element cell) {
           
       });
   }
+
+public JPopupMenu getPopup() {
+	return popup;
+}
+
+public void setPopup(JPopupMenu popup) {
+	this.popup = popup;
+}
 
 /* (non-Javadoc)
  * @see javax.swing.JComponent#getTransferHandler()
