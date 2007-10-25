@@ -733,10 +733,10 @@ class DeleteNextCharAction extends AbstractAction{
                   }
               }
               removeStart = next;
+              removeCount = 1;
               int j = 0;
               Element li = null;
               if(next.getStartOffset() < start){
-                  removeCount++;
                   i++;
                   writer.writeStartTag(next);
                   for(;;j++){
@@ -750,6 +750,9 @@ class DeleteNextCharAction extends AbstractAction{
                   writer.writeStartTag(listTag,a);
                   for(;j < next.getElementCount();j++){
                       li = next.getElement(j);
+                      if(li.getStartOffset() >= end){
+                          break;
+                      }
                       writer.write(li);
                   }
               }
@@ -763,7 +766,9 @@ class DeleteNextCharAction extends AbstractAction{
                       if(next.getEndOffset() > end){
                           break;
                       }
-                      removeCount++;
+                      if(removeStart != next&& next.getStartOffset() < end){
+                    	  removeCount++;
+                      }
                       if(isListRootElement(next)){
                           writer.writeChildElements(next);
                       }
@@ -775,19 +780,24 @@ class DeleteNextCharAction extends AbstractAction{
                   }
               }
               if(i < parent.getElementCount() && next.getStartOffset() < end){
-                  removeCount++;
-                  for(j = 0;;j++){
-                      li = next.getElement(j);
+            	  if(removeStart != next){
+            		  removeCount++;
+            	  }
+            	  for(; j < next.getElementCount();j++){
+            		  li = next.getElement(j);
                       if(li.getStartOffset() >= end){
                           break;
                       }
                       writer.write(li);
                   }
                   writer.writeEndTag(listTag);
-                  writer.writeStartTag(next);
-                  for(;j < next.getElementCount();j++){
-                      li = next.getElement(j);
-                      writer.write(li);
+                  if(j < next.getElementCount()){
+                      writer.writeStartTag(next);
+                      for(;j < next.getElementCount();j++){
+                          li = next.getElement(j);
+                          writer.write(li);
+                      }
+                      writer.writeEndTag(next);
                   }
               }
               else{
