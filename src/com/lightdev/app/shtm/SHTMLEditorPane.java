@@ -622,11 +622,11 @@ class DeleteNextCharAction extends AbstractAction{
                   }
               }
               removeStart = next;
+              removeCount = 1;
               int j = 0;
               Element li = null;
               if(next.getStartOffset() < start){
                   writer.writeStartTag(next);
-                  removeCount++;
                   i++;
                   for(;;j++){
                       li = next.getElement(j);
@@ -652,7 +652,7 @@ class DeleteNextCharAction extends AbstractAction{
                       if(next.getEndOffset() > end){
                           break;
                       }
-                      if(next.getStartOffset() < end){
+                      if(next != removeStart && next.getStartOffset() < end){
                           removeCount++;
                       }
                       if(isListRootElement(next)){
@@ -671,7 +671,9 @@ class DeleteNextCharAction extends AbstractAction{
               }
 
               if(i < parent.getElementCount() && next.getStartOffset() < end){ 
-                  removeCount++;
+            	  if(next != removeStart){
+            		  removeCount++;
+            	  }
                   for(; j < next.getElementCount();j++){
                       li = next.getElement(j);
                       if(li.getStartOffset() >= end){
