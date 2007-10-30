@@ -1241,7 +1241,7 @@ class DeleteNextCharAction extends AbstractAction{
     SHTMLDocument doc = (SHTMLDocument) getDocument();
     Element table = cell.getParentElement().getParentElement();
     Element srcCell = table.getElement(0).getElement(cIndex);
-    SimpleAttributeSet set = new SimpleAttributeSet(srcCell.getAttributes());
+    SimpleAttributeSet set = new SimpleAttributeSet();
     Object attr = set.getAttribute(CSS.Attribute.WIDTH);
     if(attr != null) {
       //LengthValue lv = new LengthValue(attr);
@@ -1272,10 +1272,10 @@ class DeleteNextCharAction extends AbstractAction{
       doc.addAttributes(srcCell, set);
       try {
         if(before) {
-          doc.insertBeforeStart(srcCell, getTableCellHTML(srcCell));
+          doc.insertBeforeStart(srcCell, createTableCellHTML(srcCell));
         }
         else {
-          doc.insertAfterEnd(srcCell, getTableCellHTML(srcCell));
+          doc.insertAfterEnd(srcCell, createTableCellHTML(srcCell));
         }
       }
       catch(IOException ioe) {
@@ -1359,26 +1359,35 @@ class DeleteNextCharAction extends AbstractAction{
    * @return an HTML string representing the new table row
    * (without cell contents)
    */
-  public String getTableRowHTML(Element srcRow) {
-    String tr = HTML.Tag.TR.toString();
-    String td = HTML.Tag.TD.toString();
-    String p = HTML.Tag.P.toString();
+  private String getTableRowHTML(Element srcRow) {
     StringWriter sw = new StringWriter();
     SHTMLWriter w = new SHTMLWriter(sw, (SHTMLDocument)getDocument());
+    String tr = HTML.Tag.TR.toString();
     try {
-      w.writeStartTag(tr, srcRow.getAttributes());
-      for(int i = 0; i < srcRow.getElementCount(); i++) {
-        w.writeStartTag(td, srcRow.getElement(i).getAttributes());
-        w.writeStartTag(p, srcRow.getElement(i).getElement(0).getAttributes());
-        w.writeEndTag(p);
-        w.writeEndTag(td);
-      }
+    	w.writeStartTag(tr, srcRow.getAttributes());
+    	for(int i = 0; i < srcRow.getElementCount(); i++) {
+    		final Element cell = srcRow.getElement(i);
+    		createTableCellHTML(w, cell);
+    	}
       w.writeEndTag(tr);
     }
     catch(IOException ex) {
       Util.errMsg(null, ex.getMessage(), ex);
     }
     return sw.getBuffer().toString();
+  }
+
+  private void createTableCellHTML(SHTMLWriter w, final Element cell) throws IOException {
+	  {
+		  w.writeStartTag(cell.getName(), cell.getAttributes());
+		  final Element paragraph = cell.getElement(0);
+		  final String parName = paragraph.getName();
+		  if(! parName.equalsIgnoreCase(HTML.Tag.IMPLIED.toString())){
+			  w.writeStartTag(parName, paragraph.getAttributes());
+			  w.writeEndTag(parName);
+		  }
+		  w.writeEndTag(cell.getName());
+	  }
   }
 
   /**
@@ -1392,20 +1401,15 @@ class DeleteNextCharAction extends AbstractAction{
    *
    * @return the HTML string for the given cell (without cell contents)
    */
-  public String getTableCellHTML(Element srcCell)
+  private String createTableCellHTML(Element srcCell)
   {
     StringWriter sw = new StringWriter();
     SHTMLWriter w = new SHTMLWriter(sw, (SHTMLDocument)getDocument());
-    String td = HTML.Tag.TD.toString();
-    String p = HTML.Tag.P.toString();
     try {
-      w.writeStartTag(td, srcCell.getAttributes());
-      w.writeStartTag(p, null);
-      w.writeEndTag(p);
-      w.writeEndTag(td);
+    	createTableCellHTML(w, srcCell);
     }
     catch(IOException e) {
-      Util.errMsg(null, e.getMessage(), e);
+    	Util.errMsg(null, e.getMessage(), e);
     }
     //System.out.println("getTableCellHTML buffer='" + sw.getBuffer().toString() + "'");
     return sw.getBuffer().toString();
@@ -1924,8 +1928,15 @@ public void goNextCell(Element cell) {
    *    the caret is not inside a table cell
    */
   public Element getCurTableCell() {
-    return Util.findElementUp(HTML.Tag.TD.toString(),
-      ((SHTMLDocument)getDocument()).getCharacterElement(getSelectionStart()));
+    final Element element = ((SHTMLDocument)getDocument()).getCharacterElement(getSelectionStart());
+	final String td = HTML.Tag.TD.toString();
+	final String th = HTML.Tag.TH.toString();
+	Element elem = element;
+	String elementName = elem.getName();
+	while((elem != null) && ! ((elementName = elem.getName()).equalsIgnoreCase(td) || elementName.equalsIgnoreCase(th))) {
+	  elem = elem.getParentElement();
+	}
+	return elem;
   }
 
   /* ---------- table cell navigation end --------------*/
