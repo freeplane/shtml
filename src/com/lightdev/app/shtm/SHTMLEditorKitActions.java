@@ -2186,8 +2186,15 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().selectAll();
-      this.panel.updateActions();
+    	if(this.panel.isHtmlEditorActive())
+    	{
+    		this.panel.getDocumentPane().getHtmlEditor().selectAll();
+    	}
+    	else
+    	{
+    		this.panel.getEditor().selectAll();
+    		this.panel.updateActions();
+    	}
     }
 
     public void update() {

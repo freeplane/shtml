@@ -120,7 +120,7 @@ class SHTMLEditorPane extends JEditorPane  implements
   public SHTMLEditorPane() {
     super();
     setCaretColor(Color.black);
-    
+    setNavigationFilter(new MyNavigationFilter());
     /**
      * set the cursor by adding
      * a MouseListener that allows to display a text cursor when the
