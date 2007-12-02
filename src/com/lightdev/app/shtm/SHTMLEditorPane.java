@@ -817,7 +817,9 @@ class DeleteNextCharAction extends AbstractAction{
               int count = parent.getElementCount();
               for(int i = 0; i < count && !listOn; i++) {
                   Element elem = parent.getElement(i);
-                  if(! isValidElement(elem)){
+                  if (elem.getStartOffset() >= start
+							&& elem.getEndOffset() <= end
+							&& !isValidElement(elem)) {
                       throw new SwitchListException();
                   }
                   int eStart = elem.getStartOffset();
