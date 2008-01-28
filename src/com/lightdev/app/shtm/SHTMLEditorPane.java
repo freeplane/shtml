@@ -194,7 +194,7 @@ class SHTMLEditorPane extends JEditorPane  implements
     myActionMap.put(insertLineBreakAction, new InsertLineBreakAction());
     myInputMap.put(lineBreak, insertLineBreakAction);
 
-    KeyStroke backspace = KeyStroke.getKeyStroke('\b');
+    KeyStroke backspace = KeyStroke.getKeyStroke('\b', 0);
     myActionMap.put(deletePrevCharAction, new DeletePrevCharAction());
     myInputMap.put(backspace, deletePrevCharAction);
 
@@ -350,7 +350,7 @@ class DeletePrevCharAction extends AbstractAction{
                 }
             }
         }
-        KeyStroke backb = KeyStroke.getKeyStroke('\b');
+        KeyStroke backb = KeyStroke.getKeyStroke('\b', 0);
         Object key = getInputMap().getParent().get(backb);
         if(key != null) {
           getActionMap().getParent().get(key).actionPerformed(e);
