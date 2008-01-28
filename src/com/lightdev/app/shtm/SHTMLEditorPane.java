@@ -1791,7 +1791,10 @@ class DeleteNextCharAction extends AbstractAction{
                         SHTMLWriter htmlStartWriter = new SHTMLWriter(writer, doc, so, caretPosition-so);
                         htmlStartWriter.writeChildElements(paragraphElement);
                     }
-                    writer.write("\n<br>\n");
+                    // work around: <br> is written twice by java
+                    if(! doc.getCharacterElement(caretPosition).getName().equalsIgnoreCase(HTML.Tag.BR.toString())){
+                    	writer.write("<br>");
+                    }	
                     if(caretPosition < eo - 1){
                         SHTMLWriter htmlEndWriter = new SHTMLWriter(writer, doc, caretPosition, eo - caretPosition);
                         htmlEndWriter.writeChildElements(paragraphElement);
