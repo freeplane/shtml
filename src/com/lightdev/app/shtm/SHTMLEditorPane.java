@@ -2334,8 +2334,10 @@ public void goNextCell(Element cell) {
           doc.startCompoundEdit();
           // clear all character attributes in selection
           SimpleAttributeSet sasText = null;
-          for(int i = p0; i < p1; i++) {
-              sasText = new SimpleAttributeSet(doc.getCharacterElement(i).getAttributes().copyAttributes());
+          for(int i = p0; i < p1; ) {
+              final Element characterElement = doc.getCharacterElement(i);
+			sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
+			final int endOffset = characterElement.getEndOffset();
               Enumeration attribEntries1 = sasText.getAttributeNames();
               while(attribEntries1.hasMoreElements()) {
                   Object entryKey   = attribEntries1.nextElement();
@@ -2343,10 +2345,12 @@ public void goNextCell(Element cell) {
                       sasText.removeAttribute(entryKey);
                   }
               }
+        	  final int last = p1 < endOffset ? p1 : endOffset;
               try {
-                  doc.setCharacterAttributes(i, 1, sasText, true);
+                  doc.setCharacterAttributes(i, last - i, sasText, true);
               } catch (Exception e) {
               }
+              i = last;
           }
           doc.endCompoundEdit();
       }
