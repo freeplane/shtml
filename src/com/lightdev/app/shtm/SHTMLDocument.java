@@ -704,57 +704,6 @@ public void startCompoundEdit() {
   }
 
   /* -------- custom reader implementation end -------- */
-
-  /* (non-Javadoc)
-   * @see javax.swing.text.AbstractDocument#remove(int, int)
-   */
-  public void remove(int offs, int len) throws BadLocationException {
-      
-      final Element elem = getLastGroupingElement(offs, len);
-      if(elem == null){
-          super.remove(offs, len);
-          return;
-      }
-      try {
-        startCompoundEdit();
-        len = elem.getStartOffset() - offs; 
-        setOuterHTML(elem, "<p>\n</p>");
-        super.remove(offs, len);
-    } catch (BadLocationException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    } finally{
-        endCompoundEdit();
-    }
-      
-  }
-
-  /**
-   * Gets the upper <ul> or <ol> element at the offset <code>pos</code>.
-   * A paragraph consists of at least one child Element, which is usually
-   * a leaf.
-   *
-   * @param pos the starting offset >= 0
-   * @return the element
-   */
-  private Element getLastGroupingElement(int offs, int len) {
-      int end = offs+len;
-      Element e = getParagraphElement(end);  
-      Element result = null;
-      while(! e.getName().equalsIgnoreCase(HTML.Tag.BODY.toString())
-              && e.getStartOffset() >= offs
-              && e.getEndOffset() <= end + 1){
-          if(e.getName().equalsIgnoreCase(HTML.Tag.TABLE.toString())
-                  || e.getName().equalsIgnoreCase(HTML.Tag.UL.toString())
-                  || e.getName().equalsIgnoreCase(HTML.Tag.OL.toString())
-          )
-          result = e;
-          e = e.getParentElement();
-      }
-      return result;
-  }
-
   public Element getParagraphElement(int pos) {
       return getParagraphElement(pos, inSetParagraphAttributes);
   }
