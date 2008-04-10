@@ -52,6 +52,8 @@ public abstract class SHTMLPanel extends JPanel {
     abstract public int getCaretPosition();
 
     public abstract JMenuBar getMenuBar();
+    
+    public abstract JEditorPane getMostRecentFocusOwner();
 
    /**
     * Switches between the rich text view and the source view, given

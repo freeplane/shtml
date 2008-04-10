@@ -779,6 +779,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
       sourceEditorPane.setText(sw.toString());
       sourceEditorPane.getDocument().addDocumentListener(this);
       sourceEditorPane.addCaretListener(sourceEditorPane);
+      sourceEditorPane.requestFocus();
       setHtmlChanged(false);
     }
     catch(Exception ex) {
@@ -797,6 +798,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     }
     editor.setCaretPosition(0);
     editor.getDocument().addDocumentListener(this);
+    editor.requestFocus();
   }
 
   /**
@@ -841,7 +843,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
           break;
       }
     }
-    requestFocus();
     SHTMLPanelImpl.getOwnerSHTMLPanel(this).updateActions();
   }
 
@@ -961,19 +962,14 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     dpListeners.clear();
   }
 
-/* (non-Javadoc)
- * @see javax.swing.JComponent#requestFocus()
- */
-public void requestFocus() {
+  public JEditorPane getMostRecentFocusOwner() {
     switch(getSelectedTab()) {
     case VIEW_TAB_LAYOUT:
-      editor.requestFocus();
-      break;
+      return editor;
     case VIEW_TAB_HTML:
-        sourceEditorPane.requestFocus();
-      break;
+        return sourceEditorPane;
   }
-    
+    return null;    
 }
 
 public void setContentPanePreferredSize(Dimension prefSize) {

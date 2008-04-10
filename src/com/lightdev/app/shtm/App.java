@@ -62,6 +62,7 @@ public class App {
     frame.setLocation((screenSize.width - frameSize.width) / 2,
                             (screenSize.height - frameSize.height) / 2);
     frame.setVisible(true); // show the window
+    frame.getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
   }
   //Main method
   public static void main(String[] args) {

@@ -94,4 +94,8 @@ class FrmMain extends JFrame {
       }
     }
 
+	protected SHTMLPanel getSHTMLPanel() {
+		return mainPane;
+	}
+
 }

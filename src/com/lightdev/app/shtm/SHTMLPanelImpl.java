@@ -1340,12 +1340,14 @@ boolean close() {
 /* (non-Javadoc)
  * @see javax.swing.JComponent#requestFocus()
  */
-public void requestFocus() {
+public JEditorPane getMostRecentFocusOwner() {
     if(getDocumentPane() != null){
-        getDocumentPane().requestFocus();
+        return getDocumentPane().getMostRecentFocusOwner();
     }
+    return null;
 }
-  /* ---------- font manipulation code end ------------------ */
+
+/* ---------- font manipulation code end ------------------ */
 public int getCaretPosition() {
     return getEditor().getCaretPosition();
 }
