@@ -1012,7 +1012,7 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
       putValue(Action.NAME, SHTMLPanelImpl.clearFormatAction);
       putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_B, KeyEvent.CTRL_MASK));
+              KeyEvent.VK_R, KeyEvent.CTRL_MASK));
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
     }
     /**
