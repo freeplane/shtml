@@ -50,11 +50,11 @@ import javax.swing.JFrame;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class FrmMain extends JFrame {
     public static final String APP_NAME = "SimplyHTML";
-    public static final String VERSION = "0.12.2";
+    public static final String VERSION = "0.12.3";
     /** static reference to this instance of class FrmMain */
     public static Frame mainFrame;
     private SHTMLPanelImpl mainPane;
@@ -70,10 +70,10 @@ class FrmMain extends JFrame {
             EventQueue.invokeAndWait(new Runnable(){
                 public void run() {
                     mainPane = new SHTMLPanelMultipleDocImpl();
-//                    mainPane = new SHTMLPanelSingleDocImpl();                    
+//                    mainPane = new SHTMLPanelSingleDocImpl();
                     getContentPane().add(mainPane);
                 }
-                
+
             });
         } catch (InterruptedException e) {
             e.printStackTrace();
