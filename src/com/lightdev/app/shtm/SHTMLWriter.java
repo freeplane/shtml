@@ -36,10 +36,11 @@ import java.util.prefs.Preferences;
 
 class SHTMLWriter extends HTMLWriter {
     private Element elem;
+    private boolean replaceEntities;
+    private boolean inTextArea;
 
-    final private MutableAttributeSet oConvAttr  = new SimpleAttributeSet();
-
-    final private MutableAttributeSet convAttr  = new SimpleAttributeSet();
+	final private MutableAttributeSet convAttr  = new SimpleAttributeSet();
+	private boolean inPre;
     
     public SHTMLWriter(Writer w, HTMLDocument doc, int pos, int len) {
         super(w, doc, pos, len);
@@ -55,7 +56,72 @@ class SHTMLWriter extends HTMLWriter {
         return new ElementIterator(elem);
     }
 
-    /**
+    protected void output(char[] chars, int start, int length)
+			throws IOException {
+		if(replaceEntities){
+			int count = 0;
+			while(length > count && chars[start+count]==' '){
+				getWriter().write("&nbsp;");
+				count++;
+		}
+			super.output(chars, start+count, length - count);
+		}
+		else{
+			super.output(chars, start, length);
+		}
+	}
+
+	protected void startTag(Element elem) throws IOException,
+			BadLocationException {
+		if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
+		    inPre = true;
+		}
+		super.startTag(elem);
+	}
+
+	protected void endTag(Element elem) throws IOException {
+		if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
+		    inPre = false;
+		}
+		super.endTag(elem);
+	}
+
+	protected void text(Element elem) throws BadLocationException, IOException {
+		replaceEntities = ! inPre;
+		super.text(elem);
+		replaceEntities = false;
+	}
+
+	protected void textAreaContent(AttributeSet attr)
+	throws BadLocationException, IOException {
+		inTextArea = true;
+		super.textAreaContent(attr);
+		inTextArea = false;
+	}
+
+	public void write() throws IOException, BadLocationException {
+		replaceEntities = false;
+		super.write();
+	}
+
+	protected void writeLineSeparator() throws IOException {
+		boolean pre = replaceEntities;
+		replaceEntities = false;
+		super.writeLineSeparator();
+		replaceEntities = pre;
+	}
+
+	protected void indent() throws IOException {
+		if(inTextArea){
+			return;
+		}
+		boolean pre = replaceEntities;
+		replaceEntities = false;
+		super.indent();
+		replaceEntities = pre;
+	}
+
+	/**
      * Iterates over the
      * Element tree and controls the writing out of
      * all the tags and its attributes.
