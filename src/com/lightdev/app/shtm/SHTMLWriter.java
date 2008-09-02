@@ -59,16 +59,14 @@ class SHTMLWriter extends HTMLWriter {
     protected void output(char[] chars, int start, int length)
 			throws IOException {
 		if(replaceEntities){
-			int count = 0;
-			while(length > count && chars[start+count]==' '){
-				getWriter().write("&nbsp;");
-				count++;
+			for(int i = 0; i < length; i++){
+				final int j = start + i;
+				if(chars[j] == ' '){
+					chars[j] = '\u00A0';
+				}
+			}
 		}
-			super.output(chars, start+count, length - count);
-		}
-		else{
-			super.output(chars, start, length);
-		}
+		super.output(chars, start, length);
 	}
 
 	protected void startTag(Element elem) throws IOException,
