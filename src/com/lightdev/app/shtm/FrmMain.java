@@ -24,11 +24,9 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 /**
@@ -56,22 +54,38 @@ class FrmMain extends JFrame {
     public static final String APP_NAME = "SimplyHTML";
     public static final String VERSION = "0.12.3";
     /** static reference to this instance of class FrmMain */
-    public static Frame mainFrame;
-    private SHTMLPanelImpl mainPane;
+     private SHTMLPanelImpl mainPane;
 
-    public FrmMain(){
-        mainFrame = this;
+    private FrmMain(){
         SHTMLPanelImpl.setTextResources(null);
         setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanelImpl.getResources(),"appIcon")));
         setTitle(APP_NAME);
+    }
 
-        SplashScreen.showInstance();
+	private void start() {
+		SplashScreen.showInstance();
         try {
             EventQueue.invokeAndWait(new Runnable(){
                 public void run() {
                     mainPane = new SHTMLPanelMultipleDocImpl();
 //                    mainPane = new SHTMLPanelSingleDocImpl();
                     getContentPane().add(mainPane);
+                    validate();
+
+                    //Center the window
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    pack();
+                    Dimension frameSize = getSize();
+                    if (frameSize.height > screenSize.height) {
+                      frameSize.height = screenSize.height;
+                    }
+                    if (frameSize.width > screenSize.width) {
+                      frameSize.width = screenSize.width;
+                    }
+                    setLocation((screenSize.width - frameSize.width) / 2,
+                                            (screenSize.height - frameSize.height) / 2);
+                    setVisible(true); // show the window
+                    getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
                 }
 
             });
@@ -81,7 +95,7 @@ class FrmMain extends JFrame {
             e.printStackTrace();
         }
         SplashScreen.hideInstance();
-    }
+	}
 
     /**
      * catch requests to close the application's main frame to
@@ -96,6 +110,11 @@ class FrmMain extends JFrame {
 
 	protected SHTMLPanel getSHTMLPanel() {
 		return mainPane;
+	}
+
+	static void run() {
+		final FrmMain frmMain = new FrmMain();
+		frmMain.start();
 	}
 
 }

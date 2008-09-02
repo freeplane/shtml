@@ -44,26 +44,6 @@ import javax.swing.ImageIcon;
 
 public class App {
 
-  //Construct the application
-  public App() {
-      FrmMain frame = new FrmMain(); // create an instance of the app's main window
-    frame.validate();
-
-    //Center the window
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    frame.pack();
-    Dimension frameSize = frame.getSize();
-    if (frameSize.height > screenSize.height) {
-      frameSize.height = screenSize.height;
-    }
-    if (frameSize.width > screenSize.width) {
-      frameSize.width = screenSize.width;
-    }
-    frame.setLocation((screenSize.width - frameSize.width) / 2,
-                            (screenSize.height - frameSize.height) / 2);
-    frame.setVisible(true); // show the window
-    frame.getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
-  }
   //Main method
   public static void main(String[] args) {
     try {
@@ -88,6 +68,6 @@ public class App {
     catch(Exception e) {
       e.printStackTrace();
     }
-    new App();
+    FrmMain.run(); // create an instance of the app's main window
   }
 }

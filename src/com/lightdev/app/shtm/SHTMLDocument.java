@@ -655,7 +655,12 @@ public void startCompoundEdit() {
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
      */
-    public void handleText(char[] data, int pos) {
+    public void handleText(char[] data, int pos) {  
+    	for(int i = 0; i < data.length; i++){
+    		if(data[i] == '\u00A0'){
+    			data[i] = ' ';
+    		}
+     	}
         if(inBody && ! paragraphCreated && paragraphLevel == 0){
             insertParagraphStartTag(pos);
         }
