@@ -179,6 +179,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static  final String fontBoldAction = "fontBold";
   public static  final String fontItalicAction = "fontItalic";
   public static  final String fontUnderlineAction = "fontUnderline";
+  public static  final String fontColorAction = "fontColor";
   public static  final String helpTopicsAction = "helpTopics";
   public static  final String aboutAction = "about";
   public static  final String gcAction = "gc";
@@ -690,6 +691,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     dynRes.addAction(fontBoldAction, new SHTMLEditorKitActions.BoldAction(this));
     dynRes.addAction(fontItalicAction, new SHTMLEditorKitActions.ItalicAction(this));
     dynRes.addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
+    dynRes.addAction(fontColorAction, new SHTMLEditorKitActions.FontColorAction(this));
     dynRes.addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ToggleAction(this, paraAlignLeftAction,
               CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_LEFT));
     dynRes.addAction(paraAlignCenterAction, new SHTMLEditorKitActions.ToggleAction(this, paraAlignCenterAction,

@@ -31,7 +31,6 @@ import java.util.Enumeration;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.StyleSheet;
 
 /**
  * a panel to display and change a color setting
@@ -64,7 +63,9 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
   /** indicates if setValue is called initially */
   private int setValCount = 0;
 
-  /**
+  private final JColorChooser colorChooserPane = new JColorChooser();
+
+    /**
    * construct a color panel
    *
    * @param title  the title of the color panel
@@ -143,17 +144,37 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
    * is selected from the color chooser
    */
   public void actionPerformed(ActionEvent e) {
-    JColorChooser cc = new JColorChooser();
-    Color color = cc.showDialog(this,
-				"Select Color",
-				colorDisplay.getBackground());
-    if(color != null) {
+      Color color = showColorChooserDialog();
+      if(color != null) {
         setValCount++;
-      setColor(color);
-    }
+        setColor(color);
+      }
   }
 
-  /**
+    private Color showColorChooserDialog() {
+        // the listener for OK button of the Color Choose Dialog:
+        class ColorTracker implements ActionListener {
+            JColorChooser chooser;
+            Color color;
+
+            public ColorTracker(JColorChooser c) {
+                chooser = c;
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                color = chooser.getColor();
+            }
+        }
+        this.colorChooserPane.setColor(colorDisplay.getBackground()); // setting up the current text color
+        ColorTracker ok = new ColorTracker(this.colorChooserPane);
+        JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooserPane, ok, null);
+        dialog.show(); // blocks until user brings dialog down...
+        dialog.dispose();
+
+        return ok.color;
+    }
+
+    /**
    * set the value of this <code>AttributeComponent</code>
    *
    * @param a  the set of attributes possibly having an

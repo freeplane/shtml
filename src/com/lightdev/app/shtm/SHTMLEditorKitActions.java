@@ -19,10 +19,7 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Frame;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -33,14 +30,7 @@ import java.net.URL;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Element;
@@ -823,6 +813,43 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     }
 
   }
+
+    static class FontColorAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+        private ColorPanel hiddenColorPanel;
+
+        public FontColorAction(SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            putValue(Action.NAME, SHTMLPanelImpl.fontColorAction);
+            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+            getProperties();
+            hiddenColorPanel = null;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            SHTMLEditorPane editorPane = this.panel.getEditor();
+            if(editorPane != null) {
+                if(hiddenColorPanel == null){
+                	hiddenColorPanel = new ColorPanel("Select Color", Color.BLACK, CSS.Attribute.COLOR);
+                }
+                hiddenColorPanel.setValue(this.panel.getMaxAttributes(editorPane, null));
+                hiddenColorPanel.actionPerformed(null); // show the color chooser
+                editorPane.applyAttributes(hiddenColorPanel.getValue(), false); // apply the color setting to the editor
+            }
+            this.panel.updateActions();
+        }
+
+        public void getProperties() {
+            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontColorAction);
+        }
+        public void update() {
+        }
+    }
+
 
 /**
    * action to edit anchors inside a document
