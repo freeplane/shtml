@@ -68,9 +68,9 @@ class SHTMLWriter extends HTMLWriter {
 					chars[i] = '\u00A0';
 				}
 			}
-			if(chars[last] == ' '){
-				chars[last] = '\u00A0';
-			}
+//			if(chars[last] == ' '){
+//				chars[last] = '\u00A0';
+//			}
 		}
 		super.output(chars, start, length);
 	}
