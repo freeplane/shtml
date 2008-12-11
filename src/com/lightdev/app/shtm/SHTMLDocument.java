@@ -176,7 +176,12 @@ public class SHTMLDocument extends HTMLDocument {
     }
   }
 
-    /* (non-Javadoc)
+    public void insertString(int offs, String str, AttributeSet a)
+			throws BadLocationException {
+		super.insertString(offs, str.replaceAll("\t", "        "), a);
+	}
+
+/* (non-Javadoc)
  * @see javax.swing.text.html.HTMLDocument#setOuterHTML(javax.swing.text.Element, java.lang.String)
  */
 public void setOuterHTML(Element elem, String htmlText) throws BadLocationException, IOException {

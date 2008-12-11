@@ -59,11 +59,17 @@ class SHTMLWriter extends HTMLWriter {
     protected void output(char[] chars, int start, int length)
 			throws IOException {
 		if(replaceEntities){
-			for(int i = 0; i < length; i++){
-				final int j = start + i;
-				if(chars[j] == ' '){
-					chars[j] = '\u00A0';
+			if(chars[start] == ' '){
+				chars[start] = '\u00A0';
+			}
+			final int last = start + length-1;
+			for(int i = start + 1; i < last; i++){
+				if(chars[i] == ' ' && (chars[i-1] == '\u00A0' || chars[i+1] == ' ' ) ){
+					chars[i] = '\u00A0';
 				}
+			}
+			if(chars[last] == ' '){
+				chars[last] = '\u00A0';
 			}
 		}
 		super.output(chars, start, length);

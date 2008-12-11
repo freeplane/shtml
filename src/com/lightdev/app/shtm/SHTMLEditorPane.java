@@ -2294,7 +2294,7 @@ public void goNextCell(Element cell) {
         /* (non-Javadoc)
          * @see javax.swing.TransferHandler#importData(javax.swing.JComponent, java.awt.datatransfer.Transferable)
          */
-        public boolean importData(JComponent comp, Transferable t) {
+        public boolean importData(JComponent comp, final Transferable t) {
             SHTMLDocument doc = (SHTMLDocument)getDocument();
             doc.startCompoundEdit();
             boolean result = false;
@@ -2305,7 +2305,7 @@ public void goNextCell(Element cell) {
                     result = true;
                 }
                 else{
-                    result = defaultImportData(comp, t);
+                	result = importExternalData(comp, t);
                 }
             }
             catch (Exception e) {
@@ -2314,6 +2314,56 @@ public void goNextCell(Element cell) {
             doc.endCompoundEdit();
             return result;
         }
+
+		private boolean importExternalData(JComponent comp, final Transferable t)
+				throws ClassNotFoundException, UnsupportedFlavorException,
+				IOException {
+			// workaround for java decoding bug 
+			// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6740877
+			final DataFlavor htmlFlavor = new DataFlavor("text/html; class=java.lang.String");
+			if(t.isDataFlavorSupported(htmlFlavor)){
+				final String s = (String)t.getTransferData(htmlFlavor);
+				if(s.charAt(0) ==  65533){
+					return  defaultImportData(comp, new Transferable(){
+
+						public Object getTransferData(DataFlavor flavor)
+								throws UnsupportedFlavorException, IOException {
+							if(isValid(flavor)) return  t.getTransferData(flavor);
+							throw new UnsupportedFlavorException(flavor);
+						}
+
+						public DataFlavor[] getTransferDataFlavors() {
+							final DataFlavor[] transferDataFlavors = t.getTransferDataFlavors();
+							int counter = 0;
+							for(int i = 0; i < transferDataFlavors.length; i++){
+								if(isValid(transferDataFlavors[i])){
+									counter++;
+								}
+							}
+							final DataFlavor[] validDataFlavors = new DataFlavor[counter];
+							int j = 0;
+							for(int i = 0; i < transferDataFlavors.length; i++){
+								final DataFlavor flavor = transferDataFlavors[i];
+								if(isValid(flavor)){
+									validDataFlavors[j++] = flavor;
+								}
+							}
+							return validDataFlavors;
+						}
+
+						public boolean isDataFlavorSupported(DataFlavor flavor) {
+							return isValid(flavor) && t.isDataFlavorSupported(flavor);
+						}
+
+						private boolean isValid(DataFlavor flavor) {
+							return !flavor.isMimeTypeEqual("text/html");
+						}
+						
+					});
+				}
+			}
+			return defaultImportData(comp, t);
+		}
 
         private boolean defaultImportData(JComponent comp, Transferable t) {
             return defaultTransferHandler.importData(comp, t);
