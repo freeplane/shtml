@@ -1,13 +1,14 @@
 <project name="SimplyHTML" default="dist" basedir=".">
+	<property name="version" value="0_12_5" />
 	<property name="src" value="." />
+	<property name="help" value="${src}/com/lightdev/app/shtm/help" />
 	<property name="lib" value="../lib" />
-	<property name="doc" value="../doc" />
 	<property name="src_base_for_post" value="../" />
 	<property name="build" value="../bin/classes" />
 	<property name="dist" value="../dist" />
 	<property name="dist.api" value="${dist}/api" />
 	<property name="dist.src" value="${dist}/src" />
-	<property name="dist.doc" value="${dist}/doc" />
+	<property name="dist.help" value="${dist}/help" />
 	<property name="dist.lib" value="${dist}/lib" />
 	<property name="SimplyHTML.jar" value="${dist.lib}/SimplyHTML.jar"/>
 	<property name="SimplyHTMLHelp.jar" value="${dist.lib}/SimplyHTMLHelp.jar"/>
@@ -34,7 +35,7 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="clean,jar,javadoc,help, dist-src">
+	<target name="dist" depends="clean,jar,help, dist-src">
 	</target>
 	<target name="dist-src">
 		<mkdir dir="${dist.src}" />
@@ -57,17 +58,20 @@
 				<include name="**/*.jar"/>
 				<include name="**/SCHEMA"/>
 				<include name="**/TMAP"/>
-			</fileset>	
+			</fileset>
 		</copy>
+		<tar destfile="${dist}/SimplyHTML_src_${version}.tar.gz" basedir="${dist.src}" compression="gzip"/>
+
 	</target>
 
 	<target name="help">
-		<mkdir dir="${dist.doc}" />
-		<copy todir="${dist.doc}">
-			<fileset dir="${doc}">
-				<include name="index.htm"/>
-			</fileset>	
+		<mkdir dir="${dist.help}" />
+		<copy todir="${dist.help}">
+			<fileset dir="${help}">
+				<include name="**/*"/>
+			</fileset>
 		</copy>
+		<zip destfile="${dist}/SimplyHTML_manual_${version}.zip"  basedir="${dist.help}" />
 	</target>
 	<target name="jar" depends="build">
 		<mkdir dir="${dist.lib}" />
@@ -76,8 +80,8 @@
 			update="true">
 			<fileset dir="${build}">
 			</fileset>
-			<fileset dir="${src}">
-				<include name="com/lightdev/app/shtm/resources/**"/>
+ 			<fileset dir="${src}">
+ 				<include name="com/lightdev/app/shtm/resources/**"/>
 			</fileset>
 		</jar>
 		<jar jarfile="${SimplyHTMLHelp.jar}"
@@ -89,14 +93,16 @@
 		<copy todir="${dist}/lib">
 			<fileset dir="${lib}" includes="*.jar"/>
 		</copy>
+		<zip destfile="${dist}/SimplyHTML_bin_${version}.zip"  basedir="${dist.lib}" compress="false"/>
 	</target>
 	<target name="clean">
-		<!-- Eclipse target: -->
 		<delete dir="${build}"  quiet="true"/>
 		<delete dir="${dist}"  quiet="true"/>
 		<delete>
 			<fileset defaultexcludes="no" dir="${src}" includes="**/*~"/>
+			<fileset defaultexcludes="no" dir="${src}" includes="**/backup/**"/>
 		</delete>
+
 	</target>
 	<target name="javadoc">
 		<mkdir dir="${dist.api}" />
