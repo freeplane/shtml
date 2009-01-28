@@ -19,13 +19,9 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
@@ -143,7 +139,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
           setDocumentPane((DocumentPane) jtpDocs.getComponentAt(activeTabNo));
           setEditorPane(getDocumentPane().getEditor());
           //System.out.println("FrmMain stateChanged docName now " + documentPane.getDocumentName());
-          doc = (SHTMLDocument) getEditor().getDocument();
+          doc = (SHTMLDocument) getSHTMLEditorPane().getDocument();
           //fireDocumentChanged();
           if(!ignoreActivateDoc) {
               getDocumentPane().fireActivated();
