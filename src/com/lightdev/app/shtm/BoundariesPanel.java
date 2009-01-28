@@ -18,15 +18,15 @@
  */
 package com.lightdev.app.shtm;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.Vector;
-import javax.swing.text.SimpleAttributeSet;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
-import java.util.Enumeration;
 
 /**
  * Panel to show and manipulate boundaries of a rectangular object

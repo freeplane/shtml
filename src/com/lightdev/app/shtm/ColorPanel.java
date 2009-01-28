@@ -19,18 +19,29 @@
 
 package com.lightdev.app.shtm;
 
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
-import javax.swing.text.AttributeSet;
-import java.util.EventObject;
-import java.util.EventListener;
-import java.util.Vector;
+import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.EventListener;
+import java.util.EventObject;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
-import javax.swing.text.SimpleAttributeSet;
 
 /**
  * a panel to display and change a color setting

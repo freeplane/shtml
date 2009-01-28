@@ -19,17 +19,10 @@
 
 package com.lightdev.app.shtm;
 
-import java.awt.event.ActionListener;
-import java.awt.AWTEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionEvent;
-import javax.swing.JDialog;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import java.awt.Frame;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Container;
+import java.awt.Frame;
+
 import javax.swing.text.AttributeSet;
 
 /**

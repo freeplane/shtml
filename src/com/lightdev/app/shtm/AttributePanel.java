@@ -19,14 +19,14 @@
 
 package com.lightdev.app.shtm;
 
-import javax.swing.JPanel;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.text.html.*;
-import java.util.*;
-import java.awt.event.*;
+import javax.swing.JPanel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 
 /**
  * Panel set a group of attributes.
