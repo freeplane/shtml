@@ -288,7 +288,7 @@ class AnchorDialog extends DialogShell implements
   }
 
   /**
-   * get the anchor currently selected in the list of anchors
+   * Gets the anchor currently selected in the list of anchors.
    *
    * @return  the anchor name, or null if none is selected
    */
