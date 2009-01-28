@@ -24,7 +24,7 @@ import javax.swing.text.html.*;
 import java.util.*;
 
 /**
- * Component to select a tag
+ * Component to select a tag, extending JComboBox.
  *
  * @author Ulrich Hilger
  * @author Light Development
@@ -56,7 +56,7 @@ class TagSelector extends JComboBox {
   }
 
   /**
-   * get the name of the tag that is currently selected
+   * Gets the name of the tag that is currently selected.
    *
    * @return the tag name
    */
