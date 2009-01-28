@@ -21,6 +21,9 @@ package com.lightdev.app.shtm;
 
 import java.awt.event.ActionListener;
 import java.awt.AWTEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
@@ -76,6 +79,10 @@ class DialogShell extends JDialog implements ActionListener {
 
   /** id of associated help topic (if any) */
   protected String helpTopicId = null;
+  
+  /** Listens to enter and cancel. */
+  private KeyListener completionKeyListener = null;
+  
   /**
    * constructor
    *
@@ -136,12 +143,12 @@ class DialogShell extends JDialog implements ActionListener {
     cancelButton = new JButton(Util.getResourceString("cancelBtnName"));
     cancelButton.addActionListener(this);
     okButton.addActionListener(this);
-
+    
     // construct button panel
     buttonPanel = new JPanel(new FlowLayout());
     buttonPanel.add(okButton);
     buttonPanel.add(cancelButton);
-
+    
     // construct help button
     if(helpTopicId != null) {
         try {
@@ -157,6 +164,7 @@ class DialogShell extends JDialog implements ActionListener {
     Container contentPane = getContentPane();
     contentPane.setLayout(new BorderLayout(5,5));
     contentPane.add(buttonPanel, BorderLayout.SOUTH);
+    
   }
 
   /**
@@ -206,5 +214,24 @@ class DialogShell extends JDialog implements ActionListener {
     else if(src == okButton) {
       confirm();
     }
+  }
+  
+  protected KeyListener getCompletionKeyListener() {
+    if (completionKeyListener == null) {
+      completionKeyListener =
+        new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            e.consume();
+            cancel();
+          }
+          else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            e.consume();
+            confirm();
+          }
+        }       
+      };
+    }
+    return completionKeyListener;
   }
 }
