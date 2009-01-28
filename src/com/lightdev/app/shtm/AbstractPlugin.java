@@ -19,18 +19,15 @@
 
 package com.lightdev.app.shtm;
 
-import javax.swing.Action;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JComponent;
-import java.util.MissingResourceException;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import java.util.prefs.*;
-import javax.help.*;
-import javax.help.event.*;
+import javax.swing.JMenuItem;
 
 /**
  * Base class for plug-ins of application SimplyHTML.

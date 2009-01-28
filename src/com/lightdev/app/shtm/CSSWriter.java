@@ -29,8 +29,7 @@ import javax.swing.text.AttributeSet;
 import java.util.Enumeration;
 
 /**
- * A writer for creating a cascading style sheet (CSS) file
- * from a <code>StyleSheet</code>.
+ * A writer for writing a <code>StyleSheet</code> into a CSS file.
  *
  * @author Ulrich Hilger
  * @author Light Development
@@ -40,7 +39,6 @@ import java.util.Enumeration;
  *      GNU General Public License,
  *      for details see file gpl.txt in the distribution
  *      package of this software
- *
  * 
  */
 
@@ -53,10 +51,10 @@ class CSSWriter {
   private String newLine = System.getProperty("line.separator");
 
   /** the writer to write to */
-  private Writer w;
+  private Writer writer;
 
   /** the style sheet to write */
-  private StyleSheet s;
+  private StyleSheet styleSheet;
 
   /** indent length */
   private int indentLen;
@@ -65,16 +63,16 @@ class CSSWriter {
    * construct a new CSSWriter
    *
    * @param writer  the writer to write to
-   * @param styles  the StyleSheet to write
+   * @param styleSheet  the StyleSheet to write
    */
-  public CSSWriter(Writer writer, StyleSheet styles) {
-    this.w = writer;
-    this.s = styles;
+  public CSSWriter(Writer writer, StyleSheet styleSheet) {
+    this.writer = writer;
+    this.styleSheet = styleSheet;
   }
 
   /** write the style sheet to the given writer */
   public void write() throws IOException {
-    Enumeration rules = s.getStyleNames();
+    Enumeration rules = styleSheet.getStyleNames();
     while(rules.hasMoreElements()) {
       writeRule((String) rules.nextElement());
       try {
@@ -93,8 +91,8 @@ class CSSWriter {
    *
    * @exception IOException if i/o fails
    */
-  public void writeRule(String ruleName) throws IOException {
-    writeRule(ruleName, s.getStyle(ruleName));
+  private void writeRule(String ruleName) throws IOException {
+    writeRule(ruleName, styleSheet.getStyle(ruleName));
   }
 
   /**
@@ -108,14 +106,14 @@ class CSSWriter {
    *
    * @exception IOException if i/o fails
    */
-  public void writeRule(String ruleName, AttributeSet rule) throws IOException {
+  public void writeRule(String ruleName, AttributeSet rule) throws IOException { 
     //System.out.println("CSSWriter writeRule ruleName=" + ruleName);
     indentLen = ruleName.length() + 3;
     if(!ruleName.equalsIgnoreCase(StyleContext.DEFAULT_STYLE)) {
-      w.write(ruleName);
-      w.write(" { ");
+      writer.write(ruleName);
+      writer.write(" { ");
       writeStyle(rule);
-      w.write(newLine);
+      writer.write(newLine);
     }
   }
 
@@ -132,7 +130,7 @@ class CSSWriter {
    * @return true, if the style was closed in this run of recursion,
    *      false if not
    */
-  public boolean writeStyle(AttributeSet style) throws IOException {
+  private boolean writeStyle(AttributeSet style) throws IOException {
     boolean closed = false;
     Enumeration names = style.getAttributeNames();
     Object value;
@@ -145,16 +143,16 @@ class CSSWriter {
           (!key.equals(StyleConstants.ResolveAttribute)) )
       {
         if(count > 0) {
-          w.write(newLine);
+          writer.write(newLine);
           indent(indentLen);
         }
         else {
           count++;
         }
-        w.write(key.toString());
-        w.write(":");
-        w.write(value.toString());
-        w.write(";");
+        writer.write(key.toString());
+        writer.write(":");
+        writer.write(value.toString());
+        writer.write(";");
       }
       else {
         if(key.equals(StyleConstants.ResolveAttribute)) {
@@ -163,8 +161,8 @@ class CSSWriter {
       }
     }
     if(!closed) {
-      w.write(" }");
-      w.write(newLine);
+      writer.write(" }");
+      writer.write(newLine);
       closed = true;
     }
     return closed;
@@ -182,6 +180,6 @@ class CSSWriter {
         indentChars[i] = ' ';
       }
     }
-    w.write(indentChars, 0, len);
+    writer.write(indentChars, 0, len);
   }
 }

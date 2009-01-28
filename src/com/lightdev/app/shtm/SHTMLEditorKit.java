@@ -122,8 +122,8 @@ class SHTMLEditorKit extends HTMLEditorKit {
   public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException {
     if (doc instanceof SHTMLDocument) {
       SHTMLDocument hdoc = (SHTMLDocument) doc;
-      Parser p = getParser();
-      if (p == null) {
+      Parser parser = getParser();
+      if (parser == null) {
         throw new IOException("Can't load parser");
       }
       if (pos > doc.getLength()) {
@@ -132,10 +132,10 @@ class SHTMLEditorKit extends HTMLEditorKit {
       ParserCallback receiver = hdoc.getReader(pos);
       if(doc.getLength() == 0){
           Boolean ignoreCharset = (Boolean)doc.getProperty("IgnoreCharsetDirective");
-          p.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
+          parser.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
       }
       else{
-          p.parse(in, receiver, true);
+          parser.parse(in, receiver, true);
       }
       receiver.flush();
     }
