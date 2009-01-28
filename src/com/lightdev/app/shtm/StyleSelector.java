@@ -19,16 +19,15 @@
 
 package com.lightdev.app.shtm;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.text.html.*;
-
-
-import java.util.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.html.HTML;
 
 /**
  * Component to select styles
@@ -46,9 +45,9 @@ import java.util.*;
  */
 
 class StyleSelector extends JComboBox
-    implements AttributeComponent, ChangeListener
+implements AttributeComponent, ChangeListener
 {
-    private SHTMLPanelImpl shtmlPanel;
+  private SHTMLPanelImpl shtmlPanel;
   /** the CSS attribute key this AttributeComponent object represents */
   private HTML.Attribute key;
 
@@ -56,8 +55,8 @@ class StyleSelector extends JComboBox
   private boolean ignoreChanges = false;
 
   private String standardStyleName = Util.getResourceString("standardStyleName");
-private String paragraphType;
-private boolean updateRunning;
+  private String paragraphType;
+  private boolean updateRunning;
 
   /**
    * construct a <code>StyleSelector</code>
@@ -104,7 +103,7 @@ private boolean updateRunning;
   }
 
   public AttributeSet getValue(boolean includeUnchanged) {
-      return getValue();
+    return getValue();
   }
 
   /* --------------- ChangeListener implementation start --------------- */
@@ -115,41 +114,41 @@ private boolean updateRunning;
    * the list of styles of this componment is refreshed accordingly.
    */
   public void stateChanged(ChangeEvent e) {
-      paragraphType = null;
-      update(); 
+    paragraphType = null;
+    update(); 
   }
-  
+
   /* (non-Javadoc)
- * @see javax.swing.JComboBox#fireActionEvent()
- */
-protected void fireActionEvent() {
+   * @see javax.swing.JComboBox#fireActionEvent()
+   */
+  protected void fireActionEvent() {
     if(updateRunning){
-        return;
+      return;
     }
     super.fireActionEvent();
-}
+  }
 
-public void update() {
-      try{
-          updateRunning = true;
-          final DocumentPane currentDocumentPane = shtmlPanel.getCurrentDocumentPane();
-          final int selectionStart = currentDocumentPane.getEditor().getSelectionStart();
-          final SHTMLDocument document = (SHTMLDocument)currentDocumentPane.getDocument();
-          final String newParagraphType = document.getParagraphElement(selectionStart, true).getName();
-          if(paragraphType == newParagraphType){
-              return;
-          }
-          paragraphType = newParagraphType;
-          Vector styleNames = Util.getStyleNamesForTag(( document).getStyleSheet(), paragraphType);
-          styleNames.insertElementAt(standardStyleName, 0);
-          setModel(new DefaultComboBoxModel(styleNames));
+  public void update() {
+    try{
+      updateRunning = true;
+      final DocumentPane currentDocumentPane = shtmlPanel.getCurrentDocumentPane();
+      final int selectionStart = currentDocumentPane.getEditor().getSelectionStart();
+      final SHTMLDocument document = (SHTMLDocument)currentDocumentPane.getDocument();
+      final String newParagraphType = document.getParagraphElement(selectionStart, true).getName();
+      if(paragraphType == newParagraphType){
+        return;
       }
-      catch(NullPointerException ex){
-          setModel(new DefaultComboBoxModel());
-      }
-      finally{
-          updateRunning = false;
-      }
+      paragraphType = newParagraphType;
+      Vector styleNames = Util.getStyleNamesForTag(( document).getStyleSheet(), paragraphType);
+      styleNames.insertElementAt(standardStyleName, 0);
+      setModel(new DefaultComboBoxModel(styleNames));
+    }
+    catch(NullPointerException ex){
+      setModel(new DefaultComboBoxModel());
+    }
+    finally{
+      updateRunning = false;
+    }
   }
 
   /* --------------- ChangeListener implementation end ----------------- */

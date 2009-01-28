@@ -19,36 +19,25 @@
 
 package com.lightdev.app.shtm;
 
-import javax.swing.JDialog;
-import java.awt.event.ActionListener;
-import java.awt.AWTEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.ActionEvent;
-import javax.swing.JDialog;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import java.awt.Frame;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
 import java.awt.Container;
-import javax.swing.text.AttributeSet;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.text.html.CSS;
-import javax.swing.text.SimpleAttributeSet;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Enumeration;
 import java.util.Vector;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import java.awt.Color;
-import javax.swing.JComponent;
-import javax.swing.text.html.HTML;
-import java.util.Enumeration;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import java.awt.Dimension;
-import java.awt.Rectangle;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.html.CSS;
+import javax.swing.text.html.HTML;
 
 /**
  * Dialog to manipulate HTML table attributes.

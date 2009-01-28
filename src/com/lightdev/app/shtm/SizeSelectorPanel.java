@@ -19,22 +19,19 @@
 
 package com.lightdev.app.shtm;
 
-import javax.swing.JPanel;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.JSpinner;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import java.awt.FlowLayout;
-import java.awt.Dimension;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.event.KeyListener;
-import java.awt.event.FocusListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
-import javax.swing.text.html.HTML;
 
 /**
  * Panel to show and manipulate a CSS size value
