@@ -4,7 +4,7 @@
 	<property name="help" value="${src}/com/lightdev/app/shtm/help" />
 	<property name="lib" value="../lib" />
 	<property name="src_base_for_post" value="../" />
-	<property name="build" value="../bin/classes" />
+	<property name="build" value="../bin" />
 	<property name="dist" value="../dist" />
 	<property name="dist.api" value="${dist}/api" />
 	<property name="dist.src" value="${dist}/src" />
@@ -33,9 +33,16 @@
 			<exclude name="tests/**" />
 			<exclude name="plugins/**" />
 		</javac>
+		<copy todir="${build}">
+			<fileset dir="${src}">
+				<include name="**/MANIFEST.MF"/>
+			</fileset>
+		</copy>
 	</target>
 
-	<target name="dist" depends="clean,jar,help, dist-src">
+	<target name="dist" depends="jar,help, dist-src">
+	</target>
+	<target name="full-dist" depends="clean,dist,javadoc">
 	</target>
 	<target name="dist-src">
 		<mkdir dir="${dist.src}" />
@@ -60,7 +67,9 @@
 				<include name="**/TMAP"/>
 			</fileset>
 		</copy>
-		<tar destfile="${dist}/SimplyHTML_src_${version}.tar.gz" basedir="${dist.src}" compression="gzip"/>
+		<tar destfile="${dist}/SimplyHTML_src_${version}.tar.gz" compression="gzip">
+			<tarfileset	dir="${dist.src}" prefix="simplyhtml-${version}" />
+		</tar>
 
 	</target>
 

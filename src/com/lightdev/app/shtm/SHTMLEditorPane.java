@@ -428,7 +428,6 @@ private class DeleteNextCharAction extends AbstractAction{
 private class MoveUpAction extends AbstractAction{
   public void actionPerformed(ActionEvent e) {
     if (caretWithinTableCell()) { 
-      int caretPositionBeforeAction = getCaretPosition();
       if (getCaretPosition()==0) {
         // The table is at the top of the document.
         // Insert new paragraph before the table.
@@ -552,7 +551,6 @@ private class ShiftEndAction extends AbstractAction{
    */
   public void applyListAttributes(AttributeSet a) {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
-    Element first = doc.getParagraphElement(getSelectionStart());
     Element list = listManager.getListElement(getSelectionStart());
     if(list != null) {
       if(a.getAttributeCount() > 0) {
@@ -593,7 +591,6 @@ private class ShiftEndAction extends AbstractAction{
      */
     public void actionPerformed(ActionEvent ae) {
       try {
-        SHTMLDocument doc = getSHTMLDocument();
         int caretPosition = getCaretPosition();
 
         // Turn paragraph starting with "* " into a bullet list.
@@ -1533,8 +1530,6 @@ private class ShiftEndAction extends AbstractAction{
    *
    * @param a  the set of attributes to apply
    * @param range  the range of cells to apply attributes to
-   *
-   * @see adjustColWidths
    */
   public void applyCellAttributes(AttributeSet a, int range) {
     //System.out.println("SHTMLEditorPane applyCellAttributes a=" + a);
@@ -1961,9 +1956,8 @@ private class ShiftEndAction extends AbstractAction{
    * this amounts to an insert of the given text.  If there
    * is no replacement text this amounts to a removal of the
    * current selection.
-   *
-   * @overrides replaceSelection in <code>JEditorPane</code> for usage of
-   *        our own HTMLText object
+   * This method overrides replaceSelection in <code>JEditorPane</code> for usage
+   * of our own HTMLText object.
    *
    * @param replacementHTMLText  the content to replace the selection with
    */
@@ -2177,8 +2171,6 @@ private class ShiftEndAction extends AbstractAction{
    *
    * @param event - the event specifiying the drop operation
    * @see java.awt.datatransfer.DataFlavor
-   * @see de.calcom.cclib.text.StyledText
-   * @see de.calcom.cclib.text.StyledTextSelection
    */
   public void drop(DropTargetDropEvent event) {
     dndEventLocation = viewToModel(event.getLocation());

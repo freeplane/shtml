@@ -129,12 +129,10 @@ public class Util {
    * @return the link attribute found, or null, if none was found
    */
   public static Object findLinkUp(Element elem) {
-    Element e = null;
     //Element elem = ((SHTMLDocument) doc).getCharacterElement(selStart);
     Object linkAttr = null; //elem.getAttributes().getAttribute(HTML.Tag.A);
     Object href = null;
     while((elem != null) && (linkAttr == null)) {
-      e = elem;
       linkAttr = elem.getAttributes().getAttribute(HTML.Tag.A);
       if(linkAttr != null) {
         href = ((AttributeSet) linkAttr).getAttribute(HTML.Attribute.HREF);
@@ -323,7 +321,6 @@ public class Util {
   public static Vector getStyleNames(StyleSheet styles) {
     Vector styleNames = new Vector(0);
     try {
-      String name;
       Enumeration rules = styles.getStyleNames();
       while (rules.hasMoreElements()) {
         styleNames.addElement((String) rules.nextElement());
@@ -679,7 +676,8 @@ public class Util {
    * find the first occurrence of an <code>Element</code> in the
    * element tree above a given <code>Element</code>
    *
-   * @param name the name of the <code>Element</code> to search for
+   * @param name1 the primary name of the <code>Element</code> to search for
+   * @param name2 an alternative name for the <code>Element</code> to search for
    * @param start the <code>Element</code> to start looking
    *
    * @return the found <code>Element</code> or null if none is found
