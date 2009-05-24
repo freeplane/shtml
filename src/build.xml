@@ -3,7 +3,7 @@
 	<property name="src" value="." />
 	<property name="help" value="${src}/com/lightdev/app/shtm/help" />
 	<property name="lib" value="../lib" />
-	<property name="src_base_for_post" value="../" />
+	<property name="base" value="../" />
 	<property name="build" value="../bin" />
 	<property name="dist" value="../dist" />
 	<property name="dist.api" value="${dist}/api" />
@@ -17,7 +17,9 @@
 	<property name="java_source_version" value="1.4" />
 	<property name="java_target_version" value="1.4" />
 	<property name="build.compiler" value="modern" />
-	<property name="classpath" value="..\lib\jhall.jar:..\lib\gnu-regexp-1.1.4.jar"/>
+	<property name="jhall.jar" value="..\lib\jhall.jar" />
+	<property name="gnu-regexp.jar" value="..\lib\gnu-regexp-1.1.4.jar" />
+	<property name="classpath" value="${jhall.jar}:${gnu-regexp.jar}"/>
 
 	<target name="build">
 		<mkdir dir="${build}"/>
@@ -33,11 +35,6 @@
 			<exclude name="tests/**" />
 			<exclude name="plugins/**" />
 		</javac>
-		<copy todir="${build}">
-			<fileset dir="${src}">
-				<include name="**/MANIFEST.MF"/>
-			</fileset>
-		</copy>
 	</target>
 
 	<target name="dist" depends="jar,help, dist-src">
@@ -68,7 +65,9 @@
 			</fileset>
 		</copy>
 		<tar destfile="${dist}/SimplyHTML_src_${version}.tar.gz" compression="gzip">
-			<tarfileset	dir="${dist.src}" prefix="simplyhtml-${version}" />
+			<tarfileset	dir="${dist.src}" prefix="simplyhtml-${version}/src" 
+				excludes="**/*.jar" />
+			<tarfileset dir="${base}" prefix="simplyhtml-${version}" includes="*.txt" />
 		</tar>
 
 	</target>
@@ -80,7 +79,10 @@
 				<include name="**/*"/>
 			</fileset>
 		</copy>
-		<zip destfile="${dist}/SimplyHTML_manual_${version}.zip"  basedir="${dist.help}" />
+		<zip destfile="${dist}/SimplyHTML_manual_${version}.zip">
+			<zipfileset dir="${dist.help}" prefix="SimplyHTML/manual" />
+			<zipfileset dir="${base}" prefix="SimplyHTML" includes="*.txt" />
+		</zip>
 	</target>
 	<target name="jar" depends="build">
 		<mkdir dir="${dist.lib}" />
@@ -99,10 +101,12 @@
 				<include name="com/lightdev/app/shtm/help/**"/>
 			</fileset>
 		</jar>
-		<copy todir="${dist}/lib">
-			<fileset dir="${lib}" includes="*.jar"/>
-		</copy>
-		<zip destfile="${dist}/SimplyHTML_bin_${version}.zip"  basedir="${dist.lib}" compress="false"/>
+		<copy file="${jhall.jar}" tofile="${dist.lib}/jhall.jar" />
+		<copy file="${gnu-regexp.jar}" tofile="${dist.lib}/gnu-regexp.jar" />
+		<zip destfile="${dist}/SimplyHTML_bin_${version}.zip">
+			<zipfileset dir="${dist.lib}" prefix="SimplyHTML/lib" />
+			<zipfileset dir="${base}" prefix="SimplyHTML" includes="*.txt" />
+		</zip>
 	</target>
 	<target name="clean">
 		<delete dir="${build}"  quiet="true"/>

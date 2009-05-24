@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: com.lightdev.app.shtm.App
-Class-Path:  SimplyHTML.jar jhall.jar SimplyHTMLHelp.jar gnu-regexp-1.1.4.jar
+Class-Path:  SimplyHTML.jar jhall.jar SimplyHTMLHelp.jar gnu-regexp.jar
 Created-By: Dimitri Polivaev
 

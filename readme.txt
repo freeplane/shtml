@@ -1,21 +1,24 @@
 SimplyHTML readme file
-stage 11, April 27, 2003
+Stage 13, May 24th, 2009
 
-Copyright (c) 2002, 2003 Ulrich Hilger 
-http://www.lightdev.com
+Copyright (c) 2002, 2003 Ulrich Hilger, 2008 Dimitri Polivaev 
+http://simplyhtml.sf.net/
 (see 'License' below)
 
 This file contains
 ------------------
+
   About SimplyHTML
-  Contents
-  Installation
+  Downloads
   Requirements
+  Installation
   Usage
+  Compilation
   License
 
 About SimplyHTML
 ----------------
+
   SimplyHTML is an application for text processing. It
   stores documents as HTML files in combination with
   Cascading Style Sheets (CSS).
@@ -26,15 +29,40 @@ About SimplyHTML
   simple and generic way of storing textual information
   and styles.
 
+Downloads
+---------
+
+The SimplyHTML offers 3 packages you can download:
+	- SimplyHTML_bin_<Version>.zip - this is the one you need!
+	- SimplyHTML_manual_<Version>.zip - an HTML version of the help
+	  (only for your convenience, the same help is available within
+	  the application)
+	- SimplyHTML_src_<Version>.tar.gz - the source code, if you don't
+	  know what it is, you don't need it!
+
+Requirements
+------------
+
+  To use SimplyHTML, you will need to have a Java JRE
+  (Java Runtime Environment) installed, with a version equal or
+  higher to 1.4.2.
+
+  To compile and run the sources, a Java 2 Standard
+  Edition 1.4 (J2SE) or higher Development Kit (JDK)
+  is required.
+
+  J2SE and/or JRE can be obtained at http://java.sun.com/javase/downloads/
+
 Installation
 ------------
-  Once downloaded
 
-    1. create an arbitrary folder such as 
-        'c:\Programs\SimplyHTML'
-    2. extract contents of the downloaded zip file into
-        that folder
-
+  Once you've downloaded the 'bin' and possibly the 'manual' zip
+  files, extract them (keeping the directory structure) into a directory
+  of your choice, e.g. "C:\Program Files\" or "/opt", a directory "SimplyHTML"
+  will be created, with everything you need within it. In the below lines,
+  we'll call this directory <SimplyHTMLDir>.
+  
+Note:
   Contents of the downloaded zip file can be restored
   by using one of the many applications capable to
   extract ZIP files. If you do not have such an
@@ -43,65 +71,34 @@ Installation
 
       http://www.calcom.de/eng/product/xtract.htm
 
-Contents
---------
-  The distribution package comes as a single compressed
-  zip file. It contains
-
-    SimplyHTML.jar........the executable file for the
-                            latest stage of SimplyHTML
-    Help.pdf..............tutorial as PDF file
-    readme.txt............this file
-    gpl.txt...............the file containing the license
-                            agreement valid for all parts
-                            of the distribution package
-    jhall.jar.............JavaHelp runtime extension
-    source................source code directory
-    doc...................directory with API documentation
-                            files
-
-  Please refer to 'License' below for terms and
-  conditions of using above parts.
-
-Requirements
-------------
-  To compile and run the sources, a Java 2 Standard
-  Edition 1.4 (J2SE) or higher Software Development Kit (SDK)
-  is required.
-
-  To only run the executable JAR file or the classes of
-  SimplyHTML, a Java Runtime Environment (JRE) is required.
-
-  J2SE and/or JRE can be obtained at http://java.sun.com/j2se/1.4
-
 Usage
 -----
-  The javadoc API documents can be read with any web browser.
-  To read the javadoc API documents, open file 'index.htm' in
-  the doc directory from out of your browser.
+  
+  Starting SimplyHTML can be as easy as double-clicking on the
+  file "<SimplyHTMLDir>/lib/SimplyHTML.jar".
+  If it doesn't work, try to call the following from the command line:
+  	Under Windows:
+  		javaw -jar  "<SimplyHTMLDir>\lib\SimplyHTML.jar"
+  	Under Linux and other UN*X-like OSs:
+  		java -jar  "<SimplyHTMLDir>/lib/SimplyHTML.jar"
+  
+  If you've downloaded the manual, you can see it in your browser by
+  just pointing it to "<SimplyHTMLDir>/manual/index.htm".
 
-  The source files can be viewed with any text editor.
-  Please refer to the documentation of the J2SE SDK about how
-  to compile source files to classes and how to run classes.
+Compilation
+-----------
 
-  To run the executable JAR file, use the following command
-  on the command line prompt of your system
-   (replace \ by / and omit .exe on Unix or Linux systems)
-
-    [JRE]\bin\javaw.exe -jar [AppDir]\SimplyHTML.jar
-
-  [AppDir] in above command means the directory, you have
-  installed SimplyHTML on your computer. [JRE] means the
-  directory, the  Java Runtime Environment (JRE) is stored on
-  your computer.
-
-  NOTE: All paths should not contain blanks. A path such
-  as C:\Program Files\SimplyHTML as the <AppDir> will
-  only work if it is put in quotes, such as in
-  "C:\Program Files\SimplyHTML\SimplyHTML.jar"
+  If you'd like to compile SimplyHTML yourself, we would assume that you
+  know what you're doing, hence only the highlights:
+  - make sure that you have jhall.jar (from JavaHelp2) and gnu-regexp.jar
+    somewhere on your system and adapt the properties 'jhall.jar' and
+    'gnu-regexp.jar' within src/build.xml.
+  - the call of 'ant' within the 'src' sub-directory should then create
+    everything you need one level above.
 
 License
 -------
+
   This distribution of SimplyHTML is published under the terms
   and conditions of the GNU General Public License. To read the
   license, please open file 'gpl.txt' which is part of this
