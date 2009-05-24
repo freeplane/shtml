@@ -90,7 +90,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   protected void createPluginMenu() {
     if(pluginMenuId != null) {
-      pMenu = owner.dynRes.createMenu(this.textResources, pluginMenuId);
+      pMenu = owner.dynRes.createMenu(AbstractPlugin.textResources, pluginMenuId);
     }
   }
 
@@ -99,7 +99,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    */
   protected void createHelpMenu() {
     if(helpMenuId != null) {
-      hMenu = owner.dynRes.createMenu(this.textResources, helpMenuId);
+      hMenu = owner.dynRes.createMenu(AbstractPlugin.textResources, helpMenuId);
       initHelpMenu();
     }
   }
@@ -136,12 +136,12 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
         createFrame();
       }
       if(frame != null) {
-        frame.show();
+        frame.setVisible(true);
       }
     }
     else {
       if(frame != null) {
-        frame.hide();
+        frame.setVisible(false);
       }
     }
   }
@@ -338,7 +338,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
    * @return the string with the given name or null, if none is found
    */
   public String getOwnerResString(String nm) {
-    return Util.getResourceString(owner.getResources(), nm);
+    return Util.getResourceString(SHTMLPanelImpl.getResources(), nm);
   }
 
   /**

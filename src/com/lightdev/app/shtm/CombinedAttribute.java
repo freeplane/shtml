@@ -23,8 +23,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.html.CSS;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.swing.text.Element;
-import javax.swing.text.Style;
 
 /**
  * A class to represent an attribute combining several other attributes.

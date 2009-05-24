@@ -19,8 +19,6 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.BorderLayout;
-
 class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
 
     public SHTMLPanelSingleDocImpl() {

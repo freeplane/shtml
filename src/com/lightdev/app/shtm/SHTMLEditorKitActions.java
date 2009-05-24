@@ -19,7 +19,11 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -30,7 +34,14 @@ import java.net.URL;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Element;
@@ -50,9 +61,10 @@ import de.calcom.cclib.text.FindReplaceDialog;
 import de.calcom.cclib.text.FindReplaceEvent;
 import de.calcom.cclib.text.FindReplaceListener;
 
+/** A class groupping actions. Most actions forward the operation to editor pane. */
 class SHTMLEditorKitActions {
 
-/**
+  /**
    * action to set the style
    */
   static class SetStyleAction extends AbstractAction implements SHTMLAction
@@ -65,20 +77,20 @@ class SHTMLEditorKitActions {
 
     public SetStyleAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.setStyleAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       if(!ignoreActions) {
         StyleSelector styleSelector = (StyleSelector) ae.getSource();
-        AttributeSet a = styleSelector.getValue();
-        if(a != null) {
+        AttributeSet attributeSet = styleSelector.getValue();
+        if(attributeSet != null) {
           //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
           //hd.listAttributes(a, 2);
-          this.panel.getEditor().applyAttributes(a, true);
+          panel.getSHTMLEditorPane().applyAttributes(attributeSet, true);
         }
-        this.panel.updateActions();
+        panel.updateActions();
       }
     }
 
@@ -87,15 +99,15 @@ class SHTMLEditorKitActions {
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if(panel.getSHTMLEditorPane() != null) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -104,11 +116,11 @@ class SHTMLEditorKitActions {
     }
   }
 
-/**
+  /**
    * append a new table col
    */
   static class AppendTableColAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -117,25 +129,25 @@ class SHTMLEditorKitActions {
 
     public AppendTableColAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.appendTableColAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().appendTableColumn();
+      panel.getSHTMLEditorPane().appendTableColumn();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      final SHTMLEditorPane editor = this.panel.getEditor();
-    if(editor != null && editor.getCurTableCell() != null) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
+      if(editor != null && editor.getCurrentTableCell() != null) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -144,8 +156,10 @@ class SHTMLEditorKitActions {
     }
   }
 
-/**
-   * action to set the tag type
+  /**
+   * Applies a tag to the <i>paragraph element</i> surrounding the selection,
+   * based on the paragraph tag previously stored in the tag selector; tag selector
+   * is a combo box. If constructed when the tag name passed, it applies that tag. 
    */
   static class SetTagAction extends AbstractAction implements SHTMLAction
   {
@@ -154,18 +168,30 @@ class SHTMLEditorKitActions {
      */
     private final SHTMLPanelImpl panel;
     private boolean ignoreActions = false;
+    private String tag = null;
 
     public SetTagAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.setTagAction);
-    this.panel = panel;
+      this.panel = panel;
+      getProperties();
+    }
+    public SetTagAction(SHTMLPanelImpl panel, String tag) {
+      super(SHTMLPanelImpl.setTagAction);
+      this.panel = panel;
+      this.tag = tag;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       if(!ignoreActions) {
-        String tag = this.panel.getTagSelector().getSelectedTag();
-        this.panel.getEditor().applyTag(tag, this.panel.getTagSelector().getTags());
-        this.panel.updateActions();
+        if (tag!=null) {
+          panel.getSHTMLEditorPane().applyParagraphTag(tag, null);
+          panel.updateActions();
+        } else {
+          String tagFromSelector = panel.getTagSelector().getSelectedTag();
+          panel.getSHTMLEditorPane().applyParagraphTag(tagFromSelector, panel.getTagSelector().getTags());
+          panel.updateActions();
+        }
       }
     }
 
@@ -174,15 +200,15 @@ class SHTMLEditorKitActions {
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if(panel.getSHTMLEditorPane() != null) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -191,11 +217,11 @@ class SHTMLEditorKitActions {
     }
   }
 
-/**
+  /**
    * append a new table row
    */
   static class AppendTableRowAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -204,24 +230,24 @@ class SHTMLEditorKitActions {
 
     public AppendTableRowAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.appendTableRowAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().appendTableRow();
+      panel.getSHTMLEditorPane().appendTableRow();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -229,11 +255,11 @@ class SHTMLEditorKitActions {
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
-/*
- * Created on 20.08.2006
- * Copyright (C) 2006 Dimitri Polivaev
- */
-static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLAction, AttributeComponent {
+  /*
+   * Created on 20.08.2006
+   * Copyright (C) 2006 Dimitri Polivaev
+   */
+  static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLAction, AttributeComponent {
     /**
      *
      */
@@ -241,11 +267,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     public BoldAction(SHTMLPanelImpl panel) {
       //Action act = new StyledEditorKit.BoldAction();
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.fontBoldAction);
       putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_B, KeyEvent.CTRL_MASK));
+          KeyEvent.VK_B, KeyEvent.CTRL_MASK));
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontBoldAction);
     }
     /**
@@ -259,44 +285,38 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
       //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
       //editor.applyAttributes(getValue(), (unselectedValue == null));
       super.actionPerformed(e);
+
       //if(unselectedValue != null) {
-      if(this.panel.getEditor() != null) {
-        SHTMLDocument doc = (SHTMLDocument) this.panel.getEditor().getDocument();
+      if(panel.getSHTMLEditorPane() != null) {
+        SHTMLDocument doc = (SHTMLDocument) panel.getSHTMLEditorPane().getDocument();
         if (doc != null) {
-          AttributeSet a = doc.getCharacterElement(this.panel.getEditor().getSelectionStart()).
-              getAttributes();
+          AttributeSet a = doc.getCharacterElement(panel.getSHTMLEditorPane().getSelectionStart()).
+          getAttributes();
           boolean isBold = StyleConstants.isBold(a);
           //if(a.isDefined(attributeKey)) {
           //Object value = a.getAttribute(attributeKey);
-          if (isBold) {
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-          }
-          else {
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-          }
+
+          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, 
+              isBold ? SHTMLPanelImpl.ACTION_SELECTED : SHTMLPanelImpl.ACTION_UNSELECTED);
+
         }
       }
       /*}
       else {
         putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
       }*/
-      this.panel.updateActions();
+      panel.updateActions();
     }
 
     public void getProperties() {
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
     }
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
       }
-      else {
-        this.setEnabled(false);
-      }
+      setEnabled(panel.getSHTMLEditorPane() != null);
     }
     /**
      * set the value of this <code>AttributeComponent</code>
@@ -308,24 +328,24 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      *            false if not
      */
     public boolean setValue(AttributeSet a) {
-        boolean success = false;
-        boolean isBold = StyleConstants.isBold(a);
-        if(a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
-            Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
-            if (value.toString().equalsIgnoreCase(StyleConstants.Bold.toString())) {
-                isBold = true;
-            }
+      boolean success = false;
+      boolean isBold = StyleConstants.isBold(a);
+      if(a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
+        Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
+        if (value.toString().equalsIgnoreCase(StyleConstants.Bold.toString())) {
+          isBold = true;
         }
-        if(isBold) {
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-        }
-        else {
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-        }
-        success = true;
-        return success;
+      }
+      if(isBold) {
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+      }
+      else {
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+      }
+      success = true;
+      return success;
     }
-    
+
     /**
      * get the value of this <code>AttributeComponent</code>
      *
@@ -337,12 +357,12 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
       //if(unselectedValue != null) {
       if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
           SHTMLPanelImpl.ACTION_SELECTED)) {
-          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
-                  StyleConstants.Bold.toString());
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
+            StyleConstants.Bold.toString());
       }
       else {
-          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
-                  Util.CSS_ATTRIBUTE_NORMAL.toString());
+        Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT,
+            Util.CSS_ATTRIBUTE_NORMAL.toString());
       }
       /*}
              else {
@@ -357,11 +377,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
   }
 
-/**
-   * action to toggle an attribute
+  /**
+   * Applies a text attribute. (Used to be ToggleAction.)
    */
-  static class ToggleAction extends AbstractAction implements SHTMLAction,
-        AttributeComponent
+  static class ApplyCSSAttributeAction extends AbstractAction implements SHTMLAction,
+  AttributeComponent
   {
     /**
      *
@@ -369,28 +389,34 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     private final SHTMLPanelImpl panel;
 
     /** the attribute this action represents values for */
-    Object attributeKey;
+    Object attributeName;
 
     /** the value for the attribute being selected */
-    final private Object selectedValue;
+    final private Object attributeValue;
+    private boolean applyToParagraph;
 
     /**
-     * construct a ToggleFontAction
-     *
-     * @param name  the name and command for this action
-     * @param key the attribute this action represents values for
-     * @param sVal the value for the attribute being selected
-     * @param uVal the value for the attribute not being selected
+     * Constructs a ToggleAttributeAction.
      * @param panel TODO
+     * @param actionName  the name and command for this action
+     * @param attributeName the name of the attribute to be modified
+     * @param attributeValue the value the attribute should be set to
+     * @param applyToParagraph TODO
+     * @param uVal the value for the attribute not being selected
      */
-    public ToggleAction(SHTMLPanelImpl panel, String name, Object key, Object sVal)
-    {
-        super(name);
-        this.panel = panel;
-        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-        attributeKey = key;
-        selectedValue = sVal;
-        getProperties();
+    public ApplyCSSAttributeAction(SHTMLPanelImpl panel, 
+        String actionName,
+        Object attributeName,
+        Object attributeValue,
+        boolean applyToParagraph) {
+
+      super(actionName);
+      this.panel = panel;
+      putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+      this.attributeName = attributeName;
+      this.attributeValue = attributeValue;
+      this.applyToParagraph = applyToParagraph;
+      getProperties();
     }
 
     /**
@@ -398,15 +424,20 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      *
      * <p>This reverses the current setting for the associated attribute</p>
      *
-     * @param  e  the ActionEvent describing the cause for this action
+     * @param  ev  the ActionEvent describing the cause for this action
      */
-    public void actionPerformed(ActionEvent e) {
-      //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-      final JToggleButton btn = (JToggleButton)e.getSource();
-      if(btn.isSelected()){
-          this.panel.getEditor().applyAttributes(getValue(), true);
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-          this.panel.updateActions();
+    public void actionPerformed(ActionEvent ev) {
+      boolean performTheAction = false;    
+      if (ev.getSource() instanceof JToggleButton) {
+        final JToggleButton button = (JToggleButton)ev.getSource();
+        performTheAction = button.isSelected();
+      }
+      else
+        performTheAction  = true;
+      if (performTheAction) {
+        panel.getSHTMLEditorPane().applyAttributes(getValue(), applyToParagraph);
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+        panel.updateActions();
       }
     }
 
@@ -415,8 +446,8 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      *
      * @return the attribute this action represents values for
      */
-    public Object getAttributeKey() {
-      return attributeKey;
+    public Object getAttributeName() {
+      return attributeName;
     }
 
     /**
@@ -430,9 +461,9 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      */
     public boolean setValue(AttributeSet a) {
       boolean success = false;
-      if(a.isDefined(attributeKey)) {
-        Object value = a.getAttribute(attributeKey);
-        if(value.toString().equalsIgnoreCase(selectedValue.toString())) {
+      if(a.isDefined(attributeName)) {
+        Object value = a.getAttribute(attributeName);
+        if(value.toString().equalsIgnoreCase(attributeValue.toString())) {
           putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
         }
         else {
@@ -453,10 +484,10 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
      */
     public AttributeSet getValue() {
       //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      Util.styleSheet().addCSSAttribute(set,
-              (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-      return set;
+      SimpleAttributeSet attributeSet = new SimpleAttributeSet();
+      Util.styleSheet().addCSSAttribute(attributeSet,
+          (CSS.Attribute)getAttributeName(), attributeValue.toString());
+      return attributeSet;
     }
 
     public AttributeSet getValue(boolean includeUnchanged) {
@@ -465,16 +496,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
     /** update the action's state */
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
       }
-      else {
-        this.setEnabled(false);
-      }
+      setEnabled(panel.getSHTMLEditorPane() != null);
     }
 
     /** get image, etc. from resource */
@@ -483,11 +509,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
   }
 
-/**
+  /**
    * delete a table col
    */
   static class DeleteTableColAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -496,24 +522,24 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
     public DeleteTableColAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.deleteTableColAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().deleteTableCol();
+      panel.getSHTMLEditorPane().deleteTableCol();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -522,7 +548,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
   }
 
-/**
+  /**
    * Action that brings up a JFrame with a JTree showing the structure
    * of the document in the currently active DocumentPane.
    *
@@ -538,27 +564,27 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
     public ShowElementTreeAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.elemTreeAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
     public void actionPerformed(ActionEvent e) {
-      if(this.elementTreeFrame == null) {
+      if(elementTreeFrame == null) {
         String title = Util.getResourceString("elementTreeTitle");
-        this.elementTreeFrame = new JFrame(title);
-        this.elementTreeFrame.addWindowListener(new WindowAdapter() {
+        elementTreeFrame = new JFrame(title);
+        elementTreeFrame.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent we) {
             ShowElementTreeAction.this.elementTreeFrame.dispose();
             ShowElementTreeAction.this.elementTreeFrame = null;
           }
         });
-        Container fContentPane = this.elementTreeFrame.getContentPane();
+        Container fContentPane = elementTreeFrame.getContentPane();
         fContentPane.setLayout(new BorderLayout());
-        ElementTreePanel elementTreePanel = new ElementTreePanel(this.panel.getEditor());
+        ElementTreePanel elementTreePanel = new ElementTreePanel(panel.getSHTMLEditorPane());
         fContentPane.add(elementTreePanel);
-        this.elementTreeFrame.pack();
+        elementTreeFrame.pack();
       }
-      this.elementTreeFrame.show();
-      this.panel.updateActions();
+      elementTreeFrame.setVisible(true);
+      panel.updateActions();
     }
     public void update() {
     }
@@ -567,11 +593,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
   }
 
-/**
+  /**
    * delete a table row
    */
   static class DeleteTableRowAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -580,24 +606,24 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
     public DeleteTableRowAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.deleteTableRowAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().deleteTableRow();
+      panel.getSHTMLEditorPane().deleteTableRow();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -606,11 +632,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
   }
 
-/**
+  /**
    * toggle list formatting for a given type of list on/off
    */
   static class ToggleListAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
 
     /**
@@ -621,28 +647,30 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
     public ToggleListAction(SHTMLPanelImpl panel, String name, HTML.Tag listTag) {
       super(name);
-    this.panel = panel;
+      this.panel = panel;
       this.listTag = listTag;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().toggleList(listTag.toString(),
-                        this.panel.getMaxAttributes(this.panel.getEditor(), listTag.toString()),
-                        false);
-      this.panel.updateActions();
+      panel.getSHTMLEditorPane().toggleList(listTag.toString(),
+          null,
+          // What are the attributes good for? They break the appearance of nested numbered lists. --Dan
+          //panel.getMaxAttributes(panel.getSHTMLEditorPane(), listTag.toString()),
+          false);
+      panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if(panel.getSHTMLEditorPane() != null) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -651,11 +679,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
   }
 
-/**
+  /**
    * set the title of the currently active document
    */
   static class DocumentTitleAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -664,7 +692,7 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
 
     public DocumentTitleAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.documentTitleAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
@@ -684,11 +712,11 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -700,13 +728,13 @@ static class BoldAction extends StyledEditorKit.BoldAction implements SHTMLActio
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
-/*
- * Created on 20.08.2006
- * Copyright (C) 2006 Dimitri Polivaev
- */
+  /*
+   * Created on 20.08.2006
+   * Copyright (C) 2006 Dimitri Polivaev
+   */
 
 
-static class UnderlineAction extends StyledEditorKit.UnderlineAction implements SHTMLAction, AttributeComponent {
+  static class UnderlineAction extends StyledEditorKit.UnderlineAction implements SHTMLAction, AttributeComponent {
     /**
      *
      */
@@ -714,11 +742,11 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     public UnderlineAction(SHTMLPanelImpl panel) {
       //Action act = new StyledEditorKit.BoldAction();
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.fontUnderlineAction);
       putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_U, KeyEvent.CTRL_MASK));
+          KeyEvent.VK_U, KeyEvent.CTRL_MASK));
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontUnderlineAction);
     }
     /**
@@ -733,11 +761,11 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       //editor.applyAttributes(getValue(), (unselectedValue == null));
       super.actionPerformed(e);
       //if(unselectedValue != null) {
-      if(this.panel.getEditor() != null) {
-        SHTMLDocument doc = (SHTMLDocument) this.panel.getEditor().getDocument();
+      if(this.panel.getSHTMLEditorPane() != null) {
+        SHTMLDocument doc = (SHTMLDocument) this.panel.getSHTMLEditorPane().getDocument();
         if (doc != null) {
-          AttributeSet a = doc.getCharacterElement(this.panel.getEditor().getSelectionStart()).
-              getAttributes();
+          AttributeSet a = doc.getCharacterElement(this.panel.getSHTMLEditorPane().getSelectionStart()).
+          getAttributes();
           boolean isUnderlined = StyleConstants.isUnderline(a);
           if (isUnderlined) {
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
@@ -754,11 +782,11 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontUnderlineAction);
     }
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -775,24 +803,24 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
      *            false if not
      */
     public boolean setValue(AttributeSet a) {
-        boolean success = false;
-        boolean isUnderlined = StyleConstants.isUnderline(a);
-        if(a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
-            Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
-            if (value.toString().equalsIgnoreCase(Util.CSS_ATTRIBUTE_UNDERLINE /*StyleConstants.Underline.toString()*/)) {
-                isUnderlined = true;
-            }
+      boolean success = false;
+      boolean isUnderlined = StyleConstants.isUnderline(a);
+      if(a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
+        Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
+        if (value.toString().equalsIgnoreCase(Util.CSS_ATTRIBUTE_UNDERLINE /*StyleConstants.Underline.toString()*/)) {
+          isUnderlined = true;
         }
-        if(isUnderlined) {
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-        }
-        else {
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-        }
-        success = true;
-        return success;
+      }
+      if(isUnderlined) {
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+      }
+      else {
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+      }
+      success = true;
+      return success;
     }
-    
+
     /**
      * get the value of this <code>AttributeComponent</code>
      *
@@ -831,7 +859,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
         }
 
         public void actionPerformed(ActionEvent e) {
-            SHTMLEditorPane editorPane = this.panel.getEditor();
+            SHTMLEditorPane editorPane = this.panel.getSHTMLEditorPane();
             if(editorPane != null) {
                 if(hiddenColorPanel == null){
                 	hiddenColorPanel = new ColorPanel("Select Color", Color.BLACK, CSS.Attribute.COLOR);
@@ -863,7 +891,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
 
     public EditAnchorsAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.editAnchorsAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
@@ -875,16 +903,16 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
           this.panel.getSHTMLDocument());
       Util.center(parent, dlg);
       dlg.setModal(true);
-      dlg.show();
+      dlg.setVisible(true);
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -897,7 +925,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     }
   }
 
-/**
+  /**
    * action to edit a link
    */
   static class EditLinkAction extends AbstractAction implements SHTMLAction
@@ -909,37 +937,36 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
 
     public EditLinkAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.editLinkAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      LinkDialog dlg = new LinkDialog(parent,
-                                       Util.getResourceString("linkDialogTitle"),
-                                       this.panel.getSHTMLDocument(),
-                                       this.panel.getEditor().getSelectionStart(),
-                                       this.panel.getEditor().getSelectionEnd(),
-                                       this.panel.getDocumentPane().getImageDir()/*,
+      LinkDialog dialog = new LinkDialog(parent,
+          Util.getResourceString("linkDialogTitle"),
+          panel.getSHTMLEditorPane(),
+          panel.getDocumentPane().getImageDir()/*,
                                        renderMode*/);
-      Util.center(parent, dlg);
-      dlg.setModal(true);
-      dlg.show();
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
+      if (parent!=null)
+        Util.center(parent, dialog);
+      dialog.setModal(true);
+      dialog.setVisible(true);
+      if(dialog.getResult() == DialogShell.RESULT_OK) {
         // apply link here
-        this.panel.getEditor().setLink(dlg.getLinkText(), dlg.getHref(), dlg.getStyleName(), dlg.getLinkImage(), dlg.getLinkImageSize());
+        panel.getSHTMLEditorPane().setLink(dialog.getLinkText(), dialog.getHref(), dialog.getStyleName(), dialog.getLinkImage(), dialog.getLinkImageSize());
       }
-      this.panel.updateActions();
+      panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        if((this.panel.getEditor().getSelectionEnd() > this.panel.getEditor().getSelectionStart()) ||
-           (Util.findLinkElementUp(this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getSelectionStart())) != null)) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(panel.getSHTMLEditorPane() != null) {
+        if((panel.getSHTMLEditorPane().getSelectionEnd() > panel.getSHTMLEditorPane().getSelectionStart()) ||
+            (panel.getSHTMLEditorPane().getCurrentLinkElement() != null)) {
           this.setEnabled(true);
         }
         else {
@@ -956,7 +983,54 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     }
   }
 
-/**
+  /**
+   * Is an action to open a hyperlink.
+   */
+  static class OpenLinkAction extends AbstractAction implements SHTMLAction
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelImpl panel;
+
+    public OpenLinkAction(SHTMLPanelImpl panel) {
+      super(SHTMLPanelImpl.openLinkAction);
+      this.panel = panel;
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      String linkURL = panel.getSHTMLEditorPane().getURLOfExistingLink();
+      if (linkURL!=null)
+        panel.openHyperlink(linkURL);        
+      panel.updateActions();
+    }
+
+    public void update() {
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if(panel.getSHTMLEditorPane() != null) {
+        if((panel.getSHTMLEditorPane().getSelectionEnd() > this.panel.getSHTMLEditorPane().getSelectionStart()) ||
+            (panel.getSHTMLEditorPane().getCurrentLinkElement() != null)) {
+          setEnabled(true);
+        }
+        else {
+          setEnabled(false);
+        }
+      }
+      else {
+        this.setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
+      SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+    }
+  }  
+
+  /**
    * UndoAction for the edit menu
    */
   static class UndoAction extends AbstractAction implements SHTMLAction {
@@ -966,7 +1040,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     private final SHTMLPanelImpl panel;
     public UndoAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.undoAction);
-    this.panel = panel;
+      this.panel = panel;
       setEnabled(false);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -975,25 +1049,25 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
 
     public void actionPerformed(ActionEvent e) {
       if(this.panel.getCurrentDocumentPane().getSelectedTab() != DocumentPane.VIEW_TAB_LAYOUT){
-         return;
+        return;
       }
       try {
         this.panel.getUndo().undo();
-        final SHTMLEditorPane editor = this.panel.getEditor();
+        final SHTMLEditorPane editor = this.panel.getSHTMLEditorPane();
       }
       catch(Exception ex) {
         Util.errMsg((Component) e.getSource(),
-		  Util.getResourceString("unableToUndoError") + ex, ex);
+            Util.getResourceString("unableToUndoError") + ex, ex);
       }
       this.panel.updateActions();
 
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
       setEnabled(this.panel.getUndo().canUndo());
     }
     public void getProperties() {
@@ -1001,7 +1075,7 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     }
   }
 
-/**
+  /**
    * action to change the paragraph style
    */
   static class EditNamedStyleAction extends AbstractAction implements SHTMLAction
@@ -1013,28 +1087,28 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
 
     public EditNamedStyleAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.editNamedStyleAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ParaStyleDialog dlg = new ParaStyleDialog(parent,
-                                       Util.getResourceString("namedStyleDialogTitle"),
-                                       this.panel.getSHTMLDocument());
+          Util.getResourceString("namedStyleDialogTitle"),
+          this.panel.getSHTMLDocument());
       Util.center(parent, dlg);
       dlg.setModal(true);
-      dlg.setValue(this.panel.getMaxAttributes(panel.getEditor(), null));
-      dlg.show();
+      dlg.setValue(this.panel.getMaxAttributes(panel.getSHTMLEditorPane(), null));
+      dlg.setVisible(true);
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1047,18 +1121,18 @@ static class UnderlineAction extends StyledEditorKit.UnderlineAction implements 
     }
   }
 
-static class ClearFormatAction extends AbstractAction implements SHTMLAction{
+  static class ClearFormatAction extends AbstractAction implements SHTMLAction{
     /**
      *
      */
     private final SHTMLPanelImpl panel;
     public ClearFormatAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.clearFormatAction);
       putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_R, KeyEvent.CTRL_MASK));
+          KeyEvent.VK_B, KeyEvent.CTRL_MASK));
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
     }
     /**
@@ -1069,118 +1143,118 @@ static class ClearFormatAction extends AbstractAction implements SHTMLAction{
      * @param  e  the ActionEvent describing the cause for this action
      */
     public void actionPerformed(ActionEvent e) {
-      final SHTMLEditorPane editor = this.panel.getEditor();
+      final SHTMLEditorPane editor = this.panel.getSHTMLEditorPane();
       if(editor != null) {
-          if(editor.getSelectionStart() != editor.getSelectionEnd()){
-              editor.removeCharacterAttributes();
-          }
-          else{
-              editor.removeParagraphAttributes();
-          }
+        if(editor.getSelectionStart() != editor.getSelectionEnd()){
+          editor.removeCharacterAttributes();
+        }
+        else{
+          editor.removeParagraphAttributes();
+        }
       }
       this.panel.updateActions();
     }
 
     public void getProperties() {
-        SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
-      }
+      SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
+    }
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-        final SHTMLEditorPane editor = this.panel.getEditor();
-        this.setEnabled(editor != null);
-    }
-
-  }
-
-/**
- * action to find and replace a given text
- */
-static class MultipleDocFindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener
-{
-  /**
-   *
-   */
-  private final SHTMLPanelMultipleDocImpl panel;
-  public MultipleDocFindReplaceAction(SHTMLPanelMultipleDocImpl panel) {
-    super(SHTMLPanelMultipleDocImpl.findReplaceAction);
-  this.panel = panel;
-    putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
-    getProperties();
-  }
-
-  public void actionPerformed(ActionEvent ae) {
-    currentTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
-    caretPos = this.panel.getDocumentPane().getEditor().getCaretPosition();
-    if(this.panel.getTabbedPaneForDocuments().getTabCount() > 1) {
-      System.out.println("FindReplaceAction.actionPerformed with Listener");
-      FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor(), this);
-    }
-    else {
-      System.out.println("FindReplaceAction.actionPerformed NO Listener");
-      FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor());
-    }
-  }
-
-  public void update() {
       if(this.panel.isHtmlEditorActive()){
-          this.setEnabled(false);
-          return;
+        this.setEnabled(false);
+        return;
       }
-    if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
-      this.setEnabled(true);
+      final SHTMLEditorPane editor = this.panel.getSHTMLEditorPane();
+      this.setEnabled(editor != null);
     }
-    else {
-      this.setEnabled(false);
-    }
+
   }
 
-  public void getProperties() {
+  /**
+   * action to find and replace a given text
+   */
+  static class MultipleDocFindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelMultipleDocImpl panel;
+    public MultipleDocFindReplaceAction(SHTMLPanelMultipleDocImpl panel) {
+      super(SHTMLPanelMultipleDocImpl.findReplaceAction);
+      this.panel = panel;
+      putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      currentTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
+      caretPos = this.panel.getDocumentPane().getEditor().getCaretPosition();
+      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 1) {
+        System.out.println("FindReplaceAction.actionPerformed with Listener");
+        FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getSHTMLEditorPane(), this);
+      }
+      else {
+        System.out.println("FindReplaceAction.actionPerformed NO Listener");
+        FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getSHTMLEditorPane());
+      }
+    }
+
+    public void update() {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getTabbedPaneForDocuments().getTabCount() > 0) {
+        this.setEnabled(true);
+      }
+      else {
+        this.setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
       SHTMLPanelMultipleDocImpl.getActionProperties(this, (String) getValue(Action.NAME));
-  }
-
-  public void getNextDocument(FindReplaceEvent e) {
-    FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-    int tabCount = this.panel.getTabbedPaneForDocuments().getTabCount();
-    int curTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
-    System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
-    if(++curTab < tabCount) {
-      System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
-      resumeWithNewEditor(frd, curTab);
     }
-    else {
-      frd.terminateOperation();
+
+    public void getNextDocument(FindReplaceEvent e) {
+      FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
+      int tabCount = this.panel.getTabbedPaneForDocuments().getTabCount();
+      int curTab = this.panel.getTabbedPaneForDocuments().getSelectedIndex();
+      System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
+      if(++curTab < tabCount) {
+        System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
+        resumeWithNewEditor(frd, curTab);
+      }
+      else {
+        frd.terminateOperation();
+      }
     }
-  }
 
-  public void getFirstDocument(FindReplaceEvent e) {
-    FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-    resumeWithNewEditor(frd, 0);
-  }
+    public void getFirstDocument(FindReplaceEvent e) {
+      FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
+      resumeWithNewEditor(frd, 0);
+    }
 
-  public void findReplaceTerminated(FindReplaceEvent e) {
-    this.panel.getTabbedPaneForDocuments().setSelectedIndex(currentTab);
-    DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getSelectedComponent();
-    JEditorPane editor = docPane.getEditor();
-    editor.setCaretPosition(caretPos);
-    editor.requestFocus();
-  }
+    public void findReplaceTerminated(FindReplaceEvent e) {
+      this.panel.getTabbedPaneForDocuments().setSelectedIndex(currentTab);
+      DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getSelectedComponent();
+      JEditorPane editor = docPane.getEditor();
+      editor.setCaretPosition(caretPos);
+      editor.requestFocus();
+    }
 
-  private void resumeWithNewEditor(FindReplaceDialog frd, int tabNo) {
-    this.panel.getTabbedPaneForDocuments().setSelectedIndex(tabNo);
-    DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(tabNo);
-    JEditorPane editor = docPane.getEditor();
-    editor.requestFocus();
-    frd.setEditor(editor);
-    frd.resumeOperation();
-  }
+    private void resumeWithNewEditor(FindReplaceDialog frd, int tabNo) {
+      this.panel.getTabbedPaneForDocuments().setSelectedIndex(tabNo);
+      DocumentPane docPane = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(tabNo);
+      JEditorPane editor = docPane.getEditor();
+      editor.requestFocus();
+      frd.setEditor(editor);
+      frd.resumeOperation();
+    }
 
-  private int caretPos;
-  private int currentTab;
-}
-/**
+    private int caretPos;
+    private int currentTab;
+  }
+  /**
    * action to find and replace a given text
    */
   static class SingleDocFindReplaceAction extends AbstractAction implements SHTMLAction
@@ -1191,7 +1265,7 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
     private final SHTMLPanelImpl panel;
     public SingleDocFindReplaceAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.findReplaceAction);
-    this.panel = panel;
+      this.panel = panel;
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
       getProperties();
     }
@@ -1199,16 +1273,16 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
     public void actionPerformed(ActionEvent ae) {
       currentDocumentPane = this.panel.getDocumentPane();
       if(currentDocumentPane != null) {
-          caretPos = currentDocumentPane.getEditor().getCaretPosition();
-        FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getEditor());
+        caretPos = currentDocumentPane.getEditor().getCaretPosition();
+        FindReplaceDialog frd = new FindReplaceDialog(this.panel.getMainFrame(), this.panel.getSHTMLEditorPane());
       }
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
       if(this.panel.getDocumentPane() != null) {
         this.setEnabled(true);
       }
@@ -1222,18 +1296,18 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
     }
 
     public void findReplaceTerminated(FindReplaceEvent e) {
-        if(currentDocumentPane.isVisible()){
-            JEditorPane editor = currentDocumentPane.getEditor();
-            editor.setCaretPosition(caretPos);
-            editor.requestFocus();
-        }
+      if(currentDocumentPane.isVisible()){
+        JEditorPane editor = currentDocumentPane.getEditor();
+        editor.setCaretPosition(caretPos);
+        editor.requestFocus();
+      }
     }
 
     private int caretPos;
     private DocumentPane currentDocumentPane;
   }
 
-/**
+  /**
    * Show a dialog to format fonts
    */
   static class FontAction extends AbstractAction implements SHTMLAction
@@ -1245,36 +1319,36 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
 
     public FontAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.fontAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      this.panel.getEditor().requestFocus();
+      this.panel.getSHTMLEditorPane().requestFocus();
 
       /** create a modal FontDialog, center and show it */
       FontDialog fd = new FontDialog(parent,
-				    Util.getResourceString("fontDialogTitle"),
-                                    this.panel.getMaxAttributes(this.panel.getEditor(), null));
+          Util.getResourceString("fontDialogTitle"),
+          this.panel.getMaxAttributes(this.panel.getSHTMLEditorPane(), null));
       Util.center(parent, fd);
       fd.setModal(true);
-      fd.show();
+      fd.setVisible(true);
 
       /** if the user made a selection, apply it to the document */
       if(fd.getResult() == FontDialog.RESULT_OK) {
-        this.panel.getEditor().applyAttributes(fd.getAttributes(), false);
+        this.panel.getSHTMLEditorPane().applyAttributes(fd.getAttributes(), false);
         this.panel.updateFormatControls();
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1287,7 +1361,7 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
     }
   }
 
-/**
+  /**
    * change a font family setting
    */
   static class FontFamilyAction extends AbstractAction implements SHTMLAction
@@ -1299,37 +1373,32 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
 
     public FontFamilyAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.fontFamilyAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       FontFamilyPicker ffp = ((FontFamilyPicker) ae.getSource());
       if(!ffp.ignore()) {
-        this.panel.getEditor().applyAttributes(ffp.getValue(), false);
+        panel.getSHTMLEditorPane().applyAttributes(ffp.getValue(), false);
       }
-      this.panel.updateActions();
+      panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        this.setEnabled(true);
-      }
-      else {
+      if(panel.isHtmlEditorActive()){
         this.setEnabled(false);
+        return;
       }
+      setEnabled(panel.getSHTMLEditorPane() != null);
     }
 
     public void getProperties() {
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
-  
-/**
+
+  /**
    * change a font size setting
    */
   static class FontSizeAction extends AbstractAction implements SHTMLAction
@@ -1341,24 +1410,24 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
 
     public FontSizeAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.fontSizeAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       FontSizePicker fsp = ((FontSizePicker) ae.getSource());
       if(!fsp.ignore()) {
-        this.panel.getEditor().applyAttributes(fsp.getValue(), false);
+        this.panel.getSHTMLEditorPane().applyAttributes(fsp.getValue(), false);
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1371,8 +1440,8 @@ static class MultipleDocFindReplaceAction extends AbstractAction implements SHTM
     }
   }
 
-static class FormatImageAction extends AbstractAction
-        implements SHTMLAction
+  static class FormatImageAction extends AbstractAction
+  implements SHTMLAction
   {
     /**
      *
@@ -1381,7 +1450,7 @@ static class FormatImageAction extends AbstractAction
 
     public FormatImageAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.formatImageAction);
       getProperties();
     }
@@ -1389,15 +1458,15 @@ static class FormatImageAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ImageDialog dlg = new ImageDialog(parent,
-                                       Util.getResourceString("imageDialogTitle"),
-                                       this.panel.getDocumentPane().getImageDir(),
-                                       (SHTMLDocument) this.panel.getDocumentPane().getDocument());
-      Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getCaretPosition());
+          Util.getResourceString("imageDialogTitle"),
+          this.panel.getDocumentPane().getImageDir(),
+          (SHTMLDocument) this.panel.getDocumentPane().getDocument());
+      Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getSHTMLEditorPane().getCaretPosition());
       if(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
         Util.center(parent, dlg);
         dlg.setImageAttributes(img.getAttributes());
         dlg.setModal(true);
-        dlg.show();
+        dlg.setVisible(true);
 
         /** if the user made a selection, apply it to the document */
         if(dlg.getResult() == DialogShell.RESULT_OK) {
@@ -1413,12 +1482,12 @@ static class FormatImageAction extends AbstractAction
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
-        Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getCaretPosition());
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
+        Element img = this.panel.getSHTMLDocument().getCharacterElement(this.panel.getSHTMLEditorPane().getCaretPosition());
         if(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
           this.setEnabled(true);
         }
@@ -1436,11 +1505,11 @@ static class FormatImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * Change list formatting
    */
   static class FormatListAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
 
     /**
@@ -1450,50 +1519,50 @@ static class FormatImageAction extends AbstractAction
 
     public FormatListAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.formatListAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      this.panel.getEditor().requestFocus();
-      int pos = this.panel.getEditor().getSelectionStart();
+      this.panel.getSHTMLEditorPane().requestFocus();
+      int pos = this.panel.getSHTMLEditorPane().getSelectionStart();
       ListDialog dlg = new ListDialog(parent,
-                     Util.getResourceString("listDialogTitle"));
+          Util.getResourceString("listDialogTitle"));
       SimpleAttributeSet set = new SimpleAttributeSet(
-          this.panel.getMaxAttributes(this.panel.getEditor(), HTML.Tag.UL.toString()));
-      set.addAttributes(this.panel.getMaxAttributes(this.panel.getEditor(), HTML.Tag.OL.toString()));
+          this.panel.getMaxAttributes(this.panel.getSHTMLEditorPane(), HTML.Tag.UL.toString()));
+      set.addAttributes(this.panel.getMaxAttributes(this.panel.getSHTMLEditorPane(), HTML.Tag.OL.toString()));
       dlg.setListAttributes(set);
       String currentTag = dlg.getListTag();
       Util.center(parent, dlg);
       dlg.setModal(true);
-      dlg.show();
+      dlg.setVisible(true);
 
       /** if the user made a selection, apply it to the document */
       if(dlg.getResult() == DialogShell.RESULT_OK) {
         AttributeSet a = dlg.getListAttributes();
         String newTag = dlg.getListTag();
         if(newTag == null) {
-          this.panel.getEditor().toggleList(newTag, a, true);
+          this.panel.getSHTMLEditorPane().toggleList(newTag, a, true);
         }
         else if(newTag.equalsIgnoreCase(currentTag)) {
           if(a.getAttributeCount() > 0) {
-            this.panel.getEditor().applyListAttributes(a);
+            this.panel.getSHTMLEditorPane().applyListAttributes(a);
           }
         }
         else {
-          this.panel.getEditor().toggleList(newTag, a, false);
+          this.panel.getSHTMLEditorPane().toggleList(newTag, a, false);
         }
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1506,7 +1575,7 @@ static class FormatImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * action to change the paragraph style
    */
   static class FormatParaAction extends AbstractAction implements SHTMLAction
@@ -1518,34 +1587,34 @@ static class FormatImageAction extends AbstractAction
 
     public FormatParaAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.formatParaAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ParaStyleDialog dlg = new ParaStyleDialog(parent,
-                                       Util.getResourceString("paraStyleDialogTitle"));
+          Util.getResourceString("paraStyleDialogTitle"));
       Util.center(parent, dlg);
       dlg.setModal(true);
       //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-      final int caretPosition = panel.getEditor().getCaretPosition();
+      final int caretPosition = panel.getSHTMLEditorPane().getCaretPosition();
       dlg.setValue(this.panel.getMaxAttributes(caretPosition));
-      dlg.show();
+      dlg.setVisible(true);
 
       /** if the user made a selection, apply it to the document */
       if(dlg.getResult() == DialogShell.RESULT_OK) {
-        this.panel.getEditor().applyAttributes(dlg.getValue(), true);
+        this.panel.getSHTMLEditorPane().applyAttributes(dlg.getValue(), true);
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1558,11 +1627,11 @@ static class FormatImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * format table attributes
    */
   static class FormatTableAction extends AbstractAction
-				implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -1571,46 +1640,46 @@ static class FormatImageAction extends AbstractAction
 
     public FormatTableAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.formatTableAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      final SHTMLEditorPane editor = this.panel.getEditor();
-    editor.requestFocus();
+      final SHTMLEditorPane editor = this.panel.getSHTMLEditorPane();
+      editor.requestFocus();
       int pos = editor.getSelectionStart();
       TableDialog td = new TableDialog(parent,
-                     Util.getResourceString("tableDialogTitle"));
+          Util.getResourceString("tableDialogTitle"));
       td.setTableAttributes(this.panel.getMaxAttributes(editor, HTML.Tag.TABLE.toString()));
       td.setCellAttributes(this.panel.getMaxAttributes(editor, HTML.Tag.TD.toString()));
       Util.center(parent, td);
       td.setModal(true);
-      td.show();
+      td.setVisible(true);
 
       /** if the user made a selection, apply it to the document */
       if(td.getResult() == DialogShell.RESULT_OK) {
-          SHTMLDocument doc = (SHTMLDocument )editor.getDocument();
-          doc.startCompoundEdit();
-          AttributeSet a = td.getTableAttributes();
-          if(a.getAttributeCount() > 0) {
-              editor.applyTableAttributes(a);
-          }
-          a = td.getCellAttributes();
-          if(a.getAttributeCount() > 0) {
-              editor.applyCellAttributes(a, td.getCellRange());
-          }
-          doc.endCompoundEdit();
+        SHTMLDocument doc = (SHTMLDocument )editor.getDocument();
+        doc.startCompoundEdit();
+        AttributeSet a = td.getTableAttributes();
+        if(a.getAttributeCount() > 0) {
+          editor.applyTableAttributes(a);
+        }
+        a = td.getCellAttributes();
+        if(a.getAttributeCount() > 0) {
+          editor.applyCellAttributes(a, td.getCellRange());
+        }
+        doc.endCompoundEdit();
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if((this.panel.getSHTMLEditorPane() != null) && (this.panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -1623,7 +1692,7 @@ static class FormatImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * force a garbage collection. This can be helpful to find out
    * whether or not objects are properly disposed.
    *
@@ -1633,14 +1702,14 @@ static class FormatImageAction extends AbstractAction
    *
    * will be hidden from menu if not in development mode (DEV_MODE = false)
    */
-  static class GCAction extends AbstractAction implements SHTMLAction {
+  static class GarbageCollectionAction extends AbstractAction implements SHTMLAction {
     /**
      *
      */
     private final SHTMLPanelImpl panel;
-    public GCAction(SHTMLPanelImpl panel) {
+    public GarbageCollectionAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.gcAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
     public void actionPerformed(ActionEvent e) {
@@ -1654,8 +1723,8 @@ static class FormatImageAction extends AbstractAction
     }
   }
 
-static class InsertImageAction extends AbstractAction
-        implements SHTMLAction
+  static class InsertImageAction extends AbstractAction
+  implements SHTMLAction
   {
     /**
      *
@@ -1664,7 +1733,7 @@ static class InsertImageAction extends AbstractAction
 
     public InsertImageAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.insertImageAction);
       getProperties();
     }
@@ -1672,17 +1741,17 @@ static class InsertImageAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       ImageDialog dlg = new ImageDialog(parent,
-                                       Util.getResourceString("imageDialogTitle"),
-                                       this.panel.getDocumentPane().getImageDir());
+          Util.getResourceString("imageDialogTitle"),
+          this.panel.getDocumentPane().getImageDir());
       Util.center(parent, dlg);
       dlg.setModal(true);
-      dlg.show();
+      dlg.setVisible(true);
 
       /** if the user made a selection, apply it to the document */
       if(dlg.getResult() == DialogShell.RESULT_OK) {
         try {
           this.panel.getSHTMLDocument().insertBeforeStart(
-              this.panel.getSHTMLDocument().getCharacterElement(this.panel.getEditor().getSelectionEnd()),
+              this.panel.getSHTMLDocument().getCharacterElement(this.panel.getSHTMLEditorPane().getSelectionEnd()),
               dlg.getImageHTML());
         }
         catch(Exception e) {
@@ -1693,11 +1762,11 @@ static class InsertImageAction extends AbstractAction
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1710,11 +1779,11 @@ static class InsertImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * insert a new table
    */
   static class InsertTableAction extends AbstractAction
-				implements SHTMLAction
+  implements SHTMLAction
   {
 
     /**
@@ -1724,28 +1793,30 @@ static class InsertImageAction extends AbstractAction
 
     public InsertTableAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.insertTableAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
-      Object input = Util.nameInput(parent, "3", "\\d+", "insertTableTitle","insertTableMsg");
-      if(input != null) {
-        int choice = Integer.parseInt(input.toString());
-        if(choice > 0) {
-          this.panel.getEditor().insertTable(choice);
-        }
+      Object input = null;
+      boolean showPopup = Util.preferenceIsTrue("table.popupBeforeInserting","true"); 
+      if (showPopup) 
+        input = Util.nameInput(parent, "3", "\\d+", "insertTableTitle","insertTableMsg");
+      if (input != null || !showPopup) {        
+        int choice = input!=null ? Integer.parseInt(input.toString()) : 3;       
+        if (choice > 0) 
+          this.panel.getSHTMLEditorPane().insertNewTable(choice);        
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1758,11 +1829,11 @@ static class InsertImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * insert a new table column
    */
   static class InsertTableColAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -1771,24 +1842,24 @@ static class InsertImageAction extends AbstractAction
 
     public InsertTableColAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.insertTableColAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().insertTableColumn();
+      panel.getSHTMLEditorPane().insertTableColumn();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((this.panel.getSHTMLEditorPane() != null) && (this.panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -1797,37 +1868,77 @@ static class InsertImageAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * insert a new table row
    */
   static class InsertTableRowAction extends AbstractAction
-                                implements SHTMLAction
+  implements SHTMLAction
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelImpl panel;
+    private final String forcedCellName;
+
+    public InsertTableRowAction(SHTMLPanelImpl panel, String forcedCellName, String titleID) {
+      super(titleID);
+      this.panel = panel;
+      this.forcedCellName = forcedCellName;
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      panel.getSHTMLEditorPane().insertTableRow(forcedCellName);
+    }
+
+    public void update() {
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
+      }
+      else {
+        setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
+      SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+    }
+  }
+  /**
+   * Move theinsert a new table row
+   */
+  static class MoveTableRowUpAction extends AbstractAction
+  implements SHTMLAction
   {
     /**
      *
      */
     private final SHTMLPanelImpl panel;
 
-    public InsertTableRowAction(SHTMLPanelImpl panel) {
-      super(SHTMLPanelImpl.insertTableRowAction);
-    this.panel = panel;
+    public MoveTableRowUpAction(SHTMLPanelImpl panel) {
+      super(SHTMLPanelImpl.moveTableRowUpAction);
+      this.panel = panel;
       getProperties();
     }
 
     public void actionPerformed(ActionEvent ae) {
-      this.panel.getEditor().insertTableRow();
+      panel.getSHTMLEditorPane().moveTableRowUp();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
-        this.setEnabled(true);
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
       }
       else {
-        this.setEnabled(false);
+        setEnabled(false);
       }
     }
 
@@ -1835,8 +1946,161 @@ static class InsertImageAction extends AbstractAction
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
+  
+  /**
+   * Moves the the table row up.
+   */
+  static class MoveTableRowDownAction extends AbstractAction
+  implements SHTMLAction
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelImpl panel;
 
-static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLAction, AttributeComponent {
+    public MoveTableRowDownAction(SHTMLPanelImpl panel) {
+      super(SHTMLPanelImpl.moveTableRowUpAction);
+      this.panel = panel;
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      panel.getSHTMLEditorPane().moveTableRowDown();
+    }
+
+    public void update() {
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
+      }
+      else {
+        setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
+      SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+    }
+  }
+  /**
+   * Moves the the table column left.
+   */
+  static class MoveTableColumnLeftAction extends AbstractAction
+  implements SHTMLAction
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelImpl panel;
+
+    public MoveTableColumnLeftAction(SHTMLPanelImpl panel) {
+      super(SHTMLPanelImpl.moveTableColumnLeftAction);
+      this.panel = panel;
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      panel.getSHTMLEditorPane().moveTableColumnLeft();
+    }
+
+    public void update() {
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
+      }
+      else {
+        setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
+      SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+    }
+  }
+  /**
+   * Moves the the table column right.
+   */
+  static class MoveTableColumnRightAction extends AbstractAction
+  implements SHTMLAction
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelImpl panel;
+
+    public MoveTableColumnRightAction(SHTMLPanelImpl panel) {
+      super(SHTMLPanelImpl.moveTableColumnRightAction);
+      this.panel = panel;
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      panel.getSHTMLEditorPane().moveTableColumnRight();
+    }
+
+    public void update() {
+      if(panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
+      }
+      else {
+        setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
+      SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+    }
+  }  
+  /**
+   * Turns a table data cell into a table header cell or vice versa.
+   */
+  static class ToggleTableHeaderCellAction extends AbstractAction
+  implements SHTMLAction
+  {
+    /**
+     *
+     */
+    private final SHTMLPanelImpl panel;
+
+    public ToggleTableHeaderCellAction(SHTMLPanelImpl panel) {
+      super();
+      this.panel = panel;
+      getProperties();
+    }
+
+    public void actionPerformed(ActionEvent ae) {
+      panel.getSHTMLEditorPane().toggleTableHeaderCell();
+    }
+
+    public void update() {
+      if(this.panel.isHtmlEditorActive()){
+        setEnabled(false);
+        return;
+      }
+      if((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
+        setEnabled(true);
+      }
+      else {
+        setEnabled(false);
+      }
+    }
+
+    public void getProperties() {
+      SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+    }
+  }  
+
+  static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLAction, AttributeComponent {
     /**
      *
      */
@@ -1844,11 +2108,11 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     public ItalicAction(SHTMLPanelImpl panel) {
       //Action act = new StyledEditorKit.BoldAction();
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.fontItalicAction);
       putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-              KeyEvent.VK_I, KeyEvent.CTRL_MASK));
+          KeyEvent.VK_I, KeyEvent.CTRL_MASK));
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
     }
     /**
@@ -1860,11 +2124,11 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
      */
     public void actionPerformed(ActionEvent e) {
       super.actionPerformed(e);
-      if(this.panel.getEditor() != null) {
-        SHTMLDocument doc = (SHTMLDocument) this.panel.getEditor().getDocument();
+      if(this.panel.getSHTMLEditorPane() != null) {
+        SHTMLDocument doc = (SHTMLDocument) this.panel.getSHTMLEditorPane().getDocument();
         if (doc != null) {
-          AttributeSet a = doc.getCharacterElement(this.panel.getEditor().getSelectionStart()).
-              getAttributes();
+          AttributeSet a = doc.getCharacterElement(this.panel.getSHTMLEditorPane().getSelectionStart()).
+          getAttributes();
           boolean isItalic = StyleConstants.isItalic(a);
           if (isItalic) {
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
@@ -1881,11 +2145,11 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
     }
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -1910,13 +2174,13 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
           isItalic = true;
         }
       }
-        if(isItalic) {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
-        }
-        else {
-          putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-        }
-        success = true;
+      if(isItalic) {
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+      }
+      else {
+        putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+      }
+      success = true;
       return success;
     }
 
@@ -1927,14 +2191,14 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
      */
     public AttributeSet getValue() {
       SimpleAttributeSet set = new SimpleAttributeSet();
-       if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
+      if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(
           SHTMLPanelImpl.ACTION_SELECTED)) {
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
-                                          Util.CSS_ATTRIBUTE_NORMAL.toString());
+            Util.CSS_ATTRIBUTE_NORMAL.toString());
       }
       else {
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE,
-                                          StyleConstants.Italic.toString());
+            StyleConstants.Italic.toString());
       }
       return set;
     }
@@ -1945,7 +2209,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
   }
 
 
-/**
+  /**
    * action to move to the next cell in a table
    */
   static class NextTableCellAction extends AbstractAction implements SHTMLAction
@@ -1957,7 +2221,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
 
     public NextTableCellAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.nextTableCellAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
           KeyEvent.VK_TAB, 0));
@@ -1965,20 +2229,20 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
 
     public void actionPerformed(ActionEvent ae) {
 
-      Element cell = this.panel.getEditor().getCurTableCell();
+      Element cell = this.panel.getSHTMLEditorPane().getCurrentTableCell();
       if(cell != null) {
-        this.panel.getEditor().goNextCell(cell);
+        this.panel.getSHTMLEditorPane().goNextCell(cell);
         this.panel.updateActions();
       }
 
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if((this.panel.getSHTMLEditorPane() != null) && (this.panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -1991,7 +2255,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     }
   }
 
-/**
+  /**
    * action to move to the previous cell in a table
    */
   static class PrevTableCellAction extends AbstractAction implements SHTMLAction
@@ -2003,26 +2267,26 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
 
     public PrevTableCellAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.prevTableCellAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
           KeyEvent.VK_TAB, KeyEvent.SHIFT_MASK));
     }
 
     public void actionPerformed(ActionEvent ae) {
-      Element cell = this.panel.getEditor().getCurTableCell();
+      Element cell = this.panel.getSHTMLEditorPane().getCurrentTableCell();
       if(cell != null) {
-        this.panel.getEditor().goPrevCell(cell);
+        this.panel.getSHTMLEditorPane().goPrevCell(cell);
         this.panel.updateActions();
       }
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-     if((this.panel.getEditor() != null) && (this.panel.getEditor().getCurTableCell() != null)) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if((this.panel.getSHTMLEditorPane() != null) && (this.panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
         this.setEnabled(true);
       }
       else {
@@ -2035,7 +2299,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     }
   }
 
-/**
+  /**
    * RedoAction for the edit menu
    */
   static class RedoAction extends AbstractAction implements SHTMLAction {
@@ -2045,7 +2309,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     private final SHTMLPanelImpl panel;
     public RedoAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.redoAction);
-    this.panel = panel;
+      this.panel = panel;
       setEnabled(false);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2054,24 +2318,24 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
 
     public void actionPerformed(ActionEvent e) {
       if(this.panel.getCurrentDocumentPane().getSelectedTab() != DocumentPane.VIEW_TAB_LAYOUT){
-         return;
+        return;
       }
       try {
         this.panel.getUndo().redo();
-        final SHTMLEditorPane editor = this.panel.getEditor();
+        final SHTMLEditorPane editor = this.panel.getSHTMLEditorPane();
       }
       catch(CannotRedoException ex) {
         Util.errMsg((Component) e.getSource(),
-	      Util.getResourceString("unableToRedoError") + ex, ex);
+            Util.getResourceString("unableToRedoError") + ex, ex);
       }
       this.panel.updateActions();
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
       setEnabled(this.panel.getUndo().canRedo());
     }
     public void getProperties() {
@@ -2079,9 +2343,9 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     }
   }
 
-/** just adds a normal name to the superclasse's action */
+  /** just adds a normal name to the superclasse's action */
   static class SHTMLEditCopyAction extends DefaultEditorKit.CopyAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2089,7 +2353,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     private final SHTMLPanelImpl panel;
     public SHTMLEditCopyAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.copyAction);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2100,7 +2364,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       this.panel.updateActions();
     }
     public void update() {
-      if(this.panel.getEditor() != null) {
+      if(this.panel.getSHTMLEditorPane() != null) {
         setEnabled(true);
       }
       else {
@@ -2111,10 +2375,10 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
-  
-/** just adds a normal name to the superclasse's action */
+
+  /** just adds a normal name to the superclasse's action */
   static class SHTMLEditCutAction extends DefaultEditorKit.CutAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2122,7 +2386,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     private final SHTMLPanelImpl panel;
     public SHTMLEditCutAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.cutAction);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2133,7 +2397,7 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
       this.panel.updateActions();
     }
     public void update() {
-      if(this.panel.getEditor() != null) {
+      if(this.panel.getSHTMLEditorPane() != null) {
         setEnabled(true);
       }
       else {
@@ -2145,9 +2409,9 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     }
   }
 
-/** just adds a normal name to the superclasse's action */
+  /** just adds a normal name to the superclasse's action */
   static class SHTMLEditPasteAction extends DefaultEditorKit.PasteAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2155,31 +2419,31 @@ static class ItalicAction extends StyledEditorKit.ItalicAction implements SHTMLA
     private final SHTMLPanelImpl panel;
     public SHTMLEditPasteAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.pasteAction);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_V, KeyEvent.CTRL_MASK));
+          KeyEvent.VK_V, KeyEvent.ALT_MASK));
     }
     public void actionPerformed(ActionEvent e) {
       super.actionPerformed(e);
       this.panel.updateActions();
     }
     public void update() {
-        if(this.panel.getEditor() != null) {
-            setEnabled(true);
-        }
-        else {
-            setEnabled(false);
-        }
+      if(this.panel.getSHTMLEditorPane() != null) {
+        setEnabled(true);
+      }
+      else {
+        setEnabled(false);
+      }
     }
     public void getProperties() {
       SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
     }
   }
 
-static class SHTMLEditPrefsAction extends AbstractAction
-        implements SHTMLAction
+  static class SHTMLEditPrefsAction extends AbstractAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2188,7 +2452,7 @@ static class SHTMLEditPrefsAction extends AbstractAction
 
     public SHTMLEditPrefsAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.editPrefsAction);
       getProperties();
     }
@@ -2196,10 +2460,10 @@ static class SHTMLEditPrefsAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       Frame parent = JOptionPane.getFrameForComponent(this.panel);
       PrefsDialog dlg = new PrefsDialog(parent,
-                                       Util.getResourceString("prefsDialogTitle"));
+          Util.getResourceString("prefsDialogTitle"));
       Util.center(parent, dlg);
       dlg.setModal(true);
-      dlg.show();
+      dlg.setVisible(true);
 
       /** if the user made a selection, apply it to the document */
       if(dlg.getResult() == DialogShell.RESULT_OK) {
@@ -2215,8 +2479,8 @@ static class SHTMLEditPrefsAction extends AbstractAction
     }
   }
 
-static class SHTMLEditSelectAllAction extends AbstractAction
-        implements SHTMLAction
+  static class SHTMLEditSelectAllAction extends AbstractAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2224,7 +2488,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private final SHTMLPanelImpl panel;
     public SHTMLEditSelectAllAction(SHTMLPanelImpl panel) {
       super();
-    this.panel = panel;
+      this.panel = panel;
       putValue(Action.NAME, SHTMLPanelImpl.selectAllAction);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
@@ -2232,19 +2496,19 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void actionPerformed(ActionEvent ae) {
-    	if(this.panel.isHtmlEditorActive())
-    	{
-    		this.panel.getDocumentPane().getHtmlEditor().selectAll();
-    	}
-    	else
-    	{
-    		this.panel.getEditor().selectAll();
-    		this.panel.updateActions();
-    	}
+      if(this.panel.isHtmlEditorActive())
+      {
+        this.panel.getDocumentPane().getHtmlEditor().selectAll();
+      }
+      else
+      {
+        this.panel.getSHTMLEditorPane().selectAll();
+        this.panel.updateActions();
+      }
     }
 
     public void update() {
-      if(this.panel.getEditor() != null) {
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2256,7 +2520,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * close a document.
    *
    * <p>the action takes into account whether or not a document needs to be
@@ -2267,7 +2531,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
    * others that might need it.</p>
    */
   static class SHTMLFileCloseAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
 
     /**
@@ -2280,13 +2544,13 @@ static class SHTMLEditSelectAllAction extends AbstractAction
      * @param panel TODO*/
     public SHTMLFileCloseAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelMultipleDocImpl.closeAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
     /** close the currently active document, if there is one */
     public void actionPerformed(ActionEvent ae) {
-      if(this.panel.getEditor() != null) {                   // if documents are open
+      if(this.panel.getSHTMLEditorPane() != null) {                   // if documents are open
         closeDocument(this.panel.getActiveTabNo(), ae, false);  // close the active one
       }
       this.panel.updateActions();
@@ -2310,24 +2574,24 @@ static class SHTMLEditSelectAllAction extends AbstractAction
         }
         else {
           if(dp.needsSaving()) {              // ..the document needs to be saved
-             this.panel.selectTabbedPane(index);
+            this.panel.selectTabbedPane(index);
             String docName = dp.getDocumentName();
             int choice = Util.msgChoice(JOptionPane.YES_NO_CANCEL_OPTION, "confirmClosing", "saveChangesQuery", docName, "\r\n\r\n");
             switch(choice) {
-              case JOptionPane.YES_OPTION:           // if the user wanted to save
-                if(dp.isNewDoc()) {                     //if the document is new
-                  panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAsAction).actionPerformed(ae); // 'save as'
-                }
-                else {                                             // else
-                    panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae);   // 'save'
-                }
-                scheduleClose(dp);    //..and wait until it is finshed, then close
-                break;
-              case JOptionPane.NO_OPTION:       // if the user don't like to save
-                closeDoc(dp);       // close the document without saving
-                break;
-              case JOptionPane.CANCEL_OPTION:             // if the user cancelled
-                 break;                                    // do nothing
+            case JOptionPane.YES_OPTION:           // if the user wanted to save
+              if(dp.isNewDoc()) {                     //if the document is new
+                panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAsAction).actionPerformed(ae); // 'save as'
+              }
+              else {                                             // else
+                panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae);   // 'save'
+              }
+              scheduleClose(dp);    //..and wait until it is finshed, then close
+              break;
+            case JOptionPane.NO_OPTION:       // if the user don't like to save
+              closeDoc(dp);       // close the document without saving
+              break;
+            case JOptionPane.CANCEL_OPTION:             // if the user cancelled
+              break;                                    // do nothing
             }
           }
           else {                      // if the document does not need to be saved
@@ -2392,7 +2656,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private void catchCloseErr(DocumentPane dp) {
       try {
         int i = this.panel.getTabbedPaneForDocuments().indexOfComponent(dp);       // get the current tab index
-        if(i < 0 && this.panel.getEditor() != null) {
+        if(i < 0 && this.panel.getSHTMLEditorPane() != null) {
           this.panel.setActiveTabNo(this.panel.getTabbedPaneForDocuments().getSelectedIndex());
           dp = (DocumentPane) this.panel.getTabbedPaneForDocuments().getComponentAt(this.panel.getActiveTabNo());
           i = this.panel.getTabbedPaneForDocuments().indexOfComponent(dp);   // get the current tab index again
@@ -2414,7 +2678,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
 
     /** update the state of this action */
     public void update() {
-      if(this.panel.getEditor() != null) {
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2426,14 +2690,14 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * close all documents currently shown.
    *
    * <p>This action simply loops through all open documents and uses an instance
    * of SHTMLFileCloseAction to perform the actual closing on each of them.</p>
    */
   static class SHTMLFileCloseAllAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
 
     /**
@@ -2444,7 +2708,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
      * @param panel TODO*/
     public SHTMLFileCloseAllAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelMultipleDocImpl.closeAllAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
@@ -2459,7 +2723,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void update() {
-      if(this.panel.getEditor() != null) {
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2471,7 +2735,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * exit the application.
    *
    * <p>This will only exit the application, if<ul>
@@ -2483,7 +2747,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
    * </ul></p>
    */
   static class SHTMLFileExitAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2491,7 +2755,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private final SHTMLPanelMultipleDocImpl panel;
     public SHTMLFileExitAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelImpl.exitAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
           KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
@@ -2507,7 +2771,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void saveRelevantPrefs() {
- 
+
       /* ---- save splitpane sizes start -------------- */
 
       this.panel.savePrefs();
@@ -2522,9 +2786,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-/** create a new empty document and show it */
+  /** create a new empty document and show it */
   static class SHTMLFileNewAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2532,7 +2796,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private final SHTMLPanelMultipleDocImpl panel;
     public SHTMLFileNewAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelMultipleDocImpl.newAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
           KeyEvent.VK_N, KeyEvent.CTRL_MASK));
@@ -2542,7 +2806,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     public void actionPerformed(ActionEvent ae) {
       this.panel.createNewDocumentPane();   // create a new empty document
       this.panel.getTabbedPaneForDocuments().setSelectedComponent(                   // add the document to the
-            this.panel.getTabbedPaneForDocuments().add(this.panel.getDocumentPane().getDocumentName(), this.panel.getDocumentPane()));   // tabbed pane for display
+          this.panel.getTabbedPaneForDocuments().add(this.panel.getDocumentPane().getDocumentName(), this.panel.getDocumentPane()));   // tabbed pane for display
 
       this.panel.registerDocument();
 
@@ -2556,9 +2820,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-/** open an existing document from file and show it */
+  /** open an existing document from file and show it */
   static class SHTMLFileOpenAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2566,7 +2830,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private final SHTMLPanelMultipleDocImpl panel;
     public SHTMLFileOpenAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelMultipleDocImpl.openAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
           KeyEvent.VK_O, KeyEvent.CTRL_MASK));
@@ -2601,7 +2865,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     public void openDocument(File file, DocumentPane.DocumentPaneListener listener) {
       int openDocNo = -1;
       try {
-        openDocNo = getOpenDocument(file.toURL().toString());
+        openDocNo = getOpenDocument(file.toURI().toURL().toString());
       }
       catch(MalformedURLException mue) {}
       if(openDocNo > -1) {
@@ -2658,13 +2922,13 @@ static class SHTMLEditSelectAllAction extends AbstractAction
       public void run() {
         try {
           Frame parent =JOptionPane.getFrameForComponent(panel);
-          SHTMLFileOpenAction.this.panel.setDocumentPane(new DocumentPane(file.toURL(), 0/*, renderMode*/));
+          SHTMLFileOpenAction.this.panel.setDocumentPane(new DocumentPane(file.toURI().toURL(), 0/*, renderMode*/));
           if(l != null) {
             SHTMLFileOpenAction.this.panel.getDocumentPane().addDocumentPaneListener(l);
           }
           SHTMLFileOpenAction.this.panel.getTabbedPaneForDocuments().setSelectedComponent(
               SHTMLFileOpenAction.this.panel.getTabbedPaneForDocuments().add(SHTMLFileOpenAction.this.panel.getDocumentPane().getDocumentName(), SHTMLFileOpenAction.this.panel.getDocumentPane()));
-	  SHTMLFileOpenAction.this.panel.registerDocument();
+          SHTMLFileOpenAction.this.panel.registerDocument();
         }
         catch(Exception e) {
           Util.errMsg(owner, Util.getResourceString("unableToOpenFileError"), e);
@@ -2679,9 +2943,9 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-/** save a document */
+  /** save a document */
   static class SHTMLFileSaveAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2689,7 +2953,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     private final SHTMLPanelImpl panel;
     public SHTMLFileSaveAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelMultipleDocImpl.saveAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
           KeyEvent.VK_S, KeyEvent.CTRL_MASK));
@@ -2702,7 +2966,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
         saver.start();
       }
       else {
-          panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAsAction).actionPerformed(ae);
+        panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAsAction).actionPerformed(ae);
       }
       this.panel.updateActions();
     }
@@ -2725,7 +2989,7 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
 
     public void update() {
-      boolean isEnabled = this.panel.getEditor() != null;
+      boolean isEnabled = this.panel.getSHTMLEditorPane() != null;
       boolean saveInProgress = false;
       boolean needsSaving = false;
       if(isEnabled) {
@@ -2739,8 +3003,8 @@ static class SHTMLEditSelectAllAction extends AbstractAction
     }
   }
 
-static class SHTMLFileSaveAllAction extends AbstractAction
-        implements SHTMLAction
+  static class SHTMLFileSaveAllAction extends AbstractAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2749,7 +3013,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
 
     public SHTMLFileSaveAllAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelMultipleDocImpl.saveAllAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
@@ -2759,14 +3023,14 @@ static class SHTMLFileSaveAllAction extends AbstractAction
         this.panel.getTabbedPaneForDocuments().setSelectedIndex(i);
         this.panel.setDocumentPane((DocumentPane) this.panel.getTabbedPaneForDocuments().getSelectedComponent());
         if(this.panel.getDocumentPane().needsSaving()) {
-            panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae);
+          panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae);
         }
       }
       this.panel.updateActions();
     }
 
     public void update() {
-      if(this.panel.getEditor() != null) {
+      if(this.panel.getSHTMLEditorPane() != null) {
         this.setEnabled(true);
       }
       else {
@@ -2779,14 +3043,14 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * save a document under a different name and/or location
    *
    * <p>If a file already exists at the chosen location / name, the method
    * will ask the user if the existing file shall be overwritten.
    */
   static class SHTMLFileSaveAsAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2794,7 +3058,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     private final SHTMLPanelMultipleDocImpl panel;
     public SHTMLFileSaveAsAction(SHTMLPanelMultipleDocImpl panel) {
       super(SHTMLPanelMultipleDocImpl.saveAsAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
@@ -2837,14 +3101,14 @@ static class SHTMLFileSaveAllAction extends AbstractAction
         if(canSave) {
           try {
             NewFileSaver saver = new NewFileSaver(
-                                  this.panel.getDocumentPane(), selection.toURL(), this.panel.getActiveTabNo());
+                this.panel.getDocumentPane(), selection.toURI().toURL(), this.panel.getActiveTabNo());
             saver.setName("NewFileSaver");
             saver.start();
           }
           catch(Exception ex) {
             Util.errMsg((Component) ae.getSource(),
                 Util.getResourceString("cantCreateURLError") +
-                    selection.getAbsolutePath(),
+                selection.getAbsolutePath(),
                 ex);
           }
         }
@@ -2876,7 +3140,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
         SHTMLFileSaveAsAction.this.panel.doSave(this.dp);
         if(this.dp.saveSuccessful) {
           SHTMLFileSaveAsAction.this.panel.getTabbedPaneForDocuments().setTitleAt(SHTMLFileSaveAsAction.this.panel.getTabbedPaneForDocuments().indexOfComponent(this.dp),
-					  this.dp.getDocumentName());
+              this.dp.getDocumentName());
           if(l != null) {
             dp.addDocumentPaneListener(l);
           }
@@ -2903,7 +3167,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
 
     public void update() {
-      boolean isEnabled = this.panel.getEditor() != null;
+      boolean isEnabled = this.panel.getSHTMLEditorPane() != null;
       boolean saveInProgress = false;
       if(isEnabled) {
         saveInProgress = this.panel.getDocumentPane().saveInProgress();
@@ -2915,23 +3179,23 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * a slot for testing certain things conveniently during development
    */
   static class SHTMLTestAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
      */
     private final SHTMLPanelImpl panel;
     public SHTMLTestAction(SHTMLPanelImpl panel) {
-        super(SHTMLPanelImpl.testAction);
-        this.panel = panel;
-        getProperties();
+      super(SHTMLPanelImpl.testAction);
+      this.panel = panel;
+      getProperties();
     }
     public void actionPerformed(ActionEvent ae) {
-        this.panel.getEditor().insertBreak();
+      this.panel.getSHTMLEditorPane().insertBreak();
     }
     public void update() {
     }
@@ -2940,9 +3204,9 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
   }
 
-/** show information about SimplyHTML in a dialog */
+  /** show information about SimplyHTML in a dialog */
   static class SHTMLHelpAppInfoAction extends AbstractAction
-	implements SHTMLAction
+  implements SHTMLAction
   {
     /**
      *
@@ -2950,7 +3214,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     private final SHTMLPanelImpl panel;
     public SHTMLHelpAppInfoAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.aboutAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
     public void actionPerformed(ActionEvent ae) {
@@ -2958,7 +3222,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
       AboutBox dlg = new AboutBox(parent);
       Util.center(parent, dlg);
       dlg.setModal(true);
-      dlg.show();
+      dlg.setVisible(true);
       this.panel.repaint();
       this.panel.updateActions();
     }
@@ -2969,7 +3233,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
   }
 
-/**
+  /**
    * action to set a reference to the default style sheet
    * (for being able to use an already existing style sheet
    * without having to define named styles)
@@ -2983,7 +3247,7 @@ static class SHTMLFileSaveAllAction extends AbstractAction
 
     public SetDefaultStyleRefAction(SHTMLPanelImpl panel) {
       super(SHTMLPanelImpl.setDefaultStyleRefAction);
-    this.panel = panel;
+      this.panel = panel;
       getProperties();
     }
 
@@ -2993,11 +3257,11 @@ static class SHTMLFileSaveAllAction extends AbstractAction
     }
 
     public void update() {
-        if(this.panel.isHtmlEditorActive()){
-            this.setEnabled(false);
-            return;
-        }
-      if(this.panel.getEditor() != null && !this.panel.getSHTMLDocument().hasStyleRef()) {
+      if(this.panel.isHtmlEditorActive()){
+        this.setEnabled(false);
+        return;
+      }
+      if(this.panel.getSHTMLEditorPane() != null && !this.panel.getSHTMLDocument().hasStyleRef()) {
         this.setEnabled(true);
       }
       else {

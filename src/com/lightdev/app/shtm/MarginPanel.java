@@ -21,7 +21,6 @@ package com.lightdev.app.shtm;
 
 import java.awt.*;
 import javax.swing.border.*;
-import javax.swing.*;
 import javax.swing.text.html.*;
 
 /**

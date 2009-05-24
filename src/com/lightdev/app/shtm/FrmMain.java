@@ -22,7 +22,6 @@ package com.lightdev.app.shtm;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -52,7 +51,7 @@ import javax.swing.JFrame;
  */
 class FrmMain extends JFrame {
     public static final String APP_NAME = "SimplyHTML";
-    public static final String VERSION = "0.12.5";
+    public static final String VERSION = "0.13.1";
     /** static reference to this instance of class FrmMain */
      private SHTMLPanelImpl mainPane;
 

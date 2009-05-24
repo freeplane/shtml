@@ -179,7 +179,7 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
         this.colorChooserPane.setColor(colorDisplay.getBackground()); // setting up the current text color
         ColorTracker ok = new ColorTracker(this.colorChooserPane);
         JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooserPane, ok, null);
-        dialog.show(); // blocks until user brings dialog down...
+        dialog.setVisible(true); // blocks until user brings dialog down...
         dialog.dispose();
 
         return ok.color;

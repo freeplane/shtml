@@ -21,7 +21,10 @@ package com.lightdev.app.shtm;
 
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.awt.event.ActionListener;
 
+import javax.swing.Action;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JEditorPane;
 import javax.swing.JMenuBar;
@@ -70,6 +73,16 @@ public abstract class SHTMLPanel extends JPanel {
     
     public abstract JEditorPane getMostRecentFocusOwner();
 
+    
+    
+    public abstract Action getAction(String actionName);  
+    
+    /**
+     * Returns a new menu item for a named action of SimplyHTML. (Can be used for building custom
+     * popup menu, or for invoking the action externally in another way.)
+     */
+    public abstract JMenuItem newActionMenuItem(String actionName);
+    
    /**
     * Switches between the rich text view and the source view, given
     * tabbed panes are not used. Has no corresponding action; calling
@@ -77,4 +90,11 @@ public abstract class SHTMLPanel extends JPanel {
     */
     public abstract void switchViews();
 
+    /**
+     * Sets the handler for the Open Hyperlink action. SimplyHTML itself has
+     * no ability to open hyperlinks, so it forwards the action to the caller
+     * application.
+     */
+    public abstract void setOpenHyperlinkHandler(ActionListener openHyperlinkHandler);
+    
 }

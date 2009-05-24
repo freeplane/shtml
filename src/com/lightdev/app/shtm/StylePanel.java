@@ -21,9 +21,7 @@ package com.lightdev.app.shtm;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.text.*;
 import javax.swing.text.html.*;
-import java.util.*;
 
 /**
  * Panel to set general text style attributes such as indent or alignment.

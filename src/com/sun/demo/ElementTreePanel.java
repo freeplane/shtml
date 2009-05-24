@@ -45,7 +45,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.tree.*;
-import javax.swing.undo.*;
 import java.awt.*;
 import java.beans.*;
 import java.util.*;
@@ -118,7 +117,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
 	};
 	tree.addTreeSelectionListener(this);
 
-	/* comment out for use in SimplyHTML */ // tree.setDragEnabled(true);
+	/* commented out for use in SimplyHTML */ // tree.setDragEnabled(true);
 
 	// Don't show the root, it is fake.
 	tree.setRootVisible(false);

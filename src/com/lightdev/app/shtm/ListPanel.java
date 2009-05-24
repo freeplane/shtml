@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -31,8 +30,6 @@ import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
-import java.util.Hashtable;
-import javax.swing.text.StyleConstants;
 
 /**
  * A panel for showing and manipulating list format.

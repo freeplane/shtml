@@ -73,10 +73,10 @@ class SHTMLEditorKit extends HTMLEditorKit {
     try {
         final String standardContent;
         if(Util.preferenceIsTrue("gray_row_below_end")){
-            standardContent = "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ doc.SUFFIX +"\n</p>\n";
+            standardContent = "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ SHTMLDocument.SUFFIX +"\n</p>\n";
         }
         else{
-            standardContent = "<p>\n</p>\n<p>\n"+ doc.SUFFIX +"\n</p>\n";
+            standardContent = "<p>\n</p>\n<p>\n"+ SHTMLDocument.SUFFIX +"\n</p>\n";
         }
 		doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), standardContent);
     } catch (BadLocationException e) {
@@ -91,7 +91,7 @@ class SHTMLEditorKit extends HTMLEditorKit {
     StyleSheet styles = getStyleSheet();
     StyleSheet ss = new StyleSheet();
     try {
-      ss.importStyleSheet(getClass().forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
+      ss.importStyleSheet(Class.forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
     }
     catch(Exception e) {}
     SHTMLDocument doc = new SHTMLDocument(ss);

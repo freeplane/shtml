@@ -27,8 +27,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.html.CSS;
 import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.StyleSheet;
-import javax.swing.text.html.HTML;
 
 /**
  * a panel to display and change line attributes

@@ -31,8 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 
-import com.lightdev.app.shtm.SHTMLPanelImpl;
-
 /**
  * Class that displays a splash screen
  * Is run in a separate thread so that the applet continues to load in the background

@@ -79,7 +79,7 @@ class SplitPanel extends JPanel {
   private JSplitPane[] outerPanels;
 
   /** current setting for major axis of this SplitPanel */
-  private int majorAxis = this.MAJOR_AXIS_VERTICAL;
+  private int majorAxis = SplitPanel.MAJOR_AXIS_VERTICAL;
 
 
   /* ------ class fields end ------------------ */
@@ -113,7 +113,7 @@ class SplitPanel extends JPanel {
     outerPanels[SOUTH].setOrientation(JSplitPane.VERTICAL_SPLIT);
     outerPanels[WEST].setOrientation(JSplitPane.HORIZONTAL_SPLIT);
     outerPanels[EAST].setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-    if(majorAxis == this.MAJOR_AXIS_VERTICAL) {
+    if(majorAxis == SplitPanel.MAJOR_AXIS_VERTICAL) {
       // [ ALWAYS THE CASE ]
        //System.out.println("SplitPanel.buildLayout majorAxis = vertical");
       outerPanels[SOUTH].setTopComponent(outerPanels[NORTH]);
@@ -281,7 +281,7 @@ class SplitPanel extends JPanel {
    * @param location  the location to add to (SplitPanel.NORTH, SOUTH, etc.)
    */
   public void addComponent(JComponent component, int location) { 
-    if(majorAxis == this.MAJOR_AXIS_VERTICAL) {
+    if(majorAxis == SplitPanel.MAJOR_AXIS_VERTICAL) {
       //System.out.println("SplitPanel.addComponent majorAxis = vertical");
       switch(location) {
         case CENTER:

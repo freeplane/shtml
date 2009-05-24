@@ -19,20 +19,17 @@
 
 package com.lightdev.app.shtm;
 
-import javax.swing.text.BadLocationException;
 import java.io.IOException;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.EditorKit;
 import java.io.StringWriter;
-import javax.swing.text.html.HTMLEditorKit;
-import java.io.StringReader;
 import java.util.Vector;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.ElementIterator;
-import javax.swing.text.Element;
+
 import javax.swing.text.AbstractDocument;
-import javax.swing.text.html.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.ElementIterator;
+import javax.swing.text.html.HTMLDocument;
 
 /**
  * A class to represent a portion of HTML text.
@@ -70,12 +67,20 @@ class HTMLText {
    * indicates whether or not the html represented by this
    * <code>HTMLText</code> instance contains more than one paragraph
    */
-  private boolean multiPara = false;
+  //private boolean multiPara = false;
 
+  
+  private boolean stringRepresentation = false;
+  
   /**
    * construct a new empty <code>HTMLText</code> object
    */
   public HTMLText() {
+  }
+  public HTMLText(String htmlText, String plainText) {
+    this.htmlText = htmlText;
+    this.plainText = plainText;
+    this.stringRepresentation = true;
   }
 
   /**
@@ -97,12 +102,12 @@ class HTMLText {
     if( doc.getParagraphElement(start).equals(
         doc.getParagraphElement(start + length)))
     {
-      multiPara = false;
+      stringRepresentation = false;
       clearStyledText();
       copyStyledText(src);
     }
     else {
-      multiPara = true;
+      stringRepresentation = true;
       StringWriter sw = new StringWriter();
       SHTMLWriter w = new SHTMLWriter(sw, doc, start, length);
       Element first = doc.getParagraphElement(start);
@@ -112,14 +117,17 @@ class HTMLText {
       plainText = doc.getText(start, length);
     }
   }
+  
+
+  
 
   /**
    * insert this <code>HTMLText<code> into a <code>Document</code>.
    *
-   * @param  doc  the document to insert into
-   * @param  pos  the text position to insert at
+   * @param  document  the document to insert into
+   * @param  position  the text position to insert at
    */
-  public void pasteHTML(Document doc, int pos)
+  public void pasteHTML(Document document, int position)
         throws BadLocationException, IOException
   {
     /**
@@ -128,89 +136,86 @@ class HTMLText {
      * chunk with its own set of copied attributes. Else
      * simply read copied HTML code back in.
      */
-    if(!multiPara) {
-      int contentSize = getClipTextSize();
+    if(!stringRepresentation) {
+      int nrTextChunks = getClipTextSize();
       String text;
-      for(int i=0;i<contentSize;i++) {
+      for(int i=0;i<nrTextChunks;i++) {
         text = getCharactersAt(i);
-        doc.insertString(pos, text, getCharacterAttributes(i));
-        pos += text.length();
-      }
-    }
-    else {
-      SHTMLDocument sDoc = (SHTMLDocument) doc;
-      Element cElem = sDoc.getCharacterElement(pos);
-      Element pElem = cElem.getParentElement();
-      if(pos == pElem.getStartOffset()) {
-        // we are at the start of the paragraph to insert at
-        sDoc.insertBeforeStart(pElem, htmlText);
-      }
-      else {
-        if(pElem.getEndOffset() == pos + 1) {
-          // we are at the end of the paragraph to insert at
-          sDoc.insertAfterEnd(pElem, htmlText);
-        }
-        else {
-          // we are somewhere else inside the paragraph to insert at
-          String newHtml = splitPaste(sDoc, cElem, pElem, pos, htmlText);
-          sDoc.setOuterHTML(pElem, newHtml);
-        }
+        document.insertString(position, text, getCharacterAttributes(i));
+        position += text.length();
       }
     }
   }
 
   /**
-   * paste HTML by splitting a given paragraph element and inserting
-   * at the split position
+   * Determines the HTML string resulting from pasting the given HTML string at the given
+   * position within the given paragraph element.
    *
    * @param doc  the document to insert to
-   * @param elem  the character element to split
-   * @param pElem  the paragraph element to split
-   * @param pos  the text position inside the document where to split
-   * @param html  the html text to insert at pos
+   * @param characterElement  the character element to split
+   * @param paragraphElement  the paragraph element to split
+   * @param targetPosition  the text position inside the document where to split
+   * @param pastedHtml  the html text to insert at pos
    */
-  private String splitPaste(SHTMLDocument doc, Element elem, Element pElem, int pos, String html) {
+  public String splitPaste(SHTMLDocument doc, Element characterElement, Element paragraphElement,
+      int targetPosition, String pastedHtml, boolean pastedHTMLHasParagraphTags) {
+
+    // A model for this method: SHTMLEditorPane.InsertLineBreakAction.
+    
     StringWriter sw = new StringWriter();
     SHTMLWriter w = new SHTMLWriter(sw, doc);
-    StringWriter splitSw = new StringWriter();
-    SHTMLWriter splitW = new SHTMLWriter(splitSw, doc);
+
+    String paragraphElementAdjustedName = paragraphElement.getName();
+    boolean impliedParagraph = paragraphElementAdjustedName.equalsIgnoreCase("p-implied");
+    if (impliedParagraph)
+      paragraphElementAdjustedName = "p";        
     try {
-      int count = pElem.getElementCount();
-      Element e;
-      w.writeStartTag(pElem.getName(), pElem.getAttributes());
-      for(int i = 0; i < count; i++) {
-        e = pElem.getElement(i);
-        if(e.equals(elem)) {
-          int start = e.getStartOffset();
-          String textToSplit = doc.getText(start, e.getEndOffset() - start);
-          splitW.write(e);
-          String splitHtml = splitSw.getBuffer().toString();
-          int splitStart = splitSw.getBuffer().toString().indexOf(textToSplit);
-          int splitEnd = splitStart + pos - start;
-          if(i > 0) {
-            w.writeStartTag(pElem.getName(), pElem.getAttributes());
-          }
-          sw.write(splitHtml.substring(0, splitEnd));
-          w.writeEndTag(pElem.getName());
-          sw.write(html);
-          w.writeStartTag(pElem.getName(), pElem.getAttributes());
-          sw.write(splitHtml.substring(splitEnd));
-          if(i > 0) {
-            w.writeEndTag(pElem.getName());
-          }
+      int count = paragraphElement.getElementCount();
+      if (!impliedParagraph || pastedHTMLHasParagraphTags)
+        w.writeStartTag(paragraphElementAdjustedName, paragraphElement.getAttributes());
+      for(int elementIdx = 0; elementIdx < count; elementIdx++) {
+        Element element = paragraphElement.getElement(elementIdx);
+        if(element.equals(characterElement)) {
+          // Why the following?
+          //if(elementIdx > 0) 
+          //  w.writeStartTag(paragraphElementAdjustedName, paragraphElement.getAttributes());
+          
+          //Write first part of the splitted text.
+          SHTMLWriter htmlStartWriter = new SHTMLWriter(sw, doc,
+              element.getStartOffset(), targetPosition - element.getStartOffset());
+          htmlStartWriter.write(element);
+          if (pastedHTMLHasParagraphTags)
+            w.writeEndTag(paragraphElementAdjustedName);
+
+          //Write the pasted text.
+          sw.write(pastedHtml);
+
+          //Write the second part of the splited text.
+          if (pastedHTMLHasParagraphTags)          
+            w.writeStartTag(paragraphElementAdjustedName, paragraphElement.getAttributes());
+
+          SHTMLWriter htmlEndWriter = new SHTMLWriter(sw, doc,
+              targetPosition, element.getEndOffset() - targetPosition);
+          htmlEndWriter.write(element);
+          
+          // Why the following?
+          //if(elementIdx > 0) 
+          //  w.writeEndTag(paragraphElementAdjustedName);
+          
         }
         else {
-          w.write(e);
+          w.write(element);
         }
       }
-      w.writeEndTag(pElem.getName());
+      if (!impliedParagraph || pastedHTMLHasParagraphTags)      
+        w.writeEndTag(paragraphElementAdjustedName);
     }
     catch(Exception e) {
       e.printStackTrace();
     }
     return sw.getBuffer().toString();
   }
-
+ 	  	 
   /**
    * Copy the selected portion of an SHTMLEditorPane as styled text,
    * i.e. chunks of plain text strings with an AttributeSet associated
@@ -253,7 +258,7 @@ class HTMLText {
     }
   }
 
-  /** get the number of text chunks in this <code>StyledText</code> object */
+  /** Gets the number of text chunks in this <code>StyledText</code> object. */
   private int getClipTextSize() {
     return clipText.size();
   }
@@ -291,7 +296,7 @@ class HTMLText {
    */
   public String toString() {
     StringBuffer text = new StringBuffer();
-    if(multiPara) {
+    if(stringRepresentation) {
       text.append(plainText);
     }
     else {
@@ -301,6 +306,33 @@ class HTMLText {
       }
     }
     return text.toString();
+  }
+  
+  /** (See also isParagraphTag.) */
+  public static boolean containsParagraphTags(String htmlText) {
+    //An simplistic heuristic. Does not handle tags in comments, for instance.
+   return htmlText.matches
+   ("(?ims).*<(blockquote|dir|div|dl|dt|frameset|h1|h2|h3|h4|h5|h6|hr|li|menu|ol|p|pre|table|td|th|tr|ul).*?>.*"); 
+  
+  }
+  
+  /** Determines whether the text has a table with exactly one cell and one row. */
+  public boolean isOneCellInOneRow() {
+    //return false;
+    if (htmlText.matches("(?ims).*</td>.*<td.*"))
+      return false;
+    if (htmlText.matches("(?ims).*</tr>.*<tr.*"))
+      return false;
+    if (!htmlText.matches("(?ims).*<table.*"))
+      return false;
+    return true;
+  }
+  public boolean usesStringRepresenation() {
+    return stringRepresentation;
+  }
+  
+  public String getHTMLText() {
+    return htmlText;
   }
 
 }

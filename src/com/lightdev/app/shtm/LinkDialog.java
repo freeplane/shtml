@@ -65,6 +65,8 @@ class LinkDialog extends DialogShell implements ActionListener {
 
   /** the document this dialog was constructed with */
   private Document doc;
+  
+  private SHTMLEditorPane editorPane;
 
   /** dialog components */
   private JComboBox linkStyle;
@@ -107,6 +109,8 @@ class LinkDialog extends DialogShell implements ActionListener {
   /** the help id for this dialog */
   private static final String helpTopicId = "item164";
 
+  private static boolean simpleLinkDialog = Util.preferenceIsTrue("simpleLinkDialog");
+  
   //private int renderMode;
 
   /**
@@ -120,15 +124,16 @@ class LinkDialog extends DialogShell implements ActionListener {
    * @param title  the dialog title
    * @param doc  the document to edit link settings for
    */
-  public LinkDialog(Frame parent, String title, Document doc, int selectionStart, int selectionEnd,
-                    File imgDir/*, int renderMode*/)
+  public LinkDialog(Frame parent, String title, SHTMLEditorPane editorPane,
+      File imgDir/*, int renderMode*/)
   {
 
     // initialize DialogShell
     super(parent, title, helpTopicId);
 
     // save document for later use
-    this.doc = doc;
+    this.editorPane = editorPane;
+    this.doc = editorPane.getSHTMLDocument();
     this.imgDir = imgDir;
     //this.renderMode = renderMode;
 
@@ -139,20 +144,24 @@ class LinkDialog extends DialogShell implements ActionListener {
     // create link style selector
     JPanel p = new JPanel(g);
     JLabel lb = new JLabel(Util.getResourceString("linkStyleLabel"));
-    Util.addGridBagComponent(p, lb, g, c, 0, 0, GridBagConstraints.EAST);
+    if (!simpleLinkDialog)	  
+      Util.addGridBagComponent(p, lb, g, c, 0, 0, GridBagConstraints.EAST);
     Vector styleNames = Util.getStyleNamesForTag(((SHTMLDocument) doc).getStyleSheet(), HTML.Tag.A.toString());
     String standardStyleName = Util.getResourceString("standardStyleName");
     styleNames.insertElementAt(standardStyleName, 0);
     linkStyle = new JComboBox(styleNames);
-    Util.addGridBagComponent(p, linkStyle, g, c, 1, 0, GridBagConstraints.WEST);
+    if (!simpleLinkDialog)
+      Util.addGridBagComponent(p, linkStyle, g, c, 1, 0, GridBagConstraints.WEST);
 
     // create link type selector
     lb = new JLabel(Util.getResourceString("linkTypeLabel"));
-    Util.addGridBagComponent(p, lb, g, c, 0, 1, GridBagConstraints.EAST);
+    if (!simpleLinkDialog)	  
+      Util.addGridBagComponent(p, lb, g, c, 0, 1, GridBagConstraints.EAST);
     buildLinkTypes();
     linkType = new JComboBox(linkTypeNames.values().toArray());
     linkType.addActionListener(this);
-    Util.addGridBagComponent(p, linkType, g, c, 1, 1, GridBagConstraints.WEST);
+    if (!simpleLinkDialog)
+      Util.addGridBagComponent(p, linkType, g, c, 1, 1, GridBagConstraints.WEST);
 
     // create link address field
     lb = new JLabel(Util.getResourceString("linkAddressLabel"));
@@ -168,18 +177,22 @@ class LinkDialog extends DialogShell implements ActionListener {
 
     // create link anchor field
     lb = new JLabel(Util.getResourceString("linkAnchorLabel"));
-    Util.addGridBagComponent(p, lb, g, c, 0, 3, GridBagConstraints.EAST);
+    if (!simpleLinkDialog)
+      Util.addGridBagComponent(p, lb, g, c, 0, 3, GridBagConstraints.EAST);
     linkAnchor = new JTextField();
     linkAnchor.setPreferredSize(new Dimension(150, 20));
     linkAnchor.setMaximumSize(new Dimension(500, 20));
-    Util.addGridBagComponent(p, linkAnchor, g, c, 1, 3, GridBagConstraints.WEST, 1, 1, GridBagConstraints.HORIZONTAL, 1, 0);
+    if (!simpleLinkDialog)
+      Util.addGridBagComponent(p, linkAnchor, g, c, 1, 3, GridBagConstraints.WEST, 1, 1, GridBagConstraints.HORIZONTAL, 1, 0);
     browseAnchor = new JButton(Util.getResourceString("linkBrowseLabel"));
     browseAnchor.addActionListener(this);
-    Util.addGridBagComponent(p, browseAnchor, g, c, 2, 3, GridBagConstraints.WEST);
+    if (!simpleLinkDialog)
+      Util.addGridBagComponent(p, browseAnchor, g, c, 2, 3, GridBagConstraints.WEST);
 
     // create link display selector
     lb = new JLabel(Util.getResourceString("linkDisplayLabel"));
-    Util.addGridBagComponent(p, lb, g, c, 0, 4, GridBagConstraints.EAST);
+    if (!simpleLinkDialog)    
+      Util.addGridBagComponent(p, lb, g, c, 0, 4, GridBagConstraints.EAST);
     showAsText = new JRadioButton(Util.getResourceString("showAsTextLabel"));
     showAsText.addActionListener(this);
     showAsImage = new JRadioButton(Util.getResourceString("showAsImageLabel"));
@@ -187,7 +200,8 @@ class LinkDialog extends DialogShell implements ActionListener {
     JPanel helpPanel = new JPanel();
     helpPanel.add(showAsText);
     helpPanel.add(showAsImage);
-    Util.addGridBagComponent(p, helpPanel, g, c, 1, 4, GridBagConstraints.WEST);
+    if (!simpleLinkDialog)
+      Util.addGridBagComponent(p, helpPanel, g, c, 1, 4, GridBagConstraints.WEST);
     ButtonGroup bg = new ButtonGroup();
     bg.add(showAsText);
     bg.add(showAsImage);
@@ -200,8 +214,15 @@ class LinkDialog extends DialogShell implements ActionListener {
     linkText = new JTextField();
     linkText.setPreferredSize(new Dimension(400, 20));
     linkText.setMaximumSize(new Dimension(500, 20));
-    linkTextPanel.add(linkText, BorderLayout.CENTER);
-    Util.addGridBagComponent(p, linkTextPanel, g, c, 1, 5, GridBagConstraints.WEST, 2, 1, GridBagConstraints.HORIZONTAL, 1, 0);
+    if (!simpleLinkDialog) {
+      linkTextPanel.add(linkText, BorderLayout.CENTER);
+      Util.addGridBagComponent(p, linkTextPanel, g, c, 1, 5, GridBagConstraints.WEST, 2, 1, GridBagConstraints.HORIZONTAL, 1, 0);
+    }
+    else {
+      lb = new JLabel(Util.getResourceString("linkTextLabel"));
+      Util.addGridBagComponent(p, lb, g, c, 0, 5, GridBagConstraints.EAST);
+      Util.addGridBagComponent(p, linkText, g, c, 1, 5, GridBagConstraints.WEST, 2, 1, GridBagConstraints.HORIZONTAL, 1, 0);      
+    }
     //linkTextPanel.setVisible(false);
 
     // create link image panel
@@ -240,13 +261,20 @@ class LinkDialog extends DialogShell implements ActionListener {
 
     // add panels to content pane of DialogShell
     contentPane.add(p, BorderLayout.CENTER);
-
+    
+    // add key listeners
+    // The following could perhaps be done by adding the listener only
+    // to one place. But to which one?
+    linkAddress.addKeyListener(getCompletionKeyListener());    
+    linkText.addKeyListener(getCompletionKeyListener());
+    linkAnchor.addKeyListener(getCompletionKeyListener());
+    
     // cause optimal placement of all elements
     pack();
 
     // init dialog with existing link (if any)
-    if(!setExistingLink(selectionStart, selectionEnd)) {
-      setLinkText(selectionStart, selectionEnd);
+    if(!setExistingLink(editorPane.getSelectionStart(), editorPane.getSelectionEnd())) {
+      setLinkText(editorPane.getSelectionStart(), editorPane.getSelectionEnd());
     }
 
   }
@@ -275,17 +303,17 @@ class LinkDialog extends DialogShell implements ActionListener {
    * set components of this dialog from an exisiting link in
    * the associated document (if any).
    *
-   * @param selStart  the start position of the text currently selected in the document
-   * @param selEnd  the end position of the text currently selected in the document
+   * @param selectionStart  the start position of the text currently selected in the document
+   * @param selectionEnd  the end position of the text currently selected in the document
    *
    * @return ture, if a link was found, false if not
    */
-  private boolean setExistingLink(int selStart, int selEnd) {
+  private boolean setExistingLink(int selectionStart, int selectionEnd) {
     setIgnoreActions(true);
-    Element e = Util.findLinkElementUp(((SHTMLDocument) doc).getCharacterElement(selStart));
-    boolean foundLink = (e != null);
+    Element linkElement = editorPane.getCurrentLinkElement();
+    boolean foundLink = (linkElement != null);
     if(foundLink) {
-      AttributeSet elemAttrs = e.getAttributes();
+      AttributeSet elemAttrs = linkElement.getAttributes();
       Object linkAttr = elemAttrs.getAttribute(HTML.Tag.A);
       Object href = ((AttributeSet) linkAttr).getAttribute(HTML.Attribute.HREF);
       if(href != null) {
@@ -300,13 +328,13 @@ class LinkDialog extends DialogShell implements ActionListener {
           setLinkImage(img, elemAttrs);
         }
         else {
-          setLinkText(e.getStartOffset(), e.getEndOffset());
+          setLinkText(linkElement.getStartOffset(), linkElement.getEndOffset());
         }
       }
     }
     else {
       linkType.setSelectedItem(LINK_TYPE_LOCAL);
-      setLinkText(selStart, selEnd);
+      setLinkText(selectionStart, selectionEnd);
     }
     setIgnoreActions(false);
     return foundLink;
@@ -377,21 +405,27 @@ class LinkDialog extends DialogShell implements ActionListener {
    * @param url  the url to set link components from
    */
   private void setDialogFromUrl(URL url) {
-    if(url != null) {
-      String protName;
-      String protocol = url.getProtocol();
-      if(protocol != null) {
-        protName = (String) linkTypeNames.get(protocol);
-      }
-      else {
-        protName = (String) linkTypeNames.get(LINK_TYPE_RELATIVE_KEY);
-      }
-      if(protName != null) {
-        linkType.setSelectedItem(protName);
-      }
-      setLinkAddress(getPathFromUrl(url, protocol));
-      linkAnchor.setText(url.getRef());
-    }
+	  if (url == null) return;
+
+	  if (simpleLinkDialog) {
+		  setLinkAddress(url.toString());
+		  return; }
+	  
+	  String protName;
+	  String protocol = url.getProtocol();
+	  if(protocol != null) {
+		  protName = (String) linkTypeNames.get(protocol);
+	  }
+	  else {
+		  protName = (String) linkTypeNames.get(LINK_TYPE_RELATIVE_KEY);
+	  }
+	  if (protName != null)
+		  linkType.setSelectedItem(protName);
+
+	  setLinkAddress(getPathFromUrl(url, protocol));
+
+	  linkAnchor.setText(url.getRef());
+
   }
 
   /**
@@ -450,6 +484,9 @@ class LinkDialog extends DialogShell implements ActionListener {
       linkTypeNames.put(type, name);
     }
   }
+  private boolean linkAddressHasProtocol() {
+	  return linkAddress.getText().indexOf(':') >= 0;
+  }
 
   /**
    * get the chosen protocol
@@ -483,7 +520,7 @@ class LinkDialog extends DialogShell implements ActionListener {
   }
 
   /**
-   * get a file from a file chooser
+   * Gets a file from a file chooser.
    *
    * @return the chosen file, or null, if none has been chosen or cancel has benn pressed
    */
@@ -570,10 +607,10 @@ class LinkDialog extends DialogShell implements ActionListener {
   public String getLinkAddress() {
     String link = linkAddress.getText();
     String prot = getProtocol();
-    if(prot != null &&
-       !prot.equalsIgnoreCase(transformProtocol(LINK_TYPE_RELATIVE_KEY)) &&
-       !prot.equalsIgnoreCase(transformProtocol(LINK_TYPE_MAILTO_KEY)) &&
-       !link.startsWith(Util.URL_SEPARATOR))
+    if(prot != null && !linkAddressHasProtocol() &&
+        !prot.equalsIgnoreCase(transformProtocol(LINK_TYPE_RELATIVE_KEY)) &&
+        !prot.equalsIgnoreCase(transformProtocol(LINK_TYPE_MAILTO_KEY)) &&
+        !link.startsWith(Util.URL_SEPARATOR))
     {
       link = Util.URL_SEPARATOR + link;
     }
@@ -581,25 +618,25 @@ class LinkDialog extends DialogShell implements ActionListener {
   }
 
   /**
-   * get the link reference
+   * Gets the URL string of the hyperlink's reference.
    *
    * @return the object this link refers to
    */
   public String getHref() {
     StringBuffer href = new StringBuffer();
-    String prot = getProtocol();
+    String protocol = getProtocol();
 
-    String linkAddrText = linkAddress.getText();
-    String linkAnchText = linkAnchor.getText();
+    String linkAddressText = linkAddress.getText();
+    String linkAnchorText = linkAnchor.getText();
 
-    if((linkAddrText == null || linkAddrText.length() < 1) && (linkAnchText != null && linkAnchText.length() > 0)) {
+    if((linkAddressText == null || linkAddressText.length() < 1) && (linkAnchorText != null && linkAnchorText.length() > 0)) {
       // link to an anchor inside this document
       href.append(Util.ANCHOR_SEPARATOR);
-      href.append(linkAnchText);
+      href.append(linkAnchorText);
     }
     else {
-      if(prot != null) {
-        href.append(prot);
+      if (protocol != null && !linkAddressHasProtocol()) {
+        href.append(protocol);
       }
       href.append(getLinkAddress());
       String anchor = linkAnchor.getText();
@@ -641,28 +678,35 @@ class LinkDialog extends DialogShell implements ActionListener {
    */
   public void actionPerformed(ActionEvent e) {
     if(!ignoreActions) {
-      Object src = e.getSource();
-      if(src.equals(showAsText)) {
+      Object source = e.getSource();
+      if(source.equals(showAsText)) {
         linkTextPanel.setVisible(true);
         linkImagePanel.setVisible(false);
       }
-      else if(src.equals(showAsImage)) {
+      else if(source.equals(showAsImage)) {
         linkTextPanel.setVisible(false);
         linkImagePanel.setVisible(true);
       }
-      else if(src.equals(browseAddress)) {
+      else if(source.equals(browseAddress)) {
         File file = chooseFile();
         if(file != null) {
-          setLinkAddress(file.getPath().replace(File.separatorChar, Util.URL_SEPARATOR_CHAR));
+          if (simpleLinkDialog) {
+            try {
+              setLinkAddress(file.toURI().toURL().toString()); 
+            }
+            catch (Exception ex) {}
+          }
+          else
+            setLinkAddress(file.getPath().replace(File.separatorChar, Util.URL_SEPARATOR_CHAR));
         }
       }
-      else if(src.equals(linkType)) {
+      else if(source.equals(linkType)) {
         handleLinkTypeAction();
       }
-      else if(src.equals(browseAnchor)) {
+      else if(source.equals(browseAnchor)) {
         handleBrowseAnchorAction();
       }
-      else if(src.equals(setImage)) {
+      else if(source.equals(setImage)) {
         handleLinkImageAction();
       }
       else {
@@ -685,7 +729,7 @@ class LinkDialog extends DialogShell implements ActionListener {
     }
     Util.center(this, dlg);
     dlg.setModal(true);
-    dlg.show();
+    dlg.setVisible(true);
 
     /** if the user made a selection, apply it to the document */
     if(dlg.getResult() == DialogShell.RESULT_OK) {
@@ -751,32 +795,32 @@ class LinkDialog extends DialogShell implements ActionListener {
   }
 
   /**
-   * handle an action performed by the button used
-   * to browse anchors of a given file
+   * Handles an action performed by the button used
+   * to browse anchors of a given file.
    */
   private void handleBrowseAnchorAction() {
     //System.out.println("LinkDialog actionPerformed browseAnchor file=" + getLinkedFile().getAbsolutePath());
     try {
-      AnchorDialog dlg;
+      AnchorDialog anchorDialog;
       File file = getLinkedFile();
       String linkAddrText = linkAddress.getText();
       if(linkAddrText == null || linkAddrText.length() < 1) {
-        dlg = new AnchorDialog(
+        anchorDialog = new AnchorDialog(
             this,
             Util.getResourceString("anchorDialogTitle"),
             doc);
       }
       else {
-        dlg = new AnchorDialog(
+        anchorDialog = new AnchorDialog(
             this,
             Util.getResourceString("anchorDialogTitle"),
-            file.toURL());
+            file.toURI().toURL());
       }
-      Util.center(this, dlg);
-      dlg.setModal(true);
-      dlg.show();
-      if(dlg.getResult() == DialogShell.RESULT_OK) {
-        linkAnchor.setText(dlg.getAnchor());
+      Util.center(this, anchorDialog);
+      anchorDialog.setModal(true);
+      anchorDialog.setVisible(true);
+      if(anchorDialog.getResult() == DialogShell.RESULT_OK) {
+        linkAnchor.setText(anchorDialog.getAnchor());
       }
     }
     catch(MalformedURLException ex) {

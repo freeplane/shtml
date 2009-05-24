@@ -64,7 +64,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.JSpinner;
 import java.util.Vector;
 import java.io.StringWriter;
 import javax.swing.text.AttributeSet;

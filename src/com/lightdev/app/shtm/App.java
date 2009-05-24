@@ -20,9 +20,7 @@
 package com.lightdev.app.shtm;
 
 import javax.swing.UIManager;
-import java.awt.*;
 import java.util.prefs.*;
-import javax.swing.ImageIcon;
 
 /**
  * Main class of application SimplyHTML.

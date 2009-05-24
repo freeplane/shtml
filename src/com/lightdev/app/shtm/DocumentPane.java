@@ -20,7 +20,6 @@
 package com.lightdev.app.shtm;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -30,7 +29,6 @@ import javax.swing.text.html.*;
 
 import com.sun.demo.ExampleFileFilter;
 import java.util.*;
-import java.util.prefs.*;
 
 /**
  * GUI representation of a document.
@@ -69,7 +67,7 @@ import java.util.prefs.*;
 class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
   /** the editor displaying the document in layout view */
-  private SHTMLEditorPane editor;
+  private SHTMLEditorPane editorPane;
 
   /** the editor displaying the document in HTML code view */
   private SyntaxPane sourceEditorPane;
@@ -168,12 +166,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     super();
 
     // EditorPane and ScrollPane for layout view
-    editor = new SHTMLEditorPane();
+    editorPane = new SHTMLEditorPane();
     SHTMLEditorKit kit = new SHTMLEditorKit(/*renderMode*/);
     //kit.resetStyleSheet();
-    editor.setEditorKit(kit);
+    editorPane.setEditorKit(kit);
     richViewScrollPane = new JScrollPane();   // create a new JScrollPane,
-    richViewScrollPane.getViewport().setView(editor);     // ..add the editor pane to it
+    richViewScrollPane.getViewport().setView(editorPane);     // ..add the editor pane to it
 
     // EditorPane and ScrollPane for html view
     sourceEditorPane = new SyntaxPane();
@@ -243,7 +241,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * @return the JEditorPane of this DocumentPane
    */
   public SHTMLEditorPane getEditor() {
-    return editor;
+    return editorPane;
   }
 
   /**
@@ -268,13 +266,13 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void createNewDocument() {
     try {
-      SHTMLEditorKit kit = (SHTMLEditorKit) editor.getEditorKit();
+      SHTMLEditorKit kit = (SHTMLEditorKit) editorPane.getEditorKit();
       SHTMLDocument doc = (SHTMLDocument) kit.createDefaultDocument();
       //insertStyleRef(doc); // create style sheet reference in HTML header tag
       //styles = kit.getStyleSheet();
       doc.addDocumentListener(this); // listen to changes
       doc.setBase(createTempDir());
-      editor.setDocument(doc); // let the document be edited in our editor
+      editorPane.setDocument(doc); // let the document be edited in our editor
       //doc.putProperty(Document.TitleProperty, getDocumentName());
       boolean useStyle = Util.useSteStyleSheet();
       if(useStyle) {
@@ -288,13 +286,13 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
   public void setDocument(Document docToSet) {
     try {
-      SHTMLEditorKit kit = (SHTMLEditorKit) editor.getEditorKit();
+      SHTMLEditorKit kit = (SHTMLEditorKit) editorPane.getEditorKit();
       HTMLDocument doc = (HTMLDocument) getDocument();
       if(doc != null) {
         doc.removeDocumentListener(this);
       }
       docToSet.addDocumentListener(this); // listen to changes
-      editor.setDocument(docToSet); // let the document be edited in our editor
+      editorPane.setDocument(docToSet); // let the document be edited in our editor
     }
     catch(Exception e) {
       Util.errMsg(this, e.getMessage(), e);
@@ -312,7 +310,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() +
                                File.separator +
                                getDocumentName() + File.separator);
-    return docTempDir.toURL();
+    return docTempDir.toURI().toURL();
   }
 
   /**
@@ -332,15 +330,15 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   public void loadDocument(URL url) {
     try {
-      SHTMLEditorKit kit = (SHTMLEditorKit) editor.getEditorKit();
+      SHTMLEditorKit kit = (SHTMLEditorKit) editorPane.getEditorKit();
       SHTMLDocument doc = (SHTMLDocument) kit.createEmptyDocument();
       doc.putProperty("IgnoreCharsetDirective", new Boolean(true));
-      doc.setBase(new File(url.getPath()).getParentFile().toURL()); // set the doc base
+      doc.setBase(new File(url.getPath()).getParentFile().toURI().toURL()); // set the doc base
       InputStream in = url.openStream(); // get an input stream
       kit.read(in, doc, 0); // ..and read the document contents from it
       in.close(); // .. then properly close the stream
       doc.addDocumentListener(this); // listen to changes
-      editor.setDocument(doc); // let the document be edited in our editor
+      editorPane.setDocument(doc); // let the document be edited in our editor
       setSource(url); // remember where the document came from
       loadedFromFile = true;
     }
@@ -361,7 +359,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         throws MalformedURLException, IOException
   {
     StyleSheet s = new StyleSheet();
-    s.importStyleSheet(cssFile.toURL());
+    s.importStyleSheet(cssFile.toURI().toURL());
     return s;
   }
 
@@ -389,7 +387,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         if(sourceUrl != null) {
           /* write the HTML document */
           if(getSelectedTab() == VIEW_TAB_HTML) {
-            editor.setText(sourceEditorPane.getText());
+            editorPane.setText(sourceEditorPane.getText());
           }
           SHTMLDocument doc = (SHTMLDocument) getDocument();
           OutputStream os = new FileOutputStream(sourceUrl.getPath());
@@ -416,7 +414,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
           //System.out.println("DocumentPane textChanged = false");
           setDocumentChanged(false); // indicate no changes pending anymore after the save
           file = new File(sourceUrl.getPath()).getParentFile();
-          ((HTMLDocument) getDocument()).setBase(file.toURL()); // set the doc base
+          ((HTMLDocument) getDocument()).setBase(file.toURI().toURL()); // set the doc base
           deleteTempDir();
           //System.out.println("DocumentPane saveSuccessful = true");
           saveSuccessful = true; // signal that saving was successful
@@ -525,11 +523,11 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   }
 
   /**
-   * save the style sheet of this document to a CSS file.
+   * Saves the style sheet of this document to a CSS file.
    *
-   * <p>With stage 8 this saves a style sheet by merging with an existing
+   * <p>With stage 8, saves a style sheet by merging it with the existing
    * one with the same name/location. Styles in this style sheet overwrite
-   * styles in the existing style sheet.</p>
+   * styles in the already existing style sheet.</p>
    */
   public void saveStyleSheet() throws IOException {
     SHTMLDocument doc = (SHTMLDocument) getDocument();
@@ -581,30 +579,30 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   }
 
   /**
-   * merge two style sheets by adding all rules found
-   * in a given source StyleSheet that are not contained
-   * in a given destination StyleSheet. Assumes rules
+   * Merges two style sheets by adding all the rules found
+   * in the source style sheet that are not contained
+   * in the destination style sheet. Assumes the rules
    * of src and dest are already loaded.
    *
-   * @param src  the source StyleSheet
-   * @param dest  the destination StyleSheet
+   * @param sourceStyleSheet  the source StyleSheet
+   * @param destinationStyleSheet  the destination StyleSheet
    */
-  private void mergeStyleSheets(StyleSheet src, StyleSheet dest) throws IOException {
+  private void mergeStyleSheets(StyleSheet sourceStyleSheet, StyleSheet destinationStyleSheet) throws IOException {
     String name;
     Object elem;
-    Vector srcNames = Util.getStyleNames(src);
-    Vector destNames = Util.getStyleNames(dest);
+    Vector srcNames = Util.getStyleNames(sourceStyleSheet);
+    Vector destNames = Util.getStyleNames(destinationStyleSheet);
     StringWriter sw = new StringWriter();
     StringBuffer buf = sw.getBuffer();
-    CSSWriter cw = new CSSWriter(sw, null);
+    CSSWriter cssWriter = new CSSWriter(sw, null);
     for(int i = 0; i < srcNames.size(); i++) {
       elem = srcNames.get(i);
       name = elem.toString();
       if(destNames.indexOf(elem) < 0) {
         buf.delete(0, buf.length());
-        cw.writeRule(name, src.getStyle(name));
-        dest.removeStyle(name);
-        dest.addRule(buf.toString());
+        cssWriter.writeRule(name, sourceStyleSheet.getStyle(name));
+        destinationStyleSheet.removeStyle(name);
+        destinationStyleSheet.addRule(buf.toString());
       }
     }
   }
@@ -630,7 +628,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     File file = new File(sourceUrl.getPath()).getParentFile();
     String newDocBase = null;
     try {
-      newDocBase = file.toURL().toString();
+      newDocBase = file.toURI().toURL().toString();
     }
     catch(Exception e) {
       if(file != null) {
@@ -733,7 +731,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * @return the <code>Document</code> of this <code>DocumentPane</code>
    */
   public Document getDocument() {
-    return editor.getDocument();
+    return editorPane.getDocument();
   }
 
   HTMLDocument getHTMLDocument() {
@@ -770,16 +768,23 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   private void setHTMLView() {
     try {
-      editor.getDocument().removeDocumentListener(this);
-      StringWriter sw = new StringWriter();
-      SHTMLDocument lDoc = (SHTMLDocument) editor.getDocument();
-      SHTMLEditorKit kit = (SHTMLEditorKit) editor.getEditorKit();
-      kit.write(sw, lDoc, 0, lDoc.getLength());
-      sw.close();
-      sourceEditorPane.setText(sw.toString());
+      editorPane.getDocument().removeDocumentListener(this);
+      StringWriter stringWriter = new StringWriter();      
+
+      if(isHtmlChanged()){
+    	  editorPane.getEditorKit().write
+    	  (stringWriter, editorPane.getDocument(), 0, editorPane.getDocument().getLength());
+    	  stringWriter.close();
+
+    	  String newText = stringWriter.toString();
+    	  if (!Util.preferenceIsTrue("writeHead","true"))
+    		  newText = newText.replaceAll("(?ims)<head>.*?(<body)","$1");
+
+    	  sourceEditorPane.setText(newText);
+          setHtmlChanged(false);
+      }
       sourceEditorPane.getDocument().addDocumentListener(this);
       sourceEditorPane.addCaretListener(sourceEditorPane);
-      sourceEditorPane.requestFocus();
       setHtmlChanged(false);
     }
     catch(Exception ex) {
@@ -794,11 +799,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     sourceEditorPane.getDocument().removeDocumentListener(this);
     sourceEditorPane.removeCaretListener(sourceEditorPane);
     if(isHtmlChanged()){
-        editor.setText(sourceEditorPane.getText());
+        editorPane.setText(sourceEditorPane.getText());
+        setHtmlChanged(false);
     }
-    editor.setCaretPosition(0);
-    editor.getDocument().addDocumentListener(this);
-    editor.requestFocus();
+    editorPane.setCaretPosition(0);
+    editorPane.getDocument().addDocumentListener(this);
+    editorPane.requestFocus();
   }
 
   /**
@@ -807,9 +813,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    */
   String getDocumentText() {
       if(getSelectedTab() == VIEW_TAB_HTML){
-          editor.setText(sourceEditorPane.getText());
+          editorPane.setText(sourceEditorPane.getText());
       }
-      return editor.getText();
+      return editorPane.getText();
   }
 
   /**
@@ -818,22 +824,20 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   void setDocumentText(String sText) {
       switch(getSelectedTab()) {
       case VIEW_TAB_LAYOUT:
-          editor.setText(sText);
+          editorPane.setText(sText);
         break;
       case VIEW_TAB_HTML:
           sourceEditorPane.setText(sText);
-          setHtmlChanged(true);
         break;
     }
       EventQueue.invokeLater(new Runnable(){
 
-		public void run() {
-			setDocumentChanged(false);
-			
-		}
-    	  
-      });
+        public void run() {
+		      setHtmlChanged(true);
+		      setDocumentChanged(false);
+        }});
   }
+
 
 
   /* ----------------- changeListener implementation start ---------------------- */
@@ -863,15 +867,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * needs to be saved.
    */
   public void insertUpdate(DocumentEvent e) {
-    //System.out.println("insertUpdate setting textChanged=true for " + getDocumentName());
-      if (getSelectedTab() == VIEW_TAB_HTML) {
-          setHtmlChanged(true);
-      }
+      setHtmlChanged(true);
       setDocumentChanged(true);
-      /*if (getSelectedTab() == VIEW_TAB_HTML) {
-       StyledDocument sDoc = (StyledDocument) e.getDocument();
-       sourceEditorPane.setMarks(sDoc, 0, sDoc.getLength(), this);
-       }*/
   }
   
   /**
@@ -879,10 +876,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
    * needs to be saved.
    */
   public void removeUpdate(DocumentEvent e) {
-      //System.out.println("removeUpdate setting textChanged=true for " + getDocumentName());
-      if (getSelectedTab() == VIEW_TAB_HTML) {
-          setHtmlChanged(true);
-      }
+      setHtmlChanged(true);
       setDocumentChanged(true);
   }
   
@@ -893,7 +887,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   public void changedUpdate(DocumentEvent e) {
       //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
       if (getSelectedTab() == VIEW_TAB_LAYOUT) {
-          editor.updateInputAttributes();
+          editorPane.updateInputAttributes();
           setDocumentChanged(true);
       }
   }
@@ -972,12 +966,14 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   public JEditorPane getMostRecentFocusOwner() {
     switch(getSelectedTab()) {
     case VIEW_TAB_LAYOUT:
-      return editor;
+      return editorPane;
     case VIEW_TAB_HTML:
         return sourceEditorPane;
   }
     return null;    
 }
+
+
 
 public void setContentPanePreferredSize(Dimension prefSize) {
     setPreferredSize(null);

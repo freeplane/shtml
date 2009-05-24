@@ -20,11 +20,8 @@
 package com.lightdev.app.shtm;
 
 import javax.swing.Action;
-import javax.swing.JMenu;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
-import javax.help.*;
-import javax.help.event.*;
 
 /**
  * Defines an interface all plug-ins for application SimplyHTML

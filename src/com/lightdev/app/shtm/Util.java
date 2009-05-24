@@ -27,14 +27,12 @@ import java.awt.Point;
 import java.awt.Frame;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.CSS;
 import javax.swing.text.html.StyleSheet;
 import javax.swing.text.Element;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.JComponent;
 import java.awt.Insets;
-import java.util.MissingResourceException;
 import java.util.Vector;
 import javax.swing.text.ElementIterator;
 import java.util.Enumeration;
@@ -167,34 +165,7 @@ public class Util {
     return newName;
   }
 
-  /**
-   * find the next link attribute from a given element upwards
-   * through the element hierarchy
-   *
-   * @param elem  the element to start looking at
-   *
-   * @return the link attribute found, or null, if none was found
-   */
-  public static Element findLinkElementUp(Element elem) {
-    Element e = null;
-    //Element elem = ((SHTMLDocument) doc).getCharacterElement(selStart);
-    Object linkAttr = null; //elem.getAttributes().getAttribute(HTML.Tag.A);
-    Object href = null;
-    while((elem != null) && (linkAttr == null)) {
-      e = elem;
-      linkAttr = elem.getAttributes().getAttribute(HTML.Tag.A);
-      if(linkAttr != null) {
-        href = ((AttributeSet) linkAttr).getAttribute(HTML.Attribute.HREF);
-      }
-      elem = elem.getParentElement();
-    }
-    if(linkAttr != null && href != null) {
-      return e;
-    }
-    else {
-      return null;
-    }
-  }
+
 
   /**
    * resolve sets of attributes that are recursively stored in each other
@@ -699,11 +670,28 @@ public class Util {
    */
   public static Element findElementUp(String name, Element start) {
     Element elem = start;
-    while((elem != null) && (!elem.getName().equalsIgnoreCase(name))) {
+    while(elem != null && !elem.getName().equalsIgnoreCase(name))
       elem = elem.getParentElement();
-    }
     return elem;
   }
+
+  /**
+   * find the first occurrence of an <code>Element</code> in the
+   * element tree above a given <code>Element</code>
+   *
+   * @param name the name of the <code>Element</code> to search for
+   * @param start the <code>Element</code> to start looking
+   *
+   * @return the found <code>Element</code> or null if none is found
+   */
+  public static Element findElementUp(String name1, String name2, Element start) {
+    Element elem = start;
+    while(elem != null &&
+        !(elem.getName().equalsIgnoreCase(name1) || 
+        elem.getName().equalsIgnoreCase(name2)))
+      elem = elem.getParentElement();
+    return elem;
+  }  
 
   /**
    * find the first occurrence of an <code>Element</code> in the
@@ -993,8 +981,9 @@ public class Util {
       return DynamicResource.getResourceString(resources, nm);      
   }
 
-  static public String getResourceString(String nm) {     
-      return DynamicResource.getResourceString(SHTMLPanelImpl.getResources(), nm);      
+  static public String getResourceString(String nm) {   
+	  String resourceString = DynamicResource.getResourceString(SHTMLPanelImpl.getResources(), nm);
+	  return resourceString!=null?resourceString:nm;       
   }
   
   static String getPreference(String key, String defaultValue){
@@ -1025,10 +1014,11 @@ public class Util {
   }
 
 
-  /** Tells whether rich view and source view should be used in tabs. */
-
+  /** Tells whether the user should be able to switch between the WYSIWYG editor pane and the HTML source
+   *  editor pane using the UI element of tab, shown below the editing panes. If false, switching
+   *  between editor panes is still possible, albeit not using the tabs. */
   static boolean showViewsInTabs() {
-	  return preferenceIsTrue("show_views_in_tabs","true");
+	  return preferenceIsTrue("showViewsInTabs","true");
   }
 
 

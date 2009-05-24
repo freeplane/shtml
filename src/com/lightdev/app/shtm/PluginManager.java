@@ -19,7 +19,6 @@
 
 package com.lightdev.app.shtm;
 
-import java.awt.Frame;
 import java.util.Vector;
 import java.net.URLClassLoader;
 import java.net.URL;
@@ -27,10 +26,7 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
 import java.io.File;
-import java.net.URI;
 import java.util.Hashtable;
-import javax.help.*;
-import javax.help.event.*;
 
 /**
  * Finds and loads plug-ins of application SimplyHTML.

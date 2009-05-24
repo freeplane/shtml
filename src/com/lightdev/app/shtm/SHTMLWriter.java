@@ -19,13 +19,22 @@
  */
 package com.lightdev.app.shtm;
 
-import javax.swing.text.*;
-import javax.swing.text.AbstractDocument.LeafElement;
-import javax.swing.text.html.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Enumeration;
 
-import java.io.*;
-import java.util.*;
-import java.util.prefs.Preferences;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.ElementIterator;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.html.CSS;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLWriter;
 
 
 /**
@@ -35,25 +44,33 @@ import java.util.prefs.Preferences;
  */
 
 class SHTMLWriter extends HTMLWriter {
-    private Element elem;
+    private Element element;
+    private Writer writer = null;
     private boolean replaceEntities;
     private boolean inTextArea;
-
-	final private MutableAttributeSet convAttr  = new SimpleAttributeSet();
-	private boolean inPre;
     
+    //final private MutableAttributeSet oConvAttr  = new SimpleAttributeSet();
+    //final private MutableAttributeSet convertedAttributeSet  = new SimpleAttributeSet();
+    private boolean inPre;
+
     public SHTMLWriter(Writer w, HTMLDocument doc, int pos, int len) {
-        super(w, doc, pos, len);
+      super(w, doc, pos, len);
+      this.writer = w; 
     }
 
+    /** Constructs the SHTMLWriter with a new StringWriter. See also the method
+     * getWrittenString. */
+    public SHTMLWriter(HTMLDocument doc) {      
+       this(new StringWriter(), doc,0 , doc.getLength());
+    }
     public SHTMLWriter(Writer w, HTMLDocument doc) {
         this(w, doc,0 , doc.getLength());
      }
 
     protected ElementIterator getElementIterator() {
-        if(elem == null)
+        if(element == null)
             return super.getElementIterator();
-        return new ElementIterator(elem);
+        return new ElementIterator(element);
     }
 
     protected void output(char[] chars, int start, int length)
@@ -135,17 +152,17 @@ class SHTMLWriter extends HTMLWriter {
      *            location within the document.
      *
      */
-    synchronized void write(Element elem) throws IOException, BadLocationException {
-        this.elem = elem;
+    synchronized void write(Element element) throws IOException, BadLocationException {
+        this.element = element;
         try{
             write();
         }
         catch(BadLocationException e){
-            elem = null;
+            element = null;
             throw e;
         }
         catch(IOException e){
-            elem = null;
+            element = null;
             throw e;
         }
     }
@@ -154,13 +171,13 @@ class SHTMLWriter extends HTMLWriter {
      *
      * @param elem  the element which children are to be written as HTML
      */
-    public void writeChildElements(Element elem)
+    public void writeChildElements(Element parentElement)
         throws IOException, BadLocationException
     {
-      Element para;
-      for(int i = 0; i < elem.getElementCount(); i++) {
-        para = elem.getElement(i);
-        write(para);
+      Element childElement; //Not necessarily a paragraph element.
+      for(int i = 0; i < parentElement.getElementCount(); i++) {
+        childElement = parentElement.getElement(i);
+        write(childElement);
       }
     }
 
@@ -184,53 +201,54 @@ class SHTMLWriter extends HTMLWriter {
      * mapping over to an HTML tag/attribute.  Other CSS attributes
      * will be placed in an HTML style attribute.
      */
-    private static void convertToHTML(AttributeSet from, MutableAttributeSet to) {
-    if (from == null) {
+    private static void convertStyleToHTMLStyle(AttributeSet source, MutableAttributeSet target) {
+      if (source == null) {
         return;
-    }
-    Enumeration keys = from.getAttributeNames();
-    String value = "";
-    while (keys.hasMoreElements()) {
-        Object key = keys.nextElement();
-        if (key instanceof CSS.Attribute) {
-            // default is to store in a HTML style attribute
-            if (value.length() > 0) {
-            value = value + "; ";
-            }
-            value = value + key + ": " + from.getAttribute(key);
+      }
+      Enumeration sourceAttributeNames = source.getAttributeNames();
+      String value = "";
+      while (sourceAttributeNames.hasMoreElements()) {
+        Object sourceAttributeName = sourceAttributeNames.nextElement();
+        if (sourceAttributeName instanceof CSS.Attribute) {
+          // default is to store in a HTML style attribute
+          if (value.length() > 0) {
+            value += "; ";
+          }
+          value += sourceAttributeName + ": " + source.getAttribute(sourceAttributeName);
         } else {
-        to.addAttribute(key, from.getAttribute(key));
+          target.addAttribute(sourceAttributeName, source.getAttribute(sourceAttributeName));
         }
-    }
-    if (value.length() > 0) {
-        to.addAttribute(HTML.Attribute.STYLE, value);
-    }
+      }
+      if (value.length() > 0) {
+        target.addAttribute(HTML.Attribute.STYLE, value);
+      }
     }
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLWriter#writeAttributes(javax.swing.text.AttributeSet)
      */
-    protected void writeAttributes(AttributeSet attr) throws IOException {
-        // translate css attributes to html
-        if(attr instanceof Element){
-            Element elem = (Element) attr;
-            if(elem.isLeaf() || elem.getName().equalsIgnoreCase("p-implied")){
-                super.writeAttributes(attr);
-                return;
-            }
+    protected void writeAttributes(AttributeSet attributeSet) throws IOException {
+      // translate css attributes to html
+      if(attributeSet instanceof Element){
+        Element element = (Element) attributeSet;
+        if(element.isLeaf() || element.getName().equalsIgnoreCase("p-implied")){
+          super.writeAttributes(attributeSet);
+          return;
         }
-        convAttr.removeAttributes(convAttr);
-        convertToHTML(attr, convAttr);
-
-        Enumeration names = convAttr.getAttributeNames();
-        while (names.hasMoreElements()) {
-            Object name = names.nextElement();
-            if (name instanceof HTML.Tag || 
-            name instanceof StyleConstants || 
-            name == HTML.Attribute.ENDTAG) {
-            continue;
-            }
-            write(" " + name + "=\"" + convAttr.getAttribute(name) + "\"");
+      }
+      //convertedAttributeSet.removeAttributes(convertedAttributeSet);
+      MutableAttributeSet convertedAttributeSet  = new SimpleAttributeSet();
+      convertStyleToHTMLStyle(attributeSet, convertedAttributeSet);
+      
+      Enumeration attributeNames = convertedAttributeSet.getAttributeNames();
+      while (attributeNames.hasMoreElements()) {
+        Object attributeName = attributeNames.nextElement();
+        if (attributeName instanceof HTML.Tag || 
+            attributeName instanceof StyleConstants || 
+            attributeName == HTML.Attribute.ENDTAG) {
+          continue;
         }
+        write(" " + attributeName + "=\"" + convertedAttributeSet.getAttribute(attributeName) + "\"");
+      }
     }
 
     /**
@@ -267,23 +285,24 @@ class SHTMLWriter extends HTMLWriter {
      * The end element is written as the last element,
      * if it is a leaf element.
      *
-     * @param start  the element to start writing with
-     * @param end  the last element to write
+     * @param startElement  the element to start writing with
+     * @param endElement  the last element to write
      */
-    void write(Element start, Element end) throws IOException, BadLocationException
+    void write(Element startElement, Element endElement) throws IOException, BadLocationException
     {
-      Element parent = start.getParentElement();
-      int count = parent.getElementCount();
+      Element parentElement = startElement.getParentElement();
+      int count = parentElement.getElementCount();
       int i = 0;
-      Element e = parent.getElement(i);
-      while(i < count && e != start) {
-        e = parent.getElement(i++);
+      Element e = parentElement.getElement(i);
+      while(i < count && e != startElement) {
+        e = parentElement.getElement(i++);
       }
       while(i < count) {
-        writeElementsUntil(e, end);
-        e = parent.getElement(i++);
+        writeElementsUntil(e, endElement);
+        e = parentElement.getElement(i++);
       }
     }
+
 
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLWriter#startTag(javax.swing.text.Element)
@@ -320,5 +339,38 @@ class SHTMLWriter extends HTMLWriter {
         }
         write('>');
         writeLineSeparator();
-    }    
+    }
+    
+    public void write (String string) {
+      try {
+        this.writer.write(string);
+      }
+      catch (IOException ex) {
+
+      }
+    }
+    public String toString() {
+      if (writer instanceof StringWriter) {
+        StringWriter stringWriter = (StringWriter)writer;
+        return stringWriter.getBuffer().toString();
+      }
+      return super.toString();
+    }
+    /** Gets the written string if the writer is a StringWriter, null otherwise. */
+    String getWrittenString() {
+      if (writer instanceof StringWriter) {
+        StringWriter stringWriter = (StringWriter)writer;
+        return stringWriter.getBuffer().toString();
+      }
+      return null;
+    }
+    
+    void removeLastWrittenNewline() {
+      if (writer instanceof StringWriter) {
+        StringWriter stringWriter = (StringWriter)writer;
+        int charIdx = stringWriter.getBuffer().length();
+        while(stringWriter.getBuffer().charAt(--charIdx) <= 13)
+          stringWriter.getBuffer().deleteCharAt(charIdx);       
+      }
+    }
 }

@@ -55,6 +55,7 @@ class HTMLTextSelection  implements Transferable
   /** the data to transfer */
   private HTMLText data;
 
+  
   /** the data flavor of this transferable */
   private static final DataFlavor[] flavors = {
     new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText")

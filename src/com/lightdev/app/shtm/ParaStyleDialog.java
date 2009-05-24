@@ -29,7 +29,6 @@ import javax.swing.text.html.*;
 
 
 import java.util.*;
-import java.util.prefs.*;
 import java.io.*;
 
 /**

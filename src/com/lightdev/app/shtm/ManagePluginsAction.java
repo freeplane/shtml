@@ -20,7 +20,6 @@
 package com.lightdev.app.shtm;
 
 import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -65,7 +64,7 @@ class ManagePluginsAction extends AbstractAction
         Util.getResourceString("pluginManagerDialogTitle"));
     Util.center(shtmlPanel, pmd);
     pmd.setModal(true);
-    pmd.show();
+    pmd.setVisible(true);
 
     /** if the user made a selection, apply it to the document */
     if(pmd.getResult() == DialogShell.RESULT_OK) {

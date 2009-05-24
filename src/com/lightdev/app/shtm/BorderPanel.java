@@ -30,7 +30,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
 import java.util.Enumeration;
-import java.util.prefs.*;
 
 /**
  * Panel to show and manipulate border settings for a rectangular

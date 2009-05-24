@@ -26,7 +26,6 @@ import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import javax.help.CSH.DisplayHelpFromSource;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;

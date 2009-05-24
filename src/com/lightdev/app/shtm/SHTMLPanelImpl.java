@@ -88,6 +88,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
 
   /** the plug-in manager of SimplyHTML */
   public static PluginManager pluginManager; // = new PluginManager(mainFrame);
+
+  protected ActionListener openHyperlinkHandler = null;
   
   public static void setTextResources(TextResources textResources){
       if (SHTMLPanelImpl.textResources != null) return;
@@ -177,6 +179,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static  final String fontFamilyAction = "fontFamily";
   public static  final String fontSizeAction = "fontSize";
   public static  final String fontBoldAction = "fontBold";
+  public static  final String fontStrikethroughAction = "fontStrikethrough";
   public static  final String fontItalicAction = "fontItalic";
   public static  final String fontUnderlineAction = "fontUnderline";
   public static  final String fontColorAction = "fontColor";
@@ -187,14 +190,20 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static  final String testAction = "test";
   public static  final String insertTableAction = "insertTable";
   public static  final String formatTableAction = "formatTable";
+  public static  final String toggleTableHeaderCellAction = "toggleTableHeaderCell";
   public static  final String insertTableColAction = "insertTableCol";
   public static  final String insertTableRowAction = "insertTableRow";
+  public static  final String insertTableRowHeaderAction = "insertTableRowHeader";
   public static  final String appendTableRowAction = "appendTableRow";
   public static  final String appendTableColAction = "appendTableCol";
   public static  final String deleteTableRowAction = "deleteTableRow";
   public static  final String deleteTableColAction = "deleteTableCol";
   public static final String nextTableCellAction = "nextTableCell";
   public static final String prevTableCellAction = "prevTableCell";
+  public static final String moveTableRowUpAction = "moveTableRowUp";
+  public static final String moveTableColumnLeftAction = "moveTableColumnLeft";
+  public static final String moveTableColumnRightAction = "moveTableColumnRight";
+  public static final String moveTableRowDownAction = "moveTableRowDown";
   //public static final String nextCellAction = "nextCell";
   //public static final String prevCellAction = "prevCell";
   public static final String toggleBulletsAction = "toggleBullets";
@@ -210,6 +219,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static  final String paraAlignRightAction = "paraAlignRight";
   public static  final String insertLinkAction = "insertLink";
   public static  final String editLinkAction = "editLink";
+  public static  final String openLinkAction = "openLink";  
   public static  final String setTagAction = "setTag";
   public static  final String editAnchorsAction = "editAnchors";
   public static final String saveAllAction = "saveAll";
@@ -217,6 +227,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static final String setDefaultStyleRefAction = "setDefaultStyleRef";
   public static final String findReplaceAction = "findReplace";
   public static  final String setStyleAction = "setStyle";
+  public static  final String formatAsCodeAction = "formatAsCode";
   
   public static SHTMLPanelImpl getOwnerSHTMLPanel(Component c){
       for(;;){
@@ -260,6 +271,14 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       return menuBar.handleKeyBinding(ks, e, condition, pressed); 
   }
 
+  public JMenuItem newActionMenuItem(String actionName) {
+	  return dynRes.createMenuItem(getResources(), actionName);
+  }
+  
+  public Action getAction(String actionName) {
+	  return dynRes.getAction(actionName);
+  }
+  
 /**
    * get the DynamicResource used in this instance of FrmMain
    *
@@ -577,7 +596,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       if(pluginMenu != null) {
         Icon menuIcon = pluginMenu.getIcon();
         if(menuIcon == null) {
-          URL url = dynRes.getResource(textResources, emptyIcon);
+          URL url = DynamicResource.getResource(textResources, emptyIcon);
           if (url != null) {
             menuIcon = new ImageIcon(url);
             pluginMenu.setIcon(new ImageIcon(url));
@@ -590,7 +609,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
         if(helpMenu.getSubElements().length > 0) {
           Icon menuIcon = helpMenu.getIcon();
           if(menuIcon == null) {
-            URL url = dynRes.getResource(textResources, emptyIcon);
+            URL url = DynamicResource.getResource(textResources, emptyIcon);
             if (url != null) {
               menuIcon = new ImageIcon(url);
               helpMenu.setIcon(new ImageIcon(url));
@@ -654,7 +673,9 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     dynRes.addAction(documentTitleAction, new SHTMLEditorKitActions.DocumentTitleAction(this));
     dynRes.addAction(editAnchorsAction, new SHTMLEditorKitActions.EditAnchorsAction(this));
     dynRes.addAction(setTagAction, new SHTMLEditorKitActions.SetTagAction(this));
+    dynRes.addAction(formatAsCodeAction, new SHTMLEditorKitActions.SetTagAction(this, "code"));
     dynRes.addAction(editLinkAction, new SHTMLEditorKitActions.EditLinkAction(this));
+    dynRes.addAction(openLinkAction, new SHTMLEditorKitActions.OpenLinkAction(this));    
     dynRes.addAction(prevTableCellAction, new SHTMLEditorKitActions.PrevTableCellAction(this));
     dynRes.addAction(nextTableCellAction, new SHTMLEditorKitActions.NextTableCellAction(this));
     dynRes.addAction(editNamedStyleAction, new SHTMLEditorKitActions.EditNamedStyleAction(this));
@@ -669,7 +690,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     dynRes.addAction(ManagePluginsAction.managePluginsAction,
                      new ManagePluginsAction());
     dynRes.addAction(elemTreeAction, new SHTMLEditorKitActions.ShowElementTreeAction(this));
-    dynRes.addAction(gcAction, new SHTMLEditorKitActions.GCAction(this));
+    dynRes.addAction(gcAction, new SHTMLEditorKitActions.GarbageCollectionAction(this));
     dynRes.addAction(undoAction, new SHTMLEditorKitActions.UndoAction(this));
     dynRes.addAction(redoAction, new SHTMLEditorKitActions.RedoAction(this));
     dynRes.addAction(cutAction, new SHTMLEditorKitActions.SHTMLEditCutAction(this));
@@ -681,23 +702,33 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     dynRes.addAction(fontFamilyAction, new SHTMLEditorKitActions.FontFamilyAction(this));
     dynRes.addAction(fontSizeAction, new SHTMLEditorKitActions.FontSizeAction(this));
     dynRes.addAction(insertTableAction, new SHTMLEditorKitActions.InsertTableAction(this));
-    dynRes.addAction(insertTableRowAction, new SHTMLEditorKitActions.InsertTableRowAction(this));
+    dynRes.addAction(insertTableRowAction, new SHTMLEditorKitActions.InsertTableRowAction(this, null,
+    		insertTableRowAction));
+    dynRes.addAction(insertTableRowHeaderAction, new SHTMLEditorKitActions.InsertTableRowAction(this, "th",
+    		insertTableRowHeaderAction));    
     dynRes.addAction(insertTableColAction, new SHTMLEditorKitActions.InsertTableColAction(this));
     dynRes.addAction(appendTableColAction, new SHTMLEditorKitActions.AppendTableColAction(this));
     dynRes.addAction(appendTableRowAction, new SHTMLEditorKitActions.AppendTableRowAction(this));
     dynRes.addAction(deleteTableRowAction, new SHTMLEditorKitActions.DeleteTableRowAction(this));
     dynRes.addAction(deleteTableColAction, new SHTMLEditorKitActions.DeleteTableColAction(this));
+    dynRes.addAction(moveTableRowUpAction, new SHTMLEditorKitActions.MoveTableRowUpAction(this));
+    dynRes.addAction(moveTableRowDownAction, new SHTMLEditorKitActions.MoveTableRowDownAction(this));    
+    dynRes.addAction(moveTableColumnLeftAction, new SHTMLEditorKitActions.MoveTableColumnLeftAction(this));
+    dynRes.addAction(moveTableColumnRightAction, new SHTMLEditorKitActions.MoveTableColumnRightAction(this));
     dynRes.addAction(formatTableAction, new SHTMLEditorKitActions.FormatTableAction(this));
+    dynRes.addAction(toggleTableHeaderCellAction, new SHTMLEditorKitActions.ToggleTableHeaderCellAction(this));
     dynRes.addAction(fontBoldAction, new SHTMLEditorKitActions.BoldAction(this));
     dynRes.addAction(fontItalicAction, new SHTMLEditorKitActions.ItalicAction(this));
     dynRes.addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
     dynRes.addAction(fontColorAction, new SHTMLEditorKitActions.FontColorAction(this));
-    dynRes.addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ToggleAction(this, paraAlignLeftAction,
-              CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_LEFT));
-    dynRes.addAction(paraAlignCenterAction, new SHTMLEditorKitActions.ToggleAction(this, paraAlignCenterAction,
-              CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_CENTER));
-    dynRes.addAction(paraAlignRightAction, new SHTMLEditorKitActions.ToggleAction(this, paraAlignRightAction,
-              CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_RIGHT));
+    dynRes.addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction
+        (this, fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));    
+    dynRes.addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction
+        (this, paraAlignLeftAction, CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_LEFT, true));
+    dynRes.addAction(paraAlignCenterAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction
+        (this, paraAlignCenterAction, CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_CENTER, true));
+    dynRes.addAction(paraAlignRightAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction
+        (this, paraAlignRightAction,  CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_RIGHT, true));
     dynRes.addAction(testAction, new SHTMLEditorKitActions.SHTMLTestAction(this));
   }
 
@@ -727,7 +758,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       splitPanel.addComponent(p, i);
     }
 
-    JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+    final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
     toolBarPanel.add(createToolBar("toolBar"));
     formatToolBar = createToolBar("formatToolBar");
     paraToolBar = createToolBar("paraToolBar");
@@ -740,7 +771,32 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     contentPane.add(splitPanel, BorderLayout.CENTER);
     //contentPane.add(workPanel);
     add(contentPane, BorderLayout.CENTER);
-  }
+    toolBarPanel.addComponentListener(new ComponentListener(){
+
+		public void componentHidden(ComponentEvent e) {
+        }
+
+		public void componentMoved(ComponentEvent e) {
+        }
+
+		public void componentResized(ComponentEvent e) {
+			resizeToolbarPane((Container)e.getComponent());
+        }
+
+		public void componentShown(ComponentEvent e) {
+        }
+		});
+    
+    	toolBarPanel.addContainerListener(new ContainerListener(){
+
+		public void componentAdded(ContainerEvent e) {
+	        resizeToolbarPane(e.getContainer());
+        }
+
+		public void componentRemoved(ContainerEvent e) {
+	        resizeToolbarPane(e.getContainer());
+        }});
+   }
 
 
   /**
@@ -771,7 +827,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
       final Dimension comboBoxSize = new Dimension(300, 24);
       final Dimension separatorSize = new Dimension(3, 24);
       JSeparator separator;
-      if (itemKey.equals(dynRes.menuSeparatorKey)) {
+      if (itemKey.equals(DynamicResource.menuSeparatorKey)) {
           separator = new JSeparator(JSeparator.VERTICAL);
           separator.setMaximumSize(separatorSize);
           toolBar.add(separator);
@@ -811,7 +867,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
               newButton = SHTMLHelpBroker.createHelpButton("item15");
               final Icon icon = DynamicResource.getIconForCommand(getResources(), helpTopicsAction);
               newButton.setIcon(icon);
-              newButton.setToolTipText(Util.getResourceString(helpTopicsAction + dynRes.toolTipSuffix));
+              newButton.setToolTipText(Util.getResourceString(helpTopicsAction + DynamicResource.toolTipSuffix));
               toolBar.add(newButton);
           }
           catch(Exception ex) {}
@@ -831,7 +887,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
               //newButton.setActionCommand("");
               newButton.setBorderPainted(false);
               action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
-              Icon si = dynRes.getIconForName(textResources, action.getValue(action.NAME) + DynamicResource.selectedIconSuffix);
+              Icon si = DynamicResource.getIconForName(textResources, action.getValue(Action.NAME) + DynamicResource.selectedIconSuffix);
               if(si != null) {
                   newButton.setSelectedIcon(si);
               }
@@ -888,8 +944,8 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    */
   protected void registerDocument() {
     doc.addUndoableEditListener(undoHandler);
-    getEditor().addCaretListener(this);
-    getEditor().addKeyListener(rkw);
+    getSHTMLEditorPane().addCaretListener(this);
+    getSHTMLEditorPane().addKeyListener(rkw);
   }
 
   /**
@@ -900,8 +956,8 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
    * SimplyHTML objects too
    */
   protected void unregisterDocument() {
-    getEditor().removeCaretListener(this);
-    getEditor().removeKeyListener(rkw);
+    getSHTMLEditorPane().removeCaretListener(this);
+    getSHTMLEditorPane().removeKeyListener(rkw);
     if(doc != null) {
       doc.removeUndoableEditListener(undoHandler);
     }
@@ -1005,7 +1061,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     if(tagSelector != null){
         SetTagAction sta = (SetTagAction) tagSelector.getAction();
         sta.setIgnoreActions(true);
-          Element e = doc.getParagraphElement(getEditor().getCaretPosition());
+          Element e = doc.getParagraphElement(getSHTMLEditorPane().getCaretPosition());
         tagSelector.setSelectedTag(e.getName());
         sta.setIgnoreActions(false);
     }
@@ -1015,7 +1071,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     Component c;
     Action action;
     int count = bar.getComponentCount();
-    AttributeSet a = getMaxAttributes(getEditor(), null);
+    AttributeSet a = getMaxAttributes(getSHTMLEditorPane(), null);
     for(int i = 0; i < count; i++) {
       c = bar.getComponentAtIndex(i);
       if(c instanceof AttributeComponent) {
@@ -1188,7 +1244,7 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
 }
 
   /**
-   * Get all attributes that can be found in the element tree
+   * Gets all the attributes that can be found in the element tree
    * starting at the highest parent down to the character element
    * at the current position in the document. Combine element
    * attributes with attributes from the style sheet.
@@ -1200,13 +1256,13 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
   AttributeSet getMaxAttributes(SHTMLEditorPane editorPane,
           String elemName)
   {
-      Element e = doc.getCharacterElement(editorPane.getSelectionStart());
-      StyleSheet s = doc.getStyleSheet();
+      Element element = doc.getCharacterElement(editorPane.getSelectionStart());
+      StyleSheet styleSheet = doc.getStyleSheet();
       if(elemName != null && elemName.length() > 0) {
-          e = Util.findElementUp(elemName, e);
-          return getMaxAttributes(e, s);
+          element = Util.findElementUp(elemName, element);
+          return getMaxAttributes(element, styleSheet);
       }
-      final MutableAttributeSet maxAttributes = (MutableAttributeSet)getMaxAttributes(e, s);
+      final MutableAttributeSet maxAttributes = (MutableAttributeSet)getMaxAttributes(element, styleSheet);
       final StyledEditorKit editorKit = (StyledEditorKit)editorPane.getEditorKit();
       final MutableAttributeSet inputAttributes = editorKit.getInputAttributes();
       maxAttributes.addAttributes(inputAttributes);
@@ -1285,7 +1341,7 @@ protected void setEditorPane(SHTMLEditorPane editorPane) {
 /**
  * @return Returns the editorPane.
  */
-SHTMLEditorPane getEditor() {
+SHTMLEditorPane getSHTMLEditorPane() {
     return (SHTMLEditorPane)getEditorPane();
 }
 
@@ -1349,9 +1405,10 @@ public JEditorPane getMostRecentFocusOwner() {
     return null;
 }
 
-/* ---------- font manipulation code end ------------------ */
+
+  /* ---------- font manipulation code end ------------------ */
 public int getCaretPosition() {
-    return getEditor().getCaretPosition();
+    return getSHTMLEditorPane().getCaretPosition();
 }
 
 public JMenuBar getMenuBar() {
@@ -1361,6 +1418,29 @@ public JMenuBar getMenuBar() {
 
 public void switchViews() {
    getDocumentPane().switchViews();
+}
+
+public void setOpenHyperlinkHandler(ActionListener openHyperlinkHandler) {
+  this.openHyperlinkHandler = openHyperlinkHandler;
+}
+
+public void openHyperlink(String linkURL) {
+  if (openHyperlinkHandler!=null)
+    openHyperlinkHandler.actionPerformed(new ActionEvent(this, 0, linkURL)); 
+}
+
+private void resizeToolbarPane(Container toolBarPanel) {
+	int lastComponent = toolBarPanel.getComponentCount()-1;
+	if(lastComponent >= 0){
+		final Component component = toolBarPanel.getComponent(lastComponent);
+		final Dimension oldPreferredSize = toolBarPanel.getPreferredSize();
+		final Dimension preferredSize = new Dimension(toolBarPanel.getWidth(), component.getY() + component.getHeight());
+		if(oldPreferredSize.height != preferredSize.height){
+			toolBarPanel.setPreferredSize(preferredSize);
+			toolBarPanel.getParent().invalidate();
+			revalidate();
+		}
+	}
 }
 
 }

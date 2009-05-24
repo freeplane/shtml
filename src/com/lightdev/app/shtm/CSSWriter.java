@@ -76,7 +76,8 @@ class CSSWriter {
     while(rules.hasMoreElements()) {
       writeRule((String) rules.nextElement());
       try {
-        Thread.currentThread().sleep(0, 1);
+        Thread.currentThread();
+		Thread.sleep(0, 1);
       } catch(Exception e) { }
     }
   }
