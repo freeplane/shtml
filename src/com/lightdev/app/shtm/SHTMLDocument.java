@@ -71,7 +71,6 @@ public class SHTMLDocument extends HTMLDocument {
 
   private static Set paragraphElements;
 
-  private AttributeContext context;
   private CompoundEdit compoundEdit;
   private int compoundEditDepth;
   private boolean inSetParagraphAttributes = false;
@@ -459,7 +458,7 @@ public class SHTMLDocument extends HTMLDocument {
     boolean inSpan = false;
     boolean emptyDocument;
 
-    private int paragraphLevel;
+    private boolean paragraphInserted;
     private boolean inBody;
     private boolean paragraphCreated;
 
@@ -473,7 +472,7 @@ public class SHTMLDocument extends HTMLDocument {
       super(offset, 0, 0, null);
       this.emptyDocument = emptyDocument;
       inBody = false;
-      paragraphLevel = 0;
+      paragraphInserted = false;
       paragraphCreated = false;
     }
 
@@ -492,10 +491,10 @@ public class SHTMLDocument extends HTMLDocument {
       else if(inBody){
         isParagraphTag = isParagraphTag(tag);
         if(isParagraphTag){
-          if(paragraphCreated && paragraphLevel == 0)
+          if(paragraphCreated && ! paragraphInserted)
             insertParagraphEndTag(pos);		
-          paragraphLevel++; }
-        else if(! paragraphCreated && paragraphLevel == 0)
+          paragraphInserted = true; }
+        else if(! paragraphCreated && ! paragraphInserted)
           insertParagraphStartTag(pos); }
 
       if (tag == HTML.Tag.SPAN && !keepSpanTag) 
@@ -510,6 +509,7 @@ public class SHTMLDocument extends HTMLDocument {
     private void insertParagraphStartTag(int pos) {
       super.handleStartTag(HTML.Tag.P, new SimpleAttributeSet(), pos);
       paragraphCreated = true;
+      paragraphInserted = true;
     }
 
     private void insertParagraphEndTag(int pos) {
@@ -575,7 +575,7 @@ public class SHTMLDocument extends HTMLDocument {
      * to handleStartTag and handleEndTag respectively.
      */
     public void handleSimpleTag(HTML.Tag t, MutableAttributeSet a, int pos) {
-      if(inBody && ! paragraphCreated && paragraphLevel == 0){
+      if(inBody && ! paragraphCreated && ! paragraphInserted){
         insertParagraphStartTag(pos);
       }
       if(t == HTML.Tag.SPAN && !keepSpanTag) {
@@ -602,9 +602,14 @@ public class SHTMLDocument extends HTMLDocument {
         }
         inBody = false;
         if(emptyDocument) {
-          super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);  
-          super.handleText(" ".toCharArray(), pos);
-          super.handleEndTag(HTML.Tag.P, pos);  
+        	if(! paragraphInserted){
+        		super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);  
+                super.handleText("\n".toCharArray(), pos);
+                super.handleEndTag(HTML.Tag.P, pos);  
+        	}
+        	super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);  
+            super.handleText(" ".toCharArray(), pos);
+            super.handleEndTag(HTML.Tag.P, pos);  
         }
         super.handleEndTag(t, pos);
       }
@@ -616,7 +621,7 @@ public class SHTMLDocument extends HTMLDocument {
       }
     }
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleComment(char[], int)
      */
     public void handleComment(char[] data, int pos) {

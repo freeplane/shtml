@@ -99,7 +99,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
   }
 
   /** indicates if the document text has changed */
-  private boolean htmlChanged = false;
+  private boolean htmlChanged = true;
 
   /**
    * @param htmlChanged The htmlChanged to set.
