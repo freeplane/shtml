@@ -4,7 +4,7 @@
 	<property name="help" value="${src}/com/lightdev/app/shtm/help" />
 	<property name="lib" value="../lib" />
 	<property name="base" value="../" />
-	<property name="build" value="../bin" />
+	<property name="build" value="../bin/classes" />
 	<property name="dist" value="../dist" />
 	<property name="dist.api" value="${dist}/api" />
 	<property name="dist.src" value="${dist}/src" />
@@ -21,7 +21,7 @@
 	<property name="gnu-regexp.jar" value="..\lib\gnu-regexp-1.1.4.jar" />
 	<property name="classpath" value="${jhall.jar}:${gnu-regexp.jar}"/>
 
-	<target name="build">
+	<target name="build" depends="clean">
 		<mkdir dir="${build}"/>
 		<javac	srcdir="${src}"
 			destdir="${build}"
@@ -37,10 +37,8 @@
 		</javac>
 	</target>
 
-	<target name="dist" depends="jar,help, dist-src">
-	</target>
-	<target name="full-dist" depends="clean,dist,javadoc">
-	</target>
+	<target name="dist" depends="jar,help, dist-src"/>
+	<target name="full-dist" depends="dist,javadoc"/>
 	<target name="dist-src">
 		<mkdir dir="${dist.src}" />
 		<copy todir="${dist.src}">
