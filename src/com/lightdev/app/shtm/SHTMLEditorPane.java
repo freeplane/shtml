@@ -2980,13 +2980,13 @@ private class ShiftEndAction extends AbstractAction{
       if(list != null && list.getStartOffset() == selectionStart){
         // A list starts at the caret position.
         Element listAtPrevPosition = selectionStart==0?null:getListElement(selectionStart-1);
+        if (listAtPrevPosition==null) {
+            performToggleListAction(actionEvent, list.getName());
+            return true;
+          }
         boolean isSurroundingList= listAtPrevPosition.getStartOffset() <= list.getStartOffset() &&
         listAtPrevPosition.getEndOffset() >= list.getEndOffset();
-        if (listAtPrevPosition==null) {
-          performToggleListAction(actionEvent, list.getName());
-          return true;
-        }
-        else if (isSurroundingList) {
+        if (isSurroundingList) {
           mergeNestedListItemIntoParent(
               getListItemElement(selectionStart-1), 
               getListItemElement(selectionStart));
