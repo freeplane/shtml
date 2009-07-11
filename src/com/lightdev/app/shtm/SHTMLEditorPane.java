@@ -1807,7 +1807,7 @@ private class ShiftEndAction extends AbstractAction{
    * @return the Element having the cell following the given cell or null
    *    if the given cell is the last cell in the table
    */
-  private Element getNextCell(Element cell) {
+  private Element getNextCell(final Element cell) {
     Element nextCell = null;
     Element row = cell.getParentElement();
     Element nextRow = null;
@@ -1827,11 +1827,11 @@ private class ShiftEndAction extends AbstractAction{
       // The cell is the last one in the row.
       int rowIdx = table.getElementCount()-1;
       Element aRow = table.getElement(rowIdx);
-      while((lastCellIdx > 0) && (aRow != row)) {
+      while(aRow != row) {
         nextRow = aRow;
         aRow = table.getElement(--rowIdx);
       }
-      nextCell = nextRow==null ? null : nextRow.getElement(0);
+      nextCell = nextRow==null || nextRow.getElementCount() == 0 ? null : nextRow.getElement(0);
     }
     return nextCell;
   }
