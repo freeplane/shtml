@@ -227,8 +227,14 @@ class SHTMLWriter extends HTMLWriter {
      * @see javax.swing.text.html.HTMLWriter#writeAttributes(javax.swing.text.AttributeSet)
      */
     protected void writeAttributes(AttributeSet attributeSet) throws IOException {
-      // translate css attributes to html
-      if(attributeSet instanceof Element){
+    	Object nameTag = (attributeSet != null) ? attributeSet.getAttribute(StyleConstants.NameAttribute) : null;
+		Object endTag = (attributeSet != null) ? attributeSet.getAttribute(HTML.Attribute.ENDTAG) : null;
+		// write no attributes for end tags
+		if (nameTag != null && endTag != null && (endTag instanceof String) && ((String) endTag).equals("true")) {
+			return;
+		}
+		
+		if (attributeSet instanceof Element) {
         Element element = (Element) attributeSet;
         if(element.isLeaf() || element.getName().equalsIgnoreCase("p-implied")){
           super.writeAttributes(attributeSet);
