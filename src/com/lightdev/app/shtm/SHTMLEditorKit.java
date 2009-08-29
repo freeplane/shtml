@@ -19,6 +19,7 @@
 
 package com.lightdev.app.shtm;
 
+import java.awt.Cursor;
 import java.io.*;
 
 import javax.swing.text.*;
@@ -58,6 +59,8 @@ class SHTMLEditorKit extends HTMLEditorKit {
 
   SHTMLEditorKit() {
     super();
+	final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+	setDefaultCursor(textCursor);
   }
 
   /* --------------- SHTMLDocument implementation start ------------ */

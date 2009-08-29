@@ -118,26 +118,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 		super();
 		setCaretColor(Color.black);
 		setNavigationFilter(new MyNavigationFilter());
-		/**
-		 * set the cursor by adding
-		 * a MouseListener that allows to display a text cursor when the
-		 * mouse pointer enters the editor. For some reason
-		 * (probably someone knows why and could let me know...) the method
-		 * setCursor does not have the same effect.
-		 */
 		addMouseListener(new MouseAdapter() {
-			public void mouseEntered(MouseEvent e) {
-				Component gp = getRootPane().getGlassPane();
-				gp.setCursor(textCursor);
-				gp.setVisible(true);
-			}
-
-			public void mouseExited(MouseEvent e) {
-				Component gp = getRootPane().getGlassPane();
-				gp.setCursor(defaultCursor);
-				gp.setVisible(false);
-			}
-
 			public void mousePressed(MouseEvent e) {
 				maybeShowPopup(e);
 			}
@@ -2888,6 +2869,7 @@ private class MoveDownAction extends AbstractAction{
 				writer.writeEndTag(first);
 				getSHTMLDocument().setOuterHTML(first, writer.getWrittenString());
 				removeElement(second);
+				finalCaretPosition = Math.min(finalCaretPosition, first.getEndOffset() - 1);
 				setCaretPosition(finalCaretPosition);
 			}
 			catch (IOException e) {
@@ -3446,8 +3428,6 @@ private class MoveDownAction extends AbstractAction{
 	/** a data flavor for transferables processed by this component */
 	private DataFlavor htmlTextDataFlavor = new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText");
 	/* Cursors for mouseovers in the editor */
-	private Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
-	private Cursor defaultCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
 	void updateInputAttributes() {
 		((SHTMLEditorKit) getEditorKit()).updateInputAttributes(this);
