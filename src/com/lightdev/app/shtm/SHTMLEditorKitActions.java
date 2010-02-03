@@ -2423,7 +2423,7 @@ class SHTMLEditorKitActions {
       putValue(Action.NAME, SHTMLPanelImpl.pasteAction);
       getProperties();
       putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-          KeyEvent.VK_V, KeyEvent.ALT_MASK));
+          KeyEvent.VK_V, KeyEvent.CTRL_MASK));
     }
     public void actionPerformed(ActionEvent e) {
       super.actionPerformed(e);
