@@ -821,8 +821,6 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   }
 protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
     ToggleBorderListener tbl = new ToggleBorderListener();
-      Action action;
-      AbstractButton newButton;
       final Dimension buttonSize = new Dimension(24, 24);
       final Dimension comboBoxSize = new Dimension(300, 24);
       final Dimension separatorSize = new Dimension(3, 24);
@@ -862,57 +860,66 @@ protected void createToolbarItem(JToolBar toolBar, final String itemKey) {
            */
           toolBar.add(tagSelector);
       }
-      else if(itemKey.equalsIgnoreCase(helpTopicsAction)) {
-          try {
-              newButton = SHTMLHelpBroker.createHelpButton("item15");
-              final Icon icon = DynamicResource.getIconForCommand(getResources(), helpTopicsAction);
-              newButton.setIcon(icon);
-              newButton.setToolTipText(Util.getResourceString(helpTopicsAction + DynamicResource.toolTipSuffix));
-              toolBar.add(newButton);
-          }
-          catch(Exception ex) {}
-          catch(java.lang.NoClassDefFoundError e) {} //When one of the help components is not there
-      }
       else {
-          action = dynRes.getAction(itemKey);
-          /**
-           * special handling for JToggleButtons in the tool bar
-           */
-          if(action instanceof AttributeComponent) {
-              newButton =
-                  new JToggleButton("", (Icon) action.getValue(Action.SMALL_ICON));
-              newButton.addMouseListener(tbl);
-              newButton.setAction(action);
-              newButton.setText("");
-              //newButton.setActionCommand("");
-              newButton.setBorderPainted(false);
-              action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
-              Icon si = DynamicResource.getIconForName(textResources, action.getValue(Action.NAME) + DynamicResource.selectedIconSuffix);
-              if(si != null) {
-                  newButton.setSelectedIcon(si);
-              }
-              newButton.setMargin(new Insets(0, 0, 0, 0));
-              newButton.setIconTextGap(0);
-              newButton.setContentAreaFilled(false);
-              newButton.setHorizontalAlignment(SwingConstants.CENTER);
-              newButton.setVerticalAlignment(SwingConstants.CENTER);
-              toolBar.add(newButton);
-          }
-          /**
-           * this is the usual way to add tool bar buttons finally
-           */
-          else {
-              newButton = toolBar.add(action);
-          }
-          newButton.setMinimumSize(buttonSize);
-          newButton.setPreferredSize(buttonSize);
-          newButton.setMaximumSize(buttonSize);
-          newButton.setFocusPainted(false);
-          newButton.setRequestFocusEnabled(false);
+    	  AbstractButton newButton;
+    	  try {
+    		  if(itemKey.equalsIgnoreCase(helpTopicsAction)) {
+
+    			  newButton = SHTMLHelpBroker.createHelpButton("item15");
+    			  final Icon icon = DynamicResource.getIconForCommand(getResources(), helpTopicsAction);
+    			  newButton.setIcon(icon);
+    			  newButton.setToolTipText(Util.getResourceString(helpTopicsAction + DynamicResource.toolTipSuffix));
+    			  toolBar.add(newButton);
+    		  }
+    			  else {
+    				  /**
+    				   * special handling for JToggleButtons in the tool bar
+    				   */
+    				  Action action = dynRes.getAction(itemKey);
+    				  if(action instanceof AttributeComponent) {
+    					  newButton =
+    						  new JToggleButton("", (Icon) action.getValue(Action.SMALL_ICON));
+    					  newButton.addMouseListener(tbl);
+    					  newButton.setAction(action);
+    					  newButton.setText("");
+    					  //newButton.setActionCommand("");
+    					  newButton.setBorderPainted(false);
+    					  action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
+    					  Icon si = DynamicResource.getIconForName(textResources, action.getValue(Action.NAME) + DynamicResource.selectedIconSuffix);
+    					  if(si != null) {
+    						  newButton.setSelectedIcon(si);
+    					  }
+    					  newButton.setMargin(new Insets(0, 0, 0, 0));
+    					  newButton.setIconTextGap(0);
+    					  newButton.setContentAreaFilled(false);
+    					  newButton.setHorizontalAlignment(SwingConstants.CENTER);
+    					  newButton.setVerticalAlignment(SwingConstants.CENTER);
+    					  toolBar.add(newButton);
+    				  }
+    				  /**
+    				   * this is the usual way to add tool bar buttons finally
+    				   */
+    				  else {
+    					  newButton = toolBar.add(action);
+    				  }
+    			  }
+
+    		  newButton.setMinimumSize(buttonSize);
+    		  newButton.setPreferredSize(buttonSize);
+    		  newButton.setMaximumSize(buttonSize);
+    		  newButton.setFocusPainted(false);
+    		  newButton.setRequestFocusEnabled(false);
+    		  if (System.getProperty("os.name").equals("Mac OS X")) {
+    			  newButton.putClientProperty("JButton.buttonType", "segmented");
+    			  newButton.putClientProperty("JButton.segmentPosition", "middle");
+    		  }
+    	  }
+    		  catch(Exception ex) {}
+    		  catch(java.lang.NoClassDefFoundError e) {} //When one of the help components is not there
+    	  }
       }
-}
-/**
-   * displays or removes an etched border around JToggleButtons
+      /**
+       * displays or removes an etched border around JToggleButtons
    * this listener is registered with.
    */
   private class ToggleBorderListener implements MouseListener {
