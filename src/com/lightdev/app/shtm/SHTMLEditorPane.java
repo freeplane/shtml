@@ -2072,10 +2072,12 @@ private class MoveDownAction extends AbstractAction{
 			try {
 				Transferable transferable = event.getTransferable();
 				if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
+					event.acceptDrop(DnDConstants.ACTION_MOVE);
 					HTMLText s = (HTMLText) transferable.getTransferData(htmlTextDataFlavor);
 					doDrop(event, s);
 				}
 				else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+					event.acceptDrop(DnDConstants.ACTION_MOVE);
 					String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
 					doDrop(event, s);
 				}
@@ -2102,7 +2104,6 @@ private class MoveDownAction extends AbstractAction{
 		int moveOffset = 0;
 		int newSelStart;
 		int newSelEnd;
-		event.acceptDrop(DnDConstants.ACTION_MOVE);
 		setCaretPosition(dndEventLocation);
 		if (s instanceof HTMLText) {
 			replaceSelection((HTMLText) s);
@@ -3085,6 +3086,9 @@ private class MoveDownAction extends AbstractAction{
 					Clipboard temp = new Clipboard("");
 					defaultTransferHandler.exportToClipboard(comp, temp, action);
 					final Transferable defaultContents = temp.getContents(this);
+					if(defaultContents == null){
+						return;
+					}
 					clip.setContents(new Transferable() {
 						public DataFlavor[] getTransferDataFlavors() {
 							DataFlavor[] defaultFlavors = defaultContents.getTransferDataFlavors();
