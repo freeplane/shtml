@@ -748,51 +748,64 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
 
   /** customize the frame to our needs */
   protected void customizeFrame() {
-    Container contentPane = new JPanel();
-    contentPane.setLayout(new BorderLayout());
+	  splitPanel = new SplitPanel();
+	  for(int i = 0; i < 4; i++) {
+		  JTabbedPane p = new JTabbedPane();
+		  p.setVisible(false);
+		  splitPanel.addComponent(p, i);
+	  }
 
-    splitPanel = new SplitPanel();
-    for(int i = 0; i < 4; i++) {
-      JTabbedPane p = new JTabbedPane();
-      p.setVisible(false);
-      splitPanel.addComponent(p, i);
-    }
+	  final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0)){
 
-    final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0)){
+		  /**
+		   * 
+		   */
+		  private static final long serialVersionUID = 1L;
 
-		/**
+		  public Dimension getPreferredSize() {
+			  int maxWidth = splitPanel.getWidth();
+			  int height = 0;
+			  int rowHeight = 0;
+			  int width = 0;
+			  for(int i = 0; i < getComponentCount(); i++){
+				  Component component = getComponent(i);
+				  Dimension compPreferredSize = component.getPreferredSize();
+				  if(maxWidth < compPreferredSize.width){
+					  height += rowHeight + compPreferredSize.height;
+					  rowHeight = 0;
+					  width = 0;
+				  }
+				  else if(maxWidth < width + compPreferredSize.width){
+					  height += rowHeight;
+					  rowHeight = compPreferredSize.height;
+					  width = compPreferredSize.width;
+				  }
+				  else{
+					  rowHeight = Math.max(rowHeight, compPreferredSize.height);
+					  width +=  compPreferredSize.width;
+				  }
+			  }
+			  height += rowHeight;
+			  return new Dimension(maxWidth, height);
+		  }
+
+	  };
+	  Container contentPane = new JPanel(){
+
+		  /**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
 		public Dimension getPreferredSize() {
-			int maxWidth = splitPanel.isShowing() ? splitPanel.getWidth() : splitPanel.getPreferredSize().width;
-			int height = 0;
-			int rowHeight = 0;
-			int width = 0;
-			for(int i = 0; i < getComponentCount(); i++){
-				Component component = getComponent(i);
-				Dimension compPreferredSize = component.getPreferredSize();
-				if(maxWidth < compPreferredSize.width){
-					height += rowHeight + compPreferredSize.height;
-					rowHeight = 0;
-					width = 0;
-				}
-				else if(maxWidth < width + compPreferredSize.width){
-					height += rowHeight;
-					rowHeight = compPreferredSize.height;
-					width = compPreferredSize.width;
-				}
-				else{
-					rowHeight = Math.max(rowHeight, compPreferredSize.height);
-					width +=  compPreferredSize.width;
-				}
-			}
-			height += rowHeight;
-			return new Dimension(maxWidth, height);
-		}
+			  Dimension splitPreferredSize = splitPanel.getPreferredSize();
+			  Dimension toolbaPreferredSize = toolBarPanel.getPreferredSize();
+			  return new Dimension(splitPreferredSize.width, splitPreferredSize.height + toolbaPreferredSize.height);
+		  }
     	
     };
+    contentPane.setLayout(new BorderLayout());
+
     toolBarPanel.add(createToolBar("toolBar"));
     formatToolBar = createToolBar("formatToolBar");
     paraToolBar = createToolBar("paraToolBar");
@@ -805,7 +818,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     contentPane.add(splitPanel, BorderLayout.CENTER);
     //contentPane.add(workPanel);
     add(contentPane, BorderLayout.CENTER);
-    toolBarPanel.addComponentListener(new ComponentListener(){
+    splitPanel.addComponentListener(new ComponentListener(){
 
 		public void componentHidden(ComponentEvent e) {
         }
@@ -814,7 +827,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
         }
 
 		public void componentResized(ComponentEvent e) {
-			resizeToolbarPane((Container)e.getComponent());
+			resizeToolbarPane(toolBarPanel);
         }
 
 		public void componentShown(ComponentEvent e) {
@@ -824,13 +837,19 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     	toolBarPanel.addContainerListener(new ContainerListener(){
 
 		public void componentAdded(ContainerEvent e) {
-	        resizeToolbarPane(e.getContainer());
+	        resizeToolbarPane(toolBarPanel);
         }
 
 		public void componentRemoved(ContainerEvent e) {
-	        resizeToolbarPane(e.getContainer());
-        }});
-   }
+			resizeToolbarPane(toolBarPanel);
+		}});
+  }
+  private void resizeToolbarPane(JComponent toolBarPanel) {
+	  if(toolBarPanel.getPreferredSize().height != toolBarPanel.getHeight()){
+		  toolBarPanel.revalidate();
+	  }
+  }
+
 
 
   /**
@@ -1468,20 +1487,6 @@ public void setOpenHyperlinkHandler(ActionListener openHyperlinkHandler) {
 public void openHyperlink(String linkURL) {
   if (openHyperlinkHandler!=null)
     openHyperlinkHandler.actionPerformed(new ActionEvent(this, 0, linkURL)); 
-}
-
-private void resizeToolbarPane(Container toolBarPanel) {
-	int lastComponent = toolBarPanel.getComponentCount()-1;
-	if(lastComponent >= 0){
-		final Component component = toolBarPanel.getComponent(lastComponent);
-		final Dimension oldPreferredSize = toolBarPanel.getPreferredSize();
-		final Dimension preferredSize = new Dimension(toolBarPanel.getWidth(), component.getY() + component.getHeight());
-		if(oldPreferredSize.height != preferredSize.height){
-			toolBarPanel.setPreferredSize(preferredSize);
-			toolBarPanel.getParent().invalidate();
-			revalidate();
-		}
-	}
 }
 
 }
