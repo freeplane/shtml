@@ -760,8 +760,36 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
 
     final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0)){
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public Dimension getPreferredSize() {
-			return new Dimension(1, super.getPreferredSize().height);
+			int maxWidth = splitPanel.isShowing() ? splitPanel.getWidth() : splitPanel.getPreferredSize().width;
+			int height = 0;
+			int rowHeight = 0;
+			int width = 0;
+			for(int i = 0; i < getComponentCount(); i++){
+				Component component = getComponent(i);
+				Dimension compPreferredSize = component.getPreferredSize();
+				if(maxWidth < compPreferredSize.width){
+					height += rowHeight + compPreferredSize.height;
+					rowHeight = 0;
+					width = 0;
+				}
+				else if(maxWidth < width + compPreferredSize.width){
+					height += rowHeight;
+					rowHeight = compPreferredSize.height;
+					width = compPreferredSize.width;
+				}
+				else{
+					rowHeight = Math.max(rowHeight, compPreferredSize.height);
+					width +=  compPreferredSize.width;
+				}
+			}
+			height += rowHeight;
+			return new Dimension(maxWidth, height);
 		}
     	
     };
