@@ -758,7 +758,13 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
       splitPanel.addComponent(p, i);
     }
 
-    final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+    final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0)){
+
+		public Dimension getPreferredSize() {
+			return new Dimension(1, super.getPreferredSize().height);
+		}
+    	
+    };
     toolBarPanel.add(createToolBar("toolBar"));
     formatToolBar = createToolBar("formatToolBar");
     paraToolBar = createToolBar("paraToolBar");

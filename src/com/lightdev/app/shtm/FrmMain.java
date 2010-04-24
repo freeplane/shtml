@@ -66,14 +66,14 @@ class FrmMain extends JFrame {
         try {
             EventQueue.invokeAndWait(new Runnable(){
                 public void run() {
+
                     mainPane = new SHTMLPanelMultipleDocImpl();
 //                    mainPane = new SHTMLPanelSingleDocImpl();
+                    mainPane.setContentPanePreferredSize(new Dimension(1024, 500));
                     getContentPane().add(mainPane);
-                    validate();
-
-                    //Center the window
-                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                     pack();
+
+                    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                     Dimension frameSize = getSize();
                     if (frameSize.height > screenSize.height) {
                       frameSize.height = screenSize.height;
@@ -81,6 +81,8 @@ class FrmMain extends JFrame {
                     if (frameSize.width > screenSize.width) {
                       frameSize.width = screenSize.width;
                     }
+                    
+                    //Center the window
                     setLocation((screenSize.width - frameSize.width) / 2,
                                             (screenSize.height - frameSize.height) / 2);
                     setVisible(true); // show the window
