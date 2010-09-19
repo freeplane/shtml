@@ -3245,7 +3245,7 @@ private class MoveDownAction extends AbstractAction{
 			doc.startCompoundEdit();
 			// clear all character attributes in selection
 			SimpleAttributeSet sasText = null;
-			for (int i = p0; i < p1; i++) {
+			for (int i = p0; i < p1;) {
 				final Element characterElement = doc.getCharacterElement(i);
 				sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
 				final int endOffset = characterElement.getEndOffset();
