@@ -3262,7 +3262,7 @@ private class MoveDownAction extends AbstractAction{
 				}
 				catch (Exception e) {
 				}
-				i = last;
+				i = i < last ? last : i + 1;
 			}
 			doc.endCompoundEdit();
 		}
