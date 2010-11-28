@@ -21,9 +21,11 @@ package com.lightdev.app.shtm;
 
 import java.awt.Cursor;
 import java.io.*;
+import java.util.Enumeration;
 
 import javax.swing.text.*;
 import javax.swing.text.html.*;
+import javax.swing.text.html.HTML.Attribute;
 
 /**
  * Extensions to <code>HTMLEditorKit</code> for application SimplyHTML.
@@ -55,7 +57,7 @@ import javax.swing.text.html.*;
  * 
  */
 
-class SHTMLEditorKit extends HTMLEditorKit {
+public class SHTMLEditorKit extends HTMLEditorKit {
 
   SHTMLEditorKit() {
     super();
@@ -225,7 +227,32 @@ class SHTMLEditorKit extends HTMLEditorKit {
     return defaultFactory;
   }
 
-  public static class SHTMLFactory extends HTMLEditorKit.HTMLFactory
+  static public void removeCharacterAttributes(StyledDocument doc, Object attributeName, int start, int length) {
+    // clear all character attributes in selection
+	int end = start + length;
+    SimpleAttributeSet sasText = null;
+    for (int i = start; i < end;) {
+    	final Element characterElement = doc.getCharacterElement(i);
+    	sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
+    	final int endOffset = characterElement.getEndOffset();
+    	Enumeration attribEntries1 = sasText.getAttributeNames();
+    	while (attribEntries1.hasMoreElements()) {
+    		Object entryKey = attribEntries1.nextElement();
+ 			if (attributeName != null && entryKey.equals(attributeName) || attributeName == null && !entryKey.equals(StyleConstants.NameAttribute)) {
+    			sasText.removeAttribute(entryKey);
+    		}
+    	}
+    	final int last = end < endOffset ? end : endOffset;
+    	try {
+    		doc.setCharacterAttributes(i, last - i, sasText, true);
+    	}
+    	catch (Exception e) {
+    	}
+    	i = i < last ? last : i + 1;
+    }
+}
+
+public static class SHTMLFactory extends HTMLEditorKit.HTMLFactory
       implements ViewFactory
   {
     public View create(Element elem) {

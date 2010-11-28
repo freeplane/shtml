@@ -48,7 +48,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -3243,27 +3242,7 @@ private class MoveDownAction extends AbstractAction{
 		if (p0 != p1) {
 			SHTMLDocument doc = (SHTMLDocument) getDocument();
 			doc.startCompoundEdit();
-			// clear all character attributes in selection
-			SimpleAttributeSet sasText = null;
-			for (int i = p0; i < p1;) {
-				final Element characterElement = doc.getCharacterElement(i);
-				sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
-				final int endOffset = characterElement.getEndOffset();
-				Enumeration attribEntries1 = sasText.getAttributeNames();
-				while (attribEntries1.hasMoreElements()) {
-					Object entryKey = attribEntries1.nextElement();
-					if (!entryKey.toString().equals(HTML.Attribute.NAME.toString())) {
-						sasText.removeAttribute(entryKey);
-					}
-				}
-				final int last = p1 < endOffset ? p1 : endOffset;
-				try {
-					doc.setCharacterAttributes(i, last - i, sasText, true);
-				}
-				catch (Exception e) {
-				}
-				i = i < last ? last : i + 1;
-			}
+			SHTMLEditorKit.removeCharacterAttributes(doc, null, p0, p1-p0);
 			doc.endCompoundEdit();
 		}
 	}
