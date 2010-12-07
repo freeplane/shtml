@@ -26,6 +26,7 @@ import java.util.Enumeration;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.ElementIterator;
 import javax.swing.text.MutableAttributeSet;
@@ -43,7 +44,7 @@ import javax.swing.text.html.HTMLWriter;
  * 
  */
 
-class SHTMLWriter extends HTMLWriter {
+public class SHTMLWriter extends HTMLWriter {
     private Element element;
     private Writer writer = null;
     private boolean replaceEntities;
@@ -182,7 +183,8 @@ class SHTMLWriter extends HTMLWriter {
     }
 
     protected boolean inRange(Element next) {
-        if(next.getStartOffset() >= ((SHTMLDocument)next.getDocument()).getLastDocumentPosition()){
+        final Document document = next.getDocument();
+		if(document instanceof SHTMLDocument && next.getStartOffset() >= ((SHTMLDocument)document).getLastDocumentPosition()){
             return false;
         }
         int startOffset = getStartOffset();
