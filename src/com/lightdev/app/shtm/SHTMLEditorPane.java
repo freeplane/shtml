@@ -798,7 +798,10 @@ private class MoveDownAction extends AbstractAction{
 		String a = HTML.Tag.A.toString();
 		SimpleAttributeSet set = new SimpleAttributeSet();
 		set.addAttribute(HTML.Attribute.HREF, href);
-		set.addAttribute(HTML.Attribute.CLASS, className);
+		String sStyleName = Util.getResourceString("standardStyleName");
+		if (className != null && !className.equalsIgnoreCase(sStyleName)) {
+			set.addAttribute(HTML.Attribute.CLASS, className);
+		}
 		StringWriter sw = new StringWriter();
 		SHTMLWriter w = new SHTMLWriter(sw, doc);
 		try {

@@ -188,7 +188,7 @@ class AnchorDialog extends DialogShell implements
     docPanel.setBorder(new TitledBorder(new EtchedBorder(
         EtchedBorder.LOWERED),
         Util.getResourceString("docPanelLabel")));
-    docPanel.add(dp, BorderLayout.CENTER);
+    docPanel.add(editor, BorderLayout.CENTER);
 
     // use a help panel to properly align anchorPanel and docPanel
     helpPanel = new JPanel(new BorderLayout());
