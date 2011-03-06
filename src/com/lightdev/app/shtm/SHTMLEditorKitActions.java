@@ -29,6 +29,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.TimerTask;
@@ -45,6 +47,7 @@ import javax.swing.KeyStroke;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
@@ -2299,6 +2302,55 @@ class SHTMLEditorKitActions {
     }
   }
 
+  /**
+   * action to move to the previous cell in a table
+   */
+  static class PrintAction extends AbstractAction implements SHTMLAction
+  {
+	  static private Method printMethod;
+	  static {
+		  Method printMethod = null;
+		  try {
+			  printMethod = JTextComponent.class.getMethod("print", new Class[]{});
+		  }
+		  catch (Exception e) {
+		  }
+		  PrintAction.printMethod = printMethod;
+	  }
+	  
+	  static boolean canPrint(){
+		  return printMethod != null;
+	  }
+	  
+	  private SHTMLPanelImpl panel;
+	  public PrintAction(SHTMLPanelImpl panel) {
+		  super(SHTMLPanelImpl.printAction);
+		  this.panel = panel;
+	  }
+
+	  public void actionPerformed(ActionEvent e) {
+		  if(canPrint()){
+			  try {
+				  printMethod.invoke(panel.getEditorPane(), new Object[]{});
+			  }
+			  catch (Exception ex) {
+				  ex.printStackTrace();
+			  }
+		  }
+		  else{
+				JOptionPane.showMessageDialog(panel, Util.getResourceString("printing_not_supported"));
+				setEnabled(false);
+			}
+	  }
+
+	  public void update() {
+	  }
+
+	  public void getProperties() {
+		  SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+	  }
+
+  }
   /**
    * RedoAction for the edit menu
    */

@@ -228,6 +228,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
   public static final String findReplaceAction = "findReplace";
   public static  final String setStyleAction = "setStyle";
   public static  final String formatAsCodeAction = "formatAsCode";
+  public static  final String printAction = "print";
   
   public static SHTMLPanelImpl getOwnerSHTMLPanel(Component c){
       for(;;){
@@ -730,6 +731,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener{
     dynRes.addAction(paraAlignRightAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction
         (this, paraAlignRightAction,  CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_RIGHT, true));
     dynRes.addAction(testAction, new SHTMLEditorKitActions.SHTMLTestAction(this));
+    dynRes.addAction(printAction, new SHTMLEditorKitActions.PrintAction(this));
   }
 
   /**
