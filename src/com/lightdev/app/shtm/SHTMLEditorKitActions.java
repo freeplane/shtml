@@ -2325,6 +2325,7 @@ class SHTMLEditorKitActions {
 	  private SHTMLPanelImpl panel;
 	  public PrintAction(SHTMLPanelImpl panel) {
 		  super(SHTMLPanelImpl.printAction);
+		  getProperties();
 		  this.panel = panel;
 	  }
 
