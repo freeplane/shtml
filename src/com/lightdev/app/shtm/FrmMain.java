@@ -53,69 +53,66 @@ class FrmMain extends JFrame {
     public static final String APP_NAME = "SimplyHTML";
     public static final String VERSION = "0.13.10";
     /** static reference to this instance of class FrmMain */
-     private SHTMLPanelImpl mainPane;
+    private SHTMLPanelImpl mainPane;
 
-    private FrmMain(){
+    private FrmMain() {
         SHTMLPanelImpl.setTextResources(null);
-        setIconImage(Toolkit.getDefaultToolkit().createImage(DynamicResource.getResource(SHTMLPanelImpl.getResources(),"appIcon")));
+        setIconImage(Toolkit.getDefaultToolkit().createImage(
+            DynamicResource.getResource(SHTMLPanelImpl.getResources(), "appIcon")));
         setTitle(APP_NAME);
     }
 
-	private void start() {
-		SplashScreen.showInstance();
+    private void start() {
+        SplashScreen.showInstance();
         try {
-            EventQueue.invokeAndWait(new Runnable(){
+            EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
-
                     mainPane = new SHTMLPanelMultipleDocImpl();
-//                    mainPane = new SHTMLPanelSingleDocImpl();
+                    //                    mainPane = new SHTMLPanelSingleDocImpl();
                     mainPane.setContentPanePreferredSize(new Dimension(1024, 500));
                     getContentPane().add(mainPane);
                     pack();
-
                     final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    Dimension frameSize = getSize();
+                    final Dimension frameSize = getSize();
                     if (frameSize.height > screenSize.height) {
-                      frameSize.height = screenSize.height;
+                        frameSize.height = screenSize.height;
                     }
                     if (frameSize.width > screenSize.width) {
-                      frameSize.width = screenSize.width;
+                        frameSize.width = screenSize.width;
                     }
-                    
                     //Center the window
-                    setLocation((screenSize.width - frameSize.width) / 2,
-                                            (screenSize.height - frameSize.height) / 2);
+                    setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
                     setVisible(true); // show the window
                     getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
                 }
-
             });
-        } catch (InterruptedException e) {
+        }
+        catch (final InterruptedException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        }
+        catch (final InvocationTargetException e) {
             e.printStackTrace();
         }
         SplashScreen.hideInstance();
-	}
+    }
 
     /**
      * catch requests to close the application's main frame to
      * ensure proper clean up before the application is
      * actually terminated.
      */
-    protected void processWindowEvent(WindowEvent e) {
-      if (! (e.getID() == WindowEvent.WINDOW_CLOSING) || mainPane.close()) {
-        super.processWindowEvent(e);
-      }
+    protected void processWindowEvent(final WindowEvent e) {
+        if (!(e.getID() == WindowEvent.WINDOW_CLOSING) || mainPane.close()) {
+            super.processWindowEvent(e);
+        }
     }
 
-	protected SHTMLPanel getSHTMLPanel() {
-		return mainPane;
-	}
+    protected SHTMLPanel getSHTMLPanel() {
+        return mainPane;
+    }
 
-	static void run() {
-		final FrmMain frmMain = new FrmMain();
-		frmMain.start();
-	}
-
+    static void run() {
+        final FrmMain frmMain = new FrmMain();
+        frmMain.start();
+    }
 }

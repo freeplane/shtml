@@ -16,16 +16,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import java.awt.Cursor;
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Enumeration;
 
-import javax.swing.text.*;
-import javax.swing.text.html.*;
-import javax.swing.text.html.HTML.Attribute;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.LabelView;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.MinimalHTMLWriter;
+import javax.swing.text.html.StyleSheet;
 
 /**
  * Extensions to <code>HTMLEditorKit</code> for application SimplyHTML.
@@ -56,231 +67,226 @@ import javax.swing.text.html.HTML.Attribute;
  *
  * 
  */
-
 public class SHTMLEditorKit extends HTMLEditorKit {
+    SHTMLEditorKit() {
+        super();
+        final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+        setDefaultCursor(textCursor);
+    }
 
-  SHTMLEditorKit() {
-    super();
-	final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
-	setDefaultCursor(textCursor);
-  }
-
-  /* --------------- SHTMLDocument implementation start ------------ */
-
-  /**
-   * Create an uninitialized text storage model
-   * that is appropriate for this type of editor.
-   *
-   * @return the model
-   */
-  public Document createDefaultDocument() {
-    SHTMLDocument doc = (SHTMLDocument)createEmptyDocument();
-    try {
-        final String standardContent;
-        if(Util.preferenceIsTrue("gray_row_below_end")){
-            standardContent = "<p>\n</p>\n<p style=\"background-color: #808080\">\n"+ SHTMLDocument.SUFFIX +"\n</p>\n";
+    /* --------------- SHTMLDocument implementation start ------------ */
+    /**
+     * Create an uninitialized text storage model
+     * that is appropriate for this type of editor.
+     *
+     * @return the model
+     */
+    public Document createDefaultDocument() {
+        final SHTMLDocument doc = (SHTMLDocument) createEmptyDocument();
+        try {
+            final String standardContent;
+            if (Util.preferenceIsTrue("gray_row_below_end")) {
+                standardContent = "<p>\n</p>\n<p style=\"background-color: #808080\">\n" + SHTMLDocument.SUFFIX
+                        + "\n</p>\n";
+            }
+            else {
+                standardContent = "<p>\n</p>\n<p>\n" + SHTMLDocument.SUFFIX + "\n</p>\n";
+            }
+            doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), standardContent);
         }
-        else{
-            standardContent = "<p>\n</p>\n<p>\n"+ SHTMLDocument.SUFFIX +"\n</p>\n";
+        catch (final BadLocationException e) {
+            e.printStackTrace();
         }
-		doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), standardContent);
-    } catch (BadLocationException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
+        catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return doc;
     }
-    return doc;
-  }
 
-  Document createEmptyDocument() {
-    StyleSheet styles = getStyleSheet();
-    StyleSheet ss = new StyleSheet();
-    try {
-      ss.importStyleSheet(Class.forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
+    Document createEmptyDocument() {
+        getStyleSheet();
+        final StyleSheet ss = new StyleSheet();
+        try {
+            ss.importStyleSheet(Class.forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
+        }
+        catch (final Exception e) {
+        }
+        final SHTMLDocument doc = new SHTMLDocument(ss);
+        doc.setParser(getParser());
+        doc.setAsynchronousLoadPriority(-1);
+        doc.setTokenThreshold(1);
+        return doc;
     }
-    catch(Exception e) {}
-    SHTMLDocument doc = new SHTMLDocument(ss);
-    doc.setParser(getParser());
-    doc.setAsynchronousLoadPriority(-1);
-    doc.setTokenThreshold(1);
-    return doc;
-}
 
-  /**
-   * Inserts content from the given stream. If <code>doc</code> is
-   * an instance of HTMLDocument, this will read
-   * HTML 3.2 text. Inserting HTML into a non-empty document must be inside
-   * the body Element, if you do not insert into the body an exception will
-   * be thrown. When inserting into a non-empty document all tags outside
-   * of the body (head, title) will be dropped.
-   *
-   * @param in  the stream to read from
-   * @param doc the destination for the insertion
-   * @param pos the location in the document to place the
-   *   content
-   * @exception IOException on any I/O error
-   * @exception BadLocationException if pos represents an invalid
-   *   location within the document
-   * @exception RuntimeException (will eventually be a BadLocationException)
-   *            if pos is invalid
-   */
-  public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException {
-    if (doc instanceof SHTMLDocument) {
-      SHTMLDocument hdoc = (SHTMLDocument) doc;
-      Parser parser = getParser();
-      if (parser == null) {
-        throw new IOException("Can't load parser");
-      }
-      if (pos > doc.getLength()) {
-        throw new BadLocationException("Invalid location", pos);
-      }
-      ParserCallback receiver = hdoc.getReader(pos);
-      if(doc.getLength() == 0){
-          Boolean ignoreCharset = (Boolean)doc.getProperty("IgnoreCharsetDirective");
-          parser.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
-      }
-      else{
-          parser.parse(in, receiver, true);
-      }
-      receiver.flush();
+    /**
+     * Inserts content from the given stream. If <code>doc</code> is
+     * an instance of HTMLDocument, this will read
+     * HTML 3.2 text. Inserting HTML into a non-empty document must be inside
+     * the body Element, if you do not insert into the body an exception will
+     * be thrown. When inserting into a non-empty document all tags outside
+     * of the body (head, title) will be dropped.
+     *
+     * @param in  the stream to read from
+     * @param doc the destination for the insertion
+     * @param pos the location in the document to place the
+     *   content
+     * @exception IOException on any I/O error
+     * @exception BadLocationException if pos represents an invalid
+     *   location within the document
+     * @exception RuntimeException (will eventually be a BadLocationException)
+     *            if pos is invalid
+     */
+    public void read(final Reader in, final Document doc, final int pos) throws IOException, BadLocationException {
+        if (doc instanceof SHTMLDocument) {
+            final SHTMLDocument hdoc = (SHTMLDocument) doc;
+            final Parser parser = getParser();
+            if (parser == null) {
+                throw new IOException("Can't load parser");
+            }
+            if (pos > doc.getLength()) {
+                throw new BadLocationException("Invalid location", pos);
+            }
+            final ParserCallback receiver = hdoc.getReader(pos);
+            if (doc.getLength() == 0) {
+                final Boolean ignoreCharset = (Boolean) doc.getProperty("IgnoreCharsetDirective");
+                parser.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
+            }
+            else {
+                parser.parse(in, receiver, true);
+            }
+            receiver.flush();
+        }
+        else {
+            super.read(in, doc, pos);
+        }
     }
-    else {
-      super.read(in, doc, pos);
-    }
-  }
 
-  /**
-   * Write content from a document to the given stream
-   * in a format appropriate for this kind of content handler.
-   *
-   * @param out  the stream to write to
-   * @param doc  the source for the write
-   * @param pos  the location in the document to fetch the
-   *   content
-   * @param len  the amount to write out
-   * @exception IOException on any I/O error
-   * @exception BadLocationException if pos represents an invalid
-   *   location within the document
-   */
-  public void write(Writer out, Document doc, int pos, int len)
-      throws IOException, BadLocationException {
+    /**
+     * Write content from a document to the given stream
+     * in a format appropriate for this kind of content handler.
+     *
+     * @param out  the stream to write to
+     * @param doc  the source for the write
+     * @param pos  the location in the document to fetch the
+     *   content
+     * @param len  the amount to write out
+     * @exception IOException on any I/O error
+     * @exception BadLocationException if pos represents an invalid
+     *   location within the document
+     */
+    public void write(final Writer out, final Document doc, final int pos, final int len) throws IOException,
+            BadLocationException {
+        if (doc instanceof SHTMLDocument) {
+            try {
+                final SHTMLWriter w = new SHTMLWriter(out, (SHTMLDocument) doc, pos, len);
+                w.write();
+            }
+            catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if (doc instanceof StyledDocument) {
+            final MinimalHTMLWriter w = new MinimalHTMLWriter(out, (StyledDocument) doc, pos, len);
+            w.write();
+        }
+        else {
+            super.write(out, doc, pos, len);
+        }
+    }
 
-    if (doc instanceof SHTMLDocument) {
-      try {
-           SHTMLWriter w = new SHTMLWriter(out, (SHTMLDocument) doc, pos,
-                                                  len);
-          w.write();
-      }
-      catch(Exception e) {
-          e.printStackTrace();
-      }
-    }
-    else if (doc instanceof StyledDocument) {
-      MinimalHTMLWriter w = new MinimalHTMLWriter(out, (StyledDocument)doc, pos, len);
-      w.write();
-    }
-    else {
-      super.write(out, doc, pos, len);
-    }
-  }
-
-  /* --------------- SHTMLDocument implementaion end --------------- */
-    void updateInputAttributes(SHTMLEditorPane e) {
+    /* --------------- SHTMLDocument implementaion end --------------- */
+    void updateInputAttributes(final SHTMLEditorPane e) {
         // EditorKit might not have installed the StyledDocument yet.
-        Document aDoc = e.getDocument();
+        final Document aDoc = e.getDocument();
         if (!(aDoc instanceof StyledDocument)) {
-        return ;
+            return;
         }
-        int start = e.getSelectionStart();
+        final int start = e.getSelectionStart();
         // record current character attributes.
-        StyledDocument doc = (StyledDocument)aDoc;
+        final StyledDocument doc = (StyledDocument) aDoc;
         // If nothing is selected, get the attributes from the character
         // before the start of the selection, otherwise get the attributes
         // from the character element at the start of the selection.
         Element run;
-        Element currentParagraph = doc.getParagraphElement(start);
+        final Element currentParagraph = doc.getParagraphElement(start);
         if (currentParagraph.getStartOffset() == start || start != e.getSelectionEnd()) {
-        // Get the attributes from the character at the selection
-        // if in a different paragrah!
-        run = doc.getCharacterElement(start);
+            // Get the attributes from the character at the selection
+            // if in a different paragrah!
+            run = doc.getCharacterElement(start);
         }
         else {
-        run = doc.getCharacterElement(Math.max(start-1, 0));
+            run = doc.getCharacterElement(Math.max(start - 1, 0));
         }
         createInputAttributes(run, getInputAttributes());
-       
     }
 
-  /* --------------- ViewFactory implementation start -------------- */
+    /* --------------- ViewFactory implementation start -------------- */
+    /** Shared factory for creating HTML Views. */
+    private static final ViewFactory defaultFactory = new SHTMLFactory();
 
-  /** Shared factory for creating HTML Views. */
-  private static final ViewFactory defaultFactory = new SHTMLFactory();
-
-  /**
-   * Fetch a factory that is suitable for producing
-   * views of any models that are produced by this
-   * kit.
-   *
-   * @return the factory
-   */
-  public ViewFactory getViewFactory() {
-    return defaultFactory;
-  }
-
-  static public void removeCharacterAttributes(StyledDocument doc, Object attributeName, int start, int length) {
-    // clear all character attributes in selection
-	int end = start + length;
-    SimpleAttributeSet sasText = null;
-    for (int i = start; i < end;) {
-    	final Element characterElement = doc.getCharacterElement(i);
-    	sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
-    	final int endOffset = characterElement.getEndOffset();
-    	Enumeration attribEntries1 = sasText.getAttributeNames();
-    	while (attribEntries1.hasMoreElements()) {
-    		Object entryKey = attribEntries1.nextElement();
- 			if (attributeName != null && entryKey.equals(attributeName) || attributeName == null && !entryKey.equals(StyleConstants.NameAttribute)) {
-    			sasText.removeAttribute(entryKey);
-    		}
-    	}
-    	final int last = end < endOffset ? end : endOffset;
-    	try {
-    		doc.setCharacterAttributes(i, last - i, sasText, true);
-    	}
-    	catch (Exception e) {
-    	}
-    	i = i < last ? last : i + 1;
+    /**
+     * Fetch a factory that is suitable for producing
+     * views of any models that are produced by this
+     * kit.
+     *
+     * @return the factory
+     */
+    public ViewFactory getViewFactory() {
+        return defaultFactory;
     }
-}
 
-public static class SHTMLFactory extends HTMLEditorKit.HTMLFactory
-      implements ViewFactory
-  {
-    public View create(Element elem) {
-      View view = null;
-      Object o = elem.getAttributes().getAttribute(StyleConstants.NameAttribute);
-      if (o instanceof HTML.Tag) {
-        HTML.Tag kind = (HTML.Tag) o;
-        //System.out.println("SHTMLEditorKit.SHTMLFactory o is HTML.Tag kind=" + kind.toString());
-        if (kind == HTML.Tag.TABLE) {
-            view = super.create(elem);
+    static public void removeCharacterAttributes(final StyledDocument doc, final Object attributeName, final int start,
+                                                 final int length) {
+        // clear all character attributes in selection
+        final int end = start + length;
+        SimpleAttributeSet sasText = null;
+        for (int i = start; i < end;) {
+            final Element characterElement = doc.getCharacterElement(i);
+            sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
+            final int endOffset = characterElement.getEndOffset();
+            final Enumeration attribEntries1 = sasText.getAttributeNames();
+            while (attribEntries1.hasMoreElements()) {
+                final Object entryKey = attribEntries1.nextElement();
+                if (attributeName != null && entryKey.equals(attributeName) || attributeName == null
+                        && !entryKey.equals(StyleConstants.NameAttribute)) {
+                    sasText.removeAttribute(entryKey);
+                }
+            }
+            final int last = end < endOffset ? end : endOffset;
+            try {
+                doc.setCharacterAttributes(i, last - i, sasText, true);
+            }
+            catch (final Exception e) {
+            }
+            i = i < last ? last : i + 1;
         }
-        else if (kind == HTML.Tag.COMMENT) {
-          view = new InvisibleView(elem);
-        }
-        else if (kind instanceof HTML.UnknownTag) {
-          view = new InvisibleView(elem);
-        }
-        else {
-          view = super.create(elem);
-        }
-      }
-      else {
-        view = new LabelView(elem);
-      }
-      return view;
     }
-  }
 
-  /* --------------- ViewFactory implementation end -------------- */
-
+    public static class SHTMLFactory extends HTMLEditorKit.HTMLFactory implements ViewFactory {
+        public View create(final Element elem) {
+            View view = null;
+            final Object o = elem.getAttributes().getAttribute(StyleConstants.NameAttribute);
+            if (o instanceof HTML.Tag) {
+                final HTML.Tag kind = (HTML.Tag) o;
+                //System.out.println("SHTMLEditorKit.SHTMLFactory o is HTML.Tag kind=" + kind.toString());
+                if (kind == HTML.Tag.TABLE) {
+                    view = super.create(elem);
+                }
+                else if (kind == HTML.Tag.COMMENT) {
+                    view = new InvisibleView(elem);
+                }
+                else if (kind instanceof HTML.UnknownTag) {
+                    view = new InvisibleView(elem);
+                }
+                else {
+                    view = super.create(elem);
+                }
+            }
+            else {
+                view = new LabelView(elem);
+            }
+            return view;
+        }
+    }
+    /* --------------- ViewFactory implementation end -------------- */
 }

@@ -16,18 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import java.awt.Dimension;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.awt.BorderLayout;
-import java.awt.Font;
 
 /**
  * A panel for displaying license information of application SimplyHTML.
@@ -43,58 +43,55 @@ import java.awt.Font;
  *
  * 
  */
-
 class LicensePane extends JPanel {
+    /* line separator character (sequence) */
+    private final String lineSeparator = System.getProperty("line.separator");
 
-  /* line separator character (sequence) */
-  private String lineSeparator = System.getProperty("line.separator");
-
-  /**
-   * construct a <code>LicensePane</code>
-   */
-  public LicensePane(Dimension d, String licensePath) {
-    /* create a text area to show the license text in */
-    JTextArea licText = new JTextArea(getLicenseText(getClass().getResourceAsStream(licensePath)));
-    licText.setEditable(false);
-    licText.setFont(new Font("Courier", Font.PLAIN, 12));
-
-    /* create a scroll pane as the license text is long */
-    JScrollPane licPane = new JScrollPane();
-    licPane = new JScrollPane(licText);
-    licPane.setPreferredSize(d);
-    licPane.setVerticalScrollBarPolicy(
-                  JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-    licPane.setHorizontalScrollBarPolicy(
-                  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-    /* add the scroll pane to this panel */
-    setLayout(new BorderLayout());
-    add(licPane, BorderLayout.CENTER);
-    licText.setCaretPosition(0); // go to top of text (for JRE versions earlier than 1.4)
-  }
-
-  /**
-   * read and return the license text
-   *
-   * @return the license text
-   */
-  private String getLicenseText(InputStream is) {
-    StringBuffer license = new StringBuffer();
-    try {
-      // InputStream is = getClass().getResourceAsStream(getLicense());
-      BufferedReader r = new BufferedReader(new InputStreamReader(is));
-      String buf = r.readLine();
-      while(buf != null) {
-        license.append(buf);
-        license.append(lineSeparator);
-        buf = r.readLine();
-      }
-      r.close();
-      is.close();
+    /**
+     * construct a <code>LicensePane</code>
+     */
+    public LicensePane(final Dimension d, final String licensePath) {
+        /* create a text area to show the license text in */
+        final JTextArea licText = new JTextArea(getLicenseText(getClass().getResourceAsStream(licensePath)));
+        licText.setEditable(false);
+        licText.setFont(new Font("Courier", Font.PLAIN, 12));
+        /* create a scroll pane as the license text is long */
+        JScrollPane licPane = new JScrollPane();
+        licPane = new JScrollPane(licText);
+        licPane.setPreferredSize(d);
+        licPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        licPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        /* add the scroll pane to this panel */
+        setLayout(new BorderLayout());
+        add(licPane, BorderLayout.CENTER);
+        licText.setCaretPosition(0); // go to top of text (for JRE versions earlier than 1.4)
     }
-    catch(Exception e) {
-      Util.errMsg(this, "The license text could not be opened.\n\nPlease consult file 'readme.txt' for installation guidelines\n\nSimplyHTML and all of its parts are distributed under\nthe terms and conditions of the GNU General Public License (GPL).\nYou may want to obtain a free and complete distribution package at\nhttp://www.lightdev.com", e);
+
+    /**
+     * read and return the license text
+     *
+     * @return the license text
+     */
+    private String getLicenseText(final InputStream is) {
+        final StringBuffer license = new StringBuffer();
+        try {
+            // InputStream is = getClass().getResourceAsStream(getLicense());
+            final BufferedReader r = new BufferedReader(new InputStreamReader(is));
+            String buf = r.readLine();
+            while (buf != null) {
+                license.append(buf);
+                license.append(lineSeparator);
+                buf = r.readLine();
+            }
+            r.close();
+            is.close();
+        }
+        catch (final Exception e) {
+            Util.errMsg(
+                this,
+                "The license text could not be opened.\n\nPlease consult file 'readme.txt' for installation guidelines\n\nSimplyHTML and all of its parts are distributed under\nthe terms and conditions of the GNU General Public License (GPL).\nYou may want to obtain a free and complete distribution package at\nhttp://www.lightdev.com",
+                e);
+        }
+        return license.toString();
     }
-    return license.toString();
-  }
 }

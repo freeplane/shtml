@@ -24,10 +24,10 @@ import java.awt.LayoutManager;
 import java.awt.event.ActionListener;
 
 import javax.swing.Action;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JEditorPane;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.text.html.HTMLDocument;
 
 /**
@@ -37,16 +37,15 @@ import javax.swing.text.html.HTMLDocument;
  * 14.01.2007
  */
 public abstract class SHTMLPanel extends JPanel {
-
-    SHTMLPanel(LayoutManager layout) {
+    SHTMLPanel(final LayoutManager layout) {
         super(layout);
     }
-    
-    public static SHTMLPanel createSHTMLPanel(){
+
+    public static SHTMLPanel createSHTMLPanel() {
         return new SHTMLPanelSingleDocImpl();
     }
 
-   public abstract String getDocumentText();
+    public abstract String getDocumentText();
 
     public abstract boolean needsSaving();
 
@@ -54,8 +53,8 @@ public abstract class SHTMLPanel extends JPanel {
 
     public abstract void setCurrentDocumentContent(String sText);
 
-    public static void setResources(TextResources resources) {
-        SHTMLPanelImpl.setTextResources(resources);        
+    public static void setResources(final TextResources resources) {
+        SHTMLPanelImpl.setTextResources(resources);
     }
 
     public abstract HTMLDocument getDocument();
@@ -65,29 +64,28 @@ public abstract class SHTMLPanel extends JPanel {
     public abstract JEditorPane getSourceEditorPane();
 
     public static TextResources getResources() {
-       return SHTMLPanelImpl.getResources(); }
+        return SHTMLPanelImpl.getResources();
+    }
 
     abstract public int getCaretPosition();
 
     public abstract JMenuBar getMenuBar();
-    
+
     public abstract JEditorPane getMostRecentFocusOwner();
 
-    
-    
-    public abstract Action getAction(String actionName);  
-    
+    public abstract Action getAction(String actionName);
+
     /**
      * Returns a new menu item for a named action of SimplyHTML. (Can be used for building custom
      * popup menu, or for invoking the action externally in another way.)
      */
     public abstract JMenuItem newActionMenuItem(String actionName);
-    
-   /**
-    * Switches between the rich text view and the source view, given
-    * tabbed panes are not used. Has no corresponding action; calling
-    * this method is up to the caller application of SimplyHTML.
-    */
+
+    /**
+     * Switches between the rich text view and the source view, given
+     * tabbed panes are not used. Has no corresponding action; calling
+     * this method is up to the caller application of SimplyHTML.
+     */
     public abstract void switchViews();
 
     /**
@@ -96,5 +94,4 @@ public abstract class SHTMLPanel extends JPanel {
      * application.
      */
     public abstract void setOpenHyperlinkHandler(ActionListener openHyperlinkHandler);
-    
 }

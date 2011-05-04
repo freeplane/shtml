@@ -16,14 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.prefs.Preferences;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.prefs.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * Dialog to set user preferences for application SimplyHTML.
@@ -39,118 +51,93 @@ import java.util.prefs.*;
  *
  * 
  */
-
 class PrefsDialog extends DialogShell implements ActionListener {
+    /** the look and feels avaliable in the system */
+    private UIManager.LookAndFeelInfo[] lfinfo;
+    /** reference for user preferences for this class */
+    protected Preferences prefs = Preferences.userNodeForPackage(getClass());
+    /** constant for dock location setting in preferences file */
+    public static final String PREFSID_LOOK_AND_FEEL = "Laf";
+    public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";
+    private final String lafName = UIManager.getLookAndFeel().getName();
+    private final JComboBox lafCombo;
+    private final JCheckBox useStdStyleSheet;
+    /** the help id for this dialog */
+    private static final String helpTopicId = "item167";
 
-  /** the look and feels avaliable in the system */
-  private UIManager.LookAndFeelInfo[] lfinfo;
-
-  /** reference for user preferences for this class */
-  protected Preferences prefs = Preferences.userNodeForPackage( getClass() );
-
-  /** constant for dock location setting in preferences file */
-  public static final String PREFSID_LOOK_AND_FEEL = "Laf";
-
-  public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";
-
-
-  private String lafName = UIManager.getLookAndFeel().getName();
-
-  private JComboBox lafCombo;
-  private JCheckBox useStdStyleSheet;
-
-  /** the help id for this dialog */
-  private static final String helpTopicId = "item167";
-
-  public PrefsDialog(Frame parent, String title) {
-    super(parent, title, helpTopicId);
-
-    // have a grid bag layout ready to use
-    GridBagLayout g = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-
-    JPanel layoutPanel = new JPanel(g);
-
-    // build a panel for preferences related to the application
-    JPanel appPrefsPanel = new JPanel(g);
-    Util.addGridBagComponent(
-        appPrefsPanel,
-        new JLabel(
-        Util.getResourceString(
-        "prfLafLabel")),
-        g, c, 0, 0, GridBagConstraints.EAST);
-    lafCombo = new JComboBox();
-    initLfComboBox();
-    Util.addGridBagComponent(
-        appPrefsPanel,
-        lafCombo,
-        g, c, 1, 0, GridBagConstraints.EAST);
-
-    // build a panel for preferences related to documents
-    /*
-    JPanel docPrefsPanel = new JPanel(g);
-    Util.addGridBagComponent(docPrefsPanel,
-                             new JCheckBox(
-                             FrmMain.dynRes.getResourceString(
-                             FrmMain.resources, "prfShareDocResourcesLabel")),
-                             g, c, 0, 1,
-                             GridBagConstraints.EAST);
-    */
-
-
-    Util.addGridBagComponent(layoutPanel, appPrefsPanel, g, c, 0, 0, GridBagConstraints.WEST);
-
-    // add option for standard stlye sheet
-    useStdStyleSheet = new JCheckBox(Util.getResourceString("linkDefaultStyleSheetLabel"));
-    boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
-    useStdStyleSheet.setSelected(useStyle);
-    Util.addGridBagComponent(layoutPanel, useStdStyleSheet, g, c, 0, 2, GridBagConstraints.WEST);
-
-    // add to content pane of DialogShell
-    Container contentPane = super.getContentPane();
-    contentPane.add(layoutPanel, BorderLayout.CENTER);
-    //contentPane.add(appPrefsPanel, BorderLayout.NORTH);
-    //contentPane.add(docPrefsPanel, BorderLayout.CENTER);
-
-    // cause optimal placement of all elements
-    pack();
-  }
-
-  private void initLfComboBox() {
-    lfinfo = UIManager.getInstalledLookAndFeels();
-    int count = lfinfo.length;
-    String[] lfNames = new String[count];
-    for(int i=0; i<count; i++) {
-      lfNames[i] = lfinfo[i].getName();
+    public PrefsDialog(final Frame parent, final String title) {
+        super(parent, title, helpTopicId);
+        // have a grid bag layout ready to use
+        final GridBagLayout g = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
+        final JPanel layoutPanel = new JPanel(g);
+        // build a panel for preferences related to the application
+        final JPanel appPrefsPanel = new JPanel(g);
+        Util.addGridBagComponent(appPrefsPanel, new JLabel(Util.getResourceString("prfLafLabel")), g, c, 0, 0,
+            GridBagConstraints.EAST);
+        lafCombo = new JComboBox();
+        initLfComboBox();
+        Util.addGridBagComponent(appPrefsPanel, lafCombo, g, c, 1, 0, GridBagConstraints.EAST);
+        // build a panel for preferences related to documents
+        /*
+        JPanel docPrefsPanel = new JPanel(g);
+        Util.addGridBagComponent(docPrefsPanel,
+                                 new JCheckBox(
+                                 FrmMain.dynRes.getResourceString(
+                                 FrmMain.resources, "prfShareDocResourcesLabel")),
+                                 g, c, 0, 1,
+                                 GridBagConstraints.EAST);
+        */
+        Util.addGridBagComponent(layoutPanel, appPrefsPanel, g, c, 0, 0, GridBagConstraints.WEST);
+        // add option for standard stlye sheet
+        useStdStyleSheet = new JCheckBox(Util.getResourceString("linkDefaultStyleSheetLabel"));
+        final boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
+        useStdStyleSheet.setSelected(useStyle);
+        Util.addGridBagComponent(layoutPanel, useStdStyleSheet, g, c, 0, 2, GridBagConstraints.WEST);
+        // add to content pane of DialogShell
+        final Container contentPane = super.getContentPane();
+        contentPane.add(layoutPanel, BorderLayout.CENTER);
+        //contentPane.add(appPrefsPanel, BorderLayout.NORTH);
+        //contentPane.add(docPrefsPanel, BorderLayout.CENTER);
+        // cause optimal placement of all elements
+        pack();
     }
-    lafCombo.setModel(new DefaultComboBoxModel(lfNames));
-    lafCombo.setSelectedItem(lafName);
-  }
 
-  /**
-   * implements the ActionListener interface to be notified of
-   * clicks onto the ok and cancel button.
-   */
-  public void actionPerformed(ActionEvent e) {
-      Component src = (Component)e.getSource();
-      if(src == okButton) {
-        savePrefs(src);
-      }
-      super.actionPerformed(e);
-  }
+    private void initLfComboBox() {
+        lfinfo = UIManager.getInstalledLookAndFeels();
+        final int count = lfinfo.length;
+        final String[] lfNames = new String[count];
+        for (int i = 0; i < count; i++) {
+            lfNames[i] = lfinfo[i].getName();
+        }
+        lafCombo.setModel(new DefaultComboBoxModel(lfNames));
+        lafCombo.setSelectedItem(lafName);
+    }
 
-  private void savePrefs(final Component src) {
-    try {
-      String newLaf = lfinfo[lafCombo.getSelectedIndex()].getClassName();
-      if(!lafName.equalsIgnoreCase(newLaf)) {
-        prefs.put(PREFSID_LOOK_AND_FEEL, newLaf);
-        UIManager.setLookAndFeel(newLaf);
-        SwingUtilities.updateComponentTreeUI(JOptionPane.getFrameForComponent(src));
-      }
-      prefs.putBoolean(PREFS_USE_STD_STYLE_SHEET, useStdStyleSheet.isSelected());
+    /**
+     * implements the ActionListener interface to be notified of
+     * clicks onto the ok and cancel button.
+     */
+    public void actionPerformed(final ActionEvent e) {
+        final Component src = (Component) e.getSource();
+        if (src == okButton) {
+            savePrefs(src);
+        }
+        super.actionPerformed(e);
     }
-    catch(Exception ex) {
-      Util.errMsg(this, ex.getMessage(), ex);
+
+    private void savePrefs(final Component src) {
+        try {
+            final String newLaf = lfinfo[lafCombo.getSelectedIndex()].getClassName();
+            if (!lafName.equalsIgnoreCase(newLaf)) {
+                prefs.put(PREFSID_LOOK_AND_FEEL, newLaf);
+                UIManager.setLookAndFeel(newLaf);
+                SwingUtilities.updateComponentTreeUI(JOptionPane.getFrameForComponent(src));
+            }
+            prefs.putBoolean(PREFS_USE_STD_STYLE_SHEET, useStdStyleSheet.isSelected());
+        }
+        catch (final Exception ex) {
+            Util.errMsg(this, ex.getMessage(), ex);
+        }
     }
-  }
 }

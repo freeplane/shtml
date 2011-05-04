@@ -37,12 +37,11 @@ import javax.swing.KeyStroke;
  * 
  */
 class SHTMLMenuBar extends JMenuBar {
-
     /* (non-Javadoc)
      * @see javax.swing.JMenuBar#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
-    public boolean handleKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
-        if(condition == JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT){
+    public boolean handleKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
+        if (condition == JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT) {
             return super.processKeyBinding(ks, e, JComponent.WHEN_IN_FOCUSED_WINDOW, pressed);
         }
         return false;
@@ -51,7 +50,7 @@ class SHTMLMenuBar extends JMenuBar {
     /* (non-Javadoc)
      * @see javax.swing.JMenuBar#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
-    public boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
+    public boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
         return false;
     }
 }

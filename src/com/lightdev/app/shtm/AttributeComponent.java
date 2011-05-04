@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import javax.swing.text.AttributeSet;
@@ -35,27 +34,24 @@ import javax.swing.text.AttributeSet;
  *
  * 
  */
-
 interface AttributeComponent {
+    /**
+     * set the value of this <code>AttributeComponent</code>
+     *
+     * @param a  the set of attributes possibly having an
+     *          attribute this component can display
+     *
+     * @return true, if the set of attributes had a matching attribute,
+     *            false if not
+     */
+    public boolean setValue(AttributeSet a);
 
-  /**
-   * set the value of this <code>AttributeComponent</code>
-   *
-   * @param a  the set of attributes possibly having an
-   *          attribute this component can display
-   *
-   * @return true, if the set of attributes had a matching attribute,
-   *            false if not
-   */
-  public boolean setValue(AttributeSet a);
+    /**
+     * get the value of this <code>AttributeComponent</code>
+     *
+     * @return the value selected from this component
+     */
+    public AttributeSet getValue();
 
-  /**
-   * get the value of this <code>AttributeComponent</code>
-   *
-   * @return the value selected from this component
-   */
-  public AttributeSet getValue();
-
-  public AttributeSet getValue(boolean includeUnchanged);
-
+    public AttributeSet getValue(boolean includeUnchanged);
 }

@@ -32,11 +32,11 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 class SHTMLHelpBroker {
-
     public static final String APP_HELP_NAME = "help";
     public static final String JAVA_HELP_EXT = ".hs";
 
-    private SHTMLHelpBroker() {}
+    private SHTMLHelpBroker() {
+    }
 
     /** our help broker */
     private static HelpBroker helpBroker;
@@ -48,12 +48,13 @@ class SHTMLHelpBroker {
      */
     private static HelpBroker getHelpBroker() {
         if (helpBroker == null) {
-            URL url = SHTMLPanelImpl.class.getResource(APP_HELP_NAME +
-                    Util.URL_SEPARATOR + APP_HELP_NAME + JAVA_HELP_EXT);
+            final URL url = SHTMLPanelImpl.class.getResource(APP_HELP_NAME + Util.URL_SEPARATOR + APP_HELP_NAME
+                    + JAVA_HELP_EXT);
             HelpSet hs;
             try {
                 hs = new HelpSet(null, url);
-            } catch (HelpSetException e) {
+            }
+            catch (final HelpSetException e) {
                 return null;
             }
             helpBroker = hs.createHelpBroker();
@@ -61,7 +62,7 @@ class SHTMLHelpBroker {
         return helpBroker;
     }
 
-    static AbstractButton createHelpButton(String helpTopicId) {
+    static AbstractButton createHelpButton(final String helpTopicId) {
         AbstractButton newButton;
         newButton = new JButton();
         CSH.setHelpIDString(newButton, helpTopicId);
@@ -69,11 +70,11 @@ class SHTMLHelpBroker {
         return newButton;
     }
 
-    static void initJavaHelpItem(JMenuItem mi, String helpTopicId) {
-          CSH.setHelpIDString(mi, helpTopicId);
-          mi.addActionListener(new CSH.DisplayHelpFromSource(SHTMLHelpBroker.getHelpBroker()));
-          mi.setIcon(DynamicResource.getIconForCommand(SHTMLPanelImpl.getResources(), SHTMLPanelImpl.helpTopicsAction));
-          mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-          mi.setEnabled(true);
+    static void initJavaHelpItem(final JMenuItem mi, final String helpTopicId) {
+        CSH.setHelpIDString(mi, helpTopicId);
+        mi.addActionListener(new CSH.DisplayHelpFromSource(SHTMLHelpBroker.getHelpBroker()));
+        mi.setIcon(DynamicResource.getIconForCommand(SHTMLPanelImpl.getResources(), SHTMLPanelImpl.helpTopicsAction));
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+        mi.setEnabled(true);
     }
 }

@@ -37,52 +37,56 @@ import javax.swing.JWindow;
  * @author Karsten Pawlik
  * 
  */
-public class SplashScreen extends JWindow{
-private static SplashScreen instance = null;
-private static int counter;
+public class SplashScreen extends JWindow {
+    private static SplashScreen instance = null;
+    private static int counter;
+
     private SplashScreen() {
         try {
-            JPanel panel = new JPanel(new BorderLayout());
-            ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(Util.getResourceString("splashImage")));
+            final JPanel panel = new JPanel(new BorderLayout());
+            final ImageIcon icon = new ImageIcon(SplashScreen.class.getResource(Util.getResourceString("splashImage")));
             panel.add(new JLabel(icon), BorderLayout.CENTER);
             panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             getContentPane().add(panel);
             getRootPane().setOpaque(true);
             pack();
-            Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+            final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
             setLocation((int) (d.getWidth() - getWidth()) / 2, (int) (d.getHeight() - getHeight()) / 2);
-        } catch (Exception e) {
+        }
+        catch (final Exception e) {
         }
     }
 
     /**
      * Hides the splash screen.
      */
-    synchronized  public static void hideInstance() {
-        if (!Util.getPreference("show_splash_screen", "true").equalsIgnoreCase("true"))
-           return;
-        if(counter > 0)
+    synchronized public static void hideInstance() {
+        if (!Util.getPreference("show_splash_screen", "true").equalsIgnoreCase("true")) {
+            return;
+        }
+        if (counter > 0) {
             counter--;
-        if(counter == 0)
+        }
+        if (counter == 0) {
             instance.setVisible(false);
+        }
     }
 
     /**
      * Shows the splash screen.
      */
     synchronized public static void showInstance() {
-        if (!Util.getPreference("show_splash_screen", "true").equalsIgnoreCase("true"))
-           return;
-        
-        if(instance == null){
+        if (!Util.getPreference("show_splash_screen", "true").equalsIgnoreCase("true")) {
+            return;
+        }
+        if (instance == null) {
             instance = new SplashScreen();
             counter = 0;
         }
-        if(counter == 0){
+        if (counter == 0) {
             instance.setVisible(true);
             instance.getRootPane().paintImmediately(0, 0, instance.getWidth(), instance.getHeight());
         }
         counter++;
     }
-    
 }

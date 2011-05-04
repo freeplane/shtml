@@ -16,12 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.text.html.*;
+import java.awt.GridLayout;
+
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.text.html.CSS;
 
 /**
  * Panel to set text margin attributes.
@@ -37,39 +38,30 @@ import javax.swing.text.html.*;
  *
  * 
  */
-
 class MarginPanel extends AttributePanel {
+    private final BoundariesPanel margin;
+    private final BoundariesPanel padding;
 
-  private BoundariesPanel margin;
-  private BoundariesPanel padding;
+    public MarginPanel() {
+        super();
+        // margin/padding panel
+        setLayout(new GridLayout(2, 1, 3, 3));
+        // construct margin panel
+        margin = new BoundariesPanel(CSS.Attribute.MARGIN);
+        // set border and title and add margin panel
+        margin
+            .setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util.getResourceString("marginLabel")));
+        this.add(margin);
+        // construct padding panel
+        padding = new BoundariesPanel(CSS.Attribute.PADDING);
+        // set border and title adn add padding panel
+        padding.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
+            .getResourceString("paddingLabel")));
+        this.add(padding);
+    }
 
-  public MarginPanel() {
-    super();
-
-    // margin/padding panel
-    setLayout(new GridLayout(2, 1, 3, 3));
-
-    // construct margin panel
-    margin = new BoundariesPanel(CSS.Attribute.MARGIN);
-
-    // set border and title and add margin panel
-    margin.setBorder(new TitledBorder(new EtchedBorder(
-        EtchedBorder.LOWERED),
-        Util.getResourceString("marginLabel")));
-    this.add(margin);
-
-    // construct padding panel
-    padding = new BoundariesPanel(CSS.Attribute.PADDING);
-
-    // set border and title adn add padding panel
-    padding.setBorder(new TitledBorder(new EtchedBorder(
-        EtchedBorder.LOWERED),
-        Util.getResourceString("paddingLabel")));
-    this.add(padding);
-  }
-
-  public void reset() {
-    margin.reset();
-    padding.reset();
-  }
+    public void reset() {
+        margin.reset();
+        padding.reset();
+    }
 }

@@ -43,135 +43,115 @@ import javax.swing.text.html.CSS;
  *
  * 
  */
-
 class BoundariesPanel extends JPanel implements AttributeComponent {
+    /** the components used for single attributes */
+    private final Vector components = new Vector();
+    /** the attributes represented by this compoent */
+    private CombinedAttribute ca;
+    /** the value to compare to determine changes */
+    private String originalValue;
+    /** indicates if a call to setValue is for initial setting or for changes */
+    private int setValueCalls = 0;
+    /** the attribute key this component represents */
+    private final Object key;
 
-  /** the components used for single attributes */
-  private Vector components = new Vector();
-
-  /** the attributes represented by this compoent */
-  private CombinedAttribute ca;
-
-  /** the value to compare to determine changes */
-  private String originalValue;
-
-  /** indicates if a call to setValue is for initial setting or for changes */
-  private int setValueCalls = 0;
-
-  /** the attribute key this component represents */
-  private Object key;
-
-  /**
-   * construct a <code>BoundariesPanel</code>.
-   */
-  public BoundariesPanel(Object attrKey) {
-    super();
-
-    this.key = attrKey;
-
-    // set layout
-    GridBagLayout g = new GridBagLayout();
-    setLayout(g);
-
-    // constraints to use on our GridBagLayout
-    GridBagConstraints c = new GridBagConstraints();
-
-    Util.addGridBagComponent(this, new JLabel(
-        Util.getResourceString("topLabel")),
-        g, c, 0, 0, GridBagConstraints.EAST);
-    Util.addGridBagComponent(this, new JLabel(
-        Util.getResourceString("rightLabel")),
-        g, c, 2, 0, GridBagConstraints.EAST);
-    Util.addGridBagComponent(this, new JLabel(
-        Util.getResourceString("bottomLabel")),
-        g, c, 0, 1, GridBagConstraints.EAST);
-    Util.addGridBagComponent(this, new JLabel(
-        Util.getResourceString("leftLabel")),
-        g, c, 2, 1, GridBagConstraints.EAST);
-
-    addSizeSelector(g, c, attrKey, 1, 0); // top
-    addSizeSelector(g, c, attrKey, 3, 0); // right
-    addSizeSelector(g, c, attrKey, 1, 1); // bottom
-    addSizeSelector(g, c, attrKey, 3, 1); // left
-  }
-
-  private void addSizeSelector(GridBagLayout g, GridBagConstraints c,
-                               Object attr, int x, int y)
-  {
-    SizeSelectorPanel ssp = new SizeSelectorPanel(
-                                      attr,
-                                      null,
-                                      false,
-                                      SizeSelectorPanel.TYPE_LABEL);
-    Util.addGridBagComponent(this, ssp, g, c, x, y, GridBagConstraints.WEST);
-    components.addElement(ssp);
-  }
-
-  /**
-   * set the value of this <code>AttributeComponent</code>
-   *
-   * @param a  the set of attributes possibly having an
-   *          attribute this component can display
-   *
-   * @return true, if the set of attributes had a matching attribute,
-   *            false if not
-   */
-  public boolean setValue(AttributeSet a) {
-    boolean success = true;
-    ca = new CombinedAttribute(key, a, true);
-    if(++setValueCalls < 2) {
-      originalValue = ca.getAttribute();
+    /**
+     * construct a <code>BoundariesPanel</code>.
+     */
+    public BoundariesPanel(final Object attrKey) {
+        super();
+        key = attrKey;
+        // set layout
+        final GridBagLayout g = new GridBagLayout();
+        setLayout(g);
+        // constraints to use on our GridBagLayout
+        final GridBagConstraints c = new GridBagConstraints();
+        Util.addGridBagComponent(this, new JLabel(Util.getResourceString("topLabel")), g, c, 0, 0,
+            GridBagConstraints.EAST);
+        Util.addGridBagComponent(this, new JLabel(Util.getResourceString("rightLabel")), g, c, 2, 0,
+            GridBagConstraints.EAST);
+        Util.addGridBagComponent(this, new JLabel(Util.getResourceString("bottomLabel")), g, c, 0, 1,
+            GridBagConstraints.EAST);
+        Util.addGridBagComponent(this, new JLabel(Util.getResourceString("leftLabel")), g, c, 2, 1,
+            GridBagConstraints.EAST);
+        addSizeSelector(g, c, attrKey, 1, 0); // top
+        addSizeSelector(g, c, attrKey, 3, 0); // right
+        addSizeSelector(g, c, attrKey, 1, 1); // bottom
+        addSizeSelector(g, c, attrKey, 3, 1); // left
     }
-    SizeSelectorPanel ssp;
-    for(int i = 0; i < components.size(); i++) {
-      ssp = (SizeSelectorPanel) components.elementAt(i);
-      ssp.setValue((String)ca.getAttribute(i));
-    }
-    return success;
-  }
 
-  /**
-   * get the value of this <code>AttributeComponent</code>
-   *
-   * @return the value selected from this component
-   */
-  public AttributeSet getValue() {
-    SimpleAttributeSet set = new SimpleAttributeSet();
-    SizeSelectorPanel ssp;
-    for(int i = 0; i < components.size(); i++) {
-      ssp = (SizeSelectorPanel) components.elementAt(i);
-      if(ssp.valueChanged()) {
-        ca.setAttribute(i, ssp.getAttr());
-      }
+    private void addSizeSelector(final GridBagLayout g, final GridBagConstraints c, final Object attr, final int x,
+                                 final int y) {
+        final SizeSelectorPanel ssp = new SizeSelectorPanel(attr, null, false, SizeSelectorPanel.TYPE_LABEL);
+        Util.addGridBagComponent(this, ssp, g, c, x, y, GridBagConstraints.WEST);
+        components.addElement(ssp);
     }
-    String newValue = ca.getAttribute();
-    if(!originalValue.equalsIgnoreCase(newValue)) {
-      set.addAttribute(key, newValue);
-      Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) key, newValue);
-    }
-    return set;
-  }
 
-  public AttributeSet getValue(boolean includeUnchanged) {
-    if(includeUnchanged) {
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      SizeSelectorPanel ssp;
-      for(int i = 0; i < components.size(); i++) {
-        ssp = (SizeSelectorPanel) components.elementAt(i);
-        ca.setAttribute(i, ssp.getAttr());
-      }
-      String newValue = ca.getAttribute();
-      set.addAttribute(key, newValue);
-      Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) key, newValue);
-      return set;
+    /**
+     * set the value of this <code>AttributeComponent</code>
+     *
+     * @param a  the set of attributes possibly having an
+     *          attribute this component can display
+     *
+     * @return true, if the set of attributes had a matching attribute,
+     *            false if not
+     */
+    public boolean setValue(final AttributeSet a) {
+        final boolean success = true;
+        ca = new CombinedAttribute(key, a, true);
+        if (++setValueCalls < 2) {
+            originalValue = ca.getAttribute();
+        }
+        SizeSelectorPanel ssp;
+        for (int i = 0; i < components.size(); i++) {
+            ssp = (SizeSelectorPanel) components.elementAt(i);
+            ssp.setValue(ca.getAttribute(i));
+        }
+        return success;
     }
-    else {
-      return getValue();
-    }
-  }
 
-  public void reset() {
-    setValueCalls = 0;
-    originalValue = null;
-  }
+    /**
+     * get the value of this <code>AttributeComponent</code>
+     *
+     * @return the value selected from this component
+     */
+    public AttributeSet getValue() {
+        final SimpleAttributeSet set = new SimpleAttributeSet();
+        SizeSelectorPanel ssp;
+        for (int i = 0; i < components.size(); i++) {
+            ssp = (SizeSelectorPanel) components.elementAt(i);
+            if (ssp.valueChanged()) {
+                ca.setAttribute(i, ssp.getAttr());
+            }
+        }
+        final String newValue = ca.getAttribute();
+        if (!originalValue.equalsIgnoreCase(newValue)) {
+            set.addAttribute(key, newValue);
+            Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) key, newValue);
+        }
+        return set;
+    }
+
+    public AttributeSet getValue(final boolean includeUnchanged) {
+        if (includeUnchanged) {
+            final SimpleAttributeSet set = new SimpleAttributeSet();
+            SizeSelectorPanel ssp;
+            for (int i = 0; i < components.size(); i++) {
+                ssp = (SizeSelectorPanel) components.elementAt(i);
+                ca.setAttribute(i, ssp.getAttr());
+            }
+            final String newValue = ca.getAttribute();
+            set.addAttribute(key, newValue);
+            Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) key, newValue);
+            return set;
+        }
+        else {
+            return getValue();
+        }
+    }
+
+    public void reset() {
+        setValueCalls = 0;
+        originalValue = null;
+    }
 }

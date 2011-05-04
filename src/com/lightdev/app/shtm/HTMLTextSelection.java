@@ -45,83 +45,70 @@ import java.io.IOException;
  * @see java.awt.datatransfer.DataFlavor.plainTextFlavor
  * @see com.lightdev.app.shtm.HTMLText
  */
+class HTMLTextSelection implements Transferable {
+    /** index of HTML text data flavor */
+    private static final int HTML_TEXT = 0;
+    /** the data to transfer */
+    private final HTMLText data;
+    /** the data flavor of this transferable */
+    private static final DataFlavor[] flavors = { new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText") };
 
-class HTMLTextSelection  implements Transferable
-{
-
-  /** index of HTML text data flavor */
-  private static final int HTML_TEXT = 0;
-
-  /** the data to transfer */
-  private HTMLText data;
-
-  
-  /** the data flavor of this transferable */
-  private static final DataFlavor[] flavors = {
-    new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText")
-  };
-
-  /**
-   * construct a <code>HTMLTextSelection</code> with a chunk
-   * of styled text.
-   *
-   * @param data - a HTMLText object
-   *
-   * @see com.lightdev.app.shtm.HTMLText
-   */
-  public HTMLTextSelection(HTMLText data) {
-    this.data = data;
-  }
-
-  /* ---- start of Transferable implementation ----------------------------*/
-
-  /**
-   * Returns an array of DataFlavor objects indicating the flavors the data
-   * can be provided in.  The array should be ordered according to preference
-   * for providing the data (from most richly descriptive to least descriptive).
-   * @return an array of data flavors in which this data can be transferred
-   */
-  public DataFlavor[] getTransferDataFlavors() {
-    return (DataFlavor[])flavors.clone();
-  }
-
-  /**
-   * Returns whether or not the specified data flavor is supported for
-   * this object.
-   * @param flavor the requested flavor for the data
-   * @return boolean indicating wjether or not the data flavor is supported
-   */
-  public boolean isDataFlavorSupported(DataFlavor flavor) {
-    for (int i = 0; i < flavors.length; i++) {
-      if (flavors[i].equals(flavor)) {
-        return true;
-      }
+    /**
+     * construct a <code>HTMLTextSelection</code> with a chunk
+     * of styled text.
+     *
+     * @param data - a HTMLText object
+     *
+     * @see com.lightdev.app.shtm.HTMLText
+     */
+    public HTMLTextSelection(final HTMLText data) {
+        this.data = data;
     }
-    return false;
-  }
 
-  /**
-   * Returns an object which represents the data to be transferred.  The class
-   * of the object returned is defined by the representation class of the flavor.
-   *
-   * @param flavor the requested flavor for the data
-   * @see DataFlavor#getRepresentationClass
-   * @exception IOException                if the data is no longer available
-   *              in the requested flavor.
-   * @exception UnsupportedFlavorException if the requested data flavor is
-   *              not supported.
-   */
-  public Object getTransferData(DataFlavor flavor) throws
-      UnsupportedFlavorException, IOException
-  {
-    if (flavor.equals(flavors[HTML_TEXT])) {
-      return (Object) data;
+    /* ---- start of Transferable implementation ----------------------------*/
+    /**
+     * Returns an array of DataFlavor objects indicating the flavors the data
+     * can be provided in.  The array should be ordered according to preference
+     * for providing the data (from most richly descriptive to least descriptive).
+     * @return an array of data flavors in which this data can be transferred
+     */
+    public DataFlavor[] getTransferDataFlavors() {
+        return (DataFlavor[]) flavors.clone();
     }
-    else {
-      throw new UnsupportedFlavorException(flavor);
+
+    /**
+     * Returns whether or not the specified data flavor is supported for
+     * this object.
+     * @param flavor the requested flavor for the data
+     * @return boolean indicating wjether or not the data flavor is supported
+     */
+    public boolean isDataFlavorSupported(final DataFlavor flavor) {
+        for (int i = 0; i < flavors.length; i++) {
+            if (flavors[i].equals(flavor)) {
+                return true;
+            }
+        }
+        return false;
     }
-  }
 
-  /* ----------- end of Transferable implementation ------------------- */
-
+    /**
+     * Returns an object which represents the data to be transferred.  The class
+     * of the object returned is defined by the representation class of the flavor.
+     *
+     * @param flavor the requested flavor for the data
+     * @see DataFlavor#getRepresentationClass
+     * @exception IOException                if the data is no longer available
+     *              in the requested flavor.
+     * @exception UnsupportedFlavorException if the requested data flavor is
+     *              not supported.
+     */
+    public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if (flavor.equals(flavors[HTML_TEXT])) {
+            return data;
+        }
+        else {
+            throw new UnsupportedFlavorException(flavor);
+        }
+    }
+    /* ----------- end of Transferable implementation ------------------- */
 }

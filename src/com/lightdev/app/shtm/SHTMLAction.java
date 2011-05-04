@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import javax.swing.Action;
@@ -38,17 +37,14 @@ import javax.swing.Action;
  *
  * @see javax.swing.Action
  */
-
 interface SHTMLAction extends Action {
+    /** update the action's state */
+    public void update();
 
-  /** update the action's state */
-  public void update();
-
-  /**
-   * this method should be called from the constructor
-   * of each SHTMLAction and can be used to get
-   * action properties from a resource file
-   */
-  public void getProperties();
-
+    /**
+     * this method should be called from the constructor
+     * of each SHTMLAction and can be used to get
+     * action properties from a resource file
+     */
+    public void getProperties();
 }

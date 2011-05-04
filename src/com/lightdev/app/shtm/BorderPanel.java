@@ -18,18 +18,19 @@
  */
 package com.lightdev.app.shtm;
 
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
-import java.util.Vector;
-import javax.swing.JLabel;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
-import java.util.Enumeration;
 
 /**
  * Panel to show and manipulate border settings for a rectangular
@@ -46,69 +47,37 @@ import java.util.Enumeration;
  *
  * 
  */
-
 class BorderPanel extends JPanel implements AttributeComponent {
-
-    private Vector components = new Vector();
-
+    private final Vector components = new Vector();
     /** the attributes for border width */
     private CombinedAttribute bWidth;
-
     /** the attributes for border color */
     private CombinedAttribute bColor;
-
     /** the color value to compare to for determining changes */
     private String oColor;
-
     /** the width value to compare to for determining changes */
     private String oWidth;
-
     /** indicates if a call to setValue is for initial setting or for changes */
     private int setValueCalls = 0;
 
     public BorderPanel() {
-      super();
-
-      // set layout
-      GridBagLayout g = new GridBagLayout();
-      setLayout(g);
-
-      // constraints to use on our GridBagLayout
-      GridBagConstraints c = new GridBagConstraints();
-
-      addSettings(g,
-                  c,
-                  Util.getResourceString("topLabel"),
-                  CombinedAttribute.ATTR_TOP,
-                  0,
-                  0);
-      addSettings(g,
-                  c,
-                  Util.getResourceString("rightLabel"),
-                  CombinedAttribute.ATTR_RIGHT,
-                  1,
-                  1);
-      addSettings(g,
-                  c,
-                  Util.getResourceString("bottomLabel"),
-                  CombinedAttribute.ATTR_BOTTOM,
-                  1,
-                  0);
-      addSettings(g,
-                  c,
-                  Util.getResourceString("leftLabel"),
-                  CombinedAttribute.ATTR_LEFT,
-                  0,
-                  1);
+        super();
+        // set layout
+        final GridBagLayout g = new GridBagLayout();
+        setLayout(g);
+        // constraints to use on our GridBagLayout
+        final GridBagConstraints c = new GridBagConstraints();
+        addSettings(g, c, Util.getResourceString("topLabel"), CombinedAttribute.ATTR_TOP, 0, 0);
+        addSettings(g, c, Util.getResourceString("rightLabel"), CombinedAttribute.ATTR_RIGHT, 1, 1);
+        addSettings(g, c, Util.getResourceString("bottomLabel"), CombinedAttribute.ATTR_BOTTOM, 1, 0);
+        addSettings(g, c, Util.getResourceString("leftLabel"), CombinedAttribute.ATTR_LEFT, 0, 1);
     }
 
-    private void addSettings(GridBagLayout g, GridBagConstraints c,
-                             String title, int side,
-                             int x, int y)
-    {
-      BorderSettings bs = new BorderSettings(title, side);
-      Util.addGridBagComponent(this, bs, g, c, x, y, GridBagConstraints.WEST);
-      components.addElement(bs);
+    private void addSettings(final GridBagLayout g, final GridBagConstraints c, final String title, final int side,
+                             final int x, final int y) {
+        final BorderSettings bs = new BorderSettings(title, side);
+        Util.addGridBagComponent(this, bs, g, c, x, y, GridBagConstraints.WEST);
+        components.addElement(bs);
     }
 
     /**
@@ -120,19 +89,19 @@ class BorderPanel extends JPanel implements AttributeComponent {
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(AttributeSet a) {
-      boolean success = true;
-      Enumeration e = components.elements();
-      bWidth = new CombinedAttribute(CSS.Attribute.BORDER_WIDTH, a, true);
-      bColor = new CombinedAttribute(CSS.Attribute.BORDER_COLOR, a, true);
-      if(++setValueCalls < 2) {
-        oColor = bColor.getAttribute();
-        oWidth = bWidth.getAttribute();
-      }
-      while(e.hasMoreElements()) {
-        ((BorderSettings) e.nextElement()).setValue(bWidth, bColor);
-      }
-      return success;
+    public boolean setValue(final AttributeSet a) {
+        final boolean success = true;
+        final Enumeration e = components.elements();
+        bWidth = new CombinedAttribute(CSS.Attribute.BORDER_WIDTH, a, true);
+        bColor = new CombinedAttribute(CSS.Attribute.BORDER_COLOR, a, true);
+        if (++setValueCalls < 2) {
+            oColor = bColor.getAttribute();
+            oWidth = bWidth.getAttribute();
+        }
+        while (e.hasMoreElements()) {
+            ((BorderSettings) e.nextElement()).setValue(bWidth, bColor);
+        }
+        return success;
     }
 
     /**
@@ -141,124 +110,110 @@ class BorderPanel extends JPanel implements AttributeComponent {
      * @return the value selected from this component
      */
     public AttributeSet getValue() {
-      SimpleAttributeSet set = new SimpleAttributeSet();
-      BorderSettings bs;
-      for(int i = 0; i < components.size(); i++) {
-        bs = (BorderSettings) components.elementAt(i);
-        bColor.setAttribute(i, bs.getBorderColor());
-        bWidth.setAttribute(i, bs.getBorderWidth());
-      }
-      String newValue = bColor.getAttribute();
+        final SimpleAttributeSet set = new SimpleAttributeSet();
+        BorderSettings bs;
+        for (int i = 0; i < components.size(); i++) {
+            bs = (BorderSettings) components.elementAt(i);
+            bColor.setAttribute(i, bs.getBorderColor());
+            bWidth.setAttribute(i, bs.getBorderWidth());
+        }
+        String newValue = bColor.getAttribute();
         newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, newValue);
-
-      return set;
+        return set;
     }
 
-    public AttributeSet getValue(boolean includeUnchanged) {
-      if(includeUnchanged) {
-        SimpleAttributeSet set = new SimpleAttributeSet();
-        BorderSettings bs;
-        for(int i = 0; i < components.size(); i++) {
-          bs = (BorderSettings) components.elementAt(i);
-          bColor.setAttribute(i, bs.getBorderColor());
-          bWidth.setAttribute(i, bs.getBorderWidth());
+    public AttributeSet getValue(final boolean includeUnchanged) {
+        if (includeUnchanged) {
+            final SimpleAttributeSet set = new SimpleAttributeSet();
+            BorderSettings bs;
+            for (int i = 0; i < components.size(); i++) {
+                bs = (BorderSettings) components.elementAt(i);
+                bColor.setAttribute(i, bs.getBorderColor());
+                bWidth.setAttribute(i, bs.getBorderWidth());
+            }
+            String newValue = bColor.getAttribute();
+            newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
+            Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
+            Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
+            Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);
+            Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, newValue);
+            return set;
         }
-        String newValue = bColor.getAttribute();
-          newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
-          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
-          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
-          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);
-          Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_LEFT_WIDTH, newValue);
-        return set;
-      }
-      else {
-        return getValue();
-      }
+        else {
+            return getValue();
+        }
     }
 
     /**
      * Panel to show and manipulate border settings
      */
     private class BorderSettings extends JPanel {
+        /** the border side */
+        private final int side;
+        /** selector for border width */
+        private final SizeSelectorPanel bWidth;
+        /** selector for border color */
+        private final ColorPanel bColor;
 
-      /** the border side */
-      private int side;
-
-      /** selector for border width */
-      private SizeSelectorPanel bWidth;
-
-      /** selector for border color */
-      private ColorPanel bColor;
-
-      /**
-       * construct a <code>BorderSettings</code> panel
-       *
-       * @param title  the title of this object
-       * @param borderKey  the attribute key for the border width this
-       * object represents
-       * @param colorKey  the attribute key for the border color this
-       * object represents
-       */
-      public BorderSettings(String title, int side) {
-        super();
-
-        this.side = side;
-        // set layout
-        GridBagLayout g = new GridBagLayout();
-        setLayout(g);
-
-        // constraints to use on our GridBagLayout
-        GridBagConstraints c = new GridBagConstraints();
-
-        // set border and title
-        setBorder(new TitledBorder(new EtchedBorder(
-                    EtchedBorder.LOWERED),
-                    title));
-        // add the width control and label
-        Util.addGridBagComponent(this,
-                   new JLabel(Util.getResourceString("borderWidthLabel")),
-                   g, c, 0, 0, GridBagConstraints.EAST);
-        bWidth = new SizeSelectorPanel(CSS.Attribute.BORDER_WIDTH, null, false, SizeSelectorPanel.TYPE_LABEL);
-        Util.addGridBagComponent(this,bWidth,
-                                 g, c, 1, 0, GridBagConstraints.WEST);
-
-        // add the color control and label
-        Util.addGridBagComponent(this,
-                   new JLabel(Util.getResourceString("borderColorLabel")),
-                   g, c, 0, 1, GridBagConstraints.EAST);
-        bColor = new ColorPanel(null, Color.black, CSS.Attribute.BORDER_COLOR);
-        Util.addGridBagComponent(this,bColor,
-                                 g, c, 1, 1, GridBagConstraints.WEST);
-      }
-
-      public String getBorderColor() {
-        return bColor.getAttr();
-      }
-
-      public String getBorderWidth() {
-        return bWidth.getAttr();
-      }
-
-      /**
-       * set the value of this <code>AttributeComponent</code>
-       *
-       * @param color  the <code>CombinedAttribute</code> to take the color from
-       *
-       */
-      public void setValue(CombinedAttribute borderWidths, CombinedAttribute borderColors) {
-        String attr = borderColors.getAttribute(side);
-        //System.out.println("BorderSettings setValue attr='" + attr + "'");
-        if(attr != null) {
-          this.bColor.setValue(attr);
+        /**
+         * construct a <code>BorderSettings</code> panel
+         *
+         * @param title  the title of this object
+         * @param borderKey  the attribute key for the border width this
+         * object represents
+         * @param colorKey  the attribute key for the border color this
+         * object represents
+         */
+        public BorderSettings(final String title, final int side) {
+            super();
+            this.side = side;
+            // set layout
+            final GridBagLayout g = new GridBagLayout();
+            setLayout(g);
+            // constraints to use on our GridBagLayout
+            final GridBagConstraints c = new GridBagConstraints();
+            // set border and title
+            setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), title));
+            // add the width control and label
+            Util.addGridBagComponent(this, new JLabel(Util.getResourceString("borderWidthLabel")), g, c, 0, 0,
+                GridBagConstraints.EAST);
+            bWidth = new SizeSelectorPanel(CSS.Attribute.BORDER_WIDTH, null, false, SizeSelectorPanel.TYPE_LABEL);
+            Util.addGridBagComponent(this, bWidth, g, c, 1, 0, GridBagConstraints.WEST);
+            // add the color control and label
+            Util.addGridBagComponent(this, new JLabel(Util.getResourceString("borderColorLabel")), g, c, 0, 1,
+                GridBagConstraints.EAST);
+            bColor = new ColorPanel(null, Color.black, CSS.Attribute.BORDER_COLOR);
+            Util.addGridBagComponent(this, bColor, g, c, 1, 1, GridBagConstraints.WEST);
         }
-        attr = borderWidths.getAttribute(side);
-        if(attr != null) {
-          this.bWidth.setValue(attr);
+
+        public String getBorderColor() {
+            return bColor.getAttr();
         }
-      }
+
+        public String getBorderWidth() {
+            return bWidth.getAttr();
+        }
+
+        /**
+         * set the value of this <code>AttributeComponent</code>
+         *
+         * @param color  the <code>CombinedAttribute</code> to take the color from
+         *
+         */
+        public void setValue(final CombinedAttribute borderWidths, final CombinedAttribute borderColors) {
+            String attr = borderColors.getAttribute(side);
+            //System.out.println("BorderSettings setValue attr='" + attr + "'");
+            if (attr != null) {
+                bColor.setValue(attr);
+            }
+            attr = borderWidths.getAttribute(side);
+            if (attr != null) {
+                bWidth.setValue(attr);
+            }
+        }
     }
 }

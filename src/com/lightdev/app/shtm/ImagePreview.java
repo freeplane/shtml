@@ -16,11 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
 
 /**
  * An <code>ImagePreview</code> is a component to preview
@@ -47,239 +52,227 @@ import java.awt.*;
  *
  */
 class ImagePreview extends JComponent implements Scrollable {
+    /**
+     * scroll increment (for Scrollable implementation)
+     */
+    private int maxUnitIncrement = 1;
+    /**
+     * the image to be previewed
+     */
+    private ImageIcon pic;
 
-  /**
-   * scroll increment (for Scrollable implementation)
-   */
-  private int maxUnitIncrement = 1;
-
-  /**
-   * the image to be previewed
-   */
-  private ImageIcon pic;
-
-  /**
-   * Construct an <CODE>ImagePreview</CODE>.
-   *
-   * @param  pic - the image to be previewed
-   */
-  public ImagePreview(ImageIcon pic) {
-    setImage(pic);
-  }
-
-  /**
-   * Construct an <CODE>ImagePreview</CODE> without an image
-   * associated.
-   */
-  public ImagePreview() {
-    this(null);
-  }
-
-  /**
-   * Get the original width of the image previewed in this component
-   *
-   * @return  the original width of the image previewed in this component
-   *             or -1 if no image is assigned
-   */
-  public int getOriginalWidth() {
-    if(pic != null) {
-      return pic.getIconWidth();
+    /**
+     * Construct an <CODE>ImagePreview</CODE>.
+     *
+     * @param  pic - the image to be previewed
+     */
+    public ImagePreview(final ImageIcon pic) {
+        setImage(pic);
     }
-    else {
-      return -1;
-    }
-  }
 
-  /**
-   * Get the original height of the image previewed in this component
-   *
-   * @return  the original height of the image previewed in this component
-   *             or -1 if no image is assigned
-   */
-  public int getOriginalHeight() {
-    if(pic != null) {
-      return pic.getIconHeight();
+    /**
+     * Construct an <CODE>ImagePreview</CODE> without an image
+     * associated.
+     */
+    public ImagePreview() {
+        this(null);
     }
-    else {
-      return -1;
-    }
-  }
 
-  /**
-   * Set the image to be previewed.
-   */
-  public void setImage(ImageIcon pic) {
-    this.pic = pic;
-    if(pic != null) {
-      this.getGraphics().clearRect(0, 0, getWidth(), getHeight());
-      this.paint(this.getGraphics());
-    }
-  }
-
-  /**
-   * Paints this component.
-   * If the image associated with this component is smaller than the size
-   * of the component, the image is painted in its original size. Otherwise,
-   * the image is scaled down to the size of this component.
-   *
-   * @param   g - The graphics context to use for painting.
-   */
-  public void paint(Graphics g) {
-    if(pic != null) {
-      int dWidth = pic.getIconWidth();
-      int dHeight = pic.getIconHeight();
-      int scale = getScale();
-      dWidth = dWidth * scale / 100;
-      dHeight = dHeight * scale/ 100;
-      g.drawImage(  pic.getImage(),
-                    0,
-                    0,
-                    dWidth,
-                    dHeight,
-                    this);
-    }
-  }
-
-  /**
-   * Gets the size adjustment necessary for the image to fit into this
-   * component and returns the resulting scale percentage.
-   *
-   * @return  the scale percentage of the image
-   */
-  public int getScale() {
-    int scale = 100;
-    if(pic != null) {
-      int vPct = 100;
-      int hPct = 100;
-        Dimension ps = getPreferredSize();
-        hPct = (int) ((double) ps.getWidth() /
-                      ((double) pic.getIconWidth() / (double) 100));
-        //System.out.println("ImagePreview getScale ps.getWidth " + ps.getWidth());
-        //System.out.println("ImagePreview getScale pic.getIconWidth() " + pic.getIconWidth());
-        //System.out.println("ImagePreview getScale hPct " + hPct + "\r\n\r\n");
-        vPct = (int) ((double) ps.getHeight() /
-                      ((double) pic.getIconHeight() / (double) 100));
-        //System.out.println("ImagePreview getScale ps.getHeight() " + ps.getHeight());
-        //System.out.println("ImagePreview getScale pic.getIconHeight() " + pic.getIconHeight());
-        //System.out.println("ImagePreview getScale vPct " + vPct + "\r\n\r\n");
-        if(hPct < vPct) {
-          scale = hPct;
+    /**
+     * Get the original width of the image previewed in this component
+     *
+     * @return  the original width of the image previewed in this component
+     *             or -1 if no image is assigned
+     */
+    public int getOriginalWidth() {
+        if (pic != null) {
+            return pic.getIconWidth();
         }
         else {
-          scale = vPct;
+            return -1;
         }
     }
-    //System.out.println("ImagePreview getScale=" + scale + "\r\n\r\n");
-    return scale;
-  }
 
-  /**
-   * set the preview to a new width maintaining the image proportions
-   *
-   * @param  newWidth   the new width for the image preview
-   */
-  public void setPreviewWidth(int newWidth) {
-    //System.out.println("ImagePreview setPreviewWidth newWidth=" + newWidth);
-    if(pic != null) {
-      try {
-        int hPct = (int) ((double) newWidth / (double) ((double) getOriginalWidth() / (double) 100));
-        int newHeight = getOriginalHeight() * hPct / 100;
-        setPreferredSize(new Dimension(newWidth, newHeight));
-      }
-      catch(Exception e) {
-        e.printStackTrace();
-        setPreferredSize(new Dimension(20, 20));
-      }
-      revalidate();
+    /**
+     * Get the original height of the image previewed in this component
+     *
+     * @return  the original height of the image previewed in this component
+     *             or -1 if no image is assigned
+     */
+    public int getOriginalHeight() {
+        if (pic != null) {
+            return pic.getIconHeight();
+        }
+        else {
+            return -1;
+        }
     }
-  }
 
-  /**
-   * set the preview to a new height maintaining the image proportions
-   *
-   * @param  newHeight   the new height for the image preview
-   */
-  public void setPreviewHeight(int newHeight) {
-    if( pic != null) {
-      try {
-        int vPct = (int) ((double) newHeight / ((double) getOriginalHeight() / (double) 100));
-        int newWidth = getOriginalWidth() * vPct / 100;
-        setPreferredSize(new Dimension(newWidth, newHeight));
-      }
-      catch(Exception e) {
-        e.printStackTrace();
-        setPreferredSize(new Dimension(20, 20));
-      }
-      revalidate();
+    /**
+     * Set the image to be previewed.
+     */
+    public void setImage(final ImageIcon pic) {
+        this.pic = pic;
+        if (pic != null) {
+            this.getGraphics().clearRect(0, 0, getWidth(), getHeight());
+            this.paint(this.getGraphics());
+        }
     }
-  }
 
-  /**
-   * Adapt the size of the image previewed by this component to a new
-   * scale.
-   *
-   * @param  newScale   the new scale the image shall adapt to in size
-   */
-  public void setScale(int newScale) {
-    int newWidth;
-    int newHeight;
-    newWidth = getOriginalWidth() * newScale / 100 ;
-    newHeight = getOriginalHeight() * newScale / 100;
-    setPreferredSize(new Dimension(newWidth, newHeight));
-    revalidate();
-  }
+    /**
+     * Paints this component.
+     * If the image associated with this component is smaller than the size
+     * of the component, the image is painted in its original size. Otherwise,
+     * the image is scaled down to the size of this component.
+     *
+     * @param   g - The graphics context to use for painting.
+     */
+    public void paint(final Graphics g) {
+        if (pic != null) {
+            int dWidth = pic.getIconWidth();
+            int dHeight = pic.getIconHeight();
+            final int scale = getScale();
+            dWidth = dWidth * scale / 100;
+            dHeight = dHeight * scale / 100;
+            g.drawImage(pic.getImage(), 0, 0, dWidth, dHeight, this);
+        }
+    }
 
-  /*
-    ------------ Scrollable implementation start ----------------------
-  */
-  public Dimension getPreferredScrollableViewportSize() {
-      return getPreferredSize();
-  }
+    /**
+     * Gets the size adjustment necessary for the image to fit into this
+     * component and returns the resulting scale percentage.
+     *
+     * @return  the scale percentage of the image
+     */
+    public int getScale() {
+        int scale = 100;
+        if (pic != null) {
+            int vPct = 100;
+            int hPct = 100;
+            final Dimension ps = getPreferredSize();
+            hPct = (int) (ps.getWidth() / ((double) pic.getIconWidth() / (double) 100));
+            //System.out.println("ImagePreview getScale ps.getWidth " + ps.getWidth());
+            //System.out.println("ImagePreview getScale pic.getIconWidth() " + pic.getIconWidth());
+            //System.out.println("ImagePreview getScale hPct " + hPct + "\r\n\r\n");
+            vPct = (int) (ps.getHeight() / ((double) pic.getIconHeight() / (double) 100));
+            //System.out.println("ImagePreview getScale ps.getHeight() " + ps.getHeight());
+            //System.out.println("ImagePreview getScale pic.getIconHeight() " + pic.getIconHeight());
+            //System.out.println("ImagePreview getScale vPct " + vPct + "\r\n\r\n");
+            if (hPct < vPct) {
+                scale = hPct;
+            }
+            else {
+                scale = vPct;
+            }
+        }
+        //System.out.println("ImagePreview getScale=" + scale + "\r\n\r\n");
+        return scale;
+    }
 
-  public int getScrollableUnitIncrement(Rectangle visibleRect,
-                                        int orientation,
-                                        int direction) {
-      //Get the current position.
-      int currentPosition = 0;
-      if (orientation == SwingConstants.HORIZONTAL)
-          currentPosition = visibleRect.x;
-      else
-          currentPosition = visibleRect.y;
+    /**
+     * set the preview to a new width maintaining the image proportions
+     *
+     * @param  newWidth   the new width for the image preview
+     */
+    public void setPreviewWidth(final int newWidth) {
+        //System.out.println("ImagePreview setPreviewWidth newWidth=" + newWidth);
+        if (pic != null) {
+            try {
+                final int hPct = (int) (newWidth / ((double) getOriginalWidth() / (double) 100));
+                final int newHeight = getOriginalHeight() * hPct / 100;
+                setPreferredSize(new Dimension(newWidth, newHeight));
+            }
+            catch (final Exception e) {
+                e.printStackTrace();
+                setPreferredSize(new Dimension(20, 20));
+            }
+            revalidate();
+        }
+    }
 
-      //Return the number of pixels between currentPosition
-      //and the nearest tick mark in the indicated direction.
-      if (direction < 0) {
-          int newPosition = currentPosition -
-                           (currentPosition / maxUnitIncrement) *
-                            maxUnitIncrement;
-          return (newPosition == 0) ? maxUnitIncrement : newPosition;
-      } else {
-          return ((currentPosition / maxUnitIncrement) + 1) *
-                 maxUnitIncrement - currentPosition;
-      }
-  }
+    /**
+     * set the preview to a new height maintaining the image proportions
+     *
+     * @param  newHeight   the new height for the image preview
+     */
+    public void setPreviewHeight(final int newHeight) {
+        if (pic != null) {
+            try {
+                final int vPct = (int) (newHeight / ((double) getOriginalHeight() / (double) 100));
+                final int newWidth = getOriginalWidth() * vPct / 100;
+                setPreferredSize(new Dimension(newWidth, newHeight));
+            }
+            catch (final Exception e) {
+                e.printStackTrace();
+                setPreferredSize(new Dimension(20, 20));
+            }
+            revalidate();
+        }
+    }
 
-  public int getScrollableBlockIncrement(Rectangle visibleRect,
-                                         int orientation,
-                                         int direction) {
-      if (orientation == SwingConstants.HORIZONTAL)
-          return visibleRect.width - maxUnitIncrement;
-      else
-          return visibleRect.height - maxUnitIncrement;
-  }
+    /**
+     * Adapt the size of the image previewed by this component to a new
+     * scale.
+     *
+     * @param  newScale   the new scale the image shall adapt to in size
+     */
+    public void setScale(final int newScale) {
+        int newWidth;
+        int newHeight;
+        newWidth = getOriginalWidth() * newScale / 100;
+        newHeight = getOriginalHeight() * newScale / 100;
+        setPreferredSize(new Dimension(newWidth, newHeight));
+        revalidate();
+    }
 
-  public boolean getScrollableTracksViewportWidth() {
-      return false;
-  }
+    /*
+      ------------ Scrollable implementation start ----------------------
+    */
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
 
-  public boolean getScrollableTracksViewportHeight() {
-      return false;
-  }
+    public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
+        //Get the current position.
+        int currentPosition = 0;
+        if (orientation == SwingConstants.HORIZONTAL) {
+            currentPosition = visibleRect.x;
+        }
+        else {
+            currentPosition = visibleRect.y;
+        }
+        //Return the number of pixels between currentPosition
+        //and the nearest tick mark in the indicated direction.
+        if (direction < 0) {
+            final int newPosition = currentPosition - (currentPosition / maxUnitIncrement) * maxUnitIncrement;
+            return (newPosition == 0) ? maxUnitIncrement : newPosition;
+        }
+        else {
+            return ((currentPosition / maxUnitIncrement) + 1) * maxUnitIncrement - currentPosition;
+        }
+    }
 
-  public void setMaxUnitIncrement(int pixels) {
-      maxUnitIncrement = pixels;
-  }
-  /*
-    --------- Scrollable implementation end ---------------------------
-  */
+    public int getScrollableBlockIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
+        if (orientation == SwingConstants.HORIZONTAL) {
+            return visibleRect.width - maxUnitIncrement;
+        }
+        else {
+            return visibleRect.height - maxUnitIncrement;
+        }
+    }
+
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
+
+    public void setMaxUnitIncrement(final int pixels) {
+        maxUnitIncrement = pixels;
+    }
+    /*
+      --------- Scrollable implementation end ---------------------------
+    */
 }

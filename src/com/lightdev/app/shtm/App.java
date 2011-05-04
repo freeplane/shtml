@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
+import java.util.prefs.Preferences;
+
 import javax.swing.UIManager;
-import java.util.prefs.*;
 
 /**
  * Main class of application SimplyHTML.
@@ -39,33 +39,31 @@ import java.util.prefs.*;
  *
  * 
  */
-
 public class App {
+    //Main method
+    public static void main(final String[] args) {
+        try {
+            final Preferences prefs = Preferences
+                .userNodeForPackage(Class.forName("com.lightdev.app.shtm.PrefsDialog"));
+            UIManager.setLookAndFeel(prefs.get(PrefsDialog.PREFSID_LOOK_AND_FEEL,
+                UIManager.getCrossPlatformLookAndFeelClassName()));
+            /*
+            The following line causes UIManager to correctly handle alignments
+            of menu items when they do not have an icon.
 
-  //Main method
-  public static void main(String[] args) {
-    try {
-      Preferences prefs = Preferences.userNodeForPackage( Class.forName("com.lightdev.app.shtm.PrefsDialog") );
-      UIManager.setLookAndFeel(
-          prefs.get(PrefsDialog.PREFSID_LOOK_AND_FEEL,
-          UIManager.getCrossPlatformLookAndFeelClassName()));
-      /*
-      The following line causes UIManager to correctly handle alignments
-      of menu items when they do not have an icon.
+            At the Java Developer Connection, SKelvin writes:
+            "If the UI class does not find an icon it can't calculate its width :-)
+            It won't work if you just set the property to null (don't ask me
+            why), but setting to any type other than icon works."
 
-      At the Java Developer Connection, SKelvin writes:
-      "If the UI class does not find an icon it can't calculate its width :-)
-      It won't work if you just set the property to null (don't ask me
-      why), but setting to any type other than icon works."
-
-      (see http://forum.java.sun.com/thread.jsp?forum=57&thread=126150)
-      */
-      //UIManager.put("Menu.checkIcon", new ImageIcon("") );
-      UIManager.put("Menu.checkIcon", UIManager.get("MenuItem.checkIcon") );
+            (see http://forum.java.sun.com/thread.jsp?forum=57&thread=126150)
+            */
+            //UIManager.put("Menu.checkIcon", new ImageIcon("") );
+            UIManager.put("Menu.checkIcon", UIManager.get("MenuItem.checkIcon"));
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
+        }
+        FrmMain.run(); // create an instance of the app's main window
     }
-    catch(Exception e) {
-      e.printStackTrace();
-    }
-    FrmMain.run(); // create an instance of the app's main window
-  }
 }

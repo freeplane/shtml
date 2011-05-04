@@ -32,10 +32,8 @@ import java.util.EventObject;
  * @author <a href="mailto:info@calcom.de">info@calcom.de</a>
  * @version 1.5, April 27, 2003
  */
-
 public class FindReplaceEvent extends EventObject {
-
-  public FindReplaceEvent(FindReplaceDialog source) {
-    super(source);
-  }
+    public FindReplaceEvent(final FindReplaceDialog source) {
+        super(source);
+    }
 }

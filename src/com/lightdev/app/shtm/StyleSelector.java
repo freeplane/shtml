@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import java.util.Vector;
@@ -43,113 +42,106 @@ import javax.swing.text.html.HTML;
  *
  * 
  */
+class StyleSelector extends JComboBox implements AttributeComponent, ChangeListener {
+    private final SHTMLPanelImpl shtmlPanel;
+    /** the CSS attribute key this AttributeComponent object represents */
+    private final HTML.Attribute key;
+    /** indicates whether or not to ignore change events */
+    private final boolean ignoreChanges = false;
+    private final String standardStyleName = Util.getResourceString("standardStyleName");
+    private String paragraphType;
+    private boolean updateRunning;
 
-class StyleSelector extends JComboBox
-implements AttributeComponent, ChangeListener
-{
-  private SHTMLPanelImpl shtmlPanel;
-  /** the CSS attribute key this AttributeComponent object represents */
-  private HTML.Attribute key;
-
-  /** indicates whether or not to ignore change events */
-  private boolean ignoreChanges = false;
-
-  private String standardStyleName = Util.getResourceString("standardStyleName");
-  private String paragraphType;
-  private boolean updateRunning;
-
-  /**
-   * construct a <code>StyleSelector</code>
-   *
-   * @param key  the attribute this component represents
-   */
-  public StyleSelector(SHTMLPanelImpl shtmlPanel, HTML.Attribute key) {
-    this.key = key;
-    this.shtmlPanel = shtmlPanel;
-    updateRunning = false;
-  }
-
-  /**
-   * set the value of this combo box
-   *
-   * @param a  the set of attributes possibly having a
-   *          font size attribute this pick list could display
-   *
-   * @return true, if the set of attributes had a matching attribute,
-   *            false if not
-   */
-  public boolean setValue(AttributeSet a) {
-    boolean success = false;
-    Object attr = a.getAttribute(key);
-    if(attr != null) {
-      setSelectedItem(attr.toString());
-      success = true;
+    /**
+     * construct a <code>StyleSelector</code>
+     *
+     * @param key  the attribute this component represents
+     */
+    public StyleSelector(final SHTMLPanelImpl shtmlPanel, final HTML.Attribute key) {
+        this.key = key;
+        this.shtmlPanel = shtmlPanel;
+        updateRunning = false;
     }
-    else {
-      setSelectedItem(standardStyleName);
+
+    /**
+     * set the value of this combo box
+     *
+     * @param a  the set of attributes possibly having a
+     *          font size attribute this pick list could display
+     *
+     * @return true, if the set of attributes had a matching attribute,
+     *            false if not
+     */
+    public boolean setValue(final AttributeSet a) {
+        boolean success = false;
+        final Object attr = a.getAttribute(key);
+        if (attr != null) {
+            setSelectedItem(attr.toString());
+            success = true;
+        }
+        else {
+            setSelectedItem(standardStyleName);
+        }
+        return success;
     }
-    return success;
-  }
 
-  /**
-   * get the value of this <code>AttributeComponent</code>
-   *
-   * @return the value selected from this component
-   */
-  public AttributeSet getValue() {
-    SimpleAttributeSet set = new SimpleAttributeSet();
-    set.addAttribute(key, getSelectedItem());
-    return set;
-  }
-
-  public AttributeSet getValue(boolean includeUnchanged) {
-    return getValue();
-  }
-
-  /* --------------- ChangeListener implementation start --------------- */
-
-  /**
-   * this method listens and reacts to changes to either the JTabbedPane of FrmMain or
-   * a given StyleSheet this component was registered with. Once either one changes
-   * the list of styles of this componment is refreshed accordingly.
-   */
-  public void stateChanged(ChangeEvent e) {
-    paragraphType = null;
-    update(); 
-  }
-
-  /* (non-Javadoc)
-   * @see javax.swing.JComboBox#fireActionEvent()
-   */
-  protected void fireActionEvent() {
-    if(updateRunning){
-      return;
+    /**
+     * get the value of this <code>AttributeComponent</code>
+     *
+     * @return the value selected from this component
+     */
+    public AttributeSet getValue() {
+        final SimpleAttributeSet set = new SimpleAttributeSet();
+        set.addAttribute(key, getSelectedItem());
+        return set;
     }
-    super.fireActionEvent();
-  }
 
-  public void update() {
-    try{
-      updateRunning = true;
-      final DocumentPane currentDocumentPane = shtmlPanel.getCurrentDocumentPane();
-      final int selectionStart = currentDocumentPane.getEditor().getSelectionStart();
-      final SHTMLDocument document = (SHTMLDocument)currentDocumentPane.getDocument();
-      final String newParagraphType = document.getParagraphElement(selectionStart, true).getName();
-      if(paragraphType == newParagraphType){
-        return;
-      }
-      paragraphType = newParagraphType;
-      Vector styleNames = Util.getStyleNamesForTag(( document).getStyleSheet(), paragraphType);
-      styleNames.insertElementAt(standardStyleName, 0);
-      setModel(new DefaultComboBoxModel(styleNames));
+    public AttributeSet getValue(final boolean includeUnchanged) {
+        return getValue();
     }
-    catch(NullPointerException ex){
-      setModel(new DefaultComboBoxModel());
-    }
-    finally{
-      updateRunning = false;
-    }
-  }
 
-  /* --------------- ChangeListener implementation end ----------------- */
+    /* --------------- ChangeListener implementation start --------------- */
+    /**
+     * this method listens and reacts to changes to either the JTabbedPane of FrmMain or
+     * a given StyleSheet this component was registered with. Once either one changes
+     * the list of styles of this componment is refreshed accordingly.
+     */
+    public void stateChanged(final ChangeEvent e) {
+        paragraphType = null;
+        update();
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.JComboBox#fireActionEvent()
+     */
+    protected void fireActionEvent() {
+        if (updateRunning) {
+            return;
+        }
+        super.fireActionEvent();
+    }
+
+    public void update() {
+        try {
+            updateRunning = true;
+            final DocumentPane currentDocumentPane = shtmlPanel.getCurrentDocumentPane();
+            final int selectionStart = currentDocumentPane.getEditor().getSelectionStart();
+            final SHTMLDocument document = (SHTMLDocument) currentDocumentPane.getDocument();
+            final String newParagraphType = document.getParagraphElement(selectionStart, true).getName();
+            if (paragraphType == newParagraphType) {
+                return;
+            }
+            paragraphType = newParagraphType;
+            final Vector styleNames = Util.getStyleNamesForTag((document).getStyleSheet(), paragraphType);
+            styleNames.insertElementAt(standardStyleName, 0);
+            setModel(new DefaultComboBoxModel(styleNames));
+        }
+        catch (final NullPointerException ex) {
+            setModel(new DefaultComboBoxModel());
+        }
+        finally {
+            updateRunning = false;
+        }
+    }
+    /* --------------- ChangeListener implementation end ----------------- */
 }

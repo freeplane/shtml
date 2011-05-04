@@ -16,12 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import java.awt.Frame;
-import java.awt.Container;
 import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Frame;
+
 import javax.swing.text.AttributeSet;
 
 /**
@@ -38,49 +38,44 @@ import javax.swing.text.AttributeSet;
  *
  * 
  */
-
 class ListDialog extends DialogShell {
+    private final ListPanel listPanel;
 
-  private ListPanel listPanel;
+    public ListDialog(final Frame parent, final String title) {
+        super(parent, title);
+        // create a ListPanel and keep a reference for later use
+        listPanel = new ListPanel();
+        // add to content pane of DialogShell
+        final Container contentPane = super.getContentPane();
+        contentPane.add(listPanel, BorderLayout.CENTER);
+        // cause optimal placement of all elements
+        pack();
+    }
 
-  public ListDialog(Frame parent, String title) {
-    super(parent, title);
+    /**
+     * set the attributes this ListDialog shall represent
+     *
+     * @param a  the set of attributes to display list attributes from
+     */
+    public void setListAttributes(final AttributeSet a) {
+        listPanel.setValue(a);
+    }
 
-    // create a ListPanel and keep a reference for later use
-    listPanel = new ListPanel();
+    /**
+     * get the list attributes the ListDialog currently is set to.
+     *
+     * @return the set of list attributes this ListDialog currently represents
+     */
+    public AttributeSet getListAttributes() {
+        return listPanel.getValue();
+    }
 
-    // add to content pane of DialogShell
-    Container contentPane = super.getContentPane();
-    contentPane.add(listPanel, BorderLayout.CENTER);
-
-    // cause optimal placement of all elements
-    pack();
-  }
-
-  /**
-   * set the attributes this ListDialog shall represent
-   *
-   * @param a  the set of attributes to display list attributes from
-   */
-  public void setListAttributes(AttributeSet a) {
-    listPanel.setValue(a);
-  }
-
-  /**
-   * get the list attributes the ListDialog currently is set to.
-   *
-   * @return the set of list attributes this ListDialog currently represents
-   */
-  public AttributeSet getListAttributes() {
-    return listPanel.getValue();
-  }
-
-  /**
-   * get the list tag currently selected in this <code>ListDialog</code>
-   *
-   * @return the list tag currently selected or null, if no list is selected
-   */
-  public String getListTag() {
-    return listPanel.getListTag();
-  }
+    /**
+     * get the list tag currently selected in this <code>ListDialog</code>
+     *
+     * @return the list tag currently selected or null, if no list is selected
+     */
+    public String getListTag() {
+        return listPanel.getListTag();
+    }
 }

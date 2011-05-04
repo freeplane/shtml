@@ -16,15 +16,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import java.util.*;
-import java.util.regex.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JEditorPane;
+import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.StyledEditorKit;
 
 /**
  * An editor pane with syntax highlighting for HTML tags.
@@ -63,273 +75,261 @@ import java.awt.*;
  *
  */
 class SyntaxPane extends JEditorPane implements CaretListener {
-
-  /**
-   * Creates a new <code>SyntaxPane</code>.
-   */
-  public SyntaxPane() {
-    super();
-    setEditorKit(new StyledEditorKit());
-    setupPatterns();
-  }
-
-  /**
-   * set up HTML patterns and attributes
-   */
-  private void setupPatterns() {
-
-    Pattern p;
-    SimpleAttributeSet set;
-    patterns = new Vector();
-
-    // content text
-    p = Pattern.compile("\\b\\w+");
-    set = new SimpleAttributeSet();
-    StyleConstants.setForeground(set, Color.BLACK);
-    StyleConstants.setBold(set, false);
-    patterns.addElement(new RegExStyle(p, set));
-
-    // a tag
-    p = Pattern.compile("<[/a-zA-Z0-9\\s]+");
-    set = new SimpleAttributeSet();
-    StyleConstants.setForeground(set, new Color(0, 0, 128));
-    StyleConstants.setBold(set, true);
-    patterns.addElement(new RegExStyle(p, set));
-
-    // a tag end
-    p = Pattern.compile(">");
-    patterns.addElement(new RegExStyle(p, set));
-
-    // an attribute
-    p = Pattern.compile("\\s[/a-zA-Z0-9]+=");
-    set = new SimpleAttributeSet();
-    StyleConstants.setForeground(set, new Color(158, 119, 0));
-    StyleConstants.setBold(set, true);
-    patterns.addElement(new RegExStyle(p, set));
-
-    // attribute values
-    p = Pattern.compile("\"[\\x2D;:/.%#?=,\\w\\s]+\"");
-    set = new SimpleAttributeSet();
-    StyleConstants.setForeground(set, Color.BLUE);
-    StyleConstants.setBold(set, false);
-    patterns.addElement(new RegExStyle(p, set));
-  }
-
-  /**
-   * apply syntax highlighting to all HTML tags found in the given
-   * area of the given document
-   *
-   * @param doc  the document to apply syntax highlighting to
-   * @param offset  the position inside the given document to start to apply syntax highlighting to
-   * @param len  the number of characters to apply syntax highlighting to
-   */
-  public void setMarks(StyledDocument sDoc, int offset, int len) {
-    SwingUtilities.invokeLater(new StyleUpdater(this, sDoc, offset, len));
-  }
-
-  /**
-   * overridden from JEditorPane
-   * to suppress line wraps
-   *
-   * @see setSize
-   */
-  public boolean getScrollableTracksViewportWidth() {
-    return false;
-  }
-
-  /**
-   * overridden from JEditorPane
-   * to suppress line wraps
-   *
-   * @see getScrollableTracksViewportWidth
-   */
-  public void setSize(Dimension d) {
-    if(d.width < getParent().getSize().width) {
-      d.width = getParent().getSize().width;
+    /**
+     * Creates a new <code>SyntaxPane</code>.
+     */
+    public SyntaxPane() {
+        super();
+        setEditorKit(new StyledEditorKit());
+        setupPatterns();
     }
-    super.setSize(d);
-  }
-
-  /**
-   * display a wait cursor for lengthy operations
-   */
-  private void cursor() {
-      final JRootPane rootPane = getRootPane();
-      if(rootPane != null){
-          Component gp = rootPane.getGlassPane();
-          if(!gp.isVisible()) {
-              gp.setCursor(waitCursor);
-              gp.setVisible(true);
-          }
-          else {
-              gp.setVisible(false);
-          }
-      }
-  }
-  /**
-   * StyleUpdater does the actual syntax highlighting work
-   * and can be used in SwingUtilities.invokeLater()
-   */
-  private class StyleUpdater implements Runnable {
 
     /**
-     * construct a <code>StyleUpdater</code>
+     * set up HTML patterns and attributes
+     */
+    private void setupPatterns() {
+        Pattern p;
+        SimpleAttributeSet set;
+        patterns = new Vector();
+        // content text
+        p = Pattern.compile("\\b\\w+");
+        set = new SimpleAttributeSet();
+        StyleConstants.setForeground(set, Color.BLACK);
+        StyleConstants.setBold(set, false);
+        patterns.addElement(new RegExStyle(p, set));
+        // a tag
+        p = Pattern.compile("<[/a-zA-Z0-9\\s]+");
+        set = new SimpleAttributeSet();
+        StyleConstants.setForeground(set, new Color(0, 0, 128));
+        StyleConstants.setBold(set, true);
+        patterns.addElement(new RegExStyle(p, set));
+        // a tag end
+        p = Pattern.compile(">");
+        patterns.addElement(new RegExStyle(p, set));
+        // an attribute
+        p = Pattern.compile("\\s[/a-zA-Z0-9]+=");
+        set = new SimpleAttributeSet();
+        StyleConstants.setForeground(set, new Color(158, 119, 0));
+        StyleConstants.setBold(set, true);
+        patterns.addElement(new RegExStyle(p, set));
+        // attribute values
+        p = Pattern.compile("\"[\\x2D;:/.%#?=,\\w\\s]+\"");
+        set = new SimpleAttributeSet();
+        StyleConstants.setForeground(set, Color.BLUE);
+        StyleConstants.setBold(set, false);
+        patterns.addElement(new RegExStyle(p, set));
+    }
+
+    /**
+     * apply syntax highlighting to all HTML tags found in the given
+     * area of the given document
      *
-     * @param sp  the SyntaxPane this StyleUpdater works on
      * @param doc  the document to apply syntax highlighting to
      * @param offset  the position inside the given document to start to apply syntax highlighting to
      * @param len  the number of characters to apply syntax highlighting to
      */
-    public StyleUpdater(SyntaxPane sp, StyledDocument doc, int offset, int len) {
-      this.sDoc = doc;
-      this.offset = offset;
-      this.len = len;
-      this.sp = sp;
+    public void setMarks(final StyledDocument sDoc, final int offset, final int len) {
+        SwingUtilities.invokeLater(new StyleUpdater(this, sDoc, offset, len));
     }
 
     /**
-     * apply snytax highlighting
+     * overridden from JEditorPane
+     * to suppress line wraps
+     *
+     * @see setSize
      */
-    public void run() {
-      Matcher m;
-      RegExStyle style;
-      cursor();
-      sp.removeCaretListener(sp);
-      try {
-        int length = sDoc.getLength();
-        if(length > 0 && len > 0) {
-          String text = sDoc.getText(offset, len);
-          if (text != null && text.length() > 0) {
-            Enumeration pe = patterns.elements();
-            while (pe.hasMoreElements()) {
-              style = (RegExStyle) pe.nextElement();
-              m =  style.getPattern().matcher(text);
-              while (m.find()) {
-                sDoc.setCharacterAttributes(offset + m.start(), m.end() - m.start(), style.getStyle(), true);
-              }
-            }
-          }
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
+
+    /**
+     * overridden from JEditorPane
+     * to suppress line wraps
+     *
+     * @see getScrollableTracksViewportWidth
+     */
+    public void setSize(final Dimension d) {
+        if (d.width < getParent().getSize().width) {
+            d.width = getParent().getSize().width;
         }
-      }
-      catch (Exception ex) {
-        System.out.println("StyleUpdater ERROR: " + ex.getMessage());
-      }
-      sp.addCaretListener(sp);
-      cursor();
-    }
-
-    /** the document to apply syntax highlighting to */
-    private StyledDocument sDoc;
-
-    /** the position inside the given document to start to apply syntax highlighting to */
-    private int offset;
-
-    /** the number of characters to apply syntax highlighting to */
-    private int len;
-
-    /** the SyntaxPane this StyleUpdater works on */
-    private SyntaxPane sp;
-  }
-
-  /**
-   * CaretListener implementation
-   *
-   * <p>updates syntax highlighting for the current line
-   * when the caret moves</p>
-   */
-  public void caretUpdate(CaretEvent e) {
-    try {
-      StyledDocument sDoc = (StyledDocument) getDocument();
-      int cPos = e.getDot();
-      int length = sDoc.getLength();
-      String text = sDoc.getText(0, length);
-      int lineStart = text.substring(0, cPos).lastIndexOf("\n") + 1;
-      int lineEnd = text.indexOf("\n", cPos);
-      if(lineEnd < 0) {
-        lineEnd = length;
-      }
-      setMarks(sDoc, lineStart, lineEnd - lineStart);
-    }
-    catch(Exception ex) {}
-  }
-
-  /**
-   * overridden to keep caret changes during the initial text load
-   * from triggering syntax highlighting repetitively
-   */
-  public void setText(String t) {
-    removeCaretListener(this);
-    super.setText(t);
-    StyledDocument sDoc = (StyledDocument) getDocument();
-    setMarks(sDoc, 0, sDoc.getLength());
-    setCaretPosition(0);
-    addCaretListener(this);
-  }
-
-  /**
-   * convenience class associating a pattern with a
-   * set of attributes
-   */
-  class RegExStyle {
-
-    /**
-     * construct a <code>RegExStyle</code> instance
-     *
-     * @param p  the <code>Pattern</code> to apply this style to
-     * @param a  the attributes making up this style
-     */
-    public RegExStyle(Pattern p, AttributeSet a) {
-      this.p = p;
-      this.a = a;
+        super.setSize(d);
     }
 
     /**
-     * get the <code>Pattern</code> this style is to be applied to
-     *
-     * @return the Pattern
+     * display a wait cursor for lengthy operations
      */
-    public Pattern getPattern() {
-      return p;
+    private void cursor() {
+        final JRootPane rootPane = getRootPane();
+        if (rootPane != null) {
+            final Component gp = rootPane.getGlassPane();
+            if (!gp.isVisible()) {
+                gp.setCursor(waitCursor);
+                gp.setVisible(true);
+            }
+            else {
+                gp.setVisible(false);
+            }
+        }
     }
 
     /**
-     * get the attributes making up this style
-     *
-     * @return the set of attributes
+     * StyleUpdater does the actual syntax highlighting work
+     * and can be used in SwingUtilities.invokeLater()
      */
-    public AttributeSet getStyle() {
-      return a;
+    private class StyleUpdater implements Runnable {
+        /**
+         * construct a <code>StyleUpdater</code>
+         *
+         * @param sp  the SyntaxPane this StyleUpdater works on
+         * @param doc  the document to apply syntax highlighting to
+         * @param offset  the position inside the given document to start to apply syntax highlighting to
+         * @param len  the number of characters to apply syntax highlighting to
+         */
+        public StyleUpdater(final SyntaxPane sp, final StyledDocument doc, final int offset, final int len) {
+            sDoc = doc;
+            this.offset = offset;
+            this.len = len;
+            this.sp = sp;
+        }
+
+        /**
+         * apply snytax highlighting
+         */
+        public void run() {
+            Matcher m;
+            RegExStyle style;
+            cursor();
+            sp.removeCaretListener(sp);
+            try {
+                final int length = sDoc.getLength();
+                if (length > 0 && len > 0) {
+                    final String text = sDoc.getText(offset, len);
+                    if (text != null && text.length() > 0) {
+                        final Enumeration pe = patterns.elements();
+                        while (pe.hasMoreElements()) {
+                            style = (RegExStyle) pe.nextElement();
+                            m = style.getPattern().matcher(text);
+                            while (m.find()) {
+                                sDoc.setCharacterAttributes(offset + m.start(), m.end() - m.start(), style.getStyle(),
+                                    true);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (final Exception ex) {
+                System.out.println("StyleUpdater ERROR: " + ex.getMessage());
+            }
+            sp.addCaretListener(sp);
+            cursor();
+        }
+
+        /** the document to apply syntax highlighting to */
+        private final StyledDocument sDoc;
+        /** the position inside the given document to start to apply syntax highlighting to */
+        private final int offset;
+        /** the number of characters to apply syntax highlighting to */
+        private final int len;
+        /** the SyntaxPane this StyleUpdater works on */
+        private final SyntaxPane sp;
     }
 
     /**
-     * set the Pattern to apply a given set of attributes to
+     * CaretListener implementation
      *
-     * @param p  the Pattern
+     * <p>updates syntax highlighting for the current line
+     * when the caret moves</p>
      */
-    public void setPattern(Pattern p) {
-      this.p = p;
+    public void caretUpdate(final CaretEvent e) {
+        try {
+            final StyledDocument sDoc = (StyledDocument) getDocument();
+            final int cPos = e.getDot();
+            final int length = sDoc.getLength();
+            final String text = sDoc.getText(0, length);
+            final int lineStart = text.substring(0, cPos).lastIndexOf("\n") + 1;
+            int lineEnd = text.indexOf("\n", cPos);
+            if (lineEnd < 0) {
+                lineEnd = length;
+            }
+            setMarks(sDoc, lineStart, lineEnd - lineStart);
+        }
+        catch (final Exception ex) {
+        }
     }
 
     /**
-     * set the set of attributes to apply to a given Pattern
-     *
-     * @param a  the set of attributes to use
+     * overridden to keep caret changes during the initial text load
+     * from triggering syntax highlighting repetitively
      */
-    public void setStyle(AttributeSet a) {
-      this.a = a;
+    public void setText(final String t) {
+        removeCaretListener(this);
+        super.setText(t);
+        final StyledDocument sDoc = (StyledDocument) getDocument();
+        setMarks(sDoc, 0, sDoc.getLength());
+        setCaretPosition(0);
+        addCaretListener(this);
     }
 
-    /** the Pattern to apply this style to */
-    private Pattern p;
+    /**
+     * convenience class associating a pattern with a
+     * set of attributes
+     */
+    class RegExStyle {
+        /**
+         * construct a <code>RegExStyle</code> instance
+         *
+         * @param p  the <code>Pattern</code> to apply this style to
+         * @param a  the attributes making up this style
+         */
+        public RegExStyle(final Pattern p, final AttributeSet a) {
+            this.p = p;
+            this.a = a;
+        }
 
-    /** the attributes making up this style */
-    private AttributeSet a;
-  }
+        /**
+         * get the <code>Pattern</code> this style is to be applied to
+         *
+         * @return the Pattern
+         */
+        public Pattern getPattern() {
+            return p;
+        }
 
-  /** Patterns registered with this SnytaxPane */
-  private Vector patterns;
+        /**
+         * get the attributes making up this style
+         *
+         * @return the set of attributes
+         */
+        public AttributeSet getStyle() {
+            return a;
+        }
 
-  /** the cursor to use to indicate a lengthy operation is going on */
-  private Cursor waitCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+        /**
+         * set the Pattern to apply a given set of attributes to
+         *
+         * @param p  the Pattern
+         */
+        public void setPattern(final Pattern p) {
+            this.p = p;
+        }
 
+        /**
+         * set the set of attributes to apply to a given Pattern
+         *
+         * @param a  the set of attributes to use
+         */
+        public void setStyle(final AttributeSet a) {
+            this.a = a;
+        }
+
+        /** the Pattern to apply this style to */
+        private Pattern p;
+        /** the attributes making up this style */
+        private AttributeSet a;
+    }
+
+    /** Patterns registered with this SnytaxPane */
+    private Vector patterns;
+    /** the cursor to use to indicate a lengthy operation is going on */
+    private final Cursor waitCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
 }

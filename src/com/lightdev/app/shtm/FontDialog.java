@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import java.awt.BorderLayout;
@@ -39,39 +38,34 @@ import javax.swing.text.AttributeSet;
  *
  * 
  */
-
 class FontDialog extends DialogShell {
+    /** the font panel to use in this dialog */
+    private final FontPanel fontPanel;
 
-  /** the font panel to use in this dialog */
-  private FontPanel fontPanel;
+    /**
+     * constructor
+     *
+     * @param parent  the main frame having the TextResources
+     * @param title  the title for this dialog
+     * @param a  the set of attributes to show and manipulate
+     */
+    public FontDialog(final Frame parent, final String title, final AttributeSet a) {
+        super(parent, title);
+        // construct font panel
+        fontPanel = new FontPanel(a, false);
+        // add font panel to content pane of DialogShell
+        final Container contentPane = super.getContentPane();
+        contentPane.add(fontPanel, BorderLayout.CENTER);
+        // cause optimal placement of all elements
+        pack();
+    }
 
-  /**
-   * constructor
-   *
-   * @param parent  the main frame having the TextResources
-   * @param title  the title for this dialog
-   * @param a  the set of attributes to show and manipulate
-   */
-  public FontDialog(Frame parent, String title, AttributeSet a) {
-    super(parent, title);
-
-    // construct font panel
-    fontPanel = new FontPanel(a, false);
-
-    // add font panel to content pane of DialogShell
-    Container contentPane = super.getContentPane();
-    contentPane.add(fontPanel, BorderLayout.CENTER);
-
-    // cause optimal placement of all elements
-    pack();
-  }
-
-  /**
-   * get the set of attributes set in this dialog
-   *
-   * @return the attributes set in this dialog
-   */
-  public AttributeSet getAttributes() {
-    return fontPanel.getAttributes();
-  }
+    /**
+     * get the set of attributes set in this dialog
+     *
+     * @return the attributes set in this dialog
+     */
+    public AttributeSet getAttributes() {
+        return fontPanel.getAttributes();
+    }
 }

@@ -16,7 +16,6 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import java.awt.BorderLayout;
@@ -54,209 +53,172 @@ import javax.swing.text.html.HTML;
  * 
  */
 class TableDialog extends DialogShell {
+    /** collection of all components with table related attributes */
+    Vector tableComponents = new Vector();
+    /** collection of all components with cell related attributes */
+    Vector cellComponents = new Vector();
+    /** selector for cell range to apply cell attributes to */
+    JComboBox cellRange;
 
-  /** collection of all components with table related attributes */
-  Vector tableComponents = new Vector();
-
-  /** collection of all components with cell related attributes */
-  Vector cellComponents = new Vector();
-
-  /** selector for cell range to apply cell attributes to */
-  JComboBox cellRange;
-
-  /**
-   * constructor
-   *
-   * @param parent  the main frame having the TextResources
-   * @param title  the title for this dialog
-   * @param a  the set of attributes to show and manipulate
-   */
-  public TableDialog(Frame parent, String title) {
-    super(parent, title);
-
-    // add to content pane of DialogShell
-    Container contentPane = super.getContentPane();
-    contentPane.add(buildTablePanel(), BorderLayout.NORTH);
-    contentPane.add(buildCellPanel(), BorderLayout.CENTER);
-
-    // cause optimal placement of all elements
-    pack();
-  }
-
-  public void setTableAttributes(AttributeSet a) {
-    setComponentAttributes(tableComponents, a);
-  }
-
-  public void setCellAttributes(AttributeSet a) {
-    setComponentAttributes(cellComponents, a);
-  }
-
-  public void setComponentAttributes(Vector v, AttributeSet a) {
-    Enumeration components = v.elements();
-    AttributeComponent ac;
-    while(components.hasMoreElements()) {
-      ac = (AttributeComponent) components.nextElement();
-      ac.setValue(a);
+    /**
+     * constructor
+     *
+     * @param parent  the main frame having the TextResources
+     * @param title  the title for this dialog
+     * @param a  the set of attributes to show and manipulate
+     */
+    public TableDialog(final Frame parent, final String title) {
+        super(parent, title);
+        // add to content pane of DialogShell
+        final Container contentPane = super.getContentPane();
+        contentPane.add(buildTablePanel(), BorderLayout.NORTH);
+        contentPane.add(buildCellPanel(), BorderLayout.CENTER);
+        // cause optimal placement of all elements
+        pack();
     }
-  }
 
-  /**
-   * get the set of attributes resulting from the settings on
-   * this TableDialog.
-   *
-   * @return the set of attributes set in this TableDialog
-   */
-  public AttributeSet getTableAttributes() {
-    return getComponentAttributes(tableComponents);
-  }
-
-  public AttributeSet getCellAttributes() {
-    //System.out.println("TableDialog getCellattributes=" + getComponentAttributes(cellComponents));
-    return getComponentAttributes(cellComponents);
-  }
-
-  private AttributeSet getComponentAttributes(Vector v) {
-    SimpleAttributeSet attributes = new SimpleAttributeSet();
-    Enumeration components = v.elements();
-    AttributeComponent ac;
-    while(components.hasMoreElements()) {
-      ac = (AttributeComponent) components.nextElement();
-      //System.out.println(ac.getValue());
-      attributes.addAttributes(ac.getValue());
+    public void setTableAttributes(final AttributeSet a) {
+        setComponentAttributes(tableComponents, a);
     }
-    return attributes;
-  }
 
-  /**
-   * build the contents of the cell panel
-   *
-   * this is moved to a separate method to make the code more
-   * legible.
-   */
-  private JPanel buildCellPanel() {
+    public void setCellAttributes(final AttributeSet a) {
+        setComponentAttributes(cellComponents, a);
+    }
 
-    // have a grid bag layout ready to use
-    GridBagLayout g = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
+    public void setComponentAttributes(final Vector v, final AttributeSet a) {
+        final Enumeration components = v.elements();
+        AttributeComponent ac;
+        while (components.hasMoreElements()) {
+            ac = (AttributeComponent) components.nextElement();
+            ac.setValue(a);
+        }
+    }
 
-    // construct cell format panel
-    JPanel cellPanel = new JPanel(new BorderLayout());
-    cellPanel.setBorder(new TitledBorder(new EtchedBorder(
-                  EtchedBorder.LOWERED),
-                  Util.getResourceString("cellPanelTitle")));
+    /**
+     * get the set of attributes resulting from the settings on
+     * this TableDialog.
+     *
+     * @return the set of attributes set in this TableDialog
+     */
+    public AttributeSet getTableAttributes() {
+        return getComponentAttributes(tableComponents);
+    }
 
-    // construct tabbed pane for various cell settings
-    JTabbedPane tp = new JTabbedPane();
-    tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    public AttributeSet getCellAttributes() {
+        //System.out.println("TableDialog getCellattributes=" + getComponentAttributes(cellComponents));
+        return getComponentAttributes(cellComponents);
+    }
 
-    // add general panel to tabbed pane
-    StylePanel sp = new StylePanel(StylePanel.TYPE_TABLE_CELL);
-    cellComponents.add(sp);
-    tp.add(Util.getResourceString("cellGenTabLabel"), sp);
+    private AttributeSet getComponentAttributes(final Vector v) {
+        final SimpleAttributeSet attributes = new SimpleAttributeSet();
+        final Enumeration components = v.elements();
+        AttributeComponent ac;
+        while (components.hasMoreElements()) {
+            ac = (AttributeComponent) components.nextElement();
+            //System.out.println(ac.getValue());
+            attributes.addAttributes(ac.getValue());
+        }
+        return attributes;
+    }
 
-    // add padding panel to cell components and tabbed pane
-    MarginPanel mp = new MarginPanel();
-    cellComponents.add(mp);
-    tp.add(Util.getResourceString("cellMarginTabLabel"),mp);
+    /**
+     * build the contents of the cell panel
+     *
+     * this is moved to a separate method to make the code more
+     * legible.
+     */
+    private JPanel buildCellPanel() {
+        new GridBagLayout();
+        new GridBagConstraints();
+        // construct cell format panel
+        final JPanel cellPanel = new JPanel(new BorderLayout());
+        cellPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
+            .getResourceString("cellPanelTitle")));
+        // construct tabbed pane for various cell settings
+        final JTabbedPane tp = new JTabbedPane();
+        tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        // add general panel to tabbed pane
+        final StylePanel sp = new StylePanel(StylePanel.TYPE_TABLE_CELL);
+        cellComponents.add(sp);
+        tp.add(Util.getResourceString("cellGenTabLabel"), sp);
+        // add padding panel to cell components and tabbed pane
+        final MarginPanel mp = new MarginPanel();
+        cellComponents.add(mp);
+        tp.add(Util.getResourceString("cellMarginTabLabel"), mp);
+        // construct border panel
+        final BorderPanel bPanel = new BorderPanel();
+        // add border width panel and border color panel to cell components
+        cellComponents.add(bPanel);
+        // add border panel to tabbed pane
+        tp.add(Util.getResourceString("cellBorderTabLabel"), bPanel);
+        // create cell range panel
+        final JPanel crPanel = new JPanel();
+        final String[] cellRangeSelection = new String[] { Util.getResourceString("thisCellRangeLabel"),
+                Util.getResourceString("thisColRangeLabel"), Util.getResourceString("thisRowRangeLabel"),
+                Util.getResourceString("allCellsRangeLabel") };
+        crPanel.add(new JLabel(Util.getResourceString("applyCellAttrLabel")));
+        cellRange = new JComboBox(cellRangeSelection);
+        crPanel.add(cellRange);
+        // get the preferred size of the tabbed pane
+        /*
+        int lastTabIndex = tp.getTabCount() - 1;
+        Rectangle tabRect = tp.getBoundsAt(lastTabIndex);
+        int prefWidth = tabRect.x + tabRect.width + 30;
+        tp.setPreferredSize(new Dimension(prefWidth, 300));
+        */
+        // add tabbed pane and range selector to cell panel
+        cellPanel.add(tp, BorderLayout.CENTER);
+        cellPanel.add(crPanel, BorderLayout.SOUTH);
+        return cellPanel;
+    }
 
-    // construct border panel
-    BorderPanel bPanel = new BorderPanel();
+    /**
+     * get the range of cells to apply cell attributes to
+     */
+    public int getCellRange() {
+        return cellRange.getSelectedIndex();
+    }
 
-    // add border width panel and border color panel to cell components
-    cellComponents.add(bPanel);
-
-    // add border panel to tabbed pane
-    tp.add(Util.getResourceString("cellBorderTabLabel"), bPanel);
-
-    // create cell range panel
-    JPanel crPanel = new JPanel();
-    String[] cellRangeSelection = new String[] {
-      Util.getResourceString("thisCellRangeLabel"),
-      Util.getResourceString("thisColRangeLabel"),
-      Util.getResourceString("thisRowRangeLabel"),
-      Util.getResourceString("allCellsRangeLabel")};
-    crPanel.add(new JLabel(Util.getResourceString("applyCellAttrLabel")));
-    cellRange = new JComboBox(cellRangeSelection);
-    crPanel.add(cellRange);
-
-    // get the preferred size of the tabbed pane
-    /*
-    int lastTabIndex = tp.getTabCount() - 1;
-    Rectangle tabRect = tp.getBoundsAt(lastTabIndex);
-    int prefWidth = tabRect.x + tabRect.width + 30;
-    tp.setPreferredSize(new Dimension(prefWidth, 300));
-    */
-
-    // add tabbed pane and range selector to cell panel
-    cellPanel.add(tp, BorderLayout.CENTER);
-    cellPanel.add(crPanel, BorderLayout.SOUTH);
-
-    return cellPanel;
-  }
-
-  /**
-   * get the range of cells to apply cell attributes to
-   */
-  public int getCellRange() {
-    return cellRange.getSelectedIndex();
-  }
-
-  /**
-   * build the contents of the table panel
-   *
-   * this is moved to a separate method to make the code more
-   * legible.
-   */
-  private JPanel buildTablePanel() {
-
-    // layout and constraints to use
-    GridBagLayout g = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-
-    // table panel
-    JPanel tablePanel = new JPanel(g);
-    tablePanel.setBorder(new TitledBorder(new EtchedBorder(
-		  EtchedBorder.LOWERED),
-		  Util.getResourceString("tablePanelTitle")));
-
-    // table width label
-    JLabel lb = new JLabel(Util.getResourceString("tableWidthLabel"));
-    Util.addGridBagComponent(tablePanel, lb, g, c, 0, 0, GridBagConstraints.EAST);
-
-    // table width combo box
-    SizeSelectorPanel ssp = new SizeSelectorPanel(
-        CSS.Attribute.WIDTH,
-        HTML.Attribute.WIDTH,
-        false,
-        SizeSelectorPanel.TYPE_COMBO);
-    Util.addGridBagComponent(tablePanel, ssp, g, c, 1, 0, GridBagConstraints.WEST);
-    tableComponents.addElement(ssp);
-
-    // table background color label
-    lb = new JLabel(Util.getResourceString("tableBgColLabel"));
-    Util.addGridBagComponent(tablePanel, lb, g, c, 0, 1, GridBagConstraints.EAST);
-
-    // table background color panel
-    ColorPanel cp = new ColorPanel(null, Color.white,
-			    CSS.Attribute.BACKGROUND_COLOR);
-    Util.addGridBagComponent(tablePanel, cp, g, c, 1, 1, GridBagConstraints.WEST);
-    tableComponents.addElement(cp);
-
-    // table alignment label
-    lb = new JLabel(Util.getResourceString("alignLabel"));
-    Util.addGridBagComponent(tablePanel, lb, g, c, 0, 2, GridBagConstraints.EAST);
-
-    // table alignment combo box
-    String[] items = new String[] {
-        Util.getResourceString("alignLeft"),
-        Util.getResourceString("alignCenter"),
-        Util.getResourceString("alignRight") };
-    String[] names = new String[] {"left", "center", "right"};
-    AttributeComboBox tAlgn = new AttributeComboBox(items, names,
-					        CSS.Attribute.TEXT_ALIGN, HTML.Attribute.ALIGN);
-    Util.addGridBagComponent(tablePanel, tAlgn, g, c, 1, 2, GridBagConstraints.WEST);
-    tableComponents.addElement(tAlgn);
-
-    return tablePanel;
-  }
+    /**
+     * build the contents of the table panel
+     *
+     * this is moved to a separate method to make the code more
+     * legible.
+     */
+    private JPanel buildTablePanel() {
+        // layout and constraints to use
+        final GridBagLayout g = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
+        // table panel
+        final JPanel tablePanel = new JPanel(g);
+        tablePanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
+            .getResourceString("tablePanelTitle")));
+        // table width label
+        JLabel lb = new JLabel(Util.getResourceString("tableWidthLabel"));
+        Util.addGridBagComponent(tablePanel, lb, g, c, 0, 0, GridBagConstraints.EAST);
+        // table width combo box
+        final SizeSelectorPanel ssp = new SizeSelectorPanel(CSS.Attribute.WIDTH, HTML.Attribute.WIDTH, false,
+            SizeSelectorPanel.TYPE_COMBO);
+        Util.addGridBagComponent(tablePanel, ssp, g, c, 1, 0, GridBagConstraints.WEST);
+        tableComponents.addElement(ssp);
+        // table background color label
+        lb = new JLabel(Util.getResourceString("tableBgColLabel"));
+        Util.addGridBagComponent(tablePanel, lb, g, c, 0, 1, GridBagConstraints.EAST);
+        // table background color panel
+        final ColorPanel cp = new ColorPanel(null, Color.white, CSS.Attribute.BACKGROUND_COLOR);
+        Util.addGridBagComponent(tablePanel, cp, g, c, 1, 1, GridBagConstraints.WEST);
+        tableComponents.addElement(cp);
+        // table alignment label
+        lb = new JLabel(Util.getResourceString("alignLabel"));
+        Util.addGridBagComponent(tablePanel, lb, g, c, 0, 2, GridBagConstraints.EAST);
+        // table alignment combo box
+        final String[] items = new String[] { Util.getResourceString("alignLeft"),
+                Util.getResourceString("alignCenter"), Util.getResourceString("alignRight") };
+        final String[] names = new String[] { "left", "center", "right" };
+        final AttributeComboBox tAlgn = new AttributeComboBox(items, names, CSS.Attribute.TEXT_ALIGN,
+            HTML.Attribute.ALIGN);
+        Util.addGridBagComponent(tablePanel, tAlgn, g, c, 1, 2, GridBagConstraints.WEST);
+        tableComponents.addElement(tAlgn);
+        return tablePanel;
+    }
 }

@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 /**
@@ -34,23 +33,23 @@ package com.lightdev.app.shtm;
  * 
  */
 class DocNameMissingException extends Exception {
-  /**
-   * Constructs a <code>DocNameMissingException</code> with <code>null</code>
-   * as its error detail message.
-   */
-  public DocNameMissingException() {
-    super();
-  }
+    /**
+     * Constructs a <code>DocNameMissingException</code> with <code>null</code>
+     * as its error detail message.
+     */
+    public DocNameMissingException() {
+        super();
+    }
 
-  /**
-   * Constructs an <code>IOException</code> with the specified detail
-   * message. The error message string <code>s</code> can later be
-   * retrieved by the <code>{@link java.lang.Throwable#getMessage}</code>
-   * method of class <code>java.lang.Throwable</code>.
-   *
-   * @param   s   the detail message.
-   */
-  public DocNameMissingException(String s) {
-    super(s);
-  }
+    /**
+     * Constructs an <code>IOException</code> with the specified detail
+     * message. The error message string <code>s</code> can later be
+     * retrieved by the <code>{@link java.lang.Throwable#getMessage}</code>
+     * method of class <code>java.lang.Throwable</code>.
+     *
+     * @param   s   the detail message.
+     */
+    public DocNameMissingException(final String s) {
+        super(s);
+    }
 }

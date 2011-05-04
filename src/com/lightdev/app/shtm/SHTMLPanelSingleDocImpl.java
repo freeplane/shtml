@@ -20,7 +20,6 @@
 package com.lightdev.app.shtm;
 
 class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
-
     public SHTMLPanelSingleDocImpl() {
         super();
     }
@@ -37,6 +36,7 @@ class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
         getDocumentPane().getEditor().setCaretPosition(0);
         splitPanel.addComponent(getDocumentPane(), SplitPanel.CENTER);
     }
+
     protected void initActions() {
         super.initActions();
         dynRes.addAction(findReplaceAction, new SHTMLEditorKitActions.SingleDocFindReplaceAction(this));

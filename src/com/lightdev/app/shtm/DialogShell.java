@@ -16,26 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import java.awt.event.ActionListener;
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractButton;
-import javax.swing.JDialog;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
-import java.awt.Frame;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Container;
-import java.awt.Dialog;
 
 /**
  * Base class for other dialogs of application SimplyHTML.
@@ -51,187 +50,171 @@ import java.awt.Dialog;
  *
  * 
  */
-
 class DialogShell extends JDialog implements ActionListener {
+    /** panel containing dialog buttons */
+    protected JPanel buttonPanel;
+    /** button to confirm the operation */
+    protected AbstractButton okButton;
+    /** button to cancel the operation */
+    protected AbstractButton cancelButton;
+    /** button to display context sensitive help */
+    protected AbstractButton helpButton;
+    /**
+     * the result of the operation, one of RESULT_CANCEL and RESULT_OK
+     */
+    private int result;
+    /** result value for a cancelled operation */
+    public static int RESULT_CANCEL = 1;
+    /** result value for a confirmed operation */
+    public static int RESULT_OK = 0;
+    /** id of associated help topic (if any) */
+    protected String helpTopicId = null;
+    /** Listens to enter and cancel. */
+    private KeyListener completionKeyListener = null;
 
-  /** panel containing dialog buttons */
-  protected JPanel buttonPanel;
+    /**
+     * constructor
+     *
+     * @param parent  the parent dialog
+     * @param title  the title for this dialog
+     */
+    public DialogShell(final Dialog parent, final String title) {
+        super(parent, title);
+        buildDialog();
+    }
 
-  /** button to confirm the operation */
-  protected AbstractButton okButton;
+    /**
+     * constructor
+     *
+     * @param parent  the parent frame
+     * @param title  the title for this dialog
+     */
+    public DialogShell(final Frame parent, final String title) {
+        super(parent, title);
+        buildDialog();
+    }
 
-  /** button to cancel the operation */
-  protected AbstractButton cancelButton;
+    /**
+     * constructor
+     *
+     * @param parent  the parent frame
+     * @param title  the title for this dialog
+     * @param helpTopicId  the id of the help topic to display for this dialog
+     */
+    public DialogShell(final Frame parent, final String title, final String helpTopicId) {
+        super(parent, title);
+        this.helpTopicId = helpTopicId;
+        buildDialog();
+    }
 
-  /** button to display context sensitive help */
-  protected AbstractButton helpButton;
+    /**
+     * constructor
+     *
+     * @param parent  the parent dialog
+     * @param title  the title for this dialog
+     * @param helpTopicId  the id of the help topic to display for this dialog
+     */
+    public DialogShell(final Dialog parent, final String title, final String helpTopicId) {
+        super(parent, title);
+        this.helpTopicId = helpTopicId;
+        buildDialog();
+    }
 
-  /**
-   * the result of the operation, one of RESULT_CANCEL and RESULT_OK
-   */
-  private int result;
+    /**
+     * create dialog components
+     */
+    private void buildDialog() {
+        enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        // construct dialog buttons
+        okButton = new JButton(Util.getResourceString("okBtnName"));
+        cancelButton = new JButton(Util.getResourceString("cancelBtnName"));
+        cancelButton.addActionListener(this);
+        okButton.addActionListener(this);
+        // construct button panel
+        buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        // construct help button
+        if (helpTopicId != null) {
+            try {
+                helpButton = SHTMLHelpBroker.createHelpButton(helpTopicId);
+                helpButton.setText(Util.getResourceString("helpLabel"));
+                buttonPanel.add(helpButton);
+            }
+            catch (final NoClassDefFoundError e) {
+                helpTopicId = null;
+            }
+        }
+        // add all to content pane of dialog
+        final Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout(5, 5));
+        contentPane.add(buttonPanel, BorderLayout.SOUTH);
+    }
 
-  /** result value for a cancelled operation */
-  public static int RESULT_CANCEL = 1;
+    /**
+     * dispose the dialog properly in case of window close events
+     */
+    protected void processWindowEvent(final WindowEvent e) {
+        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+            cancel();
+        }
+        super.processWindowEvent(e);
+    }
 
-  /** result value for a confirmed operation */
-  public static int RESULT_OK = 0;
+    /**
+     * cancel the operation
+     */
+    protected void cancel() {
+        result = RESULT_CANCEL;
+        dispose();
+    }
 
-  /** id of associated help topic (if any) */
-  protected String helpTopicId = null;
-  
-  /** Listens to enter and cancel. */
-  private KeyListener completionKeyListener = null;
-  
-  /**
-   * constructor
-   *
-   * @param parent  the parent dialog
-   * @param title  the title for this dialog
-   */
-  public DialogShell(Dialog parent, String title) {
-    super(parent, title);
-    buildDialog();
-  }
+    /**
+     * confirm the operation
+     */
+    protected void confirm() {
+        result = RESULT_OK;
+        dispose();
+    }
 
-  /**
-   * constructor
-   *
-   * @param parent  the parent frame
-   * @param title  the title for this dialog
-   */
-  public DialogShell(Frame parent, String title) {
-    super(parent, title);
-    buildDialog();
-  }
+    /**
+     * get the result of the operation performed in this dialog
+     *
+     * @return the result, one of RESULT_OK and RESULT_CANCEL
+     */
+    public int getResult() {
+        return result;
+    }
 
-  /**
-   * constructor
-   *
-   * @param parent  the parent frame
-   * @param title  the title for this dialog
-   * @param helpTopicId  the id of the help topic to display for this dialog
-   */
-  public DialogShell(Frame parent, String title, String helpTopicId) {
-    super(parent, title);
-    this.helpTopicId = helpTopicId;
-    buildDialog();
-  }
-
-  /**
-   * constructor
-   *
-   * @param parent  the parent dialog
-   * @param title  the title for this dialog
-   * @param helpTopicId  the id of the help topic to display for this dialog
-   */
-  public DialogShell(Dialog parent, String title, String helpTopicId) {
-    super(parent, title);
-    this.helpTopicId = helpTopicId;
-    buildDialog();
-  }
-
-  /**
-   * create dialog components
-   */
-  private void buildDialog() {
-
-    enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-
-    // construct dialog buttons
-    okButton = new JButton(Util.getResourceString("okBtnName"));
-    cancelButton = new JButton(Util.getResourceString("cancelBtnName"));
-    cancelButton.addActionListener(this);
-    okButton.addActionListener(this);
-    
-    // construct button panel
-    buttonPanel = new JPanel(new FlowLayout());
-    buttonPanel.add(okButton);
-    buttonPanel.add(cancelButton);
-    
-    // construct help button
-    if(helpTopicId != null) {
-        try {
-            helpButton = SHTMLHelpBroker.createHelpButton(helpTopicId);
-            helpButton.setText(Util.getResourceString("helpLabel"));
-            buttonPanel.add(helpButton);
-        } catch (NoClassDefFoundError e) {
-            helpTopicId = null;
+    /**
+     * implements the ActionListener interface to be notified of
+     * clicks onto the ok and cancel button.
+     */
+    public void actionPerformed(final ActionEvent e) {
+        final Object src = e.getSource();
+        if (src == cancelButton) {
+            cancel();
+        }
+        else if (src == okButton) {
+            confirm();
         }
     }
 
-    // add all to content pane of dialog
-    Container contentPane = getContentPane();
-    contentPane.setLayout(new BorderLayout(5,5));
-    contentPane.add(buttonPanel, BorderLayout.SOUTH);
-    
-  }
-
-  /**
-   * dispose the dialog properly in case of window close events
-   */
-  protected void processWindowEvent(WindowEvent e) {
-    if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-      cancel();
+    protected KeyListener getCompletionKeyListener() {
+        if (completionKeyListener == null) {
+            completionKeyListener = new KeyAdapter() {
+                public void keyPressed(final KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        e.consume();
+                        cancel();
+                    }
+                    else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        e.consume();
+                        confirm();
+                    }
+                }
+            };
+        }
+        return completionKeyListener;
     }
-    super.processWindowEvent(e);
-  }
-
-  /**
-   * cancel the operation
-   */
-  protected void cancel() {
-    result = RESULT_CANCEL;
-    dispose();
-  }
-
-  /**
-   * confirm the operation
-   */
-  protected void confirm() {
-    result = RESULT_OK;
-    dispose();
-  }
-
-  /**
-   * get the result of the operation performed in this dialog
-   *
-   * @return the result, one of RESULT_OK and RESULT_CANCEL
-   */
-  public int getResult() {
-    return result;
-  }
-
-  /**
-   * implements the ActionListener interface to be notified of
-   * clicks onto the ok and cancel button.
-   */
-  public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
-    if(src == cancelButton) {
-      cancel();
-    }
-    else if(src == okButton) {
-      confirm();
-    }
-  }
-  
-  protected KeyListener getCompletionKeyListener() {
-    if (completionKeyListener == null) {
-      completionKeyListener =
-        new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            e.consume();
-            cancel();
-          }
-          else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            e.consume();
-            confirm();
-          }
-        }       
-      };
-    }
-    return completionKeyListener;
-  }
 }

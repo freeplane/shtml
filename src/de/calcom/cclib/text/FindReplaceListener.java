@@ -40,33 +40,30 @@ import java.util.EventListener;
  *
  * @version 1.5, April 27, 2003
  */
-
 public interface FindReplaceListener extends EventListener {
+    /**
+     * this events gets fired, when a FindReplaceDialog has reached
+     * the end of the current document and requires the next document
+     * of a group of documents.
+     *
+     * @param  e  the object having details for the event
+     */
+    public void getNextDocument(FindReplaceEvent e);
 
-  /**
-   * this events gets fired, when a FindReplaceDialog has reached
-   * the end of the current document and requires the next document
-   * of a group of documents.
-   *
-   * @param  e  the object having details for the event
-   */
-  public void getNextDocument(FindReplaceEvent e);
+    /**
+     * this events gets fired, when a FindReplaceDialog has initiated
+     * an operation for a group of documents which requires to start at
+     * the first document.
+     *
+     * @param  e  the object having details for the event
+     */
+    public void getFirstDocument(FindReplaceEvent e);
 
-  /**
-   * this events gets fired, when a FindReplaceDialog has initiated
-   * an operation for a group of documents which requires to start at
-   * the first document.
-   *
-   * @param  e  the object having details for the event
-   */
-  public void getFirstDocument(FindReplaceEvent e);
-
-  /**
-   * this event gets fired when a FindReplaceDialog has finalized its
-   * task.
-   *
-   * @param  e  the object having details for the event
-   */
-  public void findReplaceTerminated(FindReplaceEvent e);
-
+    /**
+     * this event gets fired when a FindReplaceDialog has finalized its
+     * task.
+     *
+     * @param  e  the object having details for the event
+     */
+    public void findReplaceTerminated(FindReplaceEvent e);
 }

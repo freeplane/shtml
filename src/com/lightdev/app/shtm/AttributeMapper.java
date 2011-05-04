@@ -16,11 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
-import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 
@@ -46,98 +45,94 @@ import javax.swing.text.html.HTML;
  *
  * 
  */
-
 class AttributeMapper extends SimpleAttributeSet {
-
     public static final int toCSS = 0;
     public static final int toHTML = 1;
-  public static final int toJava = 2;
+    public static final int toJava = 2;
 
-  public AttributeMapper() {
-    super();
-  }
+    public AttributeMapper() {
+        super();
+    }
 
-  public AttributeMapper(AttributeSet a) {
-    super(a);
-  }
+    public AttributeMapper(final AttributeSet a) {
+        super(a);
+    }
 
-  public AttributeSet getMappedAttributes(int direction) {
-    switch(direction) {
-    case toCSS:
-        mapToCSSAttributes();
-        break;
-    case toHTML:
+    public AttributeSet getMappedAttributes(final int direction) {
+        switch (direction) {
+            case toCSS:
+                mapToCSSAttributes();
+                break;
+            case toHTML:
+                mapToHTMLAttributes();
+                break;
+            case toJava:
+                mapToJavaAttributes();
+                break;
+        }
+        //System.out.println("AttributeMapper transformed attributes=");
+        //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
+        //hd.listAttributes(this, 2);
+        return this;
+    }
+
+    private void mapToCSSAttributes() {
+        final Object cssFontSize = getAttribute(CSS.Attribute.FONT_SIZE);
+        if (cssFontSize != null) {
+            final int fontNumber = Integer.parseInt(cssFontSize.toString());
+            addAttribute(CSS.Attribute.FONT_SIZE, SHTMLPanelImpl.FONT_SIZES[fontNumber - 1] + "pt");
+        }
         mapToHTMLAttributes();
-        break;
-      case toJava:
-        mapToJavaAttributes();
-        break;
     }
-    //System.out.println("AttributeMapper transformed attributes=");
-    //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-    //hd.listAttributes(this, 2);
-    return this;
-  }
 
-  private void mapToCSSAttributes() {
-      Object cssFontSize = getAttribute(CSS.Attribute.FONT_SIZE);
-      if(cssFontSize != null) {
-          int fontNumber = Integer.parseInt(cssFontSize.toString()); 
-          addAttribute(CSS.Attribute.FONT_SIZE, SHTMLPanelImpl.FONT_SIZES[fontNumber-1] + "pt");
-      }
-      mapToHTMLAttributes();
-    
-}
-
-private void mapToHTMLAttributes() {
-    Object cssFontFamily = getAttribute(CSS.Attribute.FONT_FAMILY);
-    if(cssFontFamily != null) {
-      if(cssFontFamily.toString().equalsIgnoreCase("SansSerif")) {
-        addAttribute(CSS.Attribute.FONT_FAMILY, "SansSerif, Sans-Serif");
-        //System.out.println("mapToHTMLAttributes SansSerif, Sans-Serif");
-      }
-      else if(cssFontFamily.toString().indexOf("Monospaced") > -1) {
-        addAttribute(CSS.Attribute.FONT_FAMILY, "Monospace, Monospaced");
-      }
+    private void mapToHTMLAttributes() {
+        final Object cssFontFamily = getAttribute(CSS.Attribute.FONT_FAMILY);
+        if (cssFontFamily != null) {
+            if (cssFontFamily.toString().equalsIgnoreCase("SansSerif")) {
+                addAttribute(CSS.Attribute.FONT_FAMILY, "SansSerif, Sans-Serif");
+                //System.out.println("mapToHTMLAttributes SansSerif, Sans-Serif");
+            }
+            else if (cssFontFamily.toString().indexOf("Monospaced") > -1) {
+                addAttribute(CSS.Attribute.FONT_FAMILY, "Monospace, Monospaced");
+            }
+        }
     }
-  }
 
-  private void mapToJavaAttributes() {
-    Object htmlFontFace = getAttribute(HTML.Attribute.FACE);
-    Object cssFontFamily = getAttribute(CSS.Attribute.FONT_FAMILY);
-    if(htmlFontFace != null) {
-      if(cssFontFamily != null) {
-        removeAttribute(HTML.Attribute.FACE);
-        if(cssFontFamily.toString().indexOf("Sans-Serif") > -1) {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
-        }
-        else if(cssFontFamily.toString().indexOf("Monospace") > -1) {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
-        }
-      }
-      else {
-        removeAttribute(HTML.Attribute.FACE);
-        if(htmlFontFace.toString().indexOf("Sans-Serif") > -1) {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
-        }
-        else if(htmlFontFace.toString().indexOf("Monospace") > -1) {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
+    private void mapToJavaAttributes() {
+        final Object htmlFontFace = getAttribute(HTML.Attribute.FACE);
+        final Object cssFontFamily = getAttribute(CSS.Attribute.FONT_FAMILY);
+        if (htmlFontFace != null) {
+            if (cssFontFamily != null) {
+                removeAttribute(HTML.Attribute.FACE);
+                if (cssFontFamily.toString().indexOf("Sans-Serif") > -1) {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
+                }
+                else if (cssFontFamily.toString().indexOf("Monospace") > -1) {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
+                }
+            }
+            else {
+                removeAttribute(HTML.Attribute.FACE);
+                if (htmlFontFace.toString().indexOf("Sans-Serif") > -1) {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
+                }
+                else if (htmlFontFace.toString().indexOf("Monospace") > -1) {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
+                }
+                else {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, htmlFontFace.toString());
+                }
+            }
         }
         else {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, htmlFontFace.toString());
+            if (cssFontFamily != null) {
+                if (cssFontFamily.toString().indexOf("Sans-Serif") > -1) {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
+                }
+                else if (cssFontFamily.toString().indexOf("Monospace") > -1) {
+                    Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
+                }
+            }
         }
-      }
     }
-    else {
-      if(cssFontFamily != null) {
-        if(cssFontFamily.toString().indexOf("Sans-Serif") > -1) {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
-        }
-        else if(cssFontFamily.toString().indexOf("Monospace") > -1) {
-          Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
-        }
-      }
-    }
-  }
-
 }

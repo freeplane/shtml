@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.lightdev.app.shtm;
 
 import java.awt.event.ContainerEvent;
@@ -44,93 +43,89 @@ import javax.swing.text.SimpleAttributeSet;
  *
  * 
  */
+abstract class AttributePanel extends JPanel implements AttributeComponent, ContainerListener {
+    /** container for all AttributeComponents shown on this AttributePanel */
+    private final Vector components = new Vector();
 
-abstract class AttributePanel extends JPanel
-    implements AttributeComponent, ContainerListener
-{
-
-  /** container for all AttributeComponents shown on this AttributePanel */
-  private Vector components = new Vector();
-
-  /**
-   * construct a new AttributePanel
-   */
-  public AttributePanel() {
-    super();
-    this.addContainerListener(this);
-  }
-
-  /**
-   * set the value of this <code>AttributeComponent</code>
-   *
-   * @param a  the set of attributes possibly having an
-   *          attribute this component can display
-   *
-   * @return true, if the set of attributes had a matching attribute,
-   *            false if not
-   */
-  public boolean setValue(AttributeSet a) {
-    /*
-    System.out.println("AttributePanel setValue");
-    de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-    hd.listAttributes(a, 4);
-    System.out.println("\r\n");
-    */
-    boolean result = true;
-    Enumeration elements = components.elements();
-    AttributeComponent ac;
-    while(elements.hasMoreElements()) {
-      ac = (AttributeComponent) elements.nextElement();
-      if(!ac.setValue(a)) {
-        result = false;
-      }
+    /**
+     * construct a new AttributePanel
+     */
+    public AttributePanel() {
+        super();
+        this.addContainerListener(this);
     }
-    return result;
-  }
 
-  /**
-   * get the value of this <code>AttributeComponent</code>
-   *
-   * @return the value selected from this component
-   */
-  public AttributeSet getValue() {
-    SimpleAttributeSet attributes = new SimpleAttributeSet();
-    Enumeration elements = components.elements();
-    AttributeComponent ac;
-    while(elements.hasMoreElements()) {
-      ac = (AttributeComponent) elements.nextElement();
-      attributes.addAttributes(ac.getValue());
+    /**
+     * set the value of this <code>AttributeComponent</code>
+     *
+     * @param a  the set of attributes possibly having an
+     *          attribute this component can display
+     *
+     * @return true, if the set of attributes had a matching attribute,
+     *            false if not
+     */
+    public boolean setValue(final AttributeSet a) {
+        /*
+        System.out.println("AttributePanel setValue");
+        de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
+        hd.listAttributes(a, 4);
+        System.out.println("\r\n");
+        */
+        boolean result = true;
+        final Enumeration elements = components.elements();
+        AttributeComponent ac;
+        while (elements.hasMoreElements()) {
+            ac = (AttributeComponent) elements.nextElement();
+            if (!ac.setValue(a)) {
+                result = false;
+            }
+        }
+        return result;
     }
-    return attributes;
-  }
 
-  public AttributeSet getValue(boolean includeUnchanged) {
-    if(includeUnchanged) {
-      SimpleAttributeSet attributes = new SimpleAttributeSet();
-      Enumeration elements = components.elements();
-      AttributeComponent ac;
-      while(elements.hasMoreElements()) {
-        ac = (AttributeComponent) elements.nextElement();
-        attributes.addAttributes(ac.getValue(includeUnchanged));
-      }
-      return attributes;
+    /**
+     * get the value of this <code>AttributeComponent</code>
+     *
+     * @return the value selected from this component
+     */
+    public AttributeSet getValue() {
+        final SimpleAttributeSet attributes = new SimpleAttributeSet();
+        final Enumeration elements = components.elements();
+        AttributeComponent ac;
+        while (elements.hasMoreElements()) {
+            ac = (AttributeComponent) elements.nextElement();
+            attributes.addAttributes(ac.getValue());
+        }
+        return attributes;
     }
-    else {
-      return getValue();
-    }
-  }
 
-  public void componentAdded(ContainerEvent e) {
-    Object component = e.getChild();
-    if(component instanceof AttributeComponent) {
-      components.add(component);
+    public AttributeSet getValue(final boolean includeUnchanged) {
+        if (includeUnchanged) {
+            final SimpleAttributeSet attributes = new SimpleAttributeSet();
+            final Enumeration elements = components.elements();
+            AttributeComponent ac;
+            while (elements.hasMoreElements()) {
+                ac = (AttributeComponent) elements.nextElement();
+                attributes.addAttributes(ac.getValue(includeUnchanged));
+            }
+            return attributes;
+        }
+        else {
+            return getValue();
+        }
     }
-  }
 
-  public void componentRemoved(ContainerEvent e) {
-    Object component = e.getChild();
-    if(component instanceof AttributeComponent) {
-      components.remove(component);
+    public void componentAdded(final ContainerEvent e) {
+        final Object component = e.getChild();
+        if (component instanceof AttributeComponent) {
+            components.add(component);
+        }
     }
-  }
+
+    public void componentRemoved(final ContainerEvent e) {
+        final Object component = e.getChild();
+        if (component instanceof AttributeComponent) {
+            components.remove(component);
+        }
+    }
 }

@@ -29,36 +29,38 @@ package com.lightdev.app.shtm;
  * @author Dimitri Polivaev
  * 18.01.2007
  */
-public class NamedObject{
+public class NamedObject {
     private String name;
     private Object object;
-    private NamedObject(){
+
+    private NamedObject() {
     }
-    public NamedObject(Object object, String name) {
+
+    public NamedObject(final Object object, final String name) {
         this.object = object;
         this.name = name;
-        
     }
-    static public NamedObject literal(String literal){
-        NamedObject result = new NamedObject();
+
+    static public NamedObject literal(final String literal) {
+        final NamedObject result = new NamedObject();
         result.object = literal;
         result.name = literal;
         return result;
     }
 
-    public boolean equals(Object o){
-        if (o instanceof NamedObject){
-            NamedObject ts =  (NamedObject)o;
+    public boolean equals(final Object o) {
+        if (o instanceof NamedObject) {
+            final NamedObject ts = (NamedObject) o;
             return object.equals(ts.object);
         }
         return object.equals(o);
     }
 
-    public String toString(){
+    public String toString() {
         return name;
     }
-    
-    public Object getObject(){
+
+    public Object getObject() {
         return object;
     }
 }
