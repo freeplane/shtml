@@ -56,6 +56,10 @@ public abstract class SHTMLPanel extends JPanel {
     public static void setResources(final TextResources resources) {
         SHTMLPanelImpl.setTextResources(resources);
     }
+    
+    public static void setActionBuilder(final ActionBuilder ab){
+    	SHTMLPanelImpl.setActionBuilder(ab);
+    }
 
     public abstract HTMLDocument getDocument();
 
@@ -74,6 +78,7 @@ public abstract class SHTMLPanel extends JPanel {
     public abstract JEditorPane getMostRecentFocusOwner();
 
     public abstract Action getAction(String actionName);
+    public abstract void addAction(String text, Action action);
 
     /**
      * Returns a new menu item for a named action of SimplyHTML. (Can be used for building custom

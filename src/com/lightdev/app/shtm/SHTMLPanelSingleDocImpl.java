@@ -39,6 +39,6 @@ class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
 
     protected void initActions() {
         super.initActions();
-        dynRes.addAction(findReplaceAction, new SHTMLEditorKitActions.SingleDocFindReplaceAction(this));
+        addAction(findReplaceAction, new SHTMLEditorKitActions.SingleDocFindReplaceAction(this));
     }
 }

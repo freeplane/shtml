@@ -56,16 +56,16 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
      */
     protected void initActions() {
         super.initActions();
-        dynRes.addAction(findReplaceAction, new SHTMLEditorKitActions.MultipleDocFindReplaceAction(this));
-        dynRes.addAction(setStyleAction, new SHTMLEditorKitActions.SetStyleAction(this));
-        dynRes.addAction(newAction, new SHTMLEditorKitActions.SHTMLFileNewAction(this));
-        dynRes.addAction(openAction, new SHTMLEditorKitActions.SHTMLFileOpenAction(this));
-        dynRes.addAction(closeAction, new SHTMLEditorKitActions.SHTMLFileCloseAction(this));
-        dynRes.addAction(closeAllAction, new SHTMLEditorKitActions.SHTMLFileCloseAllAction(this));
-        dynRes.addAction(saveAction, new SHTMLEditorKitActions.SHTMLFileSaveAction(this));
-        dynRes.addAction(saveAllAction, new SHTMLEditorKitActions.SHTMLFileSaveAllAction(this));
-        dynRes.addAction(saveAsAction, new SHTMLEditorKitActions.SHTMLFileSaveAsAction(this));
-        dynRes.addAction(exitAction, new SHTMLEditorKitActions.SHTMLFileExitAction(this));
+        addAction(findReplaceAction, new SHTMLEditorKitActions.MultipleDocFindReplaceAction(this));
+        addAction(setStyleAction, new SHTMLEditorKitActions.SetStyleAction(this));
+        addAction(newAction, new SHTMLEditorKitActions.SHTMLFileNewAction(this));
+        addAction(openAction, new SHTMLEditorKitActions.SHTMLFileOpenAction(this));
+        addAction(closeAction, new SHTMLEditorKitActions.SHTMLFileCloseAction(this));
+        addAction(closeAllAction, new SHTMLEditorKitActions.SHTMLFileCloseAllAction(this));
+        addAction(saveAction, new SHTMLEditorKitActions.SHTMLFileSaveAction(this));
+        addAction(saveAllAction, new SHTMLEditorKitActions.SHTMLFileSaveAllAction(this));
+        addAction(saveAsAction, new SHTMLEditorKitActions.SHTMLFileSaveAsAction(this));
+        addAction(exitAction, new SHTMLEditorKitActions.SHTMLFileExitAction(this));
     }
 
     /* (non-Javadoc)

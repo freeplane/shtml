@@ -37,7 +37,7 @@ import javax.swing.Action;
  *
  * @see javax.swing.Action
  */
-interface SHTMLAction extends Action {
+public interface SHTMLAction extends Action {
     /** update the action's state */
     public void update();
 

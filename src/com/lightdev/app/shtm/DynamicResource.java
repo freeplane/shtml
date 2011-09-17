@@ -98,7 +98,7 @@ import javax.swing.event.MenuListener;
  */
 class DynamicResource {
     /** name constant for labels in the resource file */
-    private static final String labelSuffix = "Label";
+    public static final String labelSuffix = "Label";
     /** name constant for action commands in the resource file */
     private static final String actionSuffix = "Action";
     /** name constant for indicating image resources in the resource file */
@@ -234,7 +234,7 @@ class DynamicResource {
          * menu item is associated to (see below).
          */
         JMenuItem mi;
-        mi = new JMenuItem(Util.getResourceString(resources, cmd + labelSuffix));
+        mi = new JMenuItem();
         String astr = Util.getResourceString(resources, cmd + actionSuffix);
         if (astr == null) {
             astr = cmd;
@@ -270,6 +270,10 @@ class DynamicResource {
                 mi.setHorizontalTextPosition(JButton.RIGHT);
                 mi.setIcon(icon);
             }
+            String name = (String) a.getValue(Action.NAME);
+            if(name == null)
+            	name = Util.getResourceString(resources, cmd + labelSuffix);
+			mi.setText(name);
             /**
              * initially set the enabled state of the menu item
              * according to its action's enabled state
@@ -277,6 +281,7 @@ class DynamicResource {
             mi.setEnabled(a.isEnabled());
         }
         else {
+        	mi.setText(Util.getResourceString(resources, cmd + labelSuffix));
             mi.setEnabled(false);
         }
         /**

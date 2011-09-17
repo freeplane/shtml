@@ -870,34 +870,48 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param linkText  the text to show as link
      * @param doc  the document to apply the link to
      */
-    private void setTextLink(final Element e, final String href, final String className, final String linkText,
+    private void setTextLink(final Element e, final String href, final String className, String linkText,
                              final SHTMLDocument doc) {
-        final SimpleAttributeSet aSet = new SimpleAttributeSet();
-        aSet.addAttribute(HTML.Attribute.HREF, href);
         final String sStyleName = Util.getResourceString("standardStyleName");
-        if (className != null && !className.equalsIgnoreCase(sStyleName)) {
-            aSet.addAttribute(HTML.Attribute.CLASS, className);
-        }
         final SimpleAttributeSet set = new SimpleAttributeSet();
+        final SimpleAttributeSet aSet = new SimpleAttributeSet();
+        if(href != null){
+        	aSet.addAttribute(HTML.Attribute.HREF, href);
+        	if (className != null && !className.equalsIgnoreCase(sStyleName)) {
+        		aSet.addAttribute(HTML.Attribute.CLASS, className);
+        	}
+        }
         if (e != null) {
             // replace existing link
-            set.addAttributes(e.getAttributes());
-            set.addAttribute(HTML.Tag.A, aSet);
+        	if(href != null){
+        		set.addAttributes(e.getAttributes());
+        		set.addAttribute(HTML.Tag.A, aSet);
+        	}
             final int start = e.getStartOffset();
+            int length = e.getEndOffset() - start;
             try {
-                doc.replace(start, e.getEndOffset() - start, linkText, set);
+                if(linkText == null)
+                	linkText = doc.getText(start, length);
+				doc.replace(start, length, linkText, set);
             }
             catch (final BadLocationException ex) {
                 Util.errMsg(this, ex.getMessage(), ex);
             }
         }
-        else {
+        else if(href != null){
             // create new link for text selection
             final int start = getSelectionStart();
             if (start < getSelectionEnd()) {
                 set.addAttribute(HTML.Tag.A, aSet);
-                replaceSelection(linkText);
-                doc.setCharacterAttributes(start, linkText.length(), set, false);
+                try {
+                	if(linkText == null)
+                		linkText = doc.getText(start, getSelectionEnd() - start);
+                	replaceSelection(linkText);
+                	doc.setCharacterAttributes(start, linkText.length(), set, false);
+                }
+                catch (final BadLocationException ex) {
+                	Util.errMsg(this, ex.getMessage(), ex);
+                }
             }
         }
     }

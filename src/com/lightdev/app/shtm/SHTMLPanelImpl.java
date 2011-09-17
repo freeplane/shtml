@@ -34,6 +34,7 @@ import java.util.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
+import com.lightdev.app.shtm.SHTMLEditorKitActions.PrintAction;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetStyleAction;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetTagAction;
 import java.util.prefs.*;
@@ -59,7 +60,7 @@ import java.util.prefs.*;
  *
  *
  */
-class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
+public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
     /* some public constants */
     public static final String APP_TEMP_DIR = "temp";
@@ -134,6 +135,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     int newDocCounter = 0;
     /** reference to applicatin temp directory */
     private static File appTempDir;
+	private static ActionBuilder actionBuilder;
     /** tool bar selector for certain tags */
     private TagSelector tagSelector;
     /** panel for plug-in display */
@@ -229,6 +231,8 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         SplashScreen.showInstance();
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
         initActions();
+        if(actionBuilder != null)
+        	actionBuilder.initActions(this);
         menuBar = dynRes.createMenubar(textResources, "menubar");
         editorPopup = dynRes.createPopupMenu(textResources, "popup");
         setJMenuBar(menuBar);
@@ -659,72 +663,81 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     * right away.
     */
     protected void initActions() {
-        dynRes.addAction(setDefaultStyleRefAction, new SHTMLEditorKitActions.SetDefaultStyleRefAction(this));
-        dynRes.addAction(documentTitleAction, new SHTMLEditorKitActions.DocumentTitleAction(this));
-        dynRes.addAction(editAnchorsAction, new SHTMLEditorKitActions.EditAnchorsAction(this));
-        dynRes.addAction(setTagAction, new SHTMLEditorKitActions.SetTagAction(this));
-        dynRes.addAction(formatAsCodeAction, new SHTMLEditorKitActions.SetTagAction(this, "code"));
-        dynRes.addAction(editLinkAction, new SHTMLEditorKitActions.EditLinkAction(this));
-        dynRes.addAction(openLinkAction, new SHTMLEditorKitActions.OpenLinkAction(this));
-        dynRes.addAction(prevTableCellAction, new SHTMLEditorKitActions.PrevTableCellAction(this));
-        dynRes.addAction(nextTableCellAction, new SHTMLEditorKitActions.NextTableCellAction(this));
-        dynRes.addAction(editNamedStyleAction, new SHTMLEditorKitActions.EditNamedStyleAction(this));
-        dynRes.addAction(clearFormatAction, new SHTMLEditorKitActions.ClearFormatAction(this));
-        dynRes.addAction(formatParaAction, new SHTMLEditorKitActions.FormatParaAction(this));
-        dynRes.addAction(formatImageAction, new SHTMLEditorKitActions.FormatImageAction(this));
-        dynRes.addAction(insertImageAction, new SHTMLEditorKitActions.InsertImageAction(this));
-        dynRes.addAction(editPrefsAction, new SHTMLEditorKitActions.SHTMLEditPrefsAction(this));
-        dynRes.addAction(toggleBulletsAction, new SHTMLEditorKitActions.ToggleListAction(this, toggleBulletsAction,
+        addAction(setDefaultStyleRefAction, new SHTMLEditorKitActions.SetDefaultStyleRefAction(this));
+        addAction(documentTitleAction, new SHTMLEditorKitActions.DocumentTitleAction(this));
+        addAction(editAnchorsAction, new SHTMLEditorKitActions.EditAnchorsAction(this));
+        addAction(setTagAction, new SHTMLEditorKitActions.SetTagAction(this));
+        addAction(formatAsCodeAction, new SHTMLEditorKitActions.SetTagAction(this, "code"));
+        addAction(editLinkAction, new SHTMLEditorKitActions.EditLinkAction(this));
+        addAction(openLinkAction, new SHTMLEditorKitActions.OpenLinkAction(this));
+        addAction(prevTableCellAction, new SHTMLEditorKitActions.PrevTableCellAction(this));
+        addAction(nextTableCellAction, new SHTMLEditorKitActions.NextTableCellAction(this));
+        addAction(editNamedStyleAction, new SHTMLEditorKitActions.EditNamedStyleAction(this));
+        addAction(clearFormatAction, new SHTMLEditorKitActions.ClearFormatAction(this));
+        addAction(formatParaAction, new SHTMLEditorKitActions.FormatParaAction(this));
+        addAction(formatImageAction, new SHTMLEditorKitActions.FormatImageAction(this));
+        addAction(insertImageAction, new SHTMLEditorKitActions.InsertImageAction(this));
+        addAction(editPrefsAction, new SHTMLEditorKitActions.SHTMLEditPrefsAction(this));
+        addAction(toggleBulletsAction, new SHTMLEditorKitActions.ToggleListAction(this, toggleBulletsAction,
             HTML.Tag.UL));
-        dynRes.addAction(toggleNumbersAction, new SHTMLEditorKitActions.ToggleListAction(this, toggleNumbersAction,
+        addAction(toggleNumbersAction, new SHTMLEditorKitActions.ToggleListAction(this, toggleNumbersAction,
             HTML.Tag.OL));
-        dynRes.addAction(formatListAction, new SHTMLEditorKitActions.FormatListAction(this));
-        dynRes.addAction(ManagePluginsAction.managePluginsAction, new ManagePluginsAction());
-        dynRes.addAction(elemTreeAction, new SHTMLEditorKitActions.ShowElementTreeAction(this));
-        dynRes.addAction(gcAction, new SHTMLEditorKitActions.GarbageCollectionAction(this));
-        dynRes.addAction(undoAction, new SHTMLEditorKitActions.UndoAction(this));
-        dynRes.addAction(redoAction, new SHTMLEditorKitActions.RedoAction(this));
-        dynRes.addAction(cutAction, new SHTMLEditorKitActions.SHTMLEditCutAction(this));
-        dynRes.addAction(copyAction, new SHTMLEditorKitActions.SHTMLEditCopyAction(this));
-        dynRes.addAction(pasteAction, new SHTMLEditorKitActions.SHTMLEditPasteAction(this));
-        dynRes.addAction(selectAllAction, new SHTMLEditorKitActions.SHTMLEditSelectAllAction(this));
-        dynRes.addAction(aboutAction, new SHTMLEditorKitActions.SHTMLHelpAppInfoAction(this));
-        dynRes.addAction(fontAction, new SHTMLEditorKitActions.FontAction(this));
-        dynRes.addAction(fontFamilyAction, new SHTMLEditorKitActions.FontFamilyAction(this));
-        dynRes.addAction(fontSizeAction, new SHTMLEditorKitActions.FontSizeAction(this));
-        dynRes.addAction(insertTableAction, new SHTMLEditorKitActions.InsertTableAction(this));
-        dynRes.addAction(insertTableRowAction, new SHTMLEditorKitActions.InsertTableRowAction(this, null,
+        addAction(formatListAction, new SHTMLEditorKitActions.FormatListAction(this));
+        addAction(ManagePluginsAction.managePluginsAction, new ManagePluginsAction());
+        addAction(elemTreeAction, new SHTMLEditorKitActions.ShowElementTreeAction(this));
+        addAction(gcAction, new SHTMLEditorKitActions.GarbageCollectionAction(this));
+        addAction(undoAction, new SHTMLEditorKitActions.UndoAction(this));
+        addAction(redoAction, new SHTMLEditorKitActions.RedoAction(this));
+        addAction(cutAction, new SHTMLEditorKitActions.SHTMLEditCutAction(this));
+        addAction(copyAction, new SHTMLEditorKitActions.SHTMLEditCopyAction(this));
+        addAction(pasteAction, new SHTMLEditorKitActions.SHTMLEditPasteAction(this));
+        addAction(selectAllAction, new SHTMLEditorKitActions.SHTMLEditSelectAllAction(this));
+        addAction(aboutAction, new SHTMLEditorKitActions.SHTMLHelpAppInfoAction(this));
+        addAction(fontAction, new SHTMLEditorKitActions.FontAction(this));
+        addAction(fontFamilyAction, new SHTMLEditorKitActions.FontFamilyAction(this));
+        addAction(fontSizeAction, new SHTMLEditorKitActions.FontSizeAction(this));
+        addAction(insertTableAction, new SHTMLEditorKitActions.InsertTableAction(this));
+        addAction(insertTableRowAction, new SHTMLEditorKitActions.InsertTableRowAction(this, null,
             insertTableRowAction));
-        dynRes.addAction(insertTableRowHeaderAction, new SHTMLEditorKitActions.InsertTableRowAction(this, "th",
+        addAction(insertTableRowHeaderAction, new SHTMLEditorKitActions.InsertTableRowAction(this, "th",
             insertTableRowHeaderAction));
-        dynRes.addAction(insertTableColAction, new SHTMLEditorKitActions.InsertTableColAction(this));
-        dynRes.addAction(appendTableColAction, new SHTMLEditorKitActions.AppendTableColAction(this));
-        dynRes.addAction(appendTableRowAction, new SHTMLEditorKitActions.AppendTableRowAction(this));
-        dynRes.addAction(deleteTableRowAction, new SHTMLEditorKitActions.DeleteTableRowAction(this));
-        dynRes.addAction(deleteTableColAction, new SHTMLEditorKitActions.DeleteTableColAction(this));
-        dynRes.addAction(moveTableRowUpAction, new SHTMLEditorKitActions.MoveTableRowUpAction(this));
-        dynRes.addAction(moveTableRowDownAction, new SHTMLEditorKitActions.MoveTableRowDownAction(this));
-        dynRes.addAction(moveTableColumnLeftAction, new SHTMLEditorKitActions.MoveTableColumnLeftAction(this));
-        dynRes.addAction(moveTableColumnRightAction, new SHTMLEditorKitActions.MoveTableColumnRightAction(this));
-        dynRes.addAction(formatTableAction, new SHTMLEditorKitActions.FormatTableAction(this));
-        dynRes.addAction(toggleTableHeaderCellAction, new SHTMLEditorKitActions.ToggleTableHeaderCellAction(this));
-        dynRes.addAction(fontBoldAction, new SHTMLEditorKitActions.BoldAction(this));
-        dynRes.addAction(fontItalicAction, new SHTMLEditorKitActions.ItalicAction(this));
-        dynRes.addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
-        dynRes.addAction(fontColorAction, new SHTMLEditorKitActions.FontColorAction(this));
-        dynRes.addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
+        addAction(insertTableColAction, new SHTMLEditorKitActions.InsertTableColAction(this));
+        addAction(appendTableColAction, new SHTMLEditorKitActions.AppendTableColAction(this));
+        addAction(appendTableRowAction, new SHTMLEditorKitActions.AppendTableRowAction(this));
+        addAction(deleteTableRowAction, new SHTMLEditorKitActions.DeleteTableRowAction(this));
+        addAction(deleteTableColAction, new SHTMLEditorKitActions.DeleteTableColAction(this));
+        addAction(moveTableRowUpAction, new SHTMLEditorKitActions.MoveTableRowUpAction(this));
+        addAction(moveTableRowDownAction, new SHTMLEditorKitActions.MoveTableRowDownAction(this));
+        addAction(moveTableColumnLeftAction, new SHTMLEditorKitActions.MoveTableColumnLeftAction(this));
+        addAction(moveTableColumnRightAction, new SHTMLEditorKitActions.MoveTableColumnRightAction(this));
+        addAction(formatTableAction, new SHTMLEditorKitActions.FormatTableAction(this));
+        addAction(toggleTableHeaderCellAction, new SHTMLEditorKitActions.ToggleTableHeaderCellAction(this));
+        addAction(fontBoldAction, new SHTMLEditorKitActions.BoldAction(this));
+        addAction(fontItalicAction, new SHTMLEditorKitActions.ItalicAction(this));
+        addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
+        addAction(fontColorAction, new SHTMLEditorKitActions.FontColorAction(this));
+        addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));
-        dynRes.addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
+        addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             paraAlignLeftAction, CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_LEFT, true));
-        dynRes.addAction(paraAlignCenterAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
+        addAction(paraAlignCenterAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             paraAlignCenterAction, CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_CENTER, true));
-        dynRes.addAction(paraAlignRightAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
+        addAction(paraAlignRightAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             paraAlignRightAction, CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_RIGHT, true));
-        dynRes.addAction(testAction, new SHTMLEditorKitActions.SHTMLTestAction(this));
-        dynRes.addAction(printAction, new SHTMLEditorKitActions.PrintAction(this));
+        addAction(testAction, new SHTMLEditorKitActions.SHTMLTestAction(this));
+        addAction(printAction, new SHTMLEditorKitActions.PrintAction(this));
     }
 
-    /**
+    public static void setActionBuilder(final ActionBuilder ab){
+    	SHTMLPanelImpl.actionBuilder = ab;
+    }
+
+    public void addAction(String text, Action action) {
+		dynRes.addAction(text, action);
+		
+	}
+
+	/**
      * update all actions
      */
     public void updateActions() {
@@ -1042,7 +1055,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
   }
 
-    boolean isHtmlEditorActive() {
+    public boolean isHtmlEditorActive() {
         return getDocumentPane() != null && getDocumentPane().getSelectedTab() == DocumentPane.VIEW_TAB_HTML;
     }
 
@@ -1060,10 +1073,15 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         /*else {
           action.putValue(Action.SMALL_ICON, emptyIcon);
         }*/
+        final String name = Util.getResourceString(textResources, cmd + DynamicResource.labelSuffix);
+        if (name != null) {
+            action.putValue(Action.NAME, name);
+        }
         final String toolTip = Util.getResourceString(textResources, cmd + DynamicResource.toolTipSuffix);
         if (toolTip != null) {
             action.putValue(Action.SHORT_DESCRIPTION, toolTip);
         }
+        
     }
 
     /* ---------- undo/redo implementation ----------------------- */
@@ -1371,7 +1389,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * @return Returns the documentPane.
      */
-    DocumentPane getDocumentPane() {
+    public DocumentPane getDocumentPane() {
         return documentPane;
     }
 
@@ -1385,7 +1403,7 @@ class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * @return Returns the editorPane.
      */
-    SHTMLEditorPane getSHTMLEditorPane() {
+    public SHTMLEditorPane getSHTMLEditorPane() {
         return (SHTMLEditorPane) getEditorPane();
     }
 
