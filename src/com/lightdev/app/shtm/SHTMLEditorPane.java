@@ -2585,8 +2585,11 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
         /** Determines whether the caret is currently at the beginning of a list item. */
         private boolean caretWithinListItem() {
-            final Element parent = getCurrentParagraphElement().getParentElement();
-            return ("li".equalsIgnoreCase(parent.getName()));
+            final Element currentParagraphElement = getCurrentParagraphElement();
+            if(currentParagraphElement == null)
+            	return false;
+			final Element parent = currentParagraphElement.getParentElement();
+            return parent != null && "li".equalsIgnoreCase(parent.getName());
         }
 
         /** Increases the intent of selected list items. ("Including subitems" should default to "true".) */
