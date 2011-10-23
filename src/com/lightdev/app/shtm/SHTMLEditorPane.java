@@ -1886,7 +1886,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     public Element getCurrentLinkElement() {
         Element element2 = null;
-        Element element = getSHTMLDocument().getCharacterElement(getCaretPosition());
+        Element element = getSHTMLDocument().getCharacterElement(getSelectionStart());
         Object linkAttribute = null; //elem.getAttributes().getAttribute(HTML.Tag.A);
         Object href = null;
         while (element != null && linkAttribute == null) {
