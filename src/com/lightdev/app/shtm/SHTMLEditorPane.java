@@ -257,6 +257,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         if (sText == null || sText.equals("")) {
             sText = "<html><body><p></p></body></html>";
         }
+        doc.putProperty(SHTMLDocument.AdditionalComments, null);
         super.setText(sText);
         setCaretPosition(0);
         doc.endCompoundEdit();
