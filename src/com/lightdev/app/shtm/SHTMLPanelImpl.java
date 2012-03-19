@@ -34,7 +34,6 @@ import java.util.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
-import com.lightdev.app.shtm.SHTMLEditorKitActions.PrintAction;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetStyleAction;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetTagAction;
 import java.util.prefs.*;
