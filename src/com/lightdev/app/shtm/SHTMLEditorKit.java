@@ -19,6 +19,8 @@
 package com.lightdev.app.shtm;
 
 import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -37,6 +39,7 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.MinimalHTMLWriter;
 import javax.swing.text.html.StyleSheet;
+
 
 /**
  * Extensions to <code>HTMLEditorKit</code> for application SimplyHTML.
@@ -68,7 +71,9 @@ import javax.swing.text.html.StyleSheet;
  * 
  */
 public class SHTMLEditorKit extends HTMLEditorKit {
-    SHTMLEditorKit() {
+    private static final float FONT_SCALE_FACTOR = Toolkit.getDefaultToolkit().getScreenResolution()  / 72f;
+
+	SHTMLEditorKit() {
         super();
         final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
         setDefaultCursor(textCursor);
@@ -105,7 +110,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
 
     Document createEmptyDocument() {
         getStyleSheet();
-        final StyleSheet ss = new StyleSheet();
+        final StyleSheet ss = createStyleSheet();
         try {
             ss.importStyleSheet(Class.forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
         }
@@ -116,6 +121,16 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         doc.setAsynchronousLoadPriority(-1);
         doc.setTokenThreshold(1);
         return doc;
+    }
+
+	private StyleSheet createStyleSheet() {
+	    return new StyleSheet(){
+
+			public Font getFont(String family, int style, int size) {
+	            return super.getFont(family, style, Math.round(size * FONT_SCALE_FACTOR));
+            }
+	    	
+	    };
     }
 
     /**
