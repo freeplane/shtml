@@ -71,8 +71,7 @@ import javax.swing.text.html.StyleSheet;
  * 
  */
 public class SHTMLEditorKit extends HTMLEditorKit {
-    private static final float FONT_SCALE_FACTOR = Toolkit.getDefaultToolkit().getScreenResolution()  / 72f;
-
+ 
 	SHTMLEditorKit() {
         super();
         final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
@@ -110,7 +109,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
 
     Document createEmptyDocument() {
         getStyleSheet();
-        final StyleSheet ss = createStyleSheet();
+        final StyleSheet ss = new ScaledStyleSheet();
         try {
             ss.importStyleSheet(Class.forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
         }
@@ -123,17 +122,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         return doc;
     }
 
-	private StyleSheet createStyleSheet() {
-	    return new StyleSheet(){
-
-			public Font getFont(String family, int style, int size) {
-	            return super.getFont(family, style, Math.round(size * FONT_SCALE_FACTOR));
-            }
-	    	
-	    };
-    }
-
-    /**
+	/**
      * Inserts content from the given stream. If <code>doc</code> is
      * an instance of HTMLDocument, this will read
      * HTML 3.2 text. Inserting HTML into a non-empty document must be inside
