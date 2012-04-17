@@ -1251,7 +1251,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             ignoreActions = true;
             final int size = Util.styleSheet().getFont(a).getSize();
             final String newSelection = Integer.toString(size);
+            setEditable(true);
             setSelectedItem(newSelection);
+            setEditable(false);
             ignoreActions = false;
             return true;
         }
