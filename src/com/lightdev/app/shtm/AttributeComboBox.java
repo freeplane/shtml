@@ -90,8 +90,7 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
             if (valObj == null && htmlAttributeKey != null) {
                 valObj = a.getAttribute(htmlAttributeKey);
                 if (valObj != null) {
-                    setValue(valObj);
-                    success = true;
+                	success = setValue(valObj);
                 }
             }
             /*
@@ -100,15 +99,15 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
             else if (valObj == null && attributeKey.equals(CSS.Attribute.LIST_STYLE_TYPE)) {
                 final Object name = a.getAttribute(StyleConstants.NameAttribute);
                 if (name != null && name.toString().equalsIgnoreCase(HTML.Tag.UL.toString())) {
-                    setValue("disc");
+                	success = setValue("disc");
                 }
                 else if (name != null && name.toString().equalsIgnoreCase(HTML.Tag.OL.toString())) {
-                    setValue("decimal");
+                	success = setValue("decimal");
                 }
             }
             if (valObj == null && htmlAttributeKey != null) {
                 if (htmlAttributeKey.equals(HTML.Attribute.ALIGN) || htmlAttributeKey.equals(HTML.Attribute.VALIGN)) {
-                    setValue(names[0]);
+                	success = setValue(names[0]);
                 }
             }
             /*
@@ -116,16 +115,14 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
              */
             else {
                 //System.out.println("AttributeComboBox setValue value=" + valObj);
-                setValue(valObj);
-                success = true;
+            	success = setValue(valObj);
             }
         }
         else {
             if (htmlAttributeKey != null) {
                 valObj = a.getAttribute(htmlAttributeKey);
                 if (valObj != null) {
-                    setValue(valObj);
-                    success = true;
+                	success = setValue(valObj);
                 }
             }
         }
@@ -137,18 +134,22 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
         originalIndex = -2;
     }
 
-    private void setValue(final Object valObj) {
+    private boolean setValue(final Object valObj) {
         if (valObj != null) {
             final String valStr = valObj.toString();
             int i = 0;
             while (!valStr.equalsIgnoreCase(names[i])) {
                 i++;
+                if(i >= names.length)
+                	return false;
             }
             setSelectedIndex(i);
             if (++setValCount < 2) {
                 originalIndex = i;
             }
+            return true;
         }
+        return false;
     }
 
     /**
