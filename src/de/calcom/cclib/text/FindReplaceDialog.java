@@ -893,6 +893,8 @@ public class FindReplaceDialog extends JDialog {
         jpnlOptions.add(jcbProject, null);
         bgSearchDirection.add(jrbUp);
         bgSearchDirection.add(jrbDown);
+        // this is necessary so that the button fires on enter key press
+        // (for continuing a search)
         getRootPane().setDefaultButton(jbtnFindNext);
     }
 
