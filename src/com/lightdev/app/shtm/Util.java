@@ -950,19 +950,19 @@ public class Util {
         return resourceString != null ? resourceString : nm;
     }
 
-    static String getPreference(final String key, final String defaultValue) {
-        String writeMode = DynamicResource.getResourceString(SHTMLPanel.getResources(), key);
-        if (writeMode != null) {
-            return writeMode;
+    static public String getPreference(final String key, final String defaultValue) {
+        String paramValue = DynamicResource.getResourceString(SHTMLPanel.getResources(), key);
+        if (paramValue != null) {
+            return paramValue;
         }
-        writeMode = defaultValue;
+        paramValue = defaultValue;
         try {
             final Preferences prefs = Preferences.userNodeForPackage(PrefsDialog.class);
-            writeMode = prefs.get(key, writeMode);
+            paramValue = prefs.get(key, paramValue);
         }
         catch (final Exception ex) {
         }
-        return writeMode;
+        return paramValue;
     }
 
     static boolean preferenceIsTrue(final String key) {
