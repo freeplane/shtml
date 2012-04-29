@@ -893,6 +893,7 @@ public class FindReplaceDialog extends JDialog {
         jpnlOptions.add(jcbProject, null);
         bgSearchDirection.add(jrbUp);
         bgSearchDirection.add(jrbDown);
+        getRootPane().setDefaultButton(jbtnFindNext);
     }
 
     /* ----------------- class fields ------------------------------ */
