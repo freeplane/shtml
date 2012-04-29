@@ -558,6 +558,10 @@ public class FindReplaceDialog extends JDialog {
      *                          0 if no more hits were found
      */
     private int findNext() {
+    	// avoid endless loop due to "" always being found
+    	if (searchTerm.length() == 0)
+    		return -1;
+    	
         int start = -1; // -1 means not found.
         if (jrbUp.isSelected()) {
             if (lastPosition < doc.getLength()) {
