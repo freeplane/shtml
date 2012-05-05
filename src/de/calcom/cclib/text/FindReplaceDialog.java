@@ -772,9 +772,14 @@ public class FindReplaceDialog extends JDialog {
         jbtnFindNext.setMaximumSize(new Dimension(100, 27));
         jbtnFindNext.addKeyListener(escapeKeyListender);
         jcbStartOnTop.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchFromStart"));
-        jcbStartOnTop.setToolTipText("");
+        jcbStartOnTop.setToolTipText(Util.getResourceString(SHTMLPanel.getResources(), "searchFromStart.tooltip"));
         jrbDown.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchDown"));
+        
         jcbWholeWords.setText(Util.getResourceString(SHTMLPanel.getResources(), "wholeWordsOnly"));
+        jcbWholeWords.setToolTipText(Util.getResourceString(SHTMLPanel.getResources(), "wholeWordsOnly.tooltip"));
+        jrbDown.setToolTipText(Util.getResourceString(SHTMLPanel.getResources(), "searchDown.tooltip"));
+        jrbUp.setToolTipText(Util.getResourceString(SHTMLPanel.getResources(), "searchUp.tooltip"));
+        
         jpnlBtn.setLayout(gridBagLayout4);
         jpnlOptions.setBorder(titledBorder1);
         jpnlOptions.setLayout(gridLayout2);
