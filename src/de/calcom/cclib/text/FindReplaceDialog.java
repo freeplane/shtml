@@ -452,9 +452,15 @@ public class FindReplaceDialog extends JDialog {
             	double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", null));
             	//System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
             	
-            	setSearchingBusyCursor();
-            	currentApproximateMatches = PDL.computeAlignments(threshold);
-            	setSearchingDefaultCursor();
+            	try
+            	{
+            		setSearchingBusyCursor();
+            		currentApproximateMatches = PDL.computeAlignments(threshold);
+            	}
+            	finally
+            	{
+            		setSearchingDefaultCursor();
+            	}
             	if (jcbStartOnTop.isSelected())
             	{
             		if (jrbUp.isSelected()) // search bottom-up
