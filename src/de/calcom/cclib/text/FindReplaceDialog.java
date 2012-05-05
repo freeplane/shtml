@@ -20,6 +20,7 @@ package de.calcom.cclib.text;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -46,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.RootPaneContainer;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
@@ -400,6 +402,21 @@ public class FindReplaceDialog extends JDialog {
             jcbProject.setVisible(false);
         }
     }
+    
+	public void setSearchingBusyCursor()
+	{
+		//RootPaneContainer root = (RootPaneContainer)getTopLevelAncestor();
+		getRootPane().getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		getRootPane().getGlassPane().setVisible(true);
+	}
+	
+	public void setSearchingDefaultCursor()
+	{
+		//RootPaneContainer root = (RootPaneContainer)getTopLevelAncestor();
+		getRootPane().getGlassPane().setCursor(Cursor.getDefaultCursor());
+		getRootPane().getGlassPane().setVisible(false);
+	}
+
 
     /* --------- Getters and setters end ------------- */
     /* --------- Find implementation start ------ */
@@ -433,8 +450,11 @@ public class FindReplaceDialog extends JDialog {
             	// get the approximate search threshold parameter (0.65 by default)
             	// (see http://freeplane.sourceforge.net/wiki/index.php/Approximate_search)
             	double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", null));
+            	//System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
             	
+            	setSearchingBusyCursor();
             	currentApproximateMatches = PDL.computeAlignments(threshold);
+            	setSearchingDefaultCursor();
             	if (jcbStartOnTop.isSelected())
             	{
             		if (jrbUp.isSelected()) // search bottom-up
