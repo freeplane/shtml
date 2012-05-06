@@ -481,7 +481,10 @@ public class FindReplaceDialog extends JDialog {
             		for (Alignment ali: currentApproximateMatches)
             		{
             			if (ali.getMatchStart() >= start)
-            				currentApproximateMatchIndex = i;
+            			{
+            				currentApproximateMatchIndex = i - 1;
+            				break;
+            			}
             			i++;
             		}
             	}
