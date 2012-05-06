@@ -475,7 +475,7 @@ public class FindReplaceDialog extends JDialog {
 	    // get the approximate search threshold parameter (0.65 by default)
 	    // (see http://freeplane.sourceforge.net/wiki/index.php/Approximate_search)
 	    double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", null));
-	    System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
+	    //System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
 	    
 	    try
 	    {
