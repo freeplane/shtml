@@ -444,67 +444,75 @@ public class FindReplaceDialog extends JDialog {
             
             if (jcbMatchApprox.isSelected())
             {
-            	PseudoDamerauLevenshtein PDL = new PseudoDamerauLevenshtein();
-            	PDL.init(searchTerm, searchText, true, jcbMatchCase.isSelected());
-            	
-            	// get the approximate search threshold parameter (0.65 by default)
-            	// (see http://freeplane.sourceforge.net/wiki/index.php/Approximate_search)
-            	double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", null));
-            	System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
-            	
-            	try
-            	{
-            		setSearchingBusyCursor();
-            		currentApproximateMatches = PDL.computeAlignments(threshold);
-            	}
-            	finally
-            	{
-            		setSearchingDefaultCursor();
-            	}
-            	if (jcbStartOnTop.isSelected())
-            	{
-            		if (jrbUp.isSelected()) // search bottom-up
-            		{
-            			currentApproximateMatchIndex = currentApproximateMatches.size();
-            		}
-            		else // search top-down
-            		{
-            			currentApproximateMatchIndex = -1;
-            		}
-            	}
-            	else
-            	{
-            		int start = editor.getSelectionStart();
-            		// get first match after 'start'
-            		int i = 0;
-            		currentApproximateMatchIndex = 0;
-            		for (Alignment ali: currentApproximateMatches)
-            		{
-            			if (ali.getMatchStart() >= start)
-            			{
-            				currentApproximateMatchIndex = i - 1;
-            				break;
-            			}
-            			i++;
-            		}
-            	}
+            	initApproximateSearch();
             }
             else
             {
-	            if (jcbStartOnTop.isSelected()) {
-	                if (jrbUp.isSelected()) {
-	                    lastPosition = doc.getLength();
-	                }
-	                else {
-	                    lastPosition = -1;
-	                }
-	            }
-	            else {
-	                lastPosition = editor.getSelectionStart();
-	            }
+	            initExactSearch();
             }
             toggleState(STATE_LOCKED);
         }
+    }
+
+	private void initExactSearch() {
+	    if (jcbStartOnTop.isSelected()) {
+	        if (jrbUp.isSelected()) {
+	            lastPosition = doc.getLength();
+	        }
+	        else {
+	            lastPosition = -1;
+	        }
+	    }
+	    else {
+	        lastPosition = editor.getSelectionStart();
+	    }
+    }
+
+	private void initApproximateSearch() {
+	    PseudoDamerauLevenshtein PDL = new PseudoDamerauLevenshtein();
+	    PDL.init(searchTerm, searchText, true, jcbMatchCase.isSelected());
+	    
+	    // get the approximate search threshold parameter (0.65 by default)
+	    // (see http://freeplane.sourceforge.net/wiki/index.php/Approximate_search)
+	    double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", null));
+	    System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
+	    
+	    try
+	    {
+	    	setSearchingBusyCursor();
+	    	currentApproximateMatches = PDL.computeAlignments(threshold);
+	    }
+	    finally
+	    {
+	    	setSearchingDefaultCursor();
+	    }
+	    if (jcbStartOnTop.isSelected())
+	    {
+	    	if (jrbUp.isSelected()) // search bottom-up
+	    	{
+	    		currentApproximateMatchIndex = currentApproximateMatches.size();
+	    	}
+	    	else // search top-down
+	    	{
+	    		currentApproximateMatchIndex = -1;
+	    	}
+	    }
+	    else
+	    {
+	    	int start = editor.getSelectionStart();
+	    	// get first match after 'start'
+	    	int i = 0;
+	    	currentApproximateMatchIndex = 0;
+	    	for (Alignment ali: currentApproximateMatches)
+	    	{
+	    		if (ali.getMatchStart() >= start)
+	    		{
+	    			currentApproximateMatchIndex = i - 1;
+	    			break;
+	    		}
+	    		i++;
+	    	}
+	    }
     }
 
     /**
