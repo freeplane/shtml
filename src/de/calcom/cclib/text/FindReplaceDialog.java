@@ -450,7 +450,7 @@ public class FindReplaceDialog extends JDialog {
             	// get the approximate search threshold parameter (0.65 by default)
             	// (see http://freeplane.sourceforge.net/wiki/index.php/Approximate_search)
             	double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", null));
-            	//System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
+            	System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
             	
             	try
             	{
@@ -928,12 +928,12 @@ public class FindReplaceDialog extends JDialog {
         jpnlOptions.add(jrbUp, null);
         jpnlOptions.add(jcbStartOnTop, null);
         jpnlOptions.add(jrbDown, null);
-        jpnlOptions.add(jcbUnused, null);
+        //jpnlOptions.add(jcbUnused, null);
         jpnlOptions.add(jcbProject, null);
         bgSearchDirection.add(jrbUp);
         bgSearchDirection.add(jrbDown);
         // this is necessary so that the button fires on enter key press
-        // (for continuing a search)
+        // (for continuing a search)ok, 
         getRootPane().setDefaultButton(jbtnFindNext);
     }
 
