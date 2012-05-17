@@ -1168,11 +1168,11 @@ class SHTMLEditorKitActions {
             currentTab = panel.getTabbedPaneForDocuments().getSelectedIndex();
             caretPos = panel.getDocumentPane().getEditor().getCaretPosition();
             if (panel.getTabbedPaneForDocuments().getTabCount() > 1) {
-                System.out.println("FindReplaceAction.actionPerformed with Listener");
+                //System.out.println("FindReplaceAction.actionPerformed with Listener");
                 new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane(), this);
             }
             else {
-                System.out.println("FindReplaceAction.actionPerformed NO Listener");
+                //System.out.println("FindReplaceAction.actionPerformed NO Listener");
                 new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane());
             }
         }
