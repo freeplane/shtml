@@ -33,13 +33,16 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -47,6 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.MutableComboBoxModel;
 import javax.swing.RootPaneContainer;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
@@ -433,7 +437,13 @@ public class FindReplaceDialog extends JDialog {
             catch (final Exception e) {
                 e.printStackTrace();
             }
-            searchTerm = jtfPhrase.getText();
+            searchTerm = (String)jcomboSearchTerm.getEditor().getItem();
+            //System.out.format("initFind(): searchTerm='%s'\n", searchTerm);
+            
+            rememberSearchTerm(searchTerm, jcomboSearchTerm);
+            matchCaseSetting.getAndSet(jcbMatchCase.isSelected());
+            matchApproxSetting.getAndSet(jcbMatchApprox.isSelected());
+            
             replacementText = jtfReplace.getText();
             replaceDiff = replacementText.length() - searchTerm.length();
             offset = 0;
@@ -716,11 +726,22 @@ public class FindReplaceDialog extends JDialog {
         jrbUp.setSelected(false);
         jrbDown.setSelected(true);
         jcbWholeWords.setSelected(false);
-        jcbMatchCase.setSelected(false);
-        jcbMatchApprox.setSelected(false);
+        jcbMatchCase.setSelected(matchCaseSetting.get());
+        jcbMatchApprox.setSelected(matchApproxSetting.get());
         jcbStartOnTop.setSelected(true);
         jcbProject.setSelected(false);
-        jtfPhrase.setText("");
+        
+        MutableComboBoxModel searchTermComboModel = (MutableComboBoxModel)jcomboSearchTerm.getModel();
+        while (searchTermComboModel.getSize() > 0)
+        {
+        	searchTermComboModel.removeElementAt(0);
+        }
+        for (final String searchTerm: searchTermHistory)
+        {
+        	searchTermComboModel.addElement(searchTerm);
+        }
+        jcomboSearchTerm.setEditable(true);
+        
         jtfReplace.setText("");
     }
 
@@ -750,7 +771,8 @@ public class FindReplaceDialog extends JDialog {
     private void toggleState(final boolean unlocked) {
         jbtnCancel.setEnabled(!unlocked);
         jbtnClose.setEnabled(unlocked);
-        jtfPhrase.setEnabled(unlocked);
+        jcomboSearchTerm.setEnabled(unlocked);
+        jtfReplace.setEnabled(unlocked);
         jLabel3.setEnabled(unlocked);
         jLabel4.setEnabled(unlocked);
         jcbWholeWords.setEnabled(unlocked);
@@ -839,10 +861,10 @@ public class FindReplaceDialog extends JDialog {
         });
         jpnlMain.setLayout(gridBagLayout6);
         jrbUp.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchUp"));
-        jtfPhrase.setMinimumSize(new Dimension(4, 12));
-        jtfPhrase.setPreferredSize(new Dimension(63, 12));
-        jtfPhrase.setText("jtfPhrase");
-        jtfPhrase.addKeyListener(new KeyAdapter() {
+        jcomboSearchTerm.setMinimumSize(new Dimension(4, 12));
+        jcomboSearchTerm.setPreferredSize(new Dimension(63, 12));
+        //jcomboSearchTerm.setText("jtfPhrase");
+        jcomboSearchTerm.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
             public void keyPressed(final KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     e.consume();
@@ -895,8 +917,6 @@ public class FindReplaceDialog extends JDialog {
                 jbtnCancel_actionPerformed(e);
             }
         });
-        jcbUnused.setText("jcbUnused");
-        jcbUnused.setVisible(false);
         jcbProject.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchWholeProject"));
         this.getContentPane().add(jpnlMain, BorderLayout.NORTH);
         jpnlBtn.add(jbtnFindNext, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
@@ -911,7 +931,7 @@ public class FindReplaceDialog extends JDialog {
             GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
         jpnlMain.add(jpnlBtn, new GridBagConstraints(1, 0, 1, 2, 1.0, 1.0, GridBagConstraints.NORTHEAST,
             GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
-        jpnlFind.add(jtfPhrase, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
+        jpnlFind.add(jcomboSearchTerm, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
             GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 12));
         jpnlFind.add(jLabel4, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
             GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
@@ -921,25 +941,17 @@ public class FindReplaceDialog extends JDialog {
             GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
         jpnlMain.add(jpnlOptions, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTHWEST,
             GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
-        /*
-        jpnlOptions.add(jcbWholeWords, null);
-        jpnlOptions.add(jrbUp, null);
-        jpnlOptions.add(jcbMatchCase, null);
-        jpnlOptions.add(jrbDown, null);
-        jpnlOptions.add(jcbStartOnTop, null);
-        jpnlOptions.add(jcbUnused, null);
-        jpnlOptions.add(jcbProject, null);
-        */
+
         jpnlOptions.add(jcbMatchCase, null);
         jpnlOptions.add(jcbMatchApprox, null);
         jpnlOptions.add(jcbWholeWords, null);
         jpnlOptions.add(jrbUp, null);
         jpnlOptions.add(jcbStartOnTop, null);
         jpnlOptions.add(jrbDown, null);
-        //jpnlOptions.add(jcbUnused, null);
         jpnlOptions.add(jcbProject, null);
         bgSearchDirection.add(jrbUp);
         bgSearchDirection.add(jrbDown);
+        
         // this is necessary so that the button fires on enter key press
         // (for continuing a search)ok, 
         getRootPane().setDefaultButton(jbtnFindNext);
@@ -1013,7 +1025,7 @@ public class FindReplaceDialog extends JDialog {
     private final JTextField jtfReplace = new JTextField();
     private final JPanel jpnlMain = new JPanel();
     private final JRadioButton jrbUp = new JRadioButton();
-    private final JTextField jtfPhrase = new JTextField();
+    private final JComboBox jcomboSearchTerm = new JComboBox();
     private final JCheckBox jcbMatchCase = new JCheckBox();
     private final JCheckBox jcbMatchApprox = new JCheckBox();
     private final JLabel jLabel3 = new JLabel();
@@ -1025,7 +1037,34 @@ public class FindReplaceDialog extends JDialog {
     private final GridLayout gridLayout2 = new GridLayout();
     private final JButton jbtnReplace = new JButton();
     private final JButton jbtnCancel = new JButton();
-    private final JCheckBox jcbUnused = new JCheckBox();
     private final JCheckBox jcbProject = new JCheckBox();
     /* ---- GUI elements end ---------*/
+    
+    public static synchronized void rememberSearchTerm(final String searchTerm, final JComboBox searchTermCombo)
+    {
+    	//System.out.format("rememberSearchTerm(%s)\n", searchTerm);
+    	if (searchTerm.equals(""))
+    	{
+    		return;
+    	}
+    	
+		MutableComboBoxModel searchTermComboModel = (MutableComboBoxModel)searchTermCombo.getModel();
+		
+    	// remove this term from the history
+    	if (searchTermHistory.contains(searchTerm))
+    	{
+    		searchTermHistory.remove(searchTerm);
+    		searchTermComboModel.removeElement(searchTerm);
+    	}
+    	
+    	// (re)insert at top of list
+		searchTermHistory.add(0, searchTerm);
+		searchTermComboModel.insertElementAt(searchTerm, 0);
+		
+		searchTermCombo.setSelectedItem(searchTerm);
+    }
+    
+    private final static List<String> searchTermHistory = new LinkedList<String>();
+    private final static AtomicBoolean matchCaseSetting = new AtomicBoolean(false);
+    private final static AtomicBoolean matchApproxSetting = new AtomicBoolean(false);
 }
