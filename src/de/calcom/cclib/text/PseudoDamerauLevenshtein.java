@@ -421,8 +421,8 @@ public class PseudoDamerauLevenshtein {
 //				System.out.format("=> match/mismatch\n");
 				
 				alignmentsInProgress.push(new Alignment(
-						searchTerm.charAt(ali.r-1) + ali.searchTermString,
-						searchText.charAt(ali.c-1) + ali.searchTextString,
+						/*searchTerm.charAt(ali.r-1) + ali.searchTermString*/ null,
+						/*searchText.charAt(ali.c-1) + ali.searchTextString*/ null,
 						ali.prob, ali.matchStart, ali.matchEnd, ali.r - 1, ali.c - 1)
 						);
 			}
@@ -448,14 +448,14 @@ public class PseudoDamerauLevenshtein {
 				StringBuilder searchTextPrefix = new StringBuilder();
 				while (c > 0)
 				{
-					searchTermPrefix.append('-');
-					searchTextPrefix.insert(0, searchText.charAt(c-1));
+					//searchTermPrefix.append('-');
+					//searchTextPrefix.insert(0, searchText.charAt(c-1));
 					matchStart += 1;
 					c--;
 				}
 				alignmentsInProgress.push(new Alignment(
-						searchTermPrefix.toString() + ali.searchTermString,
-						searchTextPrefix.toString() + ali.searchTextString,
+						/*searchTermPrefix.toString() + ali.searchTermString*/ null,
+						/*searchTextPrefix.toString() + ali.searchTextString*/ null,
 						ali.prob, matchStart, ali.matchEnd, 0, 0)
 						);
 			}
@@ -466,8 +466,8 @@ public class PseudoDamerauLevenshtein {
 //				System.out.format("=> insertion\n");
 
 				alignmentsInProgress.push(new Alignment(
-						"-" + ali.searchTermString,
-						searchText.charAt(ali.c-1) + ali.searchTextString,
+						/*"-" + ali.searchTermString*/ null,
+						/* searchText.charAt(ali.c-1) + ali.searchTextString*/ null,
 						ali.prob, ali.matchStart, ali.matchEnd, ali.r, ali.c - 1)
 						);
 			}
@@ -478,8 +478,8 @@ public class PseudoDamerauLevenshtein {
 //				System.out.format("=> deletion\n");
 				
 				alignmentsInProgress.push(new Alignment(
-						searchTerm.charAt(ali.r-1) + ali.searchTermString,
-						"-" + ali.searchTextString,
+						/*searchTerm.charAt(ali.r-1) + ali.searchTermString*/ null,
+						/*"-" + ali.searchTextString*/ null,
 						ali.prob, ali.matchStart, ali.matchEnd, ali.r - 1, ali.c)
 						);
 			}
@@ -492,8 +492,8 @@ public class PseudoDamerauLevenshtein {
 //				System.out.format("=> transposition\n");
 				
 				alignmentsInProgress.push(new Alignment(
-						searchTerm.substring(ali.r - 2, ali.r) + ali.searchTermString,
-						searchText.substring(ali.c - 2, ali.c) + ali.searchTextString,
+						/*searchTerm.substring(ali.r - 2, ali.r) + ali.searchTermString*/ null,
+						/*searchText.substring(ali.c - 2, ali.c) + ali.searchTextString*/ null,
 						ali.prob, ali.matchStart, ali.matchEnd, ali.r - 2, ali.c - 2)
 						);
 			}
