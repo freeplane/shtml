@@ -1044,11 +1044,9 @@ public class FindReplaceDialog extends JDialog {
     {
     	//System.out.format("rememberSearchTerm(%s)\n", searchTerm);
     	if (searchTerm.equals(""))
-    	{
     		return;
-    	}
     	
-		MutableComboBoxModel searchTermComboModel = (MutableComboBoxModel)searchTermCombo.getModel();
+    	MutableComboBoxModel searchTermComboModel = (MutableComboBoxModel)searchTermCombo.getModel();
 		
     	// remove this term from the history
     	if (searchTermHistory.contains(searchTerm))
@@ -1058,10 +1056,10 @@ public class FindReplaceDialog extends JDialog {
     	}
     	
     	// (re)insert at top of list
-		searchTermHistory.add(0, searchTerm);
-		searchTermComboModel.insertElementAt(searchTerm, 0);
+    	searchTermHistory.add(0, searchTerm);
+    	searchTermComboModel.insertElementAt(searchTerm, 0);
 		
-		searchTermCombo.setSelectedItem(searchTerm);
+    	searchTermCombo.setSelectedItem(searchTerm);
     }
     
     private final static List<String> searchTermHistory = new LinkedList<String>();
