@@ -146,6 +146,7 @@ public class FindReplaceDialog extends JDialog {
         try {
             jbInit();
             initDialogContents();
+            rememberSearchTermFromSelection();
             pack();
         }
         catch (final Exception e) {
@@ -177,6 +178,7 @@ public class FindReplaceDialog extends JDialog {
             jbInit();
             initDialogContents();
             centerDialog(owner);
+            rememberSearchTermFromSelection();
             pack();
             setVisible(true);
         }
@@ -211,6 +213,7 @@ public class FindReplaceDialog extends JDialog {
             jbInit();
             initDialogContents();
             centerDialog(owner);
+            rememberSearchTermFromSelection();
             pack();
             setVisible(true);
         }
@@ -220,6 +223,15 @@ public class FindReplaceDialog extends JDialog {
     }
 
     /* --------- Constructor(s) end ------------- */
+    
+    private void rememberSearchTermFromSelection()
+    {
+    	if (editor.getSelectedText() != null)
+    	{
+    		rememberSearchTerm(editor.getSelectedText(), jcomboSearchTerm);
+    	}
+    }
+    
     /* --------- Event handling start ------------- */
     /**
      * add an event listener to this dialog.
