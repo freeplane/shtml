@@ -32,8 +32,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -59,9 +61,11 @@ class PrefsDialog extends DialogShell implements ActionListener {
     /** constant for dock location setting in preferences file */
     public static final String PREFSID_LOOK_AND_FEEL = "Laf";
     public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";
+    public static final String PREFS_DEFAULT_PASTE_MODE ="default_paste_mode";
     private final String lafName = UIManager.getLookAndFeel().getName();
     private final JComboBox lafCombo;
     private final JCheckBox useStdStyleSheet;
+    private final JComboBox pasteModeCombo;
     /** the help id for this dialog */
     private static final String helpTopicId = "item167";
 
@@ -75,9 +79,17 @@ class PrefsDialog extends DialogShell implements ActionListener {
         final JPanel appPrefsPanel = new JPanel(g);
         Util.addGridBagComponent(appPrefsPanel, new JLabel(Util.getResourceString("prfLafLabel")), g, c, 0, 0,
             GridBagConstraints.EAST);
+        
         lafCombo = new JComboBox();
         initLfComboBox();
         Util.addGridBagComponent(appPrefsPanel, lafCombo, g, c, 1, 0, GridBagConstraints.EAST);
+        
+        pasteModeCombo = new JComboBox();
+        initPasteModeComboBox();
+        Util.addGridBagComponent(appPrefsPanel, new JLabel(Util.getResourceString("prefsPasteModeLabel")), g, c, 0, 1,
+                GridBagConstraints.EAST);
+        Util.addGridBagComponent(appPrefsPanel, pasteModeCombo, g, c, 1, 1, GridBagConstraints.EAST);
+        
         // build a panel for preferences related to documents
         /*
         JPanel docPrefsPanel = new JPanel(g);
@@ -94,6 +106,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
         final boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
         useStdStyleSheet.setSelected(useStyle);
         Util.addGridBagComponent(layoutPanel, useStdStyleSheet, g, c, 0, 2, GridBagConstraints.WEST);
+                
         // add to content pane of DialogShell
         final Container contentPane = super.getContentPane();
         contentPane.add(layoutPanel, BorderLayout.CENTER);
@@ -112,6 +125,31 @@ class PrefsDialog extends DialogShell implements ActionListener {
         }
         lafCombo.setModel(new DefaultComboBoxModel(lfNames));
         lafCombo.setSelectedItem(lafName);
+    }
+    
+    private void initPasteModeComboBox()
+    {
+    	pasteModeCombo.setModel(new DefaultComboBoxModel(SHTMLEditorPane.PasteMode.values()));
+    	pasteModeCombo.setSelectedItem(
+    			SHTMLEditorPane.PasteMode.valueOf(SHTMLEditorPane.PasteMode.class, prefs.get(PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name())));
+    	pasteModeCombo.setRenderer(new ListCellRenderer() {
+
+			public Component getListCellRendererComponent(JList list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) 
+			{
+				switch ((SHTMLEditorPane.PasteMode)value)
+				{
+				case PASTE_HTML:
+					return new JLabel(Util.getResourceString("pasteModeHTML"));
+				case PASTE_PLAIN_TEXT:
+					return new JLabel(Util.getResourceString("pasteModePlainText"));
+				default:
+					throw new AssertionError();
+				}
+			}
+    		
+    	});
     }
 
     /**
@@ -135,6 +173,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
                 SwingUtilities.updateComponentTreeUI(JOptionPane.getFrameForComponent(src));
             }
             prefs.putBoolean(PREFS_USE_STD_STYLE_SHEET, useStdStyleSheet.isSelected());
+            prefs.put(PREFS_DEFAULT_PASTE_MODE, ((SHTMLEditorPane.PasteMode)pasteModeCombo.getSelectedItem()).name());
         }
         catch (final Exception ex) {
             Util.errMsg(this, ex.getMessage(), ex);

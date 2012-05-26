@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Frame;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -37,12 +38,14 @@ import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.Element;
@@ -2418,8 +2421,45 @@ class SHTMLEditorKitActions {
         }
 
         public void actionPerformed(final ActionEvent e) {
+        	super.actionPerformed(e);
+            panel.updateActions();
+        }
+
+        public void update() {
+            if (panel.getSHTMLEditorPane() != null) {
+                setEnabled(true);
+            }
+            else {
+                setEnabled(false);
+            }
+        }
+
+        public void getProperties() {
+            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+        }
+    }
+
+    static class SHTMLEditPastePlainTextAction extends DefaultEditorKit.PasteAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public SHTMLEditPastePlainTextAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            putValue(Action.NAME, SHTMLPanelImpl.pastePlainTextAction);
+            getProperties();
+            //putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
+        }
+
+        public void actionPerformed(final ActionEvent e) {
+        	panel.getSHTMLEditorPane().setPasteMode(SHTMLEditorPane.PasteMode.PASTE_PLAIN_TEXT);
+        	
             super.actionPerformed(e);
             panel.updateActions();
+            
+            panel.getSHTMLEditorPane().setPasteModeFromPrefs();
         }
 
         public void update() {

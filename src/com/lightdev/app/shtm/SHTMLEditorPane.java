@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Vector;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -104,9 +105,29 @@ import javax.swing.text.html.HTMLDocument;
  * @see com.lightdev.app.shtm.HTMLTextSelection
  */
 public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, DragSourceListener, DragGestureListener {
+	
+	public enum PasteMode
+	{
+		PASTE_HTML("Paste as HTML"), PASTE_PLAIN_TEXT("Paste as plain-text");
+		
+		private final String displayName;
+
+		private PasteMode(final String displayName)
+		{
+			this.displayName = displayName;
+		}
+		
+		public String getDisplayName()
+		{
+			return displayName;
+		}
+	}
+	
     private static final boolean OLD_JAVA_VERSION = System.getProperty("java.version").compareTo("1.5.0") < 0;
     private JPopupMenu popup;
     private final ListManager listManager = new ListManager();
+    private PasteMode pasteMode;
+    private boolean forceConstantPasteMode;
 
     /**
      * construct a new <code>SHTMLEditorPane</code>
@@ -140,13 +161,37 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 }
             }
         });
+        setPasteModeFromPrefs();
         /** implement customized caret movement */
         adjustKeyBindings();
         /** init drag and drop */
         initDnd();
     }
+    
+    public PasteMode getPasteMode() {
+		if (forceConstantPasteMode)
+		{ 
+			return pasteMode;
+		}
+		else
+		{
+			Preferences prefs = Preferences.userNodeForPackage(getClass());
+			return SHTMLEditorPane.PasteMode.valueOf(SHTMLEditorPane.PasteMode.class,
+					prefs.get(PrefsDialog.PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name()));
+		}
+	}
 
-    /**
+	public void setPasteMode(final PasteMode pasteMode) {
+		this.pasteMode = pasteMode;
+		this.forceConstantPasteMode = true;
+	}
+	
+	public void setPasteModeFromPrefs()
+	{
+		this.forceConstantPasteMode = false;
+	}
+
+	/**
      * adjust the key bindings of the key map existing for this
      * editor pane to our needs (i.e. add actions to certain keys
      * such as tab/shift tab for caret movement inside tables, etc.)
@@ -2146,7 +2191,16 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             doc.startCompoundEdit();
             try {
                 final Transferable transferable = event.getTransferable();
-                if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
+                /*
+                if (getPasteMode() == PasteMode.PASTE_PLAIN_TEXT)
+                {
+                    event.acceptDrop(DnDConstants.ACTION_MOVE);
+                    final String content = transferable.getTransferData(DataFlavor.stringFlavor).toString();
+                    doDrop(event, content);
+                }
+                else
+                */
+                 if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
                     event.acceptDrop(DnDConstants.ACTION_MOVE);
                     final HTMLText s = (HTMLText) transferable.getTransferData(htmlTextDataFlavor);
                     doDrop(event, s);
@@ -3270,11 +3324,21 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
              * @see javax.swing.TransferHandler#importData(javax.swing.JComponent, java.awt.datatransfer.Transferable)
              */
             public boolean importData(final JComponent comp, final Transferable transferable) {
-                final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            	final SHTMLDocument doc = (SHTMLDocument) getDocument();
                 doc.startCompoundEdit();
                 boolean result = false;
                 try {
-                    if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
+                	//System.out.format("getPasteMode()=%s\n", getPasteMode());
+                	if (getPasteMode() == PasteMode.PASTE_PLAIN_TEXT)
+                	{
+                		final String content = transferable.getTransferData(DataFlavor.stringFlavor).toString();
+                		if (content != null)
+                		{
+                			replaceSelection(content);
+                		}
+                		result = true;           		
+                	}
+                	else if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
                         // This path is taken if:
                         // (a) the copy and paste is internal, from SimplyHTML to SimplyHTML, and
                         // (b) the copied part is not multi paragraph.
