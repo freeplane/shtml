@@ -177,7 +177,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 		{
 			Preferences prefs = Preferences.userNodeForPackage(getClass());
 			return SHTMLEditorPane.PasteMode.valueOf(SHTMLEditorPane.PasteMode.class,
-					prefs.get(PrefsDialog.PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name()));
+					Util.getPreference("default_paste_mode", prefs.get(PrefsDialog.PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name()))
+					);
 		}
 	}
 
