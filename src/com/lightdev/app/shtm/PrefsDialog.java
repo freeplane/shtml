@@ -26,6 +26,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.DefaultComboBoxModel;
@@ -68,8 +70,9 @@ class PrefsDialog extends DialogShell implements ActionListener {
     private final JComboBox pasteModeCombo;
     /** the help id for this dialog */
     private static final String helpTopicId = "item167";
+    private final List<SHTMLPrefsChangeListener> prefChangeListeners = new LinkedList<SHTMLPrefsChangeListener>();
 
-    public PrefsDialog(final Frame parent, final String title) {
+    public PrefsDialog(final Frame parent, final String title) {   	
         super(parent, title, helpTopicId);
         // have a grid bag layout ready to use
         final GridBagLayout g = new GridBagLayout();
@@ -114,6 +117,16 @@ class PrefsDialog extends DialogShell implements ActionListener {
         //contentPane.add(docPrefsPanel, BorderLayout.CENTER);
         // cause optimal placement of all elements
         pack();
+    }
+    
+    public void addPrefChangeListener(final SHTMLPrefsChangeListener listener)
+    {
+    	prefChangeListeners.add(listener);
+    }
+    
+    public void removePrefChangeListener(final SHTMLPrefsChangeListener listener)
+    {
+    	prefChangeListeners.remove(listener);
     }
 
     private void initLfComboBox() {
@@ -172,8 +185,19 @@ class PrefsDialog extends DialogShell implements ActionListener {
                 UIManager.setLookAndFeel(newLaf);
                 SwingUtilities.updateComponentTreeUI(JOptionPane.getFrameForComponent(src));
             }
+            boolean oldStyleSheetPref = prefs.getBoolean(PREFS_USE_STD_STYLE_SHEET, false);
             prefs.putBoolean(PREFS_USE_STD_STYLE_SHEET, useStdStyleSheet.isSelected());
+            String oldDefaultPasteMode = prefs.get(PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name());
             prefs.put(PREFS_DEFAULT_PASTE_MODE, ((SHTMLEditorPane.PasteMode)pasteModeCombo.getSelectedItem()).name());
+
+            for (SHTMLPrefsChangeListener listener: prefChangeListeners)
+            {
+            	listener.shtmlPrefChanged(PREFS_USE_STD_STYLE_SHEET, new Boolean(useStdStyleSheet.isSelected()).toString(),
+            			new Boolean(oldStyleSheetPref).toString());
+            
+            	listener.shtmlPrefChanged(PREFS_DEFAULT_PASTE_MODE, prefs.get(PREFS_DEFAULT_PASTE_MODE, null),
+            			oldDefaultPasteMode);
+            }
         }
         catch (final Exception ex) {
             Util.errMsg(this, ex.getMessage(), ex);

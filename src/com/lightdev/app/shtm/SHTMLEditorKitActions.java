@@ -38,6 +38,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -57,6 +59,7 @@ import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 import javax.swing.undo.CannotRedoException;
 
+import com.lightdev.app.shtm.SHTMLEditorPane.PasteMode;
 import com.lightdev.app.shtm.SHTMLPanelImpl.FontFamilyPicker;
 import com.lightdev.app.shtm.SHTMLPanelImpl.FontSizePicker;
 import com.sun.demo.ElementTreePanel;
@@ -2438,23 +2441,47 @@ class SHTMLEditorKitActions {
             SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
-
-    static class SHTMLEditPastePlainTextAction extends DefaultEditorKit.PasteAction implements SHTMLAction {
+    
+    /**
+     * This action does either "Paste as HTML" or "Paste as Text", depending on default_paste_mode!
+     * @author Felix Natter
+     *
+     */
+    static class SHTMLEditPasteOtherAction extends DefaultEditorKit.PasteAction implements SHTMLAction {
         /**
          *
          */
         private final SHTMLPanelImpl panel;
 
-        public SHTMLEditPastePlainTextAction(final SHTMLPanelImpl panel) {
+        public SHTMLEditPasteOtherAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.pastePlainTextAction);
-            getProperties();
+            
+            updateActionName(PasteMode.getValueFromPrefs().invert());
             //putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
+        }
+        
+        public void updateActionName(final PasteMode pm)
+        {
+        	if (pm == PasteMode.PASTE_HTML)
+        	{
+        		putValue(Action.NAME, Util.getResourceString("pasteHTMLLabel"));
+        	} 
+        	else if (pm == PasteMode.PASTE_PLAIN_TEXT)
+        	{
+        		putValue(Action.NAME, Util.getResourceString("pastePlainTextLabel"));
+        	}
+        	else
+        	{
+        		throw new RuntimeException("Unknown SHTMLEditorPane.PasteMode: " + pm.toString());
+        	}
+        	getProperties();
+        	panel.updateActions();
         }
 
         public void actionPerformed(final ActionEvent e) {
-        	panel.getSHTMLEditorPane().setPasteMode(SHTMLEditorPane.PasteMode.PASTE_PLAIN_TEXT);
+        	PasteMode pm = panel.getSHTMLEditorPane().getPasteMode().invert();
+        	panel.getSHTMLEditorPane().setPasteMode(pm);
         	
             super.actionPerformed(e);
             panel.updateActions();
@@ -2472,7 +2499,7 @@ class SHTMLEditorKitActions {
         }
 
         public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+        	SHTMLPanelImpl.getActionProperties(this, "pasteOther");
         }
     }
 
@@ -2492,6 +2519,9 @@ class SHTMLEditorKitActions {
         public void actionPerformed(final ActionEvent ae) {
             final Frame parent = JOptionPane.getFrameForComponent(panel);
             final PrefsDialog dlg = new PrefsDialog(parent, Util.getResourceString("prefsDialogTitle"));
+            
+            dlg.addPrefChangeListener(panel);
+            
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
@@ -2499,6 +2529,8 @@ class SHTMLEditorKitActions {
             if (dlg.getResult() == DialogShell.RESULT_OK) {
             }
             panel.updateActions();
+            
+            dlg.removePrefChangeListener(panel);
         }
 
         public void update() {

@@ -155,7 +155,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String cutAction = "cut";
     public static final String copyAction = "copy";
     public static final String pasteAction = "paste";
-    public static final String pastePlainTextAction ="pastePlainText";
+    public static final String pasteOtherAction ="pasteOther";
     public static final String selectAllAction = "selectAll";
     public static final String clearFormatAction = "clearFormat";
     public static final String fontAction = "font";
@@ -691,7 +691,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(cutAction, new SHTMLEditorKitActions.SHTMLEditCutAction(this));
         addAction(copyAction, new SHTMLEditorKitActions.SHTMLEditCopyAction(this));
         addAction(pasteAction, new SHTMLEditorKitActions.SHTMLEditPasteAction(this));
-        addAction(pastePlainTextAction, new SHTMLEditorKitActions.SHTMLEditPastePlainTextAction(this));
+        addAction(pasteOtherAction, new SHTMLEditorKitActions.SHTMLEditPasteOtherAction(this));
         addAction(selectAllAction, new SHTMLEditorKitActions.SHTMLEditSelectAllAction(this));
         addAction(aboutAction, new SHTMLEditorKitActions.SHTMLHelpAppInfoAction(this));
         addAction(fontAction, new SHTMLEditorKitActions.FontAction(this));

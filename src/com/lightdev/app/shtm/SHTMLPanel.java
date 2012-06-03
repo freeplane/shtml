@@ -36,9 +36,18 @@ import javax.swing.text.html.HTMLDocument;
  * @author Dimitri Polivaev
  * 14.01.2007
  */
-public abstract class SHTMLPanel extends JPanel {
+public abstract class SHTMLPanel extends JPanel implements SHTMLPrefsChangeListener {
     SHTMLPanel(final LayoutManager layout) {
         super(layout);
+    }
+    
+    public void shtmlPrefChanged(String propertyName, String newValue, String oldValue)
+    {
+    	if (propertyName.equals("default_paste_mode"))
+    	{
+    		((SHTMLEditorKitActions.SHTMLEditPasteOtherAction)getAction("pasteOther"))
+    		.updateActionName(SHTMLEditorPane.PasteMode.valueOf(newValue).invert());
+    	}
     }
 
     public static SHTMLPanel createSHTMLPanel() {

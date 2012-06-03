@@ -121,6 +121,29 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 		{
 			return displayName;
 		}
+		
+		public PasteMode invert()
+		{
+			if (this == PASTE_HTML)
+				return PASTE_PLAIN_TEXT;
+			else if (this == PASTE_PLAIN_TEXT)
+				return PASTE_HTML;
+			else
+				throw new RuntimeException("Expected value for SHTMLEditorPane.PasteMode: " + name());
+		}
+		
+		public static PasteMode getValueFromPrefs()
+		{
+			// try to get freeplane pref value, and use simplyhtml pref value if that fails
+			Preferences prefs = Preferences.userNodeForPackage(SHTMLEditorPane.class);
+			PasteMode pm = SHTMLEditorPane.PasteMode.valueOf(
+					SHTMLEditorPane.PasteMode.class, Util.getPreference(
+							"default_paste_mode", prefs.get(
+									PrefsDialog.PREFS_DEFAULT_PASTE_MODE,
+									SHTMLEditorPane.PasteMode.PASTE_HTML
+											.name())));
+			return pm;
+		}
 	}
 	
     private static final boolean OLD_JAVA_VERSION = System.getProperty("java.version").compareTo("1.5.0") < 0;
@@ -175,10 +198,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 		}
 		else
 		{
-			Preferences prefs = Preferences.userNodeForPackage(getClass());
-			return SHTMLEditorPane.PasteMode.valueOf(SHTMLEditorPane.PasteMode.class,
-					Util.getPreference("default_paste_mode", prefs.get(PrefsDialog.PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name()))
-					);
+			return PasteMode.getValueFromPrefs();
 		}
 	}
 
