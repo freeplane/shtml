@@ -1,5 +1,5 @@
 <project name="SimplyHTML" default="dist" basedir=".">
-	<property name="version" value="0_16_03" />
+	<property name="version" value="0_16_04" />
 	<property name="src" value="." />
 	<property name="help" value="${src}/com/lightdev/app/shtm/help" />
 	<property name="lib" value="../lib" />

@@ -43,6 +43,8 @@ public abstract class SHTMLPanel extends JPanel implements SHTMLPrefsChangeListe
     
     public void shtmlPrefChanged(String propertyName, String newValue, String oldValue)
     {
+    	//System.out.format("SHTMLPanel.shtmlPrefChanged(%s, %s, %s)\n",
+    	// propertyName, newValue, oldValue);
     	if (propertyName.equals("default_paste_mode"))
     	{
     		((SHTMLEditorKitActions.SHTMLEditPasteOtherAction)getAction("pasteOther"))
