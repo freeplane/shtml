@@ -950,9 +950,12 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         }
         if (e != null) {
             // replace existing link
+        	set.addAttributes(e.getAttributes());
         	if(href != null){
-        		set.addAttributes(e.getAttributes());
         		set.addAttribute(HTML.Tag.A, aSet);
+        	}
+        	else{
+        		set.removeAttribute(HTML.Tag.A);
         	}
             final int start = e.getStartOffset();
             int length = e.getEndOffset() - start;
