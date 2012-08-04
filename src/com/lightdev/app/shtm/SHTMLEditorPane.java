@@ -106,6 +106,9 @@ import javax.swing.text.html.HTMLDocument;
  */
 public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, DragSourceListener, DragGestureListener {
 	
+	private static final String TAB = "\t";
+	private static final String TAB_REPLACEMENT = "    ";
+
 	public enum PasteMode
 	{
 		PASTE_HTML("Paste as HTML"), PASTE_PLAIN_TEXT("Paste as plain-text");
@@ -2001,8 +2004,16 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     public Element getCurrentParagraphElement() {
         return getSHTMLDocument().getParagraphElement(getCaretPosition());
     }
+    
+    
 
-    /* ---------- table cell navigation end --------------*/
+    @Override
+    public void replaceSelection(String content) {
+    	final String expandedContent = content.replaceAll(TAB, TAB_REPLACEMENT);
+	    super.replaceSelection(expandedContent);
+    }
+
+	/* ---------- table cell navigation end --------------*/
     /**
      * Replaces the currently selected content with new content
      * represented by the given <code>HTMLText</code>. If there is no selection
