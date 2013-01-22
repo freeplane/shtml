@@ -644,26 +644,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         public void actionPerformed(final ActionEvent ae) {
             try {
                 final int caretPosition = getCaretPosition();
-                // Turn paragraph starting with "* " into a bullet list.
-                Element paragraphElement = getCurrentParagraphElement();
-                String content = elementToHTML(paragraphElement);
-                if (content.matches("(?ims)\\s*<p[^>]*>\\s*\\* .*</p>\\s*")) {
-                    final String newContent = "<ul><li>"
-                            + content.replaceAll("(?ims)\\s*<p[^>]*>\\s*\\* (.*)</p>\\s*", "$1") + "</li></ul>";
-                    getSHTMLDocument().setOuterHTML(paragraphElement, newContent);
-                    setCaretPosition(paragraphElement.getEndOffset() - 1);
-                    return;
-                }
-                // Turn paragraph starting with "1. " into a numbered list.
-                paragraphElement = getCurrentParagraphElement();
-                content = elementToHTML(paragraphElement);
-                if (content.matches("(?ims)\\s*<p[^>]*>\\s*1\\. .*</p>\\s*")) {
-                    final String newContent = "<ol><li>"
-                            + content.replaceAll("(?ims)\\s*<p[^>]*>\\s*1\\. (.*)</p>\\s*", "$1") + "</li></ol>";
-                    getSHTMLDocument().setOuterHTML(paragraphElement, newContent);
-                    setCaretPosition(paragraphElement.getEndOffset() - 1);
-                    return;
-                }
                 // if we are in a list, create a new item
                 final Element listItemElement = listManager.getListItemElement(caretPosition);
                 if (listItemElement != null) {
