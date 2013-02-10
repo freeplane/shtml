@@ -1989,8 +1989,12 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     @Override
     public void replaceSelection(String content) {
-    	final String expandedContent = content.replaceAll(TAB, TAB_REPLACEMENT);
-	    super.replaceSelection(expandedContent);
+    	if(content != null){
+    		final String expandedContent = content.replaceAll(TAB, TAB_REPLACEMENT);
+    		super.replaceSelection(expandedContent);
+    	}
+    	else
+    		super.replaceSelection(content);
     }
 
 	/* ---------- table cell navigation end --------------*/
