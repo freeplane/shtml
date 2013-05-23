@@ -1303,12 +1303,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
     }
 
-    public AttributeSet getMaxAttributes(final int caretPosition) {
-        final Element paragraphElement = getSHTMLDocument().getParagraphElement(caretPosition);
-        final StyleSheet styleSheet = getSHTMLDocument().getStyleSheet();
-        return SHTMLPanelImpl.getMaxAttributes(paragraphElement, styleSheet);
-    }
-
     /**
      * Gets all the attributes that can be found in the element tree
      * starting at the highest parent down to the character element
