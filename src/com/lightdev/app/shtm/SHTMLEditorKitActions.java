@@ -1568,7 +1568,8 @@ class SHTMLEditorKitActions {
             Util.center(parent, dlg);
             dlg.setModal(true);
             //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
-            dlg.setValue(panel.getMaxAttributes(panel.getSHTMLEditorPane(), null));
+            final int caretPosition = panel.getSHTMLEditorPane().getCaretPosition();
+            dlg.setValue(panel.getMaxAttributes(caretPosition));
             dlg.setVisible(true);
             /** if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {
