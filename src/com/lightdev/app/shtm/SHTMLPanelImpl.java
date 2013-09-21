@@ -1179,6 +1179,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
              * to the combo box
              */
             super(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+            setSelectedItem("SansSerif");
         }
 
         boolean ignore() {
