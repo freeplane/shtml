@@ -26,6 +26,7 @@ import java.awt.Container;
 import java.awt.Frame;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -2458,7 +2459,8 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             
             updateActionName(PasteMode.getValueFromPrefs().invert());
-            //putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
+            putValue(AbstractAction.ACCELERATOR_KEY,
+            		KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK | InputEvent.SHIFT_DOWN_MASK));
         }
         
         public void updateActionName(final PasteMode pm)
