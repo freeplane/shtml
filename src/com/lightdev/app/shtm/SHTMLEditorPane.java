@@ -109,6 +109,24 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 	private static final String TAB = "\t";
 	private static final String TAB_REPLACEMENT = "    ";
 
+	private static DataFlavor getSupportedHtmlFlavor(Transferable t) {
+		try {
+//			final DataFlavor prototypeFlavor = new DataFlavor(com.lightdev.app.shtm.HTMLText.class, "HTMLText");
+			final DataFlavor prototypeFlavor = new DataFlavor("text/html; class=java.lang.String");
+
+			for (DataFlavor dataFlavor : t.getTransferDataFlavors())
+				if(dataFlavor.getPrimaryType().equals(prototypeFlavor.getPrimaryType()) 
+				&& dataFlavor.getSubType().equals(prototypeFlavor.getSubType())
+				&& dataFlavor.getRepresentationClass().equals(prototypeFlavor.getRepresentationClass())
+				)
+					return dataFlavor;
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't fetch appropriate text/html DataFlavor!");
+		}
+		return null;
+	}
+
+
 	public enum PasteMode
 	{
 		PASTE_HTML("Paste as HTML"), PASTE_PLAIN_TEXT("Paste as plain-text");
@@ -3366,10 +3384,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                         result = true;
                     }
                     else {
-                        final DataFlavor htmlFlavor = new DataFlavor("text/html; class=java.lang.String");
+                        final DataFlavor htmlFlavor = getSupportedHtmlFlavor(transferable);
                         String stringContent = null;
                         String htmlContent = null;
-                        if (transferable.isDataFlavorSupported(htmlFlavor)
+                        if (htmlFlavor != null
                                 && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                             htmlContent = (String) transferable.getTransferData(htmlFlavor);
                             if (htmlContent.charAt(0) == 65533) {
