@@ -3723,8 +3723,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         setCaretPosition(originalCaretPosition);
         return false;
     }
-    /* (non-Javadoc)
-     * @see javax.swing.JComponent#getTransferHandler()
-     */
-    /* ---------- class fields end -------------- */
+
+	@Override
+	public String getSelectedText() {
+		return super.getSelectedText().replace('\u00a0', ' ');
+	}
 }
