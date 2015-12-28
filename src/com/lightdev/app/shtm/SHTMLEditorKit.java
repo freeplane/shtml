@@ -24,6 +24,8 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import javax.swing.text.BadLocationException;
@@ -248,9 +250,8 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             final Element characterElement = doc.getCharacterElement(i);
             sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
             final int endOffset = characterElement.getEndOffset();
-            final Enumeration attribEntries1 = sasText.getAttributeNames();
-            while (attribEntries1.hasMoreElements()) {
-                final Object entryKey = attribEntries1.nextElement();
+            final ArrayList<?> attributeNames = Collections.list(sasText.getAttributeNames());
+            for (final Object entryKey : attributeNames) {
                 if (attributeName != null && entryKey.equals(attributeName) || attributeName == null
                         && !entryKey.equals(StyleConstants.NameAttribute)) {
                     sasText.removeAttribute(entryKey);
