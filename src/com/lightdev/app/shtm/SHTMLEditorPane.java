@@ -3726,6 +3726,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
 	@Override
 	public String getSelectedText() {
-		return super.getSelectedText().replace('\u00a0', ' ');
+		final String text = super.getSelectedText();
+		return text != null ? text.replace('\u00a0', ' ') : null;
 	}
 }
