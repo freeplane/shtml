@@ -1917,7 +1917,7 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public MoveTableRowDownAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.moveTableRowUpAction);
+            super(SHTMLPanelImpl.moveTableRowDownAction);
             this.panel = panel;
             getProperties();
         }
