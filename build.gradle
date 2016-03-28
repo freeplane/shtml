@@ -1,0 +1,98 @@
+plugins {
+    id "com.jfrog.bintray" version "1.6"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+version = '0.16.14'
+
+repositories {
+    jcenter()
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+	publications = ['simplyhtml'] 
+	pkg {
+        repo = 'freeplane'
+        name = 'simplyhtml'
+        userOrg = 'freeplane'
+        licenses = ['GPL-3.0', 'GPL-2.0']
+        vcsUrl = 'https://github.com/dpolivaev/simplyhtml.git'
+		version {
+                name = project.version
+		}
+    }
+}
+
+dependencies {
+	compile 'javax.help:javahelp:2.0.05',
+			'gnu-regexp:gnu-regexp:1.1.4'  
+}
+
+sourceSets {  
+    main {  
+        java {  
+            srcDir 'src'  
+        }  
+    }  
+    main {  
+        resources {  
+            srcDir 'src'
+			include 'com/lightdev/app/shtm/resources/**'
+			include 'com/lightdev/app/shtm/help/**'
+        }  
+    }  
+} 
+
+// holds classes included into SimplyHTMLHelp.jar so they are to be excluded from SimplyHTML.jar
+ext.helpExcludes = []
+
+// help.jar
+task helpJar(type: Jar) {
+	baseName = 'SimplyHTMLHelp'
+    from(sourceSets.main.output) {  
+        include "com/lightdev/app/shtm/help/**" 
+        project.ext.helpExcludes.addAll(includes)
+    }  
+}
+
+// lib.jar
+task mainJar(type: Jar) {  
+	baseName = 'SimplyHTML'
+    from(sourceSets.main.output) {  
+        exclude project.ext.helpExcludes
+    }
+	manifest {
+	def classPath = (configurations.compile.collect { it.getName() } + helpJar.name).join(' ')
+    attributes(
+		'Implementation-Title': project.name,
+        'Implementation-Version': project.version,
+        'Main-Class': 'com.lightdev.app.shtm.App',
+        'Class-Path': classPath
+		)
+  }	
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        simplyhtml(MavenPublication) {
+            from components.java
+            groupId 'com.lightdev.app.shtm.simplyhtml'
+            artifactId 'SimplyHTML'
+            version project.version
+			artifacts = [mainJar]
+			artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}

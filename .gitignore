@@ -1,3 +1,7 @@
-dist
-/
-bin/
+/dist
+/bin
+/build
+/.gradle
+/.project
+/.classpath
+/.settings
