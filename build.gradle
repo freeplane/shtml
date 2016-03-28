@@ -10,6 +10,7 @@ version = '0.16.14'
 
 repositories {
     jcenter()
+	maven { url "http://dl.bintray.com/freeplane/freeplane" } 
 }
 
 bintray {
