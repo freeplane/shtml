@@ -30,7 +30,8 @@ bintray {
 
 dependencies {
 	compile 'javax.help:javahelp:2.0.05',
-			'gnu-regexp:gnu-regexp:1.1.4'  
+			'gnu-regexp:gnu-regexp:1.1.4',
+			'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.2'  
 }
 
 sourceSets {  
