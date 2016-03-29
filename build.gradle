@@ -6,7 +6,11 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.16.14'
+group 'com.lightdev.app.shtm.simplyhtml'
+version = '0.16.15'
+
+targetCompatibility='1.7'
+sourceCompatibility='1.7'
 
 repositories {
     jcenter()
@@ -32,7 +36,7 @@ bintray {
 dependencies {
 	compile 'javax.help:javahelp:2.0.05',
 			'gnu-regexp:gnu-regexp:1.1.4',
-			'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.2'  
+			'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.3'  
 }
 
 sourceSets {  
@@ -88,9 +92,7 @@ publishing {
     publications {
         simplyhtml(MavenPublication) {
             from components.java
-            groupId 'com.lightdev.app.shtm.simplyhtml'
             artifactId 'SimplyHTML'
-            version project.version
 			artifacts = [mainJar]
 			artifact sourceJar {
                 classifier "sources"
