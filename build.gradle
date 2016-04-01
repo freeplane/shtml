@@ -89,6 +89,9 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
+build.dependsOn mainJar
+build.dependsOn javadoc
+
 publishing {
     publications {
         simplyhtml(MavenPublication) {
@@ -100,6 +103,12 @@ publishing {
             }
         }
     }
+}
+
+javadoc {
+    enabled = true
+    options.encoding = "UTF-8"
+    failOnError = false
 }
 
 apply from: './dist.gradle'
