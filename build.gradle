@@ -67,7 +67,7 @@ task helpJar(type: Jar) {
 }
 
 // lib.jar
-task mainJar(type: Jar) {  
+task mainJar(type: Jar, dependsOn: classes) {  
 	baseName = 'SimplyHTML'
     from(sourceSets.main.output) {  
         exclude project.ext.helpExcludes
@@ -83,7 +83,7 @@ task mainJar(type: Jar) {
   }	
 }
 
-task sourceJar(type: Jar, dependsOn: classes) {
+task sourceJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
