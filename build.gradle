@@ -89,43 +89,6 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task binDistrib(type: Zip) {
-    archiveName = 'simplyhtml_bin-' + project.version + '.zip'
-    destinationDir = rootDir
-
-    from(configurations.compile)
-    from(mainJar.outputs.files)
-    from(helpJar.outputs.files)
-    from(rootDir) {
-        include('*.txt')
-    }
-
-    into('simplyhtml-' + project.version)
-
-    dependsOn mainJar
-    dependsOn helpJar
-}
-
-task sourceDistrib(type: Tar) {
-    archiveName = 'simplyhtml_src-' + project.version + '.tar.gz'
-    destinationDir = rootDir
-    compression = 'GZIP'
-    includeEmptyDirs = false
-
-    from(rootDir) {
-        include('src/**')
-        include('*.txt')
-        include('*.gradle')
-    }
-
-    into('simplyhtml-' + project.version)
-}
-
-task dist {
-    dependsOn binDistrib
-    dependsOn sourceDistrib
-}
-
 publishing {
     publications {
         simplyhtml(MavenPublication) {
@@ -138,3 +101,5 @@ publishing {
         }
     }
 }
+
+apply from: './dist.gradle'
