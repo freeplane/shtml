@@ -73,7 +73,8 @@ task mainJar(type: Jar, dependsOn: classes) {
         exclude project.ext.helpExcludes
     }
 	manifest {
-	def classPath = (configurations.compile.collect { it.getName() } + helpJar.name).join(' ')
+	def classPath = (configurations.compile.collect { it.name } +
+                   helpJar.outputs.files.collect { it.name }).join(' ')
     attributes(
 		'Implementation-Title': project.name,
         'Implementation-Version': project.version,
@@ -86,6 +87,20 @@ task mainJar(type: Jar, dependsOn: classes) {
 task sourceJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+task binDistrib(type: Zip) {
+    from(configurations.compile)
+    from(mainJar.outputs.files)
+    from(helpJar.outputs.files)
+    from(rootDir) {
+        include('*.txt')
+    }
+
+    into('simplyhtml-' + project.version)
+
+    dependsOn mainJar
+    dependsOn helpJar
 }
 
 publishing {
