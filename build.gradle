@@ -84,6 +84,7 @@ task mainJar(type: Jar, dependsOn: classes) {
 }
 
 task sourceJar(type: Jar) {
+    baseName = 'SimplyHTML'
     classifier = 'sources'
     from sourceSets.main.allSource
 }
