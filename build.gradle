@@ -7,7 +7,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 group 'com.lightdev.app.shtm.simplyhtml'
-version = '0.16.15'
+version = '0.16.16'
 
 targetCompatibility='1.7'
 sourceCompatibility='1.7'
@@ -35,8 +35,7 @@ bintray {
 
 dependencies {
 	compile 'javax.help:javahelp:2.0.05',
-			'gnu-regexp:gnu-regexp:1.1.4',
-			'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.3'  
+          'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.3'  
 }
 
 sourceSets {  

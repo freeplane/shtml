@@ -295,9 +295,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         */
     }
 
-    private static gnu.regexp.RE pattern1 = null;
-    private static gnu.regexp.RE pattern2 = null;
-
     /* (non-Javadoc)
     * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
     */
@@ -315,30 +312,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /**
        * Convenience method for setting the document text
-       * contains hack around JDK bug 4799813
-       * see http://developer.java.sun.com/developer/bugParade/bugs/4799813.html
-       * regression in 1.4.x, to be fixed in 1.5
-       * When setting the text to be "&amp; footext", it becomes "&amp;footext" (space disappears)
-       * same ocurrs for "&lt;/a&gt; &amp;amp;", it becomes "&lt;/a&gt;&amp;amp;" (space disappears)
-       * with the hack it now does not occur anymore.
        * @param sText the html-text of the document
        */
     public void setText(String sText) {
-        try {
-            if (System.getProperty("java.version").substring(0, 3).equals("1.4")) {
-                if (pattern1 == null) {
-                    pattern1 = new gnu.regexp.RE("(&\\w+;|&#\\d+;)(\\s|&#160;|&nbsp;)(?=<|&\\w+;|&#\\d+;)");
-                }
-                sText = pattern1.substituteAll(sText, "$1&#160;$3");
-                if (pattern2 == null) {
-                    pattern2 = new gnu.regexp.RE("<(/[^>])>(\\s|&#160;|&nbsp;|\\n\\s+)(?!&#160;)(&\\w+;|&#\\d+;)");
-                }
-                sText = pattern2.substituteAll(sText, "<$1>&#160;$3$4");
-            }
-        }
-        catch (final gnu.regexp.REException ree) {
-            ree.printStackTrace();
-        }
         final SHTMLDocument doc = (SHTMLDocument) getDocument();
         doc.startCompoundEdit();
         if (sText == null || sText.equals("")) {
