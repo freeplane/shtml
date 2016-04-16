@@ -41,7 +41,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.dpolivaev.mnemonicsetter.MenuMnemonicSetter;
+import org.dpolivaev.mnemonicsetter.MnemonicSetter;
 
 /**
  * Provides methods to dynamically combine components and resource bundles.
@@ -153,7 +153,7 @@ class DynamicResource {
                 mb.add(m);
             }
         }
-        MenuMnemonicSetter.INSTANCE.setComponentMnemonics(mb);
+        MnemonicSetter.INSTANCE.setComponentMnemonics(mb);
         return mb;
     }
 
@@ -187,7 +187,7 @@ class DynamicResource {
          * store the menu in the menus hashtable for possible later use
          */
         menus.put(key, menu);
-        MenuMnemonicSetter.INSTANCE.setComponentMnemonics(menu.getPopupMenu());
+        MnemonicSetter.INSTANCE.setComponentMnemonics(menu.getPopupMenu());
         return menu;
     }
 
@@ -216,7 +216,7 @@ class DynamicResource {
                 menu.add(mi);
             }
         }
-        MenuMnemonicSetter.INSTANCE.setComponentMnemonics(menu);
+        MnemonicSetter.INSTANCE.setComponentMnemonics(menu);
         return menu;
     }
 
