@@ -1083,6 +1083,10 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             action.putValue(Action.SHORT_DESCRIPTION, toolTip);
         }
         
+        final String accelerator = Util.getResourceString(textResources, cmd + DynamicResource.acceleratorSuffix);
+        if (accelerator != null) {
+            action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
+        }
     }
 
     /* ---------- undo/redo implementation ----------------------- */

@@ -276,7 +276,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.fontBoldAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_MASK));
             SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontBoldAction);
         }
 
@@ -734,7 +733,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.fontUnderlineAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_U, KeyEvent.CTRL_MASK));
             SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontUnderlineAction);
         }
 
@@ -1032,7 +1030,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             setEnabled(false);
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -1117,7 +1114,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.clearFormatAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_MASK));
             SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
         }
 
@@ -1167,7 +1163,6 @@ class SHTMLEditorKitActions {
         public MultipleDocFindReplaceAction(final SHTMLPanelMultipleDocImpl panel) {
             super(SHTMLPanelMultipleDocImpl.findReplaceAction);
             this.panel = panel;
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
             getProperties();
         }
 
@@ -1253,7 +1248,6 @@ class SHTMLEditorKitActions {
         public SingleDocFindReplaceAction(final SHTMLPanelImpl panel) {
             super(SHTMLPanelImpl.findReplaceAction);
             this.panel = panel;
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_MASK));
             getProperties();
         }
 
@@ -2067,7 +2061,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.fontItalicAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_MASK));
             SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
         }
 
@@ -2176,7 +2169,6 @@ class SHTMLEditorKitActions {
             super(SHTMLPanelImpl.nextTableCellAction);
             this.panel = panel;
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0));
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2218,7 +2210,6 @@ class SHTMLEditorKitActions {
             super(SHTMLPanelImpl.prevTableCellAction);
             this.panel = panel;
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_MASK));
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2311,7 +2302,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             setEnabled(false);
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2353,7 +2343,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.copyAction);
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2387,7 +2376,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.cutAction);
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2421,7 +2409,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.pasteAction);
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2457,10 +2444,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditPasteOtherAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            
             updateActionName(PasteMode.getValueFromPrefs().invert());
-            putValue(AbstractAction.ACCELERATOR_KEY,
-            		KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK | InputEvent.SHIFT_DOWN_MASK));
         }
         
         public void updateActionName(final PasteMode pm)
@@ -2554,7 +2538,6 @@ class SHTMLEditorKitActions {
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.selectAllAction);
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2816,7 +2799,6 @@ class SHTMLEditorKitActions {
             super(SHTMLPanelImpl.exitAction);
             this.panel = panel;
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2853,7 +2835,6 @@ class SHTMLEditorKitActions {
             super(SHTMLPanelMultipleDocImpl.newAction);
             this.panel = panel;
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK));
         }
 
         /** create a new empty document and show it */
@@ -2885,7 +2866,6 @@ class SHTMLEditorKitActions {
             super(SHTMLPanelMultipleDocImpl.openAction);
             this.panel = panel;
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -3012,7 +2992,6 @@ class SHTMLEditorKitActions {
             super(SHTMLPanelMultipleDocImpl.saveAction);
             this.panel = panel;
             getProperties();
-            putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
         }
 
         public void actionPerformed(final ActionEvent ae) {
