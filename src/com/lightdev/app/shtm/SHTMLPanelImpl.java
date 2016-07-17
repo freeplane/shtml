@@ -1075,6 +1075,10 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
   }
 
+    public boolean isWYSIWYGEditorActive() {
+        return getDocumentPane() != null && editorPane != null && getDocumentPane().getSelectedTab() == DocumentPane.VIEW_TAB_LAYOUT;
+    }
+
     public boolean isHtmlEditorActive() {
         return getDocumentPane() != null && getDocumentPane().getSelectedTab() == DocumentPane.VIEW_TAB_HTML;
     }

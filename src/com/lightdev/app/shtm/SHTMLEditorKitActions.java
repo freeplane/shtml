@@ -110,16 +110,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -147,17 +138,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
-            if (editor != null && editor.getCurrentTableCell() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -210,16 +191,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -247,16 +219,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -319,11 +282,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(panel.getSHTMLEditorPane() != null);
+        	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         /**
@@ -494,11 +453,7 @@ class SHTMLEditorKitActions {
 
         /** update the action's state */
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(panel.getSHTMLEditorPane() != null);
+        	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         /** get image, etc. from resource */
@@ -527,16 +482,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -612,16 +558,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -655,16 +592,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -704,16 +632,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -774,16 +693,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         /**
@@ -847,11 +757,11 @@ class SHTMLEditorKitActions {
 
 		public void actionPerformed(final ActionEvent e) {
             final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
-            if (editorPane != null) {
+            if (panel.isWYSIWYGEditorActive()) {
                 final AttributeSet color = getColor();
 				editorPane.applyAttributes(color, false); // apply the color setting to the editor
+				panel.updateActions();
             }
-            panel.updateActions();
         }
 		
 		abstract protected AttributeSet getColor();
@@ -959,16 +869,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1110,12 +1011,8 @@ class SHTMLEditorKitActions {
             panel.updateActions();
         }
 
-        public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            setEnabled(panel.getUndo().canUndo());
+        public void update() { this.setEnabled(panel.isWYSIWYGEditorActive());
+            setEnabled(panel.isWYSIWYGEditorActive() && panel.getUndo().canUndo());
         }
 
         public void getProperties() {
@@ -1150,16 +1047,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1180,10 +1068,10 @@ class SHTMLEditorKitActions {
         }
 
 		public void actionPerformed(ActionEvent e) {
-		    final JEditorPane editor = panel.getSHTMLEditorPane();
-		    if(editor == null){
+		    if(!panel.isWYSIWYGEditorActive()){
 		    	return;
 		    }
+		    final JEditorPane editor = panel.getSHTMLEditorPane();
 		    final int selectionStart = editor.getSelectionStart();
 		    final int selectionEnd = editor.getSelectionEnd();
 		    if(selectionStart == selectionEnd){
@@ -1194,16 +1082,7 @@ class SHTMLEditorKitActions {
 	    }
 		
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.isWYSIWYGEditorActive());
         }
    }
 	
@@ -1246,12 +1125,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
-            this.setEnabled(editor != null);
+        	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
     }
 
@@ -1425,16 +1299,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1466,11 +1331,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            setEnabled(panel.getSHTMLEditorPane() != null);
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1502,16 +1363,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1581,16 +1433,7 @@ class SHTMLEditorKitActions {
 		}
 
 		public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+			 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
 
     }
@@ -1705,16 +1548,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1754,16 +1588,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1815,16 +1640,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -1951,16 +1767,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         public void getProperties() {
@@ -1988,16 +1795,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2027,16 +1825,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2064,16 +1853,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2101,16 +1881,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2138,16 +1909,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2175,16 +1937,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2212,16 +1965,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive()  && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2275,16 +2019,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
         /**
@@ -2360,16 +2095,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2401,16 +2127,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if ((panel.getSHTMLEditorPane() != null) && (panel.getSHTMLEditorPane().getCurrentTableCell() != null)) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
 
         public void getProperties() {
@@ -2499,11 +2216,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            setEnabled(panel.getUndo().canRedo());
+        	setEnabled(panel.isWYSIWYGEditorActive() && panel.getUndo().canRedo());
         }
 
         public void getProperties() {
@@ -3478,16 +3191,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null && !panel.getSHTMLDocument().hasStyleRef()) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+        	setEnabled(panel.isWYSIWYGEditorActive() && !panel.getSHTMLDocument().hasStyleRef());
         }
 
         public void getProperties() {
