@@ -220,6 +220,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     @Override
 	public void setUI(TextUI newUI) {
 		super.setUI(newUI);
+		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke('\u0004'), DO_NOTHING);
 		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("control T"), DO_NOTHING);
 		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("control H"), DO_NOTHING);
 	}

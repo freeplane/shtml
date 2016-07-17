@@ -169,9 +169,11 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String fontItalicAction = "fontItalic";
     public static final String fontUnderlineAction = "fontUnderline";
     public static final String fontColorAction = "fontColor";
+    public static final String removeFontColorAction = "removeFontColor";
     public static final String selectedFontColorAction = "selectedFontColor";
     public static final String redFontColorAction = "redFontColor";
     public static final String blueFontColorAction = "blueFontColor";
+    public static final String blackFontColorAction = "blackFontColor";
     public static final String greenFontColorAction = "greenFontColor";
     public static final String helpTopicsAction = "helpTopics";
     public static final String aboutAction = "about";
@@ -731,6 +733,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(redFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redFontColorAction, Color.RED));
         addAction(greenFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenFontColorAction, new Color(0, 0x80, 0)));
         addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, new Color(0, 0, 0xc0)));
+        addAction(blackFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blackFontColorAction, new Color(0, 0, 0)));
+        addAction(removeFontColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeFontColorAction, HTML.Attribute.COLOR, CSS.Attribute.COLOR));
+        
         addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));
         addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,

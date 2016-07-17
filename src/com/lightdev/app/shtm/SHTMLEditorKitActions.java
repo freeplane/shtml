@@ -57,7 +57,9 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
+import javax.swing.text.StyledEditorKit.StyledTextAction;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 import javax.swing.undo.CannotRedoException;
@@ -1165,6 +1167,47 @@ class SHTMLEditorKitActions {
         }
     }
 
+	static public class RemoveStyleAttributeAction extends AbstractAction implements SHTMLAction {
+	    final private Object[] attributes;
+
+	    private final SHTMLPanelImpl panel;
+
+        public RemoveStyleAttributeAction(final SHTMLPanelImpl panel, String name, Object... attributes) {
+	        super(name);
+			this.panel = panel;
+	        this.attributes = attributes;
+	        SHTMLPanelImpl.getActionProperties(this, name);
+        }
+
+		public void actionPerformed(ActionEvent e) {
+		    final JEditorPane editor = panel.getSHTMLEditorPane();
+		    if(editor == null){
+		    	return;
+		    }
+		    final int selectionStart = editor.getSelectionStart();
+		    final int selectionEnd = editor.getSelectionEnd();
+		    if(selectionStart == selectionEnd){
+		    	return;
+		    }
+		    for(Object attribute : attributes)
+		    	SHTMLEditorKit.removeCharacterAttributes((StyledDocument) editor.getDocument(), attribute, selectionStart, selectionEnd - selectionStart);
+	    }
+		
+        public void update() {
+            if (panel.isHtmlEditorActive()) {
+                this.setEnabled(false);
+                return;
+            }
+            if (panel.getSHTMLEditorPane() != null) {
+                this.setEnabled(true);
+            }
+            else {
+                this.setEnabled(false);
+            }
+        }
+   }
+	
+	
     static class ClearFormatAction extends AbstractAction implements SHTMLAction {
         /**
          *
