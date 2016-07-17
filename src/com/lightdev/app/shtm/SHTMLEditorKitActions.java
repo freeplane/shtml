@@ -34,6 +34,8 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
@@ -1472,6 +1474,82 @@ class SHTMLEditorKitActions {
         public void getProperties() {
             SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
+    }
+
+    /**
+     * change a font size setting
+     */
+    static class ChangeFontSizeAction extends AbstractAction implements SHTMLAction {
+    	enum Change{INCREASE(1), DECREASE(-1);
+    		final int changeAmount;
+
+			private Change(int changeAmount) {
+				this.changeAmount = changeAmount;
+			}
+    	};
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+		private Change change;
+
+        ChangeFontSizeAction(final SHTMLPanelImpl panel, String name, Change change ) {
+            super(name);
+            this.panel = panel;
+			this.change = change;
+            SHTMLPanelImpl.getActionProperties(this, name);
+
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
+			final AttributeSet a = panel.getMaxAttributes(editorPane, null);
+			final int size = Util.styleSheet().getFont(a).getSize();
+			int index = 0;
+			for (String availableSizeAsString : SHTMLPanelImpl.FONT_SIZES){
+				final Integer availableSizeAsNumber = Integer.valueOf(availableSizeAsString);
+				if(size < availableSizeAsNumber) {
+					setSize(change == Change.INCREASE ? index + 1 : index);
+					return;
+				}
+				else if(size == availableSizeAsNumber) {
+					setSize(index + change.changeAmount);
+					return;
+				}
+				else {
+					index++;
+					if(index == SHTMLPanelImpl.FONT_SIZES.length && change == Change.DECREASE) {
+						setSize(index - 1);
+						return;
+					}
+				}
+			}
+        }
+
+        private void setSize(int index) {
+        	if(index >= 0 && index < SHTMLPanelImpl.FONT_SIZES.length) {
+                final SimpleAttributeSet set = new SimpleAttributeSet();
+                final String relativeSize = Integer.toString(index + 1);
+                set.addAttribute(HTML.Attribute.SIZE, relativeSize);
+                Util.styleSheet().addCSSAttributeFromHTML(set, CSS.Attribute.FONT_SIZE, relativeSize /*+ "pt"*/);
+                panel.getSHTMLEditorPane().applyAttributes(set, false);
+                panel.updateActions();
+        	}
+		}
+
+		public void update() {
+            if (panel.isHtmlEditorActive()) {
+                this.setEnabled(false);
+                return;
+            }
+            if (panel.getSHTMLEditorPane() != null) {
+                this.setEnabled(true);
+            }
+            else {
+                this.setEnabled(false);
+            }
+        }
+
     }
 
     static class FormatImageAction extends AbstractAction implements SHTMLAction {

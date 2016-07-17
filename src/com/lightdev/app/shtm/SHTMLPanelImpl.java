@@ -34,6 +34,7 @@ import java.util.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
+import com.lightdev.app.shtm.SHTMLEditorKitActions.ChangeFontSizeAction.Change;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetStyleAction;
 import com.lightdev.app.shtm.SHTMLEditorKitActions.SetTagAction;
 import java.util.prefs.*;
@@ -161,6 +162,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String fontAction = "font";
     public static final String fontFamilyAction = "fontFamily";
     public static final String fontSizeAction = "fontSize";
+    public static final String increaseFontSizeAction = "increaseFontSize";
+    public static final String decreaseFontSizeAction = "decreaseFontSize";
     public static final String fontBoldAction = "fontBold";
     public static final String fontStrikethroughAction = "fontStrikethrough";
     public static final String fontItalicAction = "fontItalic";
@@ -701,6 +704,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(fontAction, new SHTMLEditorKitActions.FontAction(this));
         addAction(fontFamilyAction, new SHTMLEditorKitActions.FontFamilyAction(this));
         addAction(fontSizeAction, new SHTMLEditorKitActions.FontSizeAction(this));
+        addAction(increaseFontSizeAction, new SHTMLEditorKitActions.ChangeFontSizeAction(this, increaseFontSizeAction, Change.INCREASE));
+        addAction(decreaseFontSizeAction, new SHTMLEditorKitActions.ChangeFontSizeAction(this, decreaseFontSizeAction, Change.DECREASE));
+        
         addAction(insertTableAction, new SHTMLEditorKitActions.InsertTableAction(this));
         addAction(insertTableRowAction, new SHTMLEditorKitActions.InsertTableRowAction(this, null,
             insertTableRowAction));

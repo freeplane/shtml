@@ -40,11 +40,4 @@ import javax.swing.Action;
 public interface SHTMLAction extends Action {
     /** update the action's state */
     public void update();
-
-    /**
-     * this method should be called from the constructor
-     * of each SHTMLAction and can be used to get
-     * action properties from a resource file
-     */
-    public void getProperties();
 }
