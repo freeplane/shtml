@@ -108,6 +108,7 @@ import javax.swing.text.html.HTMLDocument;
  */
 public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, DragSourceListener, DragGestureListener {
 	
+	private static final String DO_NOTHING = "do nothing";
 	private static final String TAB = "\t";
 	private static final String TAB_REPLACEMENT = "    ";
 
@@ -219,7 +220,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     @Override
 	public void setUI(TextUI newUI) {
 		super.setUI(newUI);
-		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("control T"), "do nothing");
+		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("control T"), DO_NOTHING);
+		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("control H"), DO_NOTHING);
 	}
 
 
