@@ -166,6 +166,10 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String fontItalicAction = "fontItalic";
     public static final String fontUnderlineAction = "fontUnderline";
     public static final String fontColorAction = "fontColor";
+    public static final String selectedFontColorAction = "selectedFontColor";
+    public static final String redFontColorAction = "redFontColor";
+    public static final String blueFontColorAction = "blueFontColor";
+    public static final String greenFontColorAction = "greenFontColor";
     public static final String helpTopicsAction = "helpTopics";
     public static final String aboutAction = "about";
     public static final String gcAction = "gc";
@@ -716,7 +720,11 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(fontBoldAction, new SHTMLEditorKitActions.BoldAction(this));
         addAction(fontItalicAction, new SHTMLEditorKitActions.ItalicAction(this));
         addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
-        addAction(fontColorAction, new SHTMLEditorKitActions.FontColorAction(this));
+        addAction(fontColorAction, new SHTMLEditorKitActions.FontColorByDialogAction(this));
+        addAction(selectedFontColorAction, new SHTMLEditorKitActions.SelectedFontColorAction(this));
+        addAction(redFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redFontColorAction, Color.RED));
+        addAction(greenFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenFontColorAction, new Color(0, 0x80, 0)));
+        addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, new Color(0, 0, 0xc0)));
         addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));
         addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,

@@ -61,6 +61,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.event.CaretEvent;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
@@ -212,7 +214,17 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         initDnd();
     }
     
-    public PasteMode getPasteMode() {
+    
+    
+    @Override
+	public void setUI(TextUI newUI) {
+		super.setUI(newUI);
+		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("control T"), "do nothing");
+	}
+
+
+
+	public PasteMode getPasteMode() {
 		if (forceConstantPasteMode)
 		{ 
 			return pasteMode;

@@ -832,34 +832,43 @@ class SHTMLEditorKitActions {
         }
     }
 
-    static class FontColorAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-        private ColorPanel hiddenColorPanel;
+    abstract static class FontColorAction extends AbstractAction implements SHTMLAction {
+    	protected static ColorPanel hiddenColorPanel = new ColorPanel("Select Color", Color.BLACK, CSS.Attribute.COLOR);
+    	protected final SHTMLPanelImpl panel;
 
-        public FontColorAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.fontColorAction);
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            getProperties();
-            hiddenColorPanel = null;
-        }
+        public FontColorAction(SHTMLPanelImpl panel) {
+			super();
+			this.panel = panel;
+		}
 
-        public void actionPerformed(final ActionEvent e) {
+		public void actionPerformed(final ActionEvent e) {
             final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
             if (editorPane != null) {
-                if (hiddenColorPanel == null) {
-                    hiddenColorPanel = new ColorPanel("Select Color", Color.BLACK, CSS.Attribute.COLOR);
-                }
-                hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane, null));
-                hiddenColorPanel.actionPerformed(null); // show the color chooser
-                editorPane.applyAttributes(hiddenColorPanel.getValue(), false); // apply the color setting to the editor
+                final AttributeSet color = getColor();
+				editorPane.applyAttributes(color, false); // apply the color setting to the editor
             }
             panel.updateActions();
         }
+		
+		abstract protected AttributeSet getColor();
+
+    }
+    
+    static class FontColorByDialogAction extends FontColorAction implements SHTMLAction {
+
+        public FontColorByDialogAction(final SHTMLPanelImpl panel) {
+            super(panel);
+            putValue(Action.NAME, SHTMLPanelImpl.fontColorAction);
+            getProperties();
+        }
+
+		protected AttributeSet getColor() {
+			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
+			hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane, null));
+			hiddenColorPanel.actionPerformed(null); // show the color chooser
+			final AttributeSet color = hiddenColorPanel.getValue();
+			return color;
+		}
 
         public void getProperties() {
             SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontColorAction);
@@ -869,6 +878,57 @@ class SHTMLEditorKitActions {
         }
     }
 
+    static class SelectedFontColorAction extends FontColorAction implements SHTMLAction {
+
+        public SelectedFontColorAction(final SHTMLPanelImpl panel) {
+            super(panel);
+            putValue(Action.NAME, SHTMLPanelImpl.selectedFontColorAction);
+            getProperties();
+        }
+
+		protected AttributeSet getColor() {
+			final Color color = hiddenColorPanel.getColor();
+			final SimpleAttributeSet set = new SimpleAttributeSet();
+			final String colorRGB = "#" + Integer.toHexString(color.getRGB()).substring(2);
+			Util.styleSheet().addCSSAttribute(set,  CSS.Attribute.COLOR, colorRGB);
+			set.addAttribute(HTML.Attribute.COLOR, colorRGB);
+			return set;
+		}
+
+        public void getProperties() {
+            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.selectedFontColorAction);
+        }
+
+        public void update() {
+        }
+    }
+    
+    static class FixedFontColorAction extends FontColorAction implements SHTMLAction {
+
+        private Color color;
+
+		public FixedFontColorAction(final SHTMLPanelImpl panel, String name, Color color) {
+            super(panel);
+            putValue(Action.NAME, name);
+            getProperties();
+			this.color = color;
+        }
+
+		protected AttributeSet getColor() {
+			final SimpleAttributeSet set = new SimpleAttributeSet();
+			final String colorRGB = "#" + Integer.toHexString(color.getRGB()).substring(2);
+			Util.styleSheet().addCSSAttribute(set,  CSS.Attribute.COLOR, colorRGB);
+			set.addAttribute(HTML.Attribute.COLOR, colorRGB);
+			return set;
+		}
+		
+	    public void getProperties() {
+            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+        }
+
+        public void update() {
+        }
+    }
     /**
        * action to edit anchors inside a document
        */
@@ -1113,7 +1173,6 @@ class SHTMLEditorKitActions {
             super();
             this.panel = panel;
             putValue(Action.NAME, SHTMLPanelImpl.clearFormatAction);
-            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
         }
 
