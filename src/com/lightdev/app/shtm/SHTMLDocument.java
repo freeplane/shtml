@@ -439,6 +439,7 @@ public class SHTMLDocument extends HTMLDocument {
         boolean emptyDocument;
         private boolean paragraphInserted;
         private boolean inBody;
+        private int inPreLevel = 0;
         private boolean paragraphCreated;
         private boolean isParagraphTag;
 
@@ -470,6 +471,13 @@ public class SHTMLDocument extends HTMLDocument {
             else if (inBody) {
                 isParagraphTag = isParagraphTag(tag);
                 if (isParagraphTag) {
+                	if(HTML.Tag.PRE.equals(tag)) {
+						inPreLevel++;
+	                	if(inPreLevel > 1)
+	                		return;
+					}
+                	else if(inPreLevel >= 1)
+                		return;
                     if (paragraphCreated && !paragraphInserted) {
                         insertParagraphEndTag(pos);
                     }
@@ -559,8 +567,8 @@ public class SHTMLDocument extends HTMLDocument {
          * Handles end tag. If a SPAN tag is directed to this method, end its action,
          * otherwise, let HTMLDocument.HTMLReader do the work
          */
-        public void handleEndTag(final HTML.Tag t, final int pos) {
-            if (t == HTML.Tag.BODY) {
+        public void handleEndTag(final HTML.Tag tag, final int pos) {
+            if (tag == HTML.Tag.BODY) {
                 if (paragraphCreated) {
                     insertParagraphEndTag(pos);
                 }
@@ -575,13 +583,16 @@ public class SHTMLDocument extends HTMLDocument {
                     super.handleText(" ".toCharArray(), pos);
                     super.handleEndTag(HTML.Tag.P, pos);
                 }
-                super.handleEndTag(t, pos);
+                super.handleEndTag(tag, pos);
             }
-            else if (t == HTML.Tag.SPAN && !keepSpanTag) {
+            else if (tag == HTML.Tag.SPAN && !keepSpanTag) {
                 handleEndSpan();
             }
             else {
-                super.handleEndTag(t, pos);
+            	if(HTML.Tag.PRE.equals(tag) && inPreLevel > 0)
+            		inPreLevel--;
+            	if(inPreLevel == 0 || ! isParagraphTag(tag))
+            		super.handleEndTag(tag, pos);
             }
         }
 
