@@ -61,7 +61,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
 import javax.swing.event.CaretEvent;
-import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

@@ -19,15 +19,11 @@
 package com.lightdev.app.shtm;
 
 import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;

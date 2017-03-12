@@ -51,13 +51,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.MutableComboBoxModel;
-import javax.swing.RootPaneContainer;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
-
 import com.lightdev.app.shtm.SHTMLPanel;
 import com.lightdev.app.shtm.Util;
 
