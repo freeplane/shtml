@@ -19,12 +19,15 @@
  */
 package com.lightdev.app.shtm;
 
+import javax.swing.Icon;
+
 /**
  * interface for getting text based resources
  * 
  *  * @author Dimitri Polivaev
  * 14.01.2007
  */
-public interface TextResources {
+public interface UIResources {
     String getString(String pKey);
+	Icon getIcon(String name);
 }

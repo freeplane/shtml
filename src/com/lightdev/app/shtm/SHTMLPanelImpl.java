@@ -73,27 +73,28 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /** single instance of a dynamic resource for use by all */
     public DynamicResource dynRes = new DynamicResource();
     /** SimplyHTML's main resource bundle (plug-ins use their own) */
-    private static TextResources textResources = null;
+    private static UIResources uiResources = null;
 
-    public static TextResources getResources() {
-        if (textResources == null) {
-            textResources = SHTMLPanelImpl.readDefaultResources();
+    public static UIResources getUiResources() {
+        if (uiResources == null) {
+        	setInternalUiResources();
         }
-        return textResources;
+        return uiResources;
     }
 
     /** the plug-in manager of SimplyHTML */
     public static PluginManager pluginManager; // = new PluginManager(mainFrame);
     protected ActionListener openHyperlinkHandler = null;
 
-    public static void setTextResources(final TextResources textResources) {
-        if (SHTMLPanelImpl.textResources != null) {
-            return;
-        }
-        SHTMLPanelImpl.textResources = textResources != null ? textResources : SHTMLPanelImpl.readDefaultResources();
+    public static void setUiResources(final UIResources uiResources) {
+        SHTMLPanelImpl.uiResources = uiResources;
     }
 
-    private static TextResources readDefaultResources() {
+    public static void setInternalUiResources() {
+        SHTMLPanelImpl.uiResources = SHTMLPanelImpl.readDefaultResources();
+    }
+
+    private static UIResources readDefaultResources() {
         try {
             final String propsLoc = "com/lightdev/app/shtm/resources/SimplyHTML_common.properties";
             final URL defaultPropsURL = ClassLoader.getSystemResource(propsLoc);
@@ -104,7 +105,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             in.close();
             final ResourceBundle resourceBundle = ResourceBundle.getBundle(
                 "com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
-            return new DefaultTextResources(resourceBundle, props);
+            return new InternalUiResources(resourceBundle, props);
         }
         catch (final Exception ex) {
             Util.errMsg(null, "resources not found", ex);
@@ -242,8 +243,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         initActions();
         if(actionBuilder != null)
         	actionBuilder.initActions(this);
-        menuBar = dynRes.createMenubar(textResources, "menubar");
-        editorPopup = dynRes.createPopupMenu(textResources, "popup");
+        menuBar = dynRes.createMenubar(uiResources, "menubar");
+        editorPopup = dynRes.createPopupMenu(uiResources, "popup");
         setJMenuBar(menuBar);
         customizeFrame();
         initAppTempDir();
@@ -269,7 +270,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     public JMenuItem newActionMenuItem(final String actionName) {
-        return dynRes.createMenuItem(SHTMLPanelImpl.getResources(), actionName);
+        return dynRes.createMenuItem(SHTMLPanelImpl.getUiResources(), actionName);
     }
 
     public Action getAction(final String actionName) {
@@ -592,7 +593,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             if (pluginMenu != null) {
                 Icon menuIcon = pluginMenu.getIcon();
                 if (menuIcon == null) {
-                    final URL url = DynamicResource.getResource(textResources, emptyIcon);
+                    final URL url = DynamicResource.getResource(uiResources, emptyIcon);
                     if (url != null) {
                         menuIcon = new ImageIcon(url);
                         pluginMenu.setIcon(new ImageIcon(url));
@@ -605,7 +606,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 if (helpMenu.getSubElements().length > 0) {
                     Icon menuIcon = helpMenu.getIcon();
                     if (menuIcon == null) {
-                        final URL url = DynamicResource.getResource(textResources, emptyIcon);
+                        final URL url = DynamicResource.getResource(uiResources, emptyIcon);
                         if (url != null) {
                             menuIcon = new ImageIcon(url);
                             helpMenu.setIcon(new ImageIcon(url));
@@ -877,7 +878,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * @return the created tool bar
      */
     JToolBar createToolBar(final String nm) {
-        final String[] itemKeys = Util.tokenize(Util.getResourceString(textResources, nm), " ");
+        final String[] itemKeys = Util.tokenize(Util.getResourceString(uiResources, nm), " ");
         final JToolBar toolBar = new JToolBar();
         toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
         for (int i = 0; i < itemKeys.length; i++) {
@@ -935,7 +936,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 if (itemKey.equalsIgnoreCase(helpTopicsAction)) {
                     newButton = SHTMLHelpBroker.createHelpButton("item15");
                     final Icon icon = DynamicResource
-                        .getIconForCommand(SHTMLPanelImpl.getResources(), helpTopicsAction);
+                        .getIconForCommand(SHTMLPanelImpl.getUiResources(), helpTopicsAction);
                     newButton.setIcon(icon);
                     newButton.setToolTipText(Util.getResourceString(helpTopicsAction + DynamicResource.toolTipSuffix));
                     toolBar.add(newButton);
@@ -953,7 +954,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         //newButton.setActionCommand("");
                         newButton.setBorderPainted(false);
                         action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
-                        final Icon si = DynamicResource.getIconForName(textResources, action.getValue(Action.NAME)
+                        final Icon si = DynamicResource.getIconForName(uiResources, action.getValue(Action.NAME)
                                 + DynamicResource.selectedIconSuffix);
                         if (si != null) {
                             newButton.setSelectedIcon(si);
@@ -1071,7 +1072,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * that way, we catch the exception here.
      */
     catch(DocNameMissingException e) {
-      Util.errMsg(this, Util.getResourceString(textResources, "docNameMissingError"), e);
+      Util.errMsg(this, Util.getResourceString(uiResources, "docNameMissingError"), e);
     }
   }
 
@@ -1090,23 +1091,23 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * @param cmd the name of the action to get properties for
      */
     public static void getActionProperties(final Action action, final String cmd) {
-        final Icon icon = DynamicResource.getIconForCommand(textResources, cmd);
+        final Icon icon = DynamicResource.getIconForCommand(uiResources, cmd);
         if (icon != null) {
             action.putValue(Action.SMALL_ICON, icon);
         }
         /*else {
           action.putValue(Action.SMALL_ICON, emptyIcon);
         }*/
-        final String name = Util.getResourceString(textResources, cmd + DynamicResource.labelSuffix);
+        final String name = Util.getResourceString(uiResources, cmd + DynamicResource.labelSuffix);
         if (name != null) {
             action.putValue(Action.NAME, name);
         }
-        final String toolTip = Util.getResourceString(textResources, cmd + DynamicResource.toolTipSuffix);
+        final String toolTip = Util.getResourceString(uiResources, cmd + DynamicResource.toolTipSuffix);
         if (toolTip != null) {
             action.putValue(Action.SHORT_DESCRIPTION, toolTip);
         }
         
-        final String accelerator = Util.getResourceString(textResources, cmd + DynamicResource.acceleratorSuffix);
+        final String accelerator = Util.getResourceString(uiResources, cmd + DynamicResource.acceleratorSuffix);
         if (accelerator != null) {
             action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
         }

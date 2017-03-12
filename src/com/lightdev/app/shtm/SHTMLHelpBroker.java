@@ -73,7 +73,7 @@ class SHTMLHelpBroker {
     static void initJavaHelpItem(final JMenuItem mi, final String helpTopicId) {
         CSH.setHelpIDString(mi, helpTopicId);
         mi.addActionListener(new CSH.DisplayHelpFromSource(SHTMLHelpBroker.getHelpBroker()));
-        mi.setIcon(DynamicResource.getIconForCommand(SHTMLPanelImpl.getResources(), SHTMLPanelImpl.helpTopicsAction));
+        mi.setIcon(DynamicResource.getIconForCommand(SHTMLPanelImpl.getUiResources(), SHTMLPanelImpl.helpTopicsAction));
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
         mi.setEnabled(true);
     }

@@ -19,9 +19,13 @@
  */
 package com.lightdev.app.shtm;
 
+import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * Default implementation of TextResources based on java.util.ResourceBundle
@@ -29,29 +33,40 @@ import java.util.ResourceBundle;
  * @author Dimitri Polivaev
  * 14.01.2007
  */
-public class DefaultTextResources implements TextResources {
+public class InternalUiResources implements UIResources {
     private final Properties properties;
     private final ResourceBundle resources;
 
-    public DefaultTextResources(final ResourceBundle languageResources) {
+    public InternalUiResources(final ResourceBundle languageResources) {
         this(languageResources, null);
     }
 
-    public DefaultTextResources(final ResourceBundle languageResources, final Properties properties) {
+    public InternalUiResources(final ResourceBundle languageResources, final Properties properties) {
         super();
         resources = languageResources;
         this.properties = properties;
     }
 
-    public String getString(final String pKey) {
+    public String getString(final String key) {
         try {
-            return resources.getString(pKey);
+            return resources.getString(key);
         }
         catch (final MissingResourceException ex) {
             if (properties != null) {
-                return properties.getProperty(pKey);
+                return properties.getProperty(key);
             }
-            throw ex;
+            System.err.println("SimplyHTML : Warning : resource is missing: " + key);
+            return key;
         }
     }
+
+	@Override
+	public Icon getIcon(String name) {
+        final URL url = DynamicResource.getResource(this, name);
+        if (url != null) {
+            return new ImageIcon(url);
+        }
+        else
+        	return null;
+	}
 }

@@ -146,7 +146,7 @@ class DynamicResource {
      *
      * @return the created menu bar
      */
-    public SHTMLMenuBar createMenubar(final TextResources resources, final String name) {
+    public SHTMLMenuBar createMenubar(final UIResources resources, final String name) {
         final SHTMLMenuBar mb = new SHTMLMenuBar();
         final String[] menuKeys = Util.tokenize(Util.getResourceString(resources, name), " ");
         for (int i = 0; i < menuKeys.length; i++) {
@@ -167,7 +167,7 @@ class DynamicResource {
      * @param key  the key of the menu definition in the resource file
      * @return the created menu
      */
-    public JMenu createMenu(final TextResources resources, final String key) {
+    public JMenu createMenu(final UIResources resources, final String key) {
         JMenu menu = null;
         String def = Util.getResourceString(resources, key);
         if (def == null) {
@@ -201,7 +201,7 @@ class DynamicResource {
      * @param key  the key of the menu definition in the resource file
      * @return the created menu
      */
-    public JPopupMenu createPopupMenu(final TextResources resources, final String key) {
+    public JPopupMenu createPopupMenu(final UIResources resources, final String key) {
         JPopupMenu menu = null;
         String def = Util.getResourceString(resources, key);
         if (def == null) {
@@ -234,7 +234,7 @@ class DynamicResource {
      *      with the new menu item
      * @return the created menu item
      */
-    public JMenuItem createMenuItem(final TextResources resources, final String cmd) {
+    public JMenuItem createMenuItem(final UIResources resources, final String cmd) {
         /**
          * create a new menu item with the appropriate label from the
          * resource file. This label later is set from the action this
@@ -305,8 +305,7 @@ class DynamicResource {
      * @param nm  the key of the string
      * @return the string for the given key or null if not found
      */
-    static public String getResourceString(final TextResources resources, final String key) {
-        try {
+    static public String getResourceString(final UIResources resources, final String key) {
             //System.out.println("getResourceString nm=" + nm);
             if (resources != null) {
                 return resources.getString(key);
@@ -314,11 +313,6 @@ class DynamicResource {
             System.err.println("SimplyHTML : Warning : resources are null.");
             new Throwable("Dummy").printStackTrace();
             return key;
-        }
-        catch (final MissingResourceException mre) {
-            System.err.println("SimplyHTML : Warning : resource is missing: " + key);
-            return key;
-        }
     }
 
     /**
@@ -440,18 +434,12 @@ class DynamicResource {
      * @return the icon for that command or null, if none is present
      *        for this command
      */
-    static public Icon getIconForCommand(final TextResources resources, final String cmd) {
+    static public Icon getIconForCommand(final UIResources resources, final String cmd) {
         return DynamicResource.getIconForName(resources, cmd + imageSuffix);
     }
 
-    static public Icon getIconForName(final TextResources resources, final String name) {
-        Icon icon = null;
-        final URL url = DynamicResource.getResource(resources, name);
-        //System.out.println("getIconForName name=" + name + ", url=" + url);
-        if (url != null) {
-            icon = new ImageIcon(url);
-        }
-        return icon;
+    static public Icon getIconForName(final UIResources resources, final String name) {
+        return resources != null ? resources.getIcon(name) : null;
     }
 
     /**
@@ -466,7 +454,7 @@ class DynamicResource {
      * @param key  the key of the resource in the resource file
      * @return the resource location as a URL
      */
-    static public URL getResource(final TextResources resources, final String key) {
+    static public URL getResource(final UIResources resources, final String key) {
         final String name = Util.getResourceString(resources, key);
         if (name != null/* && !name.endsWith(IMAGE_EMPTY)*/) {
             final URL url = DynamicResource.class.getResource(name);
@@ -484,7 +472,7 @@ class DynamicResource {
      *
      * @return the created tool bar
      */
-    public JToolBar createToolBar(final TextResources resources, final String nm) {
+    public JToolBar createToolBar(final UIResources resources, final String nm) {
         Action action;
         AbstractButton newButton;
         final java.awt.Dimension buttonSize = new java.awt.Dimension(24, 24);

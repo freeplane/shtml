@@ -941,12 +941,12 @@ public class Util {
      * @param nm  the key of the string
      * @return the string for the given key or null if not found
      */
-    static public String getResourceString(final TextResources resources, final String nm) {
+    static public String getResourceString(final UIResources resources, final String nm) {
         return DynamicResource.getResourceString(resources, nm);
     }
 
     static public String getResourceString(final String nm) {
-        final String resourceString = DynamicResource.getResourceString(SHTMLPanelImpl.getResources(), nm);
+        final String resourceString = DynamicResource.getResourceString(SHTMLPanelImpl.getUiResources(), nm);
         return resourceString != null ? resourceString : nm;
     }
 

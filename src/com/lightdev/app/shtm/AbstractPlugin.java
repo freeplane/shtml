@@ -169,18 +169,18 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
                 if (plLoader != null) {
                     final ResourceBundle resourceBundle = ResourceBundle.getBundle(this.getClass().getName(),
                         Locale.getDefault(), plLoader);
-                    textResources = new DefaultTextResources(resourceBundle);
+                    textResources = new InternalUiResources(resourceBundle);
                     //System.out.println("AbstractPlugin plLoader != null, resources=" + resources);
                 }
                 else {
-                    final DefaultTextResources instance = new DefaultTextResources(ResourceBundle.getBundle(this
+                    final InternalUiResources instance = new InternalUiResources(ResourceBundle.getBundle(this
                         .getClass().getName(), Locale.getDefault()));
                     textResources = instance;
                     //System.out.println("AbstractPlugin plLoader == null, resources=" + resources);
                 }
             }
             else {
-                final DefaultTextResources instance = new DefaultTextResources(ResourceBundle.getBundle(this.getClass()
+                final InternalUiResources instance = new InternalUiResources(ResourceBundle.getBundle(this.getClass()
                     .getName(), Locale.getDefault()));
                 textResources = instance;
                 //System.out.println("AbstractPlugin pluginManager = null, resources=" + resources);
@@ -335,7 +335,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
      * @return the string with the given name or null, if none is found
      */
     public String getOwnerResString(final String nm) {
-        return Util.getResourceString(SHTMLPanelImpl.getResources(), nm);
+        return Util.getResourceString(SHTMLPanelImpl.getUiResources(), nm);
     }
 
     /**
@@ -352,7 +352,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
     /* ----------- SimplyHTML plugin interface implementation end --------- */
     /* --------------- class fields start --------------------- */
     /** TextResources of plug-in */
-    public static TextResources textResources;
+    public static UIResources textResources;
     /** constant for active setting in preferences file */
     public static final String PREFSID_PLUGIN_ACTIVE = "Active";
     /** constant for dock location setting in preferences file */

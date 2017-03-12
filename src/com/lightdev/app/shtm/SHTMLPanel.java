@@ -64,8 +64,8 @@ public abstract class SHTMLPanel extends JPanel implements SHTMLPrefsChangeListe
 
     public abstract void setCurrentDocumentContent(String sText);
 
-    public static void setResources(final TextResources resources) {
-        SHTMLPanelImpl.setTextResources(resources);
+    public static void setResources(final UIResources resources) {
+        SHTMLPanelImpl.setUiResources(resources);
     }
     
     public static void setActionBuilder(final ActionBuilder ab){
@@ -78,8 +78,8 @@ public abstract class SHTMLPanel extends JPanel implements SHTMLPrefsChangeListe
 
     public abstract JEditorPane getSourceEditorPane();
 
-    public static TextResources getResources() {
-        return SHTMLPanelImpl.getResources();
+    public static UIResources getResources() {
+        return SHTMLPanelImpl.getUiResources();
     }
 
     abstract public int getCaretPosition();

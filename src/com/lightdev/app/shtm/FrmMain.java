@@ -56,9 +56,9 @@ class FrmMain extends JFrame {
     private SHTMLPanelImpl mainPane;
 
     private FrmMain() {
-        SHTMLPanelImpl.setTextResources(null);
+        SHTMLPanelImpl.setInternalUiResources();
         setIconImage(Toolkit.getDefaultToolkit().createImage(
-            DynamicResource.getResource(SHTMLPanelImpl.getResources(), "appIcon")));
+            DynamicResource.getResource(SHTMLPanelImpl.getUiResources(), "appIcon")));
         setTitle(APP_NAME);
     }
 
