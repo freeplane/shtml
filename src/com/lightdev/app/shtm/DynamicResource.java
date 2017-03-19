@@ -101,8 +101,6 @@ import org.dpolivaev.mnemonicsetter.MnemonicSetter;
 class DynamicResource {
     /** name constant for labels in the resource file */
     public static final String labelSuffix = "Label";
-    /** name constant for action commands in the resource file */
-    private static final String actionSuffix = "Action";
     /** name constant for accelerators in the resource file */
     public static final String acceleratorSuffix = "Accelerator";
     /** name constant for indicating image resources in the resource file */
@@ -242,7 +240,7 @@ class DynamicResource {
          */
         JMenuItem mi;
         mi = new JMenuItem();
-        String astr = Util.getResourceString(resources, cmd + actionSuffix);
+        String astr = Util.getResourceString(resources, cmd + labelSuffix);
         if (astr == null) {
             astr = cmd;
         }

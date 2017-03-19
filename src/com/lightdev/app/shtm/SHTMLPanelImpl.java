@@ -1098,10 +1098,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         /*else {
           action.putValue(Action.SMALL_ICON, emptyIcon);
         }*/
-        final String name = Util.getResourceString(uiResources, cmd + DynamicResource.labelSuffix);
-        if (name != null) {
-            action.putValue(Action.NAME, name);
-        }
+        action.putValue(Action.NAME, cmd);
         final String toolTip = Util.getResourceString(uiResources, cmd + DynamicResource.toolTipSuffix);
         if (toolTip != null) {
             action.putValue(Action.SHORT_DESCRIPTION, toolTip);
