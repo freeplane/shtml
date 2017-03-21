@@ -95,7 +95,7 @@ public abstract class SHTMLPanel extends JPanel implements SHTMLPrefsChangeListe
      * Returns a new menu item for a named action of SimplyHTML. (Can be used for building custom
      * popup menu, or for invoking the action externally in another way.)
      */
-    public abstract JMenuItem newActionMenuItem(String actionName);
+    public abstract JMenuItem createActionMenuItem(String actionName);
 
     /**
      * Switches between the rich text view and the source view, given

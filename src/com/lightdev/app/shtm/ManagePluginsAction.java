@@ -80,6 +80,6 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
     }
 
     public void getProperties() {
-        SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
+        SHTMLPanelImpl.configureActionProperties(this, (String) getValue(Action.NAME));
     }
 }

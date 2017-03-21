@@ -76,9 +76,9 @@ class SHTMLEditorKitActions {
         private boolean ignoreActions = false;
 
         public SetStyleAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.setStyleAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.setStyleAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -101,10 +101,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -117,9 +113,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public AppendTableColAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.appendTableColAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.appendTableColAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -128,10 +124,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -149,16 +141,14 @@ class SHTMLEditorKitActions {
         private String tag = null;
 
         public SetTagAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.setTagAction);
-            this.panel = panel;
-            getProperties();
+        	this(panel, null);            
         }
 
         public SetTagAction(final SHTMLPanelImpl panel, final String tag) {
-            super(SHTMLPanelImpl.setTagAction);
+            super();
             this.panel = panel;
             this.tag = tag;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.setTagAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -183,9 +173,6 @@ class SHTMLEditorKitActions {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
 
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -198,9 +185,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public AppendTableRowAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.appendTableRowAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.appendTableRowAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -209,10 +196,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -230,9 +213,8 @@ class SHTMLEditorKitActions {
             //Action act = new StyledEditorKit.BoldAction();
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.fontBoldAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontBoldAction);
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontBoldAction);
         }
 
         /**
@@ -264,10 +246,6 @@ class SHTMLEditorKitActions {
               putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
             }*/
             panel.updateActions();
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
         }
 
         public void update() {
@@ -355,13 +333,13 @@ class SHTMLEditorKitActions {
          */
         public ApplyCSSAttributeAction(final SHTMLPanelImpl panel, final String actionName, final Object attributeName,
                                        final Object attributeValue, final boolean applyToParagraph) {
-            super(actionName);
+            super();
             this.panel = panel;
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             this.attributeName = attributeName;
             this.attributeValue = attributeValue;
             this.applyToParagraph = applyToParagraph;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, actionName);
         }
 
         /**
@@ -444,11 +422,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        /** get image, etc. from resource */
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -461,9 +434,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public DeleteTableColAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.deleteTableColAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.deleteTableColAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -472,10 +445,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -494,9 +463,9 @@ class SHTMLEditorKitActions {
         private JFrame elementTreeFrame = null;
 
         public ShowElementTreeAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.elemTreeAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.elemTreeAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -521,10 +490,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -537,9 +502,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public DeleteTableRowAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.deleteTableRowAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.deleteTableRowAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -548,10 +513,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -566,10 +527,10 @@ class SHTMLEditorKitActions {
         private final HTML.Tag listTag;
 
         public ToggleListAction(final SHTMLPanelImpl panel, final String name, final HTML.Tag listTag) {
-            super(name);
+            super();
             this.panel = panel;
             this.listTag = listTag;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, name);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -583,10 +544,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -599,9 +556,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public DocumentTitleAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.documentTitleAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.documentTitleAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -623,10 +580,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /*
@@ -643,9 +596,8 @@ class SHTMLEditorKitActions {
             //Action act = new StyledEditorKit.BoldAction();
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.fontUnderlineAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontUnderlineAction);
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontUnderlineAction);
         }
 
         /**
@@ -676,11 +628,6 @@ class SHTMLEditorKitActions {
             }
             panel.updateActions();
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontUnderlineAction);
-        }
-
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
@@ -761,8 +708,7 @@ class SHTMLEditorKitActions {
 
         public FontColorByDialogAction(final SHTMLPanelImpl panel) {
             super(panel);
-            putValue(Action.NAME, SHTMLPanelImpl.fontColorAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontColorAction);
         }
 
 		protected AttributeSet getColor() {
@@ -773,10 +719,6 @@ class SHTMLEditorKitActions {
 			return color;
 		}
 
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontColorAction);
-        }
-
         public void update() {
         }
     }
@@ -785,8 +727,7 @@ class SHTMLEditorKitActions {
 
         public SelectedFontColorAction(final SHTMLPanelImpl panel) {
             super(panel);
-            putValue(Action.NAME, SHTMLPanelImpl.selectedFontColorAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.selectedFontColorAction);
         }
 
 		protected AttributeSet getColor() {
@@ -798,10 +739,6 @@ class SHTMLEditorKitActions {
 			return set;
 		}
 
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.selectedFontColorAction);
-        }
-
         public void update() {
         }
     }
@@ -812,8 +749,7 @@ class SHTMLEditorKitActions {
 
 		public FixedFontColorAction(final SHTMLPanelImpl panel, String name, Color color) {
             super(panel);
-            putValue(Action.NAME, name);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, name);
 			this.color = color;
         }
 
@@ -824,12 +760,8 @@ class SHTMLEditorKitActions {
 			set.addAttribute(HTML.Attribute.COLOR, colorRGB);
 			return set;
 		}
-		
-	    public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
 
-        public void update() {
+		public void update() {
         }
     }
     /**
@@ -842,9 +774,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public EditAnchorsAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.editAnchorsAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.editAnchorsAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -860,10 +792,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -876,9 +804,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public EditLinkAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.editLinkAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.editLinkAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -917,10 +845,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -933,9 +857,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public OpenLinkAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.openLinkAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.openLinkAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -964,10 +888,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -980,10 +900,10 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public UndoAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.undoAction);
+            super();
             this.panel = panel;
             setEnabled(false);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.undoAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -1004,9 +924,6 @@ class SHTMLEditorKitActions {
             setEnabled(panel.isWYSIWYGEditorActive() && panel.getUndo().canUndo());
         }
 
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1019,9 +936,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public EditNamedStyleAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.editNamedStyleAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.editNamedStyleAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1038,10 +955,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
 	static public class RemoveStyleAttributeAction extends AbstractAction implements SHTMLAction {
@@ -1053,7 +966,7 @@ class SHTMLEditorKitActions {
 	        super(name);
 			this.panel = panel;
 	        this.attributes = attributes;
-	        SHTMLPanelImpl.getActionProperties(this, name);
+	        SHTMLPanelImpl.configureActionProperties(this, name);
         }
 
 		public void actionPerformed(ActionEvent e) {
@@ -1085,8 +998,7 @@ class SHTMLEditorKitActions {
         public ClearFormatAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.clearFormatAction);
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.clearFormatAction);
         }
 
         /**
@@ -1108,11 +1020,6 @@ class SHTMLEditorKitActions {
             }
             panel.updateActions();
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.clearFormatAction);
-        }
-
         public void update() {
         	 this.setEnabled(panel.isWYSIWYGEditorActive());
         }
@@ -1128,9 +1035,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelMultipleDocImpl panel;
 
         public MultipleDocFindReplaceAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.findReplaceAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelMultipleDocImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.findReplaceAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1159,9 +1066,6 @@ class SHTMLEditorKitActions {
             }
         }
 
-        public void getProperties() {
-            SHTMLPanelMultipleDocImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
 
         public void getNextDocument(final FindReplaceEvent e) {
             final FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
@@ -1213,9 +1117,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public SingleDocFindReplaceAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.findReplaceAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.findReplaceAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1237,10 +1141,6 @@ class SHTMLEditorKitActions {
             else {
                 this.setEnabled(false);
             }
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
 
         public void findReplaceTerminated(final FindReplaceEvent e) {
@@ -1265,9 +1165,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public FontAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.fontAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1290,10 +1190,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1306,9 +1202,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public FontFamilyAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.fontFamilyAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontFamilyAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1322,10 +1218,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1338,9 +1230,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public FontSizeAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.fontSizeAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontSizeAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1353,10 +1245,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1381,7 +1269,7 @@ class SHTMLEditorKitActions {
             super(name);
             this.panel = panel;
 			this.change = change;
-            SHTMLPanelImpl.getActionProperties(this, name);
+            SHTMLPanelImpl.configureActionProperties(this, name);
 
         }
 
@@ -1436,8 +1324,7 @@ class SHTMLEditorKitActions {
         public FormatImageAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.formatImageAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.formatImageAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1483,10 +1370,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1499,9 +1382,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public FormatListAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.formatListAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.formatListAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1539,10 +1422,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1555,9 +1434,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public FormatParaAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.formatParaAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.formatParaAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1579,10 +1458,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1595,9 +1470,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public FormatTableAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.formatTableAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.formatTableAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1631,10 +1506,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1654,9 +1525,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public GarbageCollectionAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.gcAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.gcAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -1665,10 +1536,6 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1681,8 +1548,7 @@ class SHTMLEditorKitActions {
         public InsertImageAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.insertImageAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.insertImageAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1718,10 +1584,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1734,9 +1596,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public InsertTableAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.insertTableAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.insertTableAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1758,10 +1620,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -1774,9 +1632,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public InsertTableColAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.insertTableColAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.insertTableColAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1785,10 +1643,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1803,10 +1657,10 @@ class SHTMLEditorKitActions {
         private final String forcedCellName;
 
         public InsertTableRowAction(final SHTMLPanelImpl panel, final String forcedCellName, final String titleID) {
-            super(titleID);
+            super();
             this.panel = panel;
             this.forcedCellName = forcedCellName;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, titleID);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1815,10 +1669,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1832,9 +1682,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public MoveTableRowUpAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.moveTableRowUpAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.moveTableRowUpAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1843,10 +1693,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1860,9 +1706,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public MoveTableRowDownAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.moveTableRowDownAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.moveTableRowDownAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1871,10 +1717,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1888,9 +1730,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public MoveTableColumnLeftAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.moveTableColumnLeftAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.moveTableColumnLeftAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1899,10 +1741,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1916,9 +1754,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public MoveTableColumnRightAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.moveTableColumnRightAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.moveTableColumnRightAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1927,10 +1765,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1946,7 +1780,7 @@ class SHTMLEditorKitActions {
         public ToggleTableHeaderCellAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, null);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -1955,10 +1789,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive()  && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -1972,9 +1802,8 @@ class SHTMLEditorKitActions {
             //Action act = new StyledEditorKit.BoldAction();
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.fontItalicAction);
             putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontItalicAction);
         }
 
         /**
@@ -2001,10 +1830,6 @@ class SHTMLEditorKitActions {
                 }
             }
             panel.updateActions();
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, SHTMLPanelImpl.fontItalicAction);
         }
 
         public void update() {
@@ -2070,9 +1895,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public NextTableCellAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.nextTableCellAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.nextTableCellAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2086,10 +1911,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -2102,9 +1923,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public PrevTableCellAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.prevTableCellAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.prevTableCellAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2117,10 +1938,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getSHTMLEditorPane().getCurrentTableCell() != null);
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -2146,9 +1963,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public PrintAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.printAction);
-            getProperties();
+            super();
             this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.printAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2168,10 +1985,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -2184,10 +1997,10 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public RedoAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.redoAction);
+            super();
             this.panel = panel;
             setEnabled(false);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.redoAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2207,10 +2020,6 @@ class SHTMLEditorKitActions {
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && panel.getUndo().canRedo());
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /** just adds a normal name to the superclasse's action */
@@ -2223,8 +2032,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditCopyAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.copyAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.copyAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2239,10 +2047,6 @@ class SHTMLEditorKitActions {
             else {
                 setEnabled(false);
             }
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -2256,8 +2060,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditCutAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.cutAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.cutAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2273,10 +2076,6 @@ class SHTMLEditorKitActions {
                 setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /** just adds a normal name to the superclasse's action */
@@ -2289,8 +2088,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditPasteAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.pasteAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.pasteAction);
         }
 
         public void actionPerformed(final ActionEvent e) {
@@ -2305,10 +2103,6 @@ class SHTMLEditorKitActions {
             else {
                 setEnabled(false);
             }
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
     
@@ -2326,6 +2120,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditPasteOtherAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, "pasteOther");
             updateActionName(PasteMode.getValueFromPrefs().invert());
         }
         
@@ -2343,7 +2138,6 @@ class SHTMLEditorKitActions {
         	{
         		throw new RuntimeException("Unknown SHTMLEditorPane.PasteMode: " + pm.toString());
         	}
-        	getProperties();
         	panel.updateActions();
         }
 
@@ -2365,10 +2159,6 @@ class SHTMLEditorKitActions {
                 setEnabled(false);
             }
         }
-
-        public void getProperties() {
-        	SHTMLPanelImpl.getActionProperties(this, "pasteOther");
-        }
     }
 
     static class SHTMLEditPrefsAction extends AbstractAction implements SHTMLAction {
@@ -2380,8 +2170,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditPrefsAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.editPrefsAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.editPrefsAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2403,10 +2192,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     static class SHTMLEditSelectAllAction extends AbstractAction implements SHTMLAction {
@@ -2418,8 +2203,7 @@ class SHTMLEditorKitActions {
         public SHTMLEditSelectAllAction(final SHTMLPanelImpl panel) {
             super();
             this.panel = panel;
-            putValue(Action.NAME, SHTMLPanelImpl.selectAllAction);
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.selectAllAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2439,10 +2223,6 @@ class SHTMLEditorKitActions {
             else {
                 this.setEnabled(false);
             }
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -2466,9 +2246,9 @@ class SHTMLEditorKitActions {
         /** constructor
          * @param panel TODO*/
         public SHTMLFileCloseAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.closeAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.closeAction);
         }
 
         /** close the currently active document, if there is one */
@@ -2609,10 +2389,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -2630,9 +2406,9 @@ class SHTMLEditorKitActions {
         /** constructor
          * @param panel TODO*/
         public SHTMLFileCloseAllAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.closeAllAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.closeAllAction);
         }
 
         /** close all open documents */
@@ -2654,10 +2430,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -2678,9 +2450,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelMultipleDocImpl panel;
 
         public SHTMLFileExitAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelImpl.exitAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.exitAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2700,10 +2472,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /** create a new empty document and show it */
@@ -2714,9 +2482,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelMultipleDocImpl panel;
 
         public SHTMLFileNewAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.newAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.newAction);
         }
 
         /** create a new empty document and show it */
@@ -2731,10 +2499,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /** open an existing document from file and show it */
@@ -2745,9 +2509,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelMultipleDocImpl panel;
 
         public SHTMLFileOpenAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.openAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.openAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2857,10 +2621,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /** save a document */
@@ -2871,9 +2631,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public SHTMLFileSaveAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.saveAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.saveAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2917,10 +2677,6 @@ class SHTMLEditorKitActions {
             }
             this.setEnabled(isEnabled && needsSaving && !saveInProgress);
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     static class SHTMLFileSaveAllAction extends AbstractAction implements SHTMLAction {
@@ -2930,9 +2686,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelMultipleDocImpl panel;
 
         public SHTMLFileSaveAllAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.saveAllAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.saveAllAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -2955,10 +2711,6 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
             }
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -2974,9 +2726,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelMultipleDocImpl panel;
 
         public SHTMLFileSaveAsAction(final SHTMLPanelMultipleDocImpl panel) {
-            super(SHTMLPanelMultipleDocImpl.saveAsAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.saveAsAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -3093,10 +2845,6 @@ class SHTMLEditorKitActions {
             }
             this.setEnabled(isEnabled && !saveInProgress);
         }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
-        }
     }
 
     /**
@@ -3109,9 +2857,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public SHTMLTestAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.testAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.testAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -3119,10 +2867,6 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -3134,9 +2878,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public SHTMLHelpAppInfoAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.aboutAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.aboutAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -3150,10 +2894,6 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 
@@ -3169,9 +2909,9 @@ class SHTMLEditorKitActions {
         private final SHTMLPanelImpl panel;
 
         public SetDefaultStyleRefAction(final SHTMLPanelImpl panel) {
-            super(SHTMLPanelImpl.setDefaultStyleRefAction);
+            super();
             this.panel = panel;
-            getProperties();
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.setDefaultStyleRefAction);
         }
 
         public void actionPerformed(final ActionEvent ae) {
@@ -3181,10 +2921,6 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && !panel.getSHTMLDocument().hasStyleRef());
-        }
-
-        public void getProperties() {
-            SHTMLPanelImpl.getActionProperties(this, (String) getValue(Action.NAME));
         }
     }
 }

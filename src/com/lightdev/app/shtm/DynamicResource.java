@@ -107,8 +107,6 @@ class DynamicResource {
     public static final String imageSuffix = "Image";
     /** name constant for tool tip strings in the resource file */
     public static final String toolTipSuffix = "Tip";
-    /** name constant for selected icon names in the resource file */
-    public static final String selectedIconSuffix = "SelectedIcon";
     /** indicator for menu separators */
     public static final String menuSeparatorKey = "-";
     /** dynamic storage for menu items */
@@ -240,15 +238,11 @@ class DynamicResource {
          */
         JMenuItem mi;
         mi = new JMenuItem();
-        String astr = Util.getResourceString(resources, cmd + labelSuffix);
-        if (astr == null) {
-            astr = cmd;
-        }
-        mi.setActionCommand(astr);
+        mi.setActionCommand(cmd);
         /**
          * connect action and menu item with appropriate listeners
          */
-        final Action a = getAction(astr);
+        final Action a = getAction(cmd);
         if (a != null) {
             final Object aKey = a.getValue(AbstractAction.ACCELERATOR_KEY);
             if (aKey != null) {

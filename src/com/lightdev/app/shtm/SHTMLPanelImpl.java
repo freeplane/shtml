@@ -269,7 +269,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         return menuBar.handleKeyBinding(ks, e, condition, pressed);
     }
 
-    public JMenuItem newActionMenuItem(final String actionName) {
+    public JMenuItem createActionMenuItem(final String actionName) {
         return dynRes.createMenuItem(SHTMLPanelImpl.getUiResources(), actionName);
     }
 
@@ -880,7 +880,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     JToolBar createToolBar(final String nm) {
         final String[] itemKeys = Util.tokenize(Util.getResourceString(uiResources, nm), " ");
         final JToolBar toolBar = new JToolBar();
-        toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
         for (int i = 0; i < itemKeys.length; i++) {
             /** special handling for separators */
             final String itemKey = itemKeys[i];
@@ -890,7 +889,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     protected void createToolbarItem(final JToolBar toolBar, final String itemKey) {
-        final ToggleBorderListener tbl = new ToggleBorderListener();
         final Dimension buttonSize = new Dimension(24, 24);
         final Dimension comboBoxSize = new Dimension(300, 24);
         final Dimension separatorSize = new Dimension(3, 24);
@@ -947,22 +945,10 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                      */
                     final Action action = dynRes.getAction(itemKey);
                     if (action instanceof AttributeComponent) {
-                        newButton = new JToggleButton("", (Icon) action.getValue(Action.SMALL_ICON));
-                        newButton.addMouseListener(tbl);
-                        newButton.setAction(action);
+                        newButton = new JToggleButton(action);
                         newButton.setText("");
-                        //newButton.setActionCommand("");
-                        newButton.setBorderPainted(false);
+                        newButton.setHideActionText(true);
                         action.addPropertyChangeListener(new ToggleActionChangedListener((JToggleButton) newButton));
-                        final Icon si = DynamicResource.getIconForName(uiResources, action.getValue(Action.NAME)
-                                + DynamicResource.selectedIconSuffix);
-                        if (si != null) {
-                            newButton.setSelectedIcon(si);
-                        }
-                        newButton.setMargin(new Insets(0, 0, 0, 0));
-                        newButton.setIconTextGap(0);
-                        newButton.setContentAreaFilled(false);
-                        newButton.setHorizontalAlignment(SwingConstants.CENTER);
                         newButton.setVerticalAlignment(SwingConstants.CENTER);
                         toolBar.add(newButton);
                     }
@@ -976,8 +962,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 newButton.setMinimumSize(buttonSize);
                 newButton.setPreferredSize(buttonSize);
                 newButton.setMaximumSize(buttonSize);
-                newButton.setFocusPainted(false);
-                newButton.setRequestFocusEnabled(false);
                 if (System.getProperty("os.name").equals("Mac OS X")) {
                     newButton.putClientProperty("JButton.buttonType", "segmented");
                     newButton.putClientProperty("JButton.segmentPosition", "middle");
@@ -987,41 +971,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             }
             catch (final java.lang.NoClassDefFoundError e) {
             } //When one of the help components is not there
-        }
-    }
-
-    /**
-     * displays or removes an etched border around JToggleButtons
-    * this listener is registered with.
-    */
-    private class ToggleBorderListener implements MouseListener {
-        private final EtchedBorder border = new EtchedBorder(EtchedBorder.LOWERED);
-        private JToggleButton button;
-
-        public void mouseClicked(final MouseEvent e) {
-        }
-
-        public void mouseEntered(final MouseEvent e) {
-            final Object src = e.getSource();
-            if (src instanceof JToggleButton) {
-                button = (JToggleButton) src;
-                if (button.isEnabled()) {
-                    ((JToggleButton) src).setBorder(border);
-                }
-            }
-        }
-
-        public void mouseExited(final MouseEvent e) {
-            final Object src = e.getSource();
-            if (src instanceof JToggleButton) {
-                ((JToggleButton) src).setBorder(null);
-            }
-        }
-
-        public void mousePressed(final MouseEvent e) {
-        }
-
-        public void mouseReleased(final MouseEvent e) {
         }
     }
 
@@ -1090,7 +1039,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * @param action the action to apply properties to
      * @param cmd the name of the action to get properties for
      */
-    public static void getActionProperties(final Action action, final String cmd) {
+    public static void configureActionProperties(final Action action, final String cmd) {
+    	action.putValue(Action.NAME, cmd);
         final Icon icon = DynamicResource.getIconForCommand(uiResources, cmd);
         if (icon != null) {
             action.putValue(Action.SMALL_ICON, icon);
@@ -1098,7 +1048,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         /*else {
           action.putValue(Action.SMALL_ICON, emptyIcon);
         }*/
-        action.putValue(Action.NAME, cmd);
         final String toolTip = Util.getResourceString(uiResources, cmd + DynamicResource.toolTipSuffix);
         if (toolTip != null) {
             action.putValue(Action.SHORT_DESCRIPTION, toolTip);
