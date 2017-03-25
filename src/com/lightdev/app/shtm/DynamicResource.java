@@ -24,13 +24,11 @@ import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.MissingResourceException;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;

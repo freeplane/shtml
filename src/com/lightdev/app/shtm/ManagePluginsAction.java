@@ -46,10 +46,8 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
     public static final String managePluginsAction = "managePlugins";
 
     public ManagePluginsAction() {
-        super(managePluginsAction);
-        getProperties();
-        /*putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-            KeyEvent.VK_N, KeyEvent.CTRL_MASK));*/
+        super();
+        SHTMLPanelImpl.configureActionProperties(this, managePluginsAction);
     }
 
     public void actionPerformed(final ActionEvent e) {
@@ -77,9 +75,5 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
     }
 
     public void update() {
-    }
-
-    public void getProperties() {
-        SHTMLPanelImpl.configureActionProperties(this, (String) getValue(Action.NAME));
     }
 }
