@@ -889,13 +889,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     protected void createToolbarItem(final JToolBar toolBar, final String itemKey) {
-        final Dimension buttonSize = new Dimension(24, 24);
-        final Dimension comboBoxSize = new Dimension(300, 24);
-        final Dimension separatorSize = new Dimension(3, 24);
         JSeparator separator;
         if (itemKey.equals(DynamicResource.menuSeparatorKey)) {
             separator = new JSeparator(JSeparator.VERTICAL);
-            separator.setMaximumSize(separatorSize);
             toolBar.add(separator);
         }
         /**
@@ -904,16 +900,13 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          */
         else if (itemKey.equalsIgnoreCase(fontFamilyAction)) {
             final FontFamilyPicker fontFamily = new FontFamilyPicker();
-            fontFamily.setPreferredSize(new Dimension(180, 23));
             fontFamily.setAction(dynRes.getAction(fontFamilyAction));
-            fontFamily.setMaximumSize(comboBoxSize);
             toolBar.add(fontFamily);
         }
         else if (itemKey.equalsIgnoreCase(fontSizeAction)) {
             final FontSizePicker fontSize = new FontSizePicker();
-            fontSize.setPreferredSize(new Dimension(50, 23));
+            fontSize.setPrototypeDisplayValue("88888");
             fontSize.setAction(dynRes.getAction(fontSizeAction));
-            fontSize.setMaximumSize(comboBoxSize);
             toolBar.add(fontSize);
         }
         else if (itemKey.equalsIgnoreCase(setTagAction)) {
@@ -959,9 +952,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         newButton = toolBar.add(action);
                     }
                 }
-                newButton.setMinimumSize(buttonSize);
-                newButton.setPreferredSize(buttonSize);
-                newButton.setMaximumSize(buttonSize);
                 if (System.getProperty("os.name").equals("Mac OS X")) {
                     newButton.putClientProperty("JButton.buttonType", "segmented");
                     newButton.putClientProperty("JButton.segmentPosition", "middle");
