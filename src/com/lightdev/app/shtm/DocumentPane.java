@@ -566,8 +566,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             throws IOException {
         String name;
         Object elem;
-        final Vector srcNames = Util.getStyleNames(sourceStyleSheet);
-        final Vector destNames = Util.getStyleNames(destinationStyleSheet);
+        final Vector<Object> srcNames = Util.getStyleNames(sourceStyleSheet);
+        final Vector<Object> destNames = Util.getStyleNames(destinationStyleSheet);
         final StringWriter sw = new StringWriter();
         final StringBuffer buf = sw.getBuffer();
         final CSSWriter cssWriter = new CSSWriter(sw, null);
@@ -806,7 +806,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                 break;
         }
         EventQueue.invokeLater(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 setHtmlChanged(true);
                 setDocumentChanged(false);
             }
@@ -814,7 +815,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     }
 
     /* ----------------- changeListener implementation start ---------------------- */
-    public void stateChanged(final ChangeEvent e) {
+    @Override
+	public void stateChanged(final ChangeEvent e) {
         final Object src = e.getSource();
         if (src.equals(paneHoldingScrollPanes)) {
             switch (getSelectedTab()) {
@@ -835,7 +837,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * listens to inserts into the document to track whether or not the document
      * needs to be saved.
      */
-    public void insertUpdate(final DocumentEvent e) {
+    @Override
+	public void insertUpdate(final DocumentEvent e) {
         setHtmlChanged(true);
         setDocumentChanged(true);
     }
@@ -844,7 +847,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * listens to removes from the document to track whether or not the document
      * needs to be saved.
      */
-    public void removeUpdate(final DocumentEvent e) {
+    @Override
+	public void removeUpdate(final DocumentEvent e) {
         setHtmlChanged(true);
         setDocumentChanged(true);
     }
@@ -853,7 +857,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * listens to changes on the document to track whether or not the document
      * needs to be saved.
      */
-    public void changedUpdate(final DocumentEvent e) {
+    @Override
+	public void changedUpdate(final DocumentEvent e) {
         //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
         if (getSelectedTab() == VIEW_TAB_LAYOUT) {
             editorPane.updateInputAttributes();
@@ -881,7 +886,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     }
 
     /** listeners for DocumentPaneEvents */
-    private final Vector dpListeners = new Vector();
+    private final Vector<DocumentPaneListener> dpListeners = new Vector<>();
 
     /**
      * add a DocumentPaneListener to this Document
@@ -908,9 +913,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * fire a DocumentPaneEvent to all registered DocumentPaneListeners
      */
     public void fireNameChanged() {
-        final Enumeration listenerList = dpListeners.elements();
+        final Enumeration<DocumentPaneListener> listenerList = dpListeners.elements();
         while (listenerList.hasMoreElements()) {
-            ((DocumentPaneListener) listenerList.nextElement()).nameChanged(new DocumentPaneEvent(this));
+            listenerList.nextElement().nameChanged(new DocumentPaneEvent(this));
         }
     }
 
@@ -918,9 +923,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * fire a DocumentPaneEvent to all registered DocumentPaneListeners
      */
     public void fireActivated() {
-        final Enumeration listenerList = dpListeners.elements();
+        final Enumeration<DocumentPaneListener> listenerList = dpListeners.elements();
         while (listenerList.hasMoreElements()) {
-            ((DocumentPaneListener) listenerList.nextElement()).activated(new DocumentPaneEvent(this));
+            listenerList.nextElement().activated(new DocumentPaneEvent(this));
         }
     }
 

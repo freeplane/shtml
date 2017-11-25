@@ -52,7 +52,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
     private final Object attributeKey;
     private final Object htmlAttrKey;
     private final JSpinner valueSelector;
-    private JComboBox unitSelector;
+    private JComboBox<String> unitSelector;
     private JLabel unitName;
     //private LengthValue lv;
     private int setValueCalls = 0;
@@ -112,7 +112,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
                 break;
             case TYPE_COMBO:
                 //System.out.println("SizeSelectorPanel constructor setting COMBO");
-                unitSelector = new JComboBox(UNIT_VALUES);
+                unitSelector = new JComboBox<>(UNIT_VALUES);
                 unitSelector.addActionListener(this);
                 add(unitSelector);
                 break;

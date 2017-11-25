@@ -2279,7 +2279,7 @@ class SHTMLEditorKitActions {
                     if (dp.needsSaving()) { // ..the document needs to be saved
                         panel.selectTabbedPane(index);
                         final String docName = dp.getDocumentName();
-                        final int choice = Util.msgChoice(JOptionPane.YES_NO_CANCEL_OPTION, "confirmClosing",
+                        final int choice = Util.msgChoice(JOptionPane.getFrameForComponent(panel), JOptionPane.YES_NO_CANCEL_OPTION, "confirmClosing",
                             "saveChangesQuery", docName, "\r\n\r\n");
                         switch (choice) {
                             case JOptionPane.YES_OPTION: // if the user wanted to save
@@ -2759,13 +2759,13 @@ class SHTMLEditorKitActions {
             else {
                 chooser.setSelectedFile(new File(fName));
             }
-            final int result = chooser.showSaveDialog((Component) ae.getSource());
+            final int result = chooser.showSaveDialog(panel);
             if (result == JFileChooser.APPROVE_OPTION) {
                 final File selection = chooser.getSelectedFile();
                 prefs.put(SHTMLPanelImpl.FILE_LAST_SAVE, selection.getAbsolutePath());
                 if (selection.exists()) {
                     final String newName = selection.getName();
-                    canSave = Util.msg(JOptionPane.YES_NO_OPTION, "confirmSaveAs", "fileExistsQuery", newName, " ");
+                    canSave = Util.msg(JOptionPane.getFrameForComponent(panel), JOptionPane.YES_NO_OPTION, "confirmSaveAs", "fileExistsQuery", newName, " ");
                 }
                 if (canSave) {
                     try {

@@ -45,7 +45,7 @@ import javax.swing.text.SimpleAttributeSet;
  */
 abstract class AttributePanel extends JPanel implements AttributeComponent, ContainerListener {
     /** container for all AttributeComponents shown on this AttributePanel */
-    private final Vector components = new Vector();
+    private final Vector<AttributeComponent> components = new Vector<>();
 
     /**
      * construct a new AttributePanel
@@ -64,7 +64,8 @@ abstract class AttributePanel extends JPanel implements AttributeComponent, Cont
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         /*
         System.out.println("AttributePanel setValue");
         de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
@@ -72,10 +73,10 @@ abstract class AttributePanel extends JPanel implements AttributeComponent, Cont
         System.out.println("\r\n");
         */
         boolean result = true;
-        final Enumeration elements = components.elements();
+        final Enumeration<AttributeComponent> elements = components.elements();
         AttributeComponent ac;
         while (elements.hasMoreElements()) {
-            ac = (AttributeComponent) elements.nextElement();
+            ac = elements.nextElement();
             if (!ac.setValue(a)) {
                 result = false;
             }
@@ -88,24 +89,26 @@ abstract class AttributePanel extends JPanel implements AttributeComponent, Cont
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet attributes = new SimpleAttributeSet();
-        final Enumeration elements = components.elements();
+        final Enumeration<AttributeComponent> elements = components.elements();
         AttributeComponent ac;
         while (elements.hasMoreElements()) {
-            ac = (AttributeComponent) elements.nextElement();
+            ac = elements.nextElement();
             attributes.addAttributes(ac.getValue());
         }
         return attributes;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet attributes = new SimpleAttributeSet();
-            final Enumeration elements = components.elements();
+            final Enumeration<AttributeComponent> elements = components.elements();
             AttributeComponent ac;
             while (elements.hasMoreElements()) {
-                ac = (AttributeComponent) elements.nextElement();
+                ac = elements.nextElement();
                 attributes.addAttributes(ac.getValue(includeUnchanged));
             }
             return attributes;
@@ -115,14 +118,16 @@ abstract class AttributePanel extends JPanel implements AttributeComponent, Cont
         }
     }
 
-    public void componentAdded(final ContainerEvent e) {
+    @Override
+	public void componentAdded(final ContainerEvent e) {
         final Object component = e.getChild();
         if (component instanceof AttributeComponent) {
-            components.add(component);
+            components.add((AttributeComponent) component);
         }
     }
 
-    public void componentRemoved(final ContainerEvent e) {
+    @Override
+	public void componentRemoved(final ContainerEvent e) {
         final Object component = e.getChild();
         if (component instanceof AttributeComponent) {
             components.remove(component);

@@ -55,11 +55,11 @@ import javax.swing.event.ListSelectionListener;
  */
 class PluginManagerDialog extends DialogShell implements ListSelectionListener, ActionListener {
     /** combo box for selecting the dock location */
-    private final JComboBox dockLocation;
+    private final JComboBox<String> dockLocation;
     /** indicates if we can ignore changes (when happenig programmatically */
     private boolean ignoreChanges = false;
     /** the list with available plug-ins */
-    private final JList pluginNames;
+    private final JList<Object> pluginNames;
     /** constant for activation button label */
     private final String activateName = Util.getResourceString("activatePlugin");
     /** constant for deactivation button label */
@@ -88,7 +88,7 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
             .getResourceString("pluginPanelTitle")));
         //pluginPanel.setMinimumSize(new Dimension(400, 400));
         SHTMLPanelImpl.pluginManager.plugins();
-        pluginNames = new JList(SHTMLPanelImpl.pluginManager.getPluginNames());
+        pluginNames = new JList<>(SHTMLPanelImpl.pluginManager.getPluginNames());
         pluginNames.addListSelectionListener(this);
         pluginNames.setMinimumSize(new Dimension(250, 400));
         pluginNames.setPreferredSize(new Dimension(250, 400));
@@ -112,7 +112,7 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         final String[] locations = { Util.getResourceString("pluginDockLocationNone"),
                 Util.getResourceString("pluginDockLocationTop"), Util.getResourceString("pluginDockLocationRight"),
                 Util.getResourceString("pluginDockLocationBottom"), Util.getResourceString("pluginDockLocationLeft"), };
-        dockLocation = new JComboBox(locations);
+        dockLocation = new JComboBox<>(locations);
         dockLocation.setEnabled(false);
         dockLocation.addActionListener(this);
         Util.addGridBagComponent(pluginSettingsPanel, dockLocation, g, c, 1, 1, GridBagConstraints.WEST);
@@ -132,7 +132,8 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
     /**
      * ListSelectionListener implementation
      */
-    public void valueChanged(final ListSelectionEvent e) {
+    @Override
+	public void valueChanged(final ListSelectionEvent e) {
         ignoreChanges = true;
         if (pluginNames.getSelectedIndex() > -1) {
             final SHTMLPlugin p = getSelectedPlugin();
@@ -177,7 +178,8 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
     /**
      * ActionListener implementation
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final Object source = e.getSource();
         if ((pluginNames.getSelectedIndex() > -1) && (!ignoreChanges)) {
             ignoreChanges = true;

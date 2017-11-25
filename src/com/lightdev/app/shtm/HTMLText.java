@@ -53,9 +53,9 @@ class HTMLText {
     /** the plain text representation of the text */
     private String plainText;
     /** holds the copied plain text chunks */
-    private final Vector clipText = new Vector(0);
+    private final Vector<String> clipText = new Vector<>(0);
     /** holds the copied character attributes mapping to clipText */
-    private final Vector clipAttr = new Vector(0);
+    private final Vector<AttributeSet> clipAttr = new Vector<>(0);
     /**
      * indicates whether or not the html represented by this
      * <code>HTMLText</code> instance contains more than one paragraph
@@ -249,7 +249,7 @@ class HTMLText {
      * @return the attributes for respective character position
      */
     private AttributeSet getCharacterAttributes(final int chunkNo) {
-        return (AttributeSet) clipAttr.elementAt(chunkNo);
+        return clipAttr.elementAt(chunkNo);
     }
 
     /**
@@ -259,7 +259,7 @@ class HTMLText {
      * @return the characters for respective chunk as String
      */
     private String getCharactersAt(final int chunkNo) {
-        return (String) clipText.elementAt(chunkNo);
+        return clipText.elementAt(chunkNo);
     }
 
     /** clear all styled text contents of this <code>HTMLText</code> object */
@@ -273,7 +273,8 @@ class HTMLText {
      *
      * @return string of all chunks in this object
      */
-    public String toString() {
+    @Override
+	public String toString() {
         final StringBuffer text = new StringBuffer();
         if (stringRepresentation) {
             text.append(plainText);
@@ -281,7 +282,7 @@ class HTMLText {
         else {
             int i;
             for (i = 0; i < clipText.size(); i++) {
-                text.append((String) clipText.elementAt(i));
+                text.append(clipText.elementAt(i));
             }
         }
         return text.toString();

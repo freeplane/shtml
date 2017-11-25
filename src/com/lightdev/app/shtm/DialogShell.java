@@ -154,7 +154,8 @@ class DialogShell extends JDialog implements ActionListener {
     /**
      * dispose the dialog properly in case of window close events
      */
-    protected void processWindowEvent(final WindowEvent e) {
+    @Override
+	protected void processWindowEvent(final WindowEvent e) {
         if (e.getID() == WindowEvent.WINDOW_CLOSING) {
             cancel();
         }
@@ -190,7 +191,8 @@ class DialogShell extends JDialog implements ActionListener {
      * implements the ActionListener interface to be notified of
      * clicks onto the ok and cancel button.
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final Object src = e.getSource();
         if (src == cancelButton) {
             cancel();
@@ -203,7 +205,8 @@ class DialogShell extends JDialog implements ActionListener {
     protected KeyListener getCompletionKeyListener() {
         if (completionKeyListener == null) {
             completionKeyListener = new KeyAdapter() {
-                public void keyPressed(final KeyEvent e) {
+                @Override
+				public void keyPressed(final KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                         e.consume();
                         cancel();

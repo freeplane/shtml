@@ -90,7 +90,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      */
     private boolean ignoreChangeEvents = false;
     /** list with images in this image repository */
-    private JList imgFileList;
+    private JList<String> imgFileList;
     /** button to add an image file to the repository */
     private JButton addImgBtn;
     /** button to delete an image file from the repository */
@@ -113,7 +113,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * contains all components having attributes for the image represented
      * in this <code>ImageDialog</code>
      */
-    private final Vector attributeComponents = new Vector();
+    private final Vector<AttributeComponent> attributeComponents = new Vector<>();
     /** the help id for this dialog */
     private static final String helpTopicId = "item166";
     /** the document the image came from, if any */
@@ -164,7 +164,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         dirPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("imgDirPanelTitle")));
         // create a list to disply image files in
-        imgFileList = new JList();
+        imgFileList = new JList<>();
         dim = new Dimension(100, 100);
         imgFileList.setMinimumSize(dim);
         imgFileList.setPreferredSize(dim);
@@ -309,10 +309,10 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
                 imgFile = new File(a.getAttribute(HTML.Attribute.SRC).toString());
             }
             //System.out.println("ImageDialog.setImageAttribute imgFile=" + imgFile.getAbsolutePath());
-            imgFileList.setSelectedValue(imgFile.getName().toLowerCase(), true);
+            imgFileList.setSelectedValue(imgFile.getName(), true);
         }
         for (int i = 0; i < attributeComponents.size(); i++) {
-            ((AttributeComponent) attributeComponents.get(i)).setValue(a);
+            attributeComponents.get(i).setValue(a);
         }
         if (a.isDefined(HTML.Attribute.WIDTH)) {
             preview.setPreviewWidth(Integer.parseInt(a.getAttribute(HTML.Attribute.WIDTH).toString()));
@@ -351,7 +351,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         final StringWriter sw = new StringWriter();
         final SHTMLWriter w = new SHTMLWriter(sw, doc == null ? new HTMLDocument() : doc);
         for (int i = 0; i < attributeComponents.size(); i++) {
-            set.addAttributes(((AttributeComponent) attributeComponents.get(i)).getValue());
+            set.addAttributes(attributeComponents.get(i).getValue());
         }
         set.addAttribute(HTML.Attribute.SRC, getImageSrc());
         try {
@@ -404,6 +404,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
                     Util.copyFile(sFiles[i], new File(imgDirName + File.separator + sFiles[i].getName()));
                     updateFileList();
                 }
+                imgFileList.setSelectedValue(sFiles[sFiles.length-1].getName(), true);
             }
         }
         catch (final Exception e) {
@@ -417,7 +418,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      */
     private void handleDeleteImage() {
         final String fName = imgFileList.getSelectedValue().toString();
-        if (Util.msg(JOptionPane.YES_NO_OPTION, "confirmDelete", "deleteFileQuery", fName, "\r\n")) {
+        if (Util.msg(JOptionPane.getFrameForComponent(this), JOptionPane.YES_NO_OPTION, "confirmDelete", "deleteFileQuery", fName, "\r\n")) {
             final File delFile = new File(imgDir.getAbsolutePath() + File.separator + fName);
             delFile.delete();
             updateFileList();
@@ -430,9 +431,9 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     private void updateFileList() {
         if (imgDir != null && imgFileList != null) {
             final String[] files = imgDir.list();
-            if (files != null && files.length > 0) {
+            if (files != null) {
                 for (int i = 0; i < files.length; i++) {
-                    files[i] = files[i].toLowerCase();
+                    files[i] = files[i];
                 }
                 imgFileList.setListData(files);
             }
@@ -522,7 +523,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * implements the ActionListener interface to be notified of
      * clicks onto the file repository buttons.
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final Object src = e.getSource();
         if (src == addImgBtn) {
             handleAddImage();
@@ -541,7 +543,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * <p>updates the image preview and property displays according
      * to the current selection (if any)</p>
      */
-    public void valueChanged(final ListSelectionEvent e) {
+    @Override
+	public void valueChanged(final ListSelectionEvent e) {
         if (!imgFileList.isSelectionEmpty()) {
             /*System.out.println("ImageDialog.valueChanged setting preview image to " + imgDir.getAbsolutePath() +
                                  File.separator +
@@ -567,7 +570,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * property displays accordingly.</p>
      */
     private class ResizeListener extends ComponentAdapter {
-        public void componentResized(final ComponentEvent e) {
+        @Override
+		public void componentResized(final ComponentEvent e) {
             final int vWidth = scPrev.getWidth() - 5;
             final int vHeight = scPrev.getHeight() - 5;
             preview.setPreferredSize(new Dimension(vWidth, vHeight));
@@ -583,7 +587,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * user settings in the scale text field</p>
      */
     private class KeyHandler extends KeyAdapter {
-        public void keyReleased(final KeyEvent e) {
+        @Override
+		public void keyReleased(final KeyEvent e) {
             final Object source = e.getSource();
             final int keyCode = e.getKeyCode();
             if (source.equals(scale)) {
@@ -601,7 +606,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * user settings in the scale text field</p>
      */
     private class FocusHandler extends FocusAdapter {
-        public void focusLost(final FocusEvent e) {
+        @Override
+		public void focusLost(final FocusEvent e) {
             final Object source = e.getSource();
             if (source.equals(scale)) {
                 applyPreviewScale();
@@ -615,7 +621,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * <p>Used to adjust preview properties according to
      * user settings in SizeSelectorPanels</p>
      */
-    public void stateChanged(final ChangeEvent e) {
+    @Override
+	public void stateChanged(final ChangeEvent e) {
         if (!ignoreChangeEvents) {
             final Object source = e.getSource();
             if (source.equals(imgWidth.getValueSelector())) {

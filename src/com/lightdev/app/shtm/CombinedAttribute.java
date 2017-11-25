@@ -77,7 +77,7 @@ class CombinedAttribute {
     /** indicates which sides were present in the attribute set */
     private final boolean[] present = new boolean[4];
     /** table with attribute names from the source attribute set */
-    private final Vector aNames = new Vector();
+    private final Vector<Object> aNames = new Vector<>();
     /** indicates if attributes of parent elements shall be used */
     private final boolean includeParents;
 
@@ -92,7 +92,7 @@ class CombinedAttribute {
         attributeKey = key;
         this.includeParents = includeParents;
         // get names in this attribute set to filter out parent attributes later
-        final Enumeration names = a.getAttributeNames();
+        final Enumeration<?> names = a.getAttributeNames();
         while (names.hasMoreElements()) {
             aNames.addElement(names.nextElement());
         }
@@ -100,7 +100,7 @@ class CombinedAttribute {
         final Object attr = a.getAttribute(key);
         if (attr != null) {
             //System.out.println("  construct CombinedAttribute attr=" + attr);
-            copyValues(Util.tokenize(attr.toString(), " "));
+            copyValues(attr.toString().split(" "));
         }
         else {
             copyValues(key, a);

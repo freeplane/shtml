@@ -54,11 +54,11 @@ import javax.swing.text.html.HTML;
  */
 class TableDialog extends DialogShell {
     /** collection of all components with table related attributes */
-    Vector tableComponents = new Vector();
+    Vector<AttributeComponent> tableComponents = new Vector<>();
     /** collection of all components with cell related attributes */
-    Vector cellComponents = new Vector();
+    Vector<AttributeComponent> cellComponents = new Vector<>();
     /** selector for cell range to apply cell attributes to */
-    JComboBox cellRange;
+    JComboBox<String> cellRange;
 
     /**
      * constructor
@@ -85,11 +85,11 @@ class TableDialog extends DialogShell {
         setComponentAttributes(cellComponents, a);
     }
 
-    public void setComponentAttributes(final Vector v, final AttributeSet a) {
-        final Enumeration components = v.elements();
+    public void setComponentAttributes(final Vector<AttributeComponent> v, final AttributeSet a) {
+        final Enumeration<AttributeComponent> components = v.elements();
         AttributeComponent ac;
         while (components.hasMoreElements()) {
-            ac = (AttributeComponent) components.nextElement();
+            ac = components.nextElement();
             ac.setValue(a);
         }
     }
@@ -109,12 +109,12 @@ class TableDialog extends DialogShell {
         return getComponentAttributes(cellComponents);
     }
 
-    private AttributeSet getComponentAttributes(final Vector v) {
+    private AttributeSet getComponentAttributes(final Vector<AttributeComponent> v) {
         final SimpleAttributeSet attributes = new SimpleAttributeSet();
-        final Enumeration components = v.elements();
+        final Enumeration<AttributeComponent> components = v.elements();
         AttributeComponent ac;
         while (components.hasMoreElements()) {
-            ac = (AttributeComponent) components.nextElement();
+            ac = components.nextElement();
             //System.out.println(ac.getValue());
             attributes.addAttributes(ac.getValue());
         }
@@ -157,7 +157,7 @@ class TableDialog extends DialogShell {
                 Util.getResourceString("thisColRangeLabel"), Util.getResourceString("thisRowRangeLabel"),
                 Util.getResourceString("allCellsRangeLabel") };
         crPanel.add(new JLabel(Util.getResourceString("applyCellAttrLabel")));
-        cellRange = new JComboBox(cellRangeSelection);
+        cellRange = new JComboBox<>(cellRangeSelection);
         crPanel.add(cellRange);
         // get the preferred size of the tabbed pane
         /*

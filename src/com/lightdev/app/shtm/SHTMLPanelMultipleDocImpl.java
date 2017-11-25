@@ -19,7 +19,6 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JTabbedPane;

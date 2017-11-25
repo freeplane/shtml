@@ -107,7 +107,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
                 String asString;
                 if (as != null) {
                     final StringBuffer retBuffer = new StringBuffer("[");
-                    final Enumeration names = as.getAttributeNames();
+                    final Enumeration<?> names = as.getAttributeNames();
                     while (names.hasMoreElements()) {
                         final Object nextName = names.nextElement();
                         if (nextName != StyleConstants.ResolveAttribute) {
@@ -255,7 +255,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
             getEditor();
             final int selBegin = Math.min(e.getDot(), e.getMark());
             final int end = Math.max(e.getDot(), e.getMark());
-            final Vector paths = new Vector();
+            final Vector<TreePath> paths = new Vector<>();
             final TreeModel model = getTreeModel();
             final Object root = model.getRoot();
             final int rootCount = model.getChildCount(root);

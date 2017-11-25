@@ -90,7 +90,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
     private void setupPatterns() {
         Pattern p;
         SimpleAttributeSet set;
-        patterns = new Vector();
+        patterns = new Vector<>();
         // content text
         p = Pattern.compile("\\b\\w+");
         set = new SimpleAttributeSet();
@@ -138,7 +138,8 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      *
      * @see setSize
      */
-    public boolean getScrollableTracksViewportWidth() {
+    @Override
+	public boolean getScrollableTracksViewportWidth() {
         return false;
     }
 
@@ -148,7 +149,8 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      *
      * @see getScrollableTracksViewportWidth
      */
-    public void setSize(final Dimension d) {
+    @Override
+	public void setSize(final Dimension d) {
         if (d.width < getParent().getSize().width) {
             d.width = getParent().getSize().width;
         }
@@ -195,7 +197,8 @@ class SyntaxPane extends JEditorPane implements CaretListener {
         /**
          * apply snytax highlighting
          */
-        public void run() {
+        @Override
+		public void run() {
             Matcher m;
             RegExStyle style;
             cursor();
@@ -205,9 +208,9 @@ class SyntaxPane extends JEditorPane implements CaretListener {
                 if (length > 0 && len > 0) {
                     final String text = sDoc.getText(offset, len);
                     if (text != null && text.length() > 0) {
-                        final Enumeration pe = patterns.elements();
+                        final Enumeration<RegExStyle> pe = patterns.elements();
                         while (pe.hasMoreElements()) {
-                            style = (RegExStyle) pe.nextElement();
+                            style = pe.nextElement();
                             m = style.getPattern().matcher(text);
                             while (m.find()) {
                                 sDoc.setCharacterAttributes(offset + m.start(), m.end() - m.start(), style.getStyle(),
@@ -240,7 +243,8 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * <p>updates syntax highlighting for the current line
      * when the caret moves</p>
      */
-    public void caretUpdate(final CaretEvent e) {
+    @Override
+	public void caretUpdate(final CaretEvent e) {
         try {
             final StyledDocument sDoc = (StyledDocument) getDocument();
             final int cPos = e.getDot();
@@ -261,7 +265,8 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * overridden to keep caret changes during the initial text load
      * from triggering syntax highlighting repetitively
      */
-    public void setText(final String t) {
+    @Override
+	public void setText(final String t) {
         removeCaretListener(this);
         super.setText(t);
         final StyledDocument sDoc = (StyledDocument) getDocument();
@@ -329,7 +334,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
     }
 
     /** Patterns registered with this SnytaxPane */
-    private Vector patterns;
+    private Vector<RegExStyle> patterns;
     /** the cursor to use to indicate a lengthy operation is going on */
     private final Cursor waitCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
 }

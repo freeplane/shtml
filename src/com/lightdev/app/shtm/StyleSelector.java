@@ -42,7 +42,7 @@ import javax.swing.text.html.HTML;
  *
  * 
  */
-class StyleSelector extends JComboBox implements AttributeComponent, ChangeListener {
+class StyleSelector extends JComboBox<String> implements AttributeComponent, ChangeListener {
     private final SHTMLPanelImpl shtmlPanel;
     /** the CSS attribute key this AttributeComponent object represents */
     private final HTML.Attribute key;
@@ -72,7 +72,8 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         boolean success = false;
         final Object attr = a.getAttribute(key);
         if (attr != null) {
@@ -90,13 +91,15 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet set = new SimpleAttributeSet();
         set.addAttribute(key, getSelectedItem());
         return set;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         return getValue();
     }
 
@@ -106,7 +109,8 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
      * a given StyleSheet this component was registered with. Once either one changes
      * the list of styles of this componment is refreshed accordingly.
      */
-    public void stateChanged(final ChangeEvent e) {
+    @Override
+	public void stateChanged(final ChangeEvent e) {
         paragraphType = null;
         update();
     }
@@ -114,7 +118,8 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
     /* (non-Javadoc)
      * @see javax.swing.JComboBox#fireActionEvent()
      */
-    protected void fireActionEvent() {
+    @Override
+	protected void fireActionEvent() {
         if (updateRunning) {
             return;
         }
@@ -132,12 +137,12 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
                 return;
             }
             paragraphType = newParagraphType;
-            final Vector styleNames = Util.getStyleNamesForTag((document).getStyleSheet(), paragraphType);
+            final Vector<String> styleNames = Util.getStyleNamesForTag((document).getStyleSheet(), paragraphType);
             styleNames.insertElementAt(standardStyleName, 0);
-            setModel(new DefaultComboBoxModel(styleNames));
+            setModel(new DefaultComboBoxModel<>(styleNames));
         }
         catch (final NullPointerException ex) {
-            setModel(new DefaultComboBoxModel());
+            setModel(new DefaultComboBoxModel<String>());
         }
         finally {
             updateRunning = false;

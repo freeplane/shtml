@@ -53,7 +53,7 @@ import javax.swing.border.EtchedBorder;
  */
 class AboutBox extends JDialog implements ActionListener {
     /** button to close the dialog */
-    JButton closeButton = new JButton("Close");
+    JButton closeButton;
     /** name of the license file */
     private final String LICENSE = "resources/gpl.txt";
 
@@ -65,8 +65,8 @@ class AboutBox extends JDialog implements ActionListener {
     public AboutBox(final Frame parent) {
         super(parent);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
+        closeButton= new JButton(Util.getResourceString("closeBtnName"));
         closeButton.addActionListener(this);
-        closeButton.setText(Util.getResourceString("closeBtnName"));
         constructFrame();
         setTitle(Util.getResourceString("aboutFrameTitle"));
         pack();
@@ -92,8 +92,6 @@ class AboutBox extends JDialog implements ActionListener {
         final JLabel appStageLabel = new JLabel(FrmMain.VERSION);
         final JLabel appCopyrightLabel = new JLabel("Copyright (c) 2002-2008 Ulrich Hilger, Dimitry Polivaev");
         final JLabel appHomepageLabel = new JLabel("http://simplyhtml.sf.net/");
-        /* set the dialog title */
-        setTitle("About this application");
         /* highlight the application name with an appropriate font */
         appTitleLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
         /* load the application image into a panel */
@@ -140,27 +138,22 @@ class AboutBox extends JDialog implements ActionListener {
     /**
      * dispose the dialog properly in case of window close events
      */
-    protected void processWindowEvent(final WindowEvent e) {
-        if (e.getID() == WindowEvent.WINDOW_CLOSING) {
-            cancel();
-        }
-        super.processWindowEvent(e);
-    }
-
-    /**
-     * dispose the dialog
-     */
-    private void cancel() {
-        dispose();
-    }
+	@Override
+	protected void processWindowEvent(final WindowEvent e) {
+		if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+			dispose();
+		}
+		super.processWindowEvent(e);
+	}
 
     /**
      * implements the ActionListener interface to be notified of
      * clicks onto the ok button. Closes and disposes the dialog in this case.
      */
-    public void actionPerformed(final ActionEvent e) {
-        if (e.getSource() == closeButton) {
-            cancel();
-        }
-    }
+	@Override
+	public void actionPerformed(final ActionEvent e) {
+		if (e.getSource() == closeButton) {
+			dispose();
+		}
+	}
 }

@@ -48,7 +48,7 @@ import javax.swing.text.html.CSS;
  * 
  */
 class BorderPanel extends JPanel implements AttributeComponent {
-    private final Vector components = new Vector();
+    private final Vector<BorderSettings> components = new Vector<>();
     /** the attributes for border width */
     private CombinedAttribute bWidth;
     /** the attributes for border color */
@@ -89,9 +89,10 @@ class BorderPanel extends JPanel implements AttributeComponent {
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         final boolean success = true;
-        final Enumeration e = components.elements();
+        final Enumeration<BorderSettings> e = components.elements();
         bWidth = new CombinedAttribute(CSS.Attribute.BORDER_WIDTH, a, true);
         bColor = new CombinedAttribute(CSS.Attribute.BORDER_COLOR, a, true);
         if (++setValueCalls < 2) {
@@ -99,7 +100,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
             oWidth = bWidth.getAttribute();
         }
         while (e.hasMoreElements()) {
-            ((BorderSettings) e.nextElement()).setValue(bWidth, bColor);
+            e.nextElement().setValue(bWidth, bColor);
         }
         return success;
     }
@@ -109,11 +110,12 @@ class BorderPanel extends JPanel implements AttributeComponent {
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet set = new SimpleAttributeSet();
         BorderSettings bs;
         for (int i = 0; i < components.size(); i++) {
-            bs = (BorderSettings) components.elementAt(i);
+            bs = components.elementAt(i);
             bColor.setAttribute(i, bs.getBorderColor());
             bWidth.setAttribute(i, bs.getBorderWidth());
         }
@@ -126,12 +128,13 @@ class BorderPanel extends JPanel implements AttributeComponent {
         return set;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             BorderSettings bs;
             for (int i = 0; i < components.size(); i++) {
-                bs = (BorderSettings) components.elementAt(i);
+                bs = components.elementAt(i);
                 bColor.setAttribute(i, bs.getBorderColor());
                 bWidth.setAttribute(i, bs.getBorderWidth());
             }

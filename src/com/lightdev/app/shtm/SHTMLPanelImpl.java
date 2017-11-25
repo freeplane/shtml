@@ -25,7 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
@@ -262,18 +261,21 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /* (non-Javadoc)
      * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
-    protected boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
+    @Override
+	protected boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
         if (super.processKeyBinding(ks, e, condition, pressed)) {
             return true;
         }
         return menuBar.handleKeyBinding(ks, e, condition, pressed);
     }
 
-    public JMenuItem createActionMenuItem(final String actionName) {
+    @Override
+	public JMenuItem createActionMenuItem(final String actionName) {
         return dynRes.createMenuItem(SHTMLPanelImpl.getUiResources(), actionName);
     }
 
-    public Action getAction(final String actionName) {
+    @Override
+	public Action getAction(final String actionName) {
         return dynRes.getAction(actionName);
     }
 
@@ -322,7 +324,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * Convenience method for obtaining the document text
      * @return returns the document text as string.
      */
-    public String getDocumentText() {
+    @Override
+	public String getDocumentText() {
         return getDocumentPane().getDocumentText();
     }
 
@@ -335,7 +338,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      *
      * @return  true, if changes need to be saved
      */
-    public boolean needsSaving() {
+    @Override
+	public boolean needsSaving() {
         return getDocumentPane().needsSaving();
     }
 
@@ -354,19 +358,22 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * Convenience method for setting the document text
      */
-    public void setCurrentDocumentContent(final String sText) {
+    @Override
+	public void setCurrentDocumentContent(final String sText) {
         getDocumentPane().setDocumentText(sText);
         purgeUndos();
     }
 
-    public void setContentPanePreferredSize(final Dimension prefSize) {
+    @Override
+	public void setContentPanePreferredSize(final Dimension prefSize) {
         getDocumentPane().setContentPanePreferredSize(prefSize);
     }
 
     /**
      * @return returns the currently used ExtendedHTMLDocument Object
      */
-    public HTMLDocument getDocument() {
+    @Override
+	public HTMLDocument getDocument() {
         return doc;
     }
 
@@ -421,7 +428,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         if (pMenu != null) {
             final Container contentPane = SHTMLPanelImpl.this;
             pluginManager.loadPlugins();
-            final Enumeration plugins = pluginManager.plugins();
+            final Enumeration<Object> plugins = pluginManager.plugins();
             SHTMLPlugin pi;
             final JComponent pc;
             final JMenuItem pluginMenu;
@@ -485,7 +492,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          * release task (if any) and indicating repeated key press
          * as applicable.
          */
-        public void keyPressed(final KeyEvent e) {
+        @Override
+		public void keyPressed(final KeyEvent e) {
             if (nextTask != null) {
                 nextTask.cancel();
             }
@@ -503,12 +511,14 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          * handle a keyReleased event by scheduling a
          * <code>ReleaseTask</code>.
          */
-        public void keyReleased(final KeyEvent e) {
+        @Override
+		public void keyReleased(final KeyEvent e) {
             nextTask = new ReleaseTask();
             releaseTimer.schedule(nextTask, delay);
         }
 
-        public void keyTyped(final KeyEvent e) {
+        @Override
+		public void keyTyped(final KeyEvent e) {
         }
 
         /**
@@ -524,7 +534,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          * Task to be executed when a key is released
          */
         private class ReleaseTask extends TimerTask implements Runnable {
-            public void run() {
+            @Override
+			public void run() {
                 if (EventQueue.isDispatchThread()) {
                     repeating = false;
                     updateFormatControls();
@@ -578,7 +589,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         panelNo = SplitPanel.NORTH;
                         break;
                 }
-                p = (JTabbedPane) splitPanel.getPanel(panelNo);
+                p = splitPanel.getPanel(panelNo);
                 p.setVisible(true);
                 p.add(pi.getGUIName(), pc);
                 if (((panelNo == SplitPanel.WEST) && splitPanel.getDivLoc(panelNo) < this.getWidth() / 10)
@@ -634,7 +645,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             this.pi = pi;
         }
 
-        public void run() {
+        @Override
+		public void run() {
             pi.showInitialInfo();
         }
     }
@@ -753,7 +765,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     	SHTMLPanelImpl.actionBuilder = ab;
     }
 
-    public void addAction(String text, Action action) {
+    @Override
+	public void addAction(String text, Action action) {
 		dynRes.addAction(text, action);
 		
 	}
@@ -763,9 +776,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      */
     public void updateActions() {
         Action action;
-        final Enumeration actions = dynRes.getActions();
+        final Enumeration<Action> actions = dynRes.getActions();
         while (actions.hasMoreElements()) {
-            action = (Action) actions.nextElement();
+            action = actions.nextElement();
             if (action instanceof SHTMLAction) {
                 ((SHTMLAction) action).update();
             }
@@ -786,7 +799,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
              */
             private static final long serialVersionUID = 1L;
 
-            public Dimension getPreferredSize() {
+            @Override
+			public Dimension getPreferredSize() {
                 final int maxWidth = splitPanel.getWidth();
                 int height = 0;
                 int rowHeight = 0;
@@ -819,7 +833,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             */
             private static final long serialVersionUID = 1L;
 
-            public Dimension getPreferredSize() {
+            @Override
+			public Dimension getPreferredSize() {
                 final Dimension splitPreferredSize = splitPanel.getPreferredSize();
                 final Dimension toolbaPreferredSize = toolBarPanel.getPreferredSize();
                 return new Dimension(splitPreferredSize.width, splitPreferredSize.height + toolbaPreferredSize.height);
@@ -839,25 +854,31 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         //contentPane.add(workPanel);
         add(contentPane, BorderLayout.CENTER);
         splitPanel.addComponentListener(new ComponentListener() {
-            public void componentHidden(final ComponentEvent e) {
+            @Override
+			public void componentHidden(final ComponentEvent e) {
             }
 
-            public void componentMoved(final ComponentEvent e) {
+            @Override
+			public void componentMoved(final ComponentEvent e) {
             }
 
-            public void componentResized(final ComponentEvent e) {
+            @Override
+			public void componentResized(final ComponentEvent e) {
                 resizeToolbarPane(toolBarPanel);
             }
 
-            public void componentShown(final ComponentEvent e) {
+            @Override
+			public void componentShown(final ComponentEvent e) {
             }
         });
         toolBarPanel.addContainerListener(new ContainerListener() {
-            public void componentAdded(final ContainerEvent e) {
+            @Override
+			public void componentAdded(final ContainerEvent e) {
                 resizeToolbarPane(toolBarPanel);
             }
 
-            public void componentRemoved(final ContainerEvent e) {
+            @Override
+			public void componentRemoved(final ContainerEvent e) {
                 resizeToolbarPane(toolBarPanel);
             }
         });
@@ -878,7 +899,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * @return the created tool bar
      */
     JToolBar createToolBar(final String nm) {
-        final String[] itemKeys = Util.tokenize(Util.getResourceString(uiResources, nm), " ");
+        final String[] itemKeys = Util.getResourceString(uiResources, nm).split(" ");
         final JToolBar toolBar = new JToolBar();
         for (int i = 0; i < itemKeys.length; i++) {
             /** special handling for separators */
@@ -1061,7 +1082,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          * Messaged when the Document has created an edit, the edit is
          * added to <code>undo</code>, an instance of UndoManager.
          */
-        public void undoableEditHappened(final UndoableEditEvent e) {
+        @Override
+		public void undoableEditHappened(final UndoableEditEvent e) {
             // ignore all events happened when the html source code pane is open
             if (getCurrentDocumentPane().getSelectedTab() != DocumentPane.VIEW_TAB_LAYOUT) {
                 return;
@@ -1073,10 +1095,12 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * caret listener implementation to track format changes
      */
-    public void caretUpdate(final CaretEvent e) {
+    @Override
+	public void caretUpdate(final CaretEvent e) {
         if (!rkw.isRepeating()) {
             EventQueue.invokeLater(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     updateFormatControls();
                 }
             });
@@ -1133,7 +1157,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     * a JComboBox for selecting a font family names
     * from those available in the system.
     */
-    class FontFamilyPicker extends JComboBox implements AttributeComponent {
+    class FontFamilyPicker extends JComboBox<String> implements AttributeComponent {
         /** switch for the action listener */
         private boolean ignoreActions = false;
 
@@ -1159,7 +1183,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          * @return true, if the set of attributes had a matching attribute,
          *            false if not
          */
-        public boolean setValue(final AttributeSet a) {
+        @Override
+		public boolean setValue(final AttributeSet a) {
             ignoreActions = true;
             final String newSelection = Util.styleSheet().getFont(a).getFamily();
             setSelectedItem(newSelection);
@@ -1172,14 +1197,16 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          *
          * @return the value selected from this component
          */
-        public AttributeSet getValue() {
+        @Override
+		public AttributeSet getValue() {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_FAMILY, (String) getSelectedItem());
-            set.addAttribute(HTML.Attribute.FACE, (String) getSelectedItem());
+            set.addAttribute(HTML.Attribute.FACE, getSelectedItem());
             return set;
         }
 
-        public AttributeSet getValue(final boolean includeUnchanged) {
+        @Override
+		public AttributeSet getValue(final boolean includeUnchanged) {
             return getValue();
         }
     }
@@ -1189,7 +1216,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     */
     static final String[] FONT_SIZES = new String[] { "8", "10", "12", "14", "18", "24" };
 
-    class FontSizePicker extends JComboBox implements AttributeComponent {
+    class FontSizePicker extends JComboBox<String> implements AttributeComponent {
         private boolean ignoreActions = false;
         final private Object key;
 
@@ -1214,7 +1241,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          * @return true, if the set of attributes had a font size attribute,
          *            false if not
          */
-        public boolean setValue(final AttributeSet a) {
+        @Override
+		public boolean setValue(final AttributeSet a) {
             ignoreActions = true;
             final int size = Util.styleSheet().getFont(a).getSize();
             final String newSelection = Integer.toString(size);
@@ -1230,7 +1258,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          *
          * @return the value selected from this component
          */
-        public AttributeSet getValue() {
+        @Override
+		public AttributeSet getValue() {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             final String relativeSize = Integer.toString(getSelectedIndex() + 1);
             set.addAttribute(HTML.Attribute.SIZE, relativeSize);
@@ -1238,7 +1267,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             return set;
         }
 
-        public AttributeSet getValue(final boolean includeUnchanged) {
+        @Override
+		public AttributeSet getValue(final boolean includeUnchanged) {
             return getValue();
         }
     }
@@ -1254,7 +1284,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             this.button = button;
         }
 
-        public void propertyChange(final PropertyChangeEvent e) {
+        @Override
+		public void propertyChange(final PropertyChangeEvent e) {
             final String propertyName = e.getPropertyName();
             if (e.getPropertyName().equals(SHTMLPanelImpl.ACTION_SELECTED_KEY)) {
                 //System.out.println("propertyName=" + propertyName + " newValue=" + e.getNewValue());
@@ -1307,7 +1338,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         final SimpleAttributeSet a = new SimpleAttributeSet();
         final Element cElem = e;
         AttributeSet attrs;
-        final Vector elements = new Vector();
+        final Vector<Element> elements = new Vector<>();
         Object classAttr;
         String styleName;
         String elemName;
@@ -1316,7 +1347,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             e = e.getParentElement();
         }
         for (int i = 0; i < elements.size(); i++) {
-            e = (Element) elements.elementAt(i);
+            e = elements.elementAt(i);
             classAttr = e.getAttributes().getAttribute(HTML.Attribute.CLASS);
             elemName = e.getName();
             styleName = elemName;
@@ -1375,12 +1406,14 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         return (SHTMLEditorPane) getEditorPane();
     }
 
-    public JEditorPane getEditorPane() {
+    @Override
+	public JEditorPane getEditorPane() {
         return editorPane;
     }
 
-    public JEditorPane getSourceEditorPane() {
-        return (JEditorPane) getDocumentPane().getHtmlEditor();
+    @Override
+	public JEditorPane getSourceEditorPane() {
+        return getDocumentPane().getHtmlEditor();
     }
 
     /**
@@ -1429,7 +1462,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /* (non-Javadoc)
      * @see javax.swing.JComponent#requestFocus()
      */
-    public JEditorPane getMostRecentFocusOwner() {
+    @Override
+	public JEditorPane getMostRecentFocusOwner() {
         if (getDocumentPane() != null) {
             return getDocumentPane().getMostRecentFocusOwner();
         }
@@ -1437,19 +1471,23 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     /* ---------- font manipulation code end ------------------ */
-    public int getCaretPosition() {
+    @Override
+	public int getCaretPosition() {
         return getSHTMLEditorPane().getCaretPosition();
     }
 
-    public JMenuBar getMenuBar() {
+    @Override
+	public JMenuBar getMenuBar() {
         return menuBar;
     }
 
-    public void switchViews() {
+    @Override
+	public void switchViews() {
         getDocumentPane().switchViews();
     }
 
-    public void setOpenHyperlinkHandler(final ActionListener openHyperlinkHandler) {
+    @Override
+	public void setOpenHyperlinkHandler(final ActionListener openHyperlinkHandler) {
         this.openHyperlinkHandler = openHyperlinkHandler;
     }
 

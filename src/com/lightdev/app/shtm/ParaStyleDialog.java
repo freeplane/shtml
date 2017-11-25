@@ -84,11 +84,11 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     /** the mode this dialog was created in */
     private final int mode;
     /** the AttributeComponents in this dialog */
-    private final Vector components = new Vector();
+    private final Vector<AttributePanel> components = new Vector<>();
     /** the FontPanel for the paragraph font settings */
     private final FontPanel fp;
     /** list of styles available in style sheet */
-    private JList styleList;
+    private JList<String> styleList;
     /** style sheet to use in MODE_NAMED_STYLES */
     private StyleSheet styles;
     /** the document this dialog is operating on when in MODE_NAMED_STYLES */
@@ -108,7 +108,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     /** table to map between HTML tags and 'content types' */
     static private NamedObject[] cTypes = null;
     /** selector for content type */
-    private JComboBox cType;
+    private JComboBox<NamedObject> cType;
 
     /**
      * create a <code>ParaStyleDialog</code> to manipulate
@@ -163,12 +163,12 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
             styles = ((SHTMLDocument) doc).getStyleSheet();
             // create a combo box for content type
             initContentTypes();
-            cType = new JComboBox(cTypes);
+            cType = new JComboBox<>(cTypes);
             cType.addActionListener(this);
             // create a list of styles
             //Vector styleNames = Util.getStyleNamesForTag(styles, getContentType());
             //styleNames.insertElementAt(standardStyleName, 0);
-            styleList = new JList(/*new DefaultComboBoxModel(styleNames)*/);
+            styleList = new JList<>(/*new DefaultComboBoxModel(styleNames)*/);
             updateStyleList();
             styles.addChangeListener(this);
             styleList.addListSelectionListener(this);
@@ -227,9 +227,9 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * selected tag
      */
     private void updateStyleList() {
-        final Vector styleNames = Util.getStyleNamesForTag(styles, getContentType());
+        final Vector<String> styleNames = Util.getStyleNamesForTag(styles, getContentType());
         styleNames.insertElementAt(standardStyleName, 0);
-        styleList.setModel(new DefaultComboBoxModel(styleNames));
+        styleList.setModel(new DefaultComboBoxModel<>(styleNames));
     }
 
     /**
@@ -264,25 +264,27 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet attributes = new SimpleAttributeSet();
-        final Enumeration elements = components.elements();
+        final Enumeration<AttributePanel> elements = components.elements();
         AttributeComponent ac;
         while (elements.hasMoreElements()) {
-            ac = (AttributeComponent) elements.nextElement();
+            ac = elements.nextElement();
             attributes.addAttributes(ac.getValue());
         }
         attributes.addAttributes(fp.getAttributes());
         return attributes;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet attributes = new SimpleAttributeSet();
-            final Enumeration elements = components.elements();
+            final Enumeration<AttributePanel> elements = components.elements();
             AttributeComponent ac;
             while (elements.hasMoreElements()) {
-                ac = (AttributeComponent) elements.nextElement();
+                ac = elements.nextElement();
                 attributes.addAttributes(ac.getValue(includeUnchanged));
             }
             attributes.addAttributes(fp.getAttributes(includeUnchanged));
@@ -302,7 +304,8 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         boolean result = true;
         /*
         System.out.println("\r\n");
@@ -310,10 +313,10 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
         hd.listAttributes(a, 4);
         */
         final AttributeSet set = Util.resolveAttributes(a);
-        final Enumeration elements = components.elements();
+        final Enumeration<AttributePanel> elements = components.elements();
         AttributeComponent ac;
         while (elements.hasMoreElements()) {
-            ac = (AttributeComponent) elements.nextElement();
+            ac = elements.nextElement();
             if (!ac.setValue(set)) {
                 result = false;
             }
@@ -327,7 +330,8 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * switch state of save and delete buttons accordingly and
      * set dialog to the selected style, if any
      */
-    public void valueChanged(final ListSelectionEvent e) {
+    @Override
+	public void valueChanged(final ListSelectionEvent e) {
         if (e.getSource().equals(styleList)) {
             final int selectedStyleNo = styleList.getSelectedIndex();
             final boolean styleSelected = selectedStyleNo > -1;
@@ -404,11 +408,11 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
         if (initialName == null) {
             initialName = Util.getResourceString("newStyleDefaultName");
         }
-        final String newStyleName = Util.nameInput(null, initialName, "\\w[\\w ]*", "styleNameInputTitle",
+        final String newStyleName = Util.nameInput(JOptionPane.getFrameForComponent(this), initialName, "\\w[\\w ]*", "styleNameInputTitle",
             "styleNameInputText").trim();
         if (newStyleName != null) {
             if (styleNameExists(newStyleName) || newStyleName.equalsIgnoreCase(standardStyleName)) {
-                if (Util.msg(JOptionPane.YES_NO_OPTION, "confirmSaveAs", "fileExistsQuery", newStyleName, " ")) {
+                if (Util.msg(JOptionPane.getFrameForComponent(this), JOptionPane.YES_NO_OPTION, "confirmSaveAs", "fileExistsQuery", newStyleName, " ")) {
                     saveStyleAs(newStyleName);
                 }
             }
@@ -425,7 +429,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     private void doDeleteStyle() {
         final String styleName = getSelectedStyleName();
         if (styleName != null) {
-            if (Util.msg(JOptionPane.YES_NO_OPTION, "confirmDelete", "deleteStyleQuery", styleName, "\r\n\r\n")) {
+            if (Util.msg(JOptionPane.getFrameForComponent(this), JOptionPane.YES_NO_OPTION, "confirmDelete", "deleteStyleQuery", styleName, "\r\n\r\n")) {
                 styles.removeStyle(getContentType() + Util.CLASS_SEPARATOR + styleName);
             }
         }
@@ -491,14 +495,15 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      *    false if not
      */
     private boolean styleNameExists(final String styleName) {
-        final Vector styleNames = Util.getStyleNamesForTag(styles, getContentType() /*HTML.Tag.P.toString()*/);
+        final Vector<String> styleNames = Util.getStyleNamesForTag(styles, getContentType() /*HTML.Tag.P.toString()*/);
         return (styleNames.indexOf(styleName) > -1);
     }
 
     /**
      * overridden to addd some custom cleanup upon closing of dialog
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (mode == MODE_NAMED_STYLES) {
             styles.removeChangeListener(this);
         }
@@ -511,13 +516,14 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * <p>This is used to update the list of named styles whenever
      * a change was saved to the style sheet.</p>
      */
-    public void stateChanged(final ChangeEvent e) {
+    @Override
+	public void stateChanged(final ChangeEvent e) {
         final Object src = e.getSource();
         if (src instanceof StyleContext.NamedStyle) {
-            final Vector styleNames = Util
+            final Vector<String> styleNames = Util
                 .getStyleNamesForTag((AttributeSet) src, getContentType() /*HTML.Tag.P.toString()*/);
             styleNames.insertElementAt(standardStyleName, 0);
-            styleList.setModel(new DefaultComboBoxModel(styleNames));
+            styleList.setModel(new DefaultComboBoxModel<>(styleNames));
         }
     }
 
@@ -525,7 +531,8 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * listen to actions and route them accordingly, i.e. react to
      * buttons save, save as and delete style
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final Object src = e.getSource();
         if (src.equals(saveStyleBtn)) {
             doSaveStyle();

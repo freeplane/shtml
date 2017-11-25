@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -108,11 +107,11 @@ class DynamicResource {
     /** indicator for menu separators */
     public static final String menuSeparatorKey = "-";
     /** dynamic storage for menu items */
-    private final Hashtable menuItems = new Hashtable();
+    private final Hashtable<String, JMenuItem> menuItems = new Hashtable<>();
     /** dynamic storage for actions */
-    private final Hashtable commands = new Hashtable();
+    private final Hashtable<String, Action> commands = new Hashtable<>();
     /** dynamic storage for menus */
-    private final Hashtable menus = new Hashtable();
+    private final Hashtable<String, JMenu> menus = new Hashtable<>();
     public static final String IMAGE_EMPTY = "empty.gif";
 
     /**
@@ -142,7 +141,7 @@ class DynamicResource {
      */
     public SHTMLMenuBar createMenubar(final UIResources resources, final String name) {
         final SHTMLMenuBar mb = new SHTMLMenuBar();
-        final String[] menuKeys = Util.tokenize(Util.getResourceString(resources, name), " ");
+        final String[] menuKeys = Util.getResourceString(resources, name).split(" ");
         for (int i = 0; i < menuKeys.length; i++) {
             final JMenu m = createMenu(resources, menuKeys[i]);
             if (m != null) {
@@ -167,7 +166,7 @@ class DynamicResource {
         if (def == null) {
             def = "";
         }
-        final String[] itemKeys = Util.tokenize(def, " ");
+        final String[] itemKeys = def.split(" ");
         menu = new JMenu(Util.getResourceString(resources, key + labelSuffix));
         for (int i = 0; i < itemKeys.length; i++) {
             if (itemKeys[i].equals(menuSeparatorKey)) {
@@ -201,7 +200,7 @@ class DynamicResource {
         if (def == null) {
             def = "";
         }
-        final String[] itemKeys = Util.tokenize(def, " ");
+        final String[] itemKeys = def.split(" ");
         menu = new JPopupMenu();
         for (int i = 0; i < itemKeys.length; i++) {
             if (itemKeys[i].equals(menuSeparatorKey)) {
@@ -217,7 +216,7 @@ class DynamicResource {
     }
 
     public JMenu getMenu(final String cmd) {
-        return (JMenu) menus.get(cmd);
+        return menus.get(cmd);
     }
 
     /**
@@ -242,7 +241,7 @@ class DynamicResource {
          */
         final Action a = getAction(cmd);
         if (a != null) {
-            final Object aKey = a.getValue(AbstractAction.ACCELERATOR_KEY);
+            final Object aKey = a.getValue(Action.ACCELERATOR_KEY);
             if (aKey != null) {
                 mi.setAccelerator((KeyStroke) aKey);
             }
@@ -321,7 +320,8 @@ class DynamicResource {
         public DynamicMenuListener() {
         }
 
-        public void menuSelected(final MenuEvent e) {
+        @Override
+		public void menuSelected(final MenuEvent e) {
             final Component[] items = ((JMenu) e.getSource()).getMenuComponents();
             Action action;
             for (int i = 0; i < items.length; i++) {
@@ -336,10 +336,12 @@ class DynamicResource {
             }
         }
 
-        public void menuDeselected(final MenuEvent e) {
+        @Override
+		public void menuDeselected(final MenuEvent e) {
         }
 
-        public void menuCanceled(final MenuEvent e) {
+        @Override
+		public void menuCanceled(final MenuEvent e) {
         }
     }
 
@@ -350,7 +352,7 @@ class DynamicResource {
      * @return the action found for the given name
      */
     public Action getAction(final String cmd) {
-        return (Action) commands.get(cmd);
+        return commands.get(cmd);
     }
 
     /**
@@ -358,7 +360,7 @@ class DynamicResource {
      *
      * @return all actions
      */
-    public Enumeration getActions() {
+    public Enumeration<Action> getActions() {
         return commands.elements();
     }
 
@@ -386,7 +388,8 @@ class DynamicResource {
             menuItem = mi;
         }
 
-        public void propertyChange(final PropertyChangeEvent e) {
+        @Override
+		public void propertyChange(final PropertyChangeEvent e) {
             final String propertyName = e.getPropertyName();
             if (e.getPropertyName().equals(Action.NAME)) {
                 final String text = (String) e.getNewValue();
@@ -408,7 +411,7 @@ class DynamicResource {
      *  if one wasn't created.
      */
     public JMenuItem getMenuItem(final String cmd) {
-        return (JMenuItem) menuItems.get(cmd);
+        return menuItems.get(cmd);
     }
 
     /**
@@ -468,7 +471,7 @@ class DynamicResource {
         final java.awt.Dimension buttonSize = new java.awt.Dimension(24, 24);
         new java.awt.Dimension(3, 20);
         JSeparator separator;
-        final String[] itemKeys = Util.tokenize(Util.getResourceString(resources, nm), " ");
+        final String[] itemKeys = Util.getResourceString(resources, nm).split(" ");
         final JToolBar toolBar = new JToolBar();
         toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
         for (int i = 0; i < itemKeys.length; i++) {

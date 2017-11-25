@@ -45,7 +45,7 @@ import javax.swing.text.html.CSS;
  */
 class BoundariesPanel extends JPanel implements AttributeComponent {
     /** the components used for single attributes */
-    private final Vector components = new Vector();
+    private final Vector<SizeSelectorPanel> components = new Vector<>();
     /** the attributes represented by this compoent */
     private CombinedAttribute ca;
     /** the value to compare to determine changes */
@@ -96,7 +96,8 @@ class BoundariesPanel extends JPanel implements AttributeComponent {
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         final boolean success = true;
         ca = new CombinedAttribute(key, a, true);
         if (++setValueCalls < 2) {
@@ -104,7 +105,7 @@ class BoundariesPanel extends JPanel implements AttributeComponent {
         }
         SizeSelectorPanel ssp;
         for (int i = 0; i < components.size(); i++) {
-            ssp = (SizeSelectorPanel) components.elementAt(i);
+            ssp = components.elementAt(i);
             ssp.setValue(ca.getAttribute(i));
         }
         return success;
@@ -115,11 +116,12 @@ class BoundariesPanel extends JPanel implements AttributeComponent {
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet set = new SimpleAttributeSet();
         SizeSelectorPanel ssp;
         for (int i = 0; i < components.size(); i++) {
-            ssp = (SizeSelectorPanel) components.elementAt(i);
+            ssp = components.elementAt(i);
             if (ssp.valueChanged()) {
                 ca.setAttribute(i, ssp.getAttr());
             }
@@ -132,12 +134,13 @@ class BoundariesPanel extends JPanel implements AttributeComponent {
         return set;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             SizeSelectorPanel ssp;
             for (int i = 0; i < components.size(); i++) {
-                ssp = (SizeSelectorPanel) components.elementAt(i);
+                ssp = components.elementAt(i);
                 ca.setAttribute(i, ssp.getAttr());
             }
             final String newValue = ca.getAttribute();

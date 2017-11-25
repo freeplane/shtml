@@ -71,7 +71,7 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
     private final JTextField choice;
     boolean ignoreTextChanges = false;
     /** the list having all possible entries */
-    private final JList optionsList;
+    private final JList<String> optionsList;
 
     /**
      * constructor
@@ -85,7 +85,7 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
         choice.addCaretListener(this);
         choice.addFocusListener(this);
         choice.addKeyListener(this);
-        optionsList = new JList(options);
+        optionsList = new JList<>(options);
         optionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         optionsList.addListSelectionListener(this);
         final JScrollPane scrollableList = new JScrollPane(optionsList);
@@ -103,17 +103,18 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
      * the text field, try to find a font family name starting
      * with what was typed so far, set the list to that family
      */
-    public void caretUpdate(final CaretEvent ce) {
+    @Override
+	public void caretUpdate(final CaretEvent ce) {
         if (!ignoreTextChanges) {
             if (choice.hasFocus()) {
-                final ListModel model = optionsList.getModel();
+                final ListModel<String> model = optionsList.getModel();
                 final String key = choice.getText().toLowerCase();
                 if (key != null) {
                     int i = 0;
                     final int modelSize = model.getSize();
-                    String listEntry = (String) model.getElementAt(i);
+                    String listEntry = model.getElementAt(i);
                     while (++i < modelSize && !listEntry.toLowerCase().startsWith(key)) {
-                        listEntry = (String) model.getElementAt(i);
+                        listEntry = model.getElementAt(i);
                     }
                     if (i < modelSize) {
                         optionsList.setSelectedValue(listEntry, true);
@@ -124,14 +125,16 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
     }
 
     /** for FocusListener implementation, but unused here */
-    public void focusGained(final FocusEvent e) {
+    @Override
+	public void focusGained(final FocusEvent e) {
     }
 
     /**
      * put the currently selected value in the list
      * into the text field when user leaves field
      */
-    public void focusLost(final FocusEvent e) {
+    @Override
+	public void focusLost(final FocusEvent e) {
         updateTextFromList();
     }
 
@@ -139,18 +142,21 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
      * put the currently selected value in the list
      * into the text field when user pressed enter in field
      */
-    public void keyPressed(final KeyEvent e) {
+    @Override
+	public void keyPressed(final KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             updateTextFromList();
         }
     }
 
     /** for KeyListener implementation, but unused here */
-    public void keyReleased(final KeyEvent e) {
+    @Override
+	public void keyReleased(final KeyEvent e) {
     }
 
     /** for KeyListener implementation, but unused here */
-    public void keyTyped(final KeyEvent e) {
+    @Override
+	public void keyTyped(final KeyEvent e) {
     }
 
     /** put selected value into text field */
@@ -204,7 +210,8 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
      * textfield according to the choice and update the
      * sample
      */
-    public void valueChanged(final ListSelectionEvent e) {
+    @Override
+	public void valueChanged(final ListSelectionEvent e) {
         if (optionsList.hasFocus()) {
             updateTextFromList();
         }
@@ -213,7 +220,7 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
 
     /* ------------- event handling start ------------ */
     /** the listeners for TitledPickkListEvents */
-    private final Vector listeners = new Vector(0);
+    private final Vector<TitledPickListListener> listeners = new Vector<>(0);
 
     /**
      * add an event listener.
@@ -235,9 +242,9 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
 
     /** fire a value changed event to all registered listeners */
     void fireValueChanged() {
-        final Enumeration listenerList = listeners.elements();
+        final Enumeration<TitledPickListListener> listenerList = listeners.elements();
         while (listenerList.hasMoreElements()) {
-            ((TitledPickListListener) listenerList.nextElement()).valueChanged(new TitledPickListEvent(this));
+            listenerList.nextElement().valueChanged(new TitledPickListEvent(this));
         }
     }
 

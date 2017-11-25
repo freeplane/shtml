@@ -41,6 +41,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.lightdev.app.shtm.SHTMLEditorPane.PasteMode;
+
 /**
  * Dialog to set user preferences for application SimplyHTML.
  *
@@ -65,9 +67,9 @@ class PrefsDialog extends DialogShell implements ActionListener {
     public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";
     public static final String PREFS_DEFAULT_PASTE_MODE ="default_paste_mode";
     private final String lafName = UIManager.getLookAndFeel().getName();
-    private final JComboBox lafCombo;
+    private final JComboBox<String> lafCombo;
     private final JCheckBox useStdStyleSheet;
-    private final JComboBox pasteModeCombo;
+    private final JComboBox<PasteMode> pasteModeCombo;
     /** the help id for this dialog */
     private static final String helpTopicId = "item167";
     private final List<SHTMLPrefsChangeListener> prefChangeListeners = new LinkedList<SHTMLPrefsChangeListener>();
@@ -83,11 +85,11 @@ class PrefsDialog extends DialogShell implements ActionListener {
         Util.addGridBagComponent(appPrefsPanel, new JLabel(Util.getResourceString("prfLafLabel")), g, c, 0, 0,
             GridBagConstraints.EAST);
         
-        lafCombo = new JComboBox();
+        lafCombo = new JComboBox<>();
         initLfComboBox();
         Util.addGridBagComponent(appPrefsPanel, lafCombo, g, c, 1, 0, GridBagConstraints.EAST);
         
-        pasteModeCombo = new JComboBox();
+        pasteModeCombo = new JComboBox<>();
         initPasteModeComboBox();
         Util.addGridBagComponent(appPrefsPanel, new JLabel(Util.getResourceString("prefsPasteModeLabel")), g, c, 0, 1,
                 GridBagConstraints.EAST);
@@ -119,13 +121,11 @@ class PrefsDialog extends DialogShell implements ActionListener {
         pack();
     }
     
-    public void addPrefChangeListener(final SHTMLPrefsChangeListener listener)
-    {
+    public void addPrefChangeListener(final SHTMLPrefsChangeListener listener) {
     	prefChangeListeners.add(listener);
     }
     
-    public void removePrefChangeListener(final SHTMLPrefsChangeListener listener)
-    {
+    public void removePrefChangeListener(final SHTMLPrefsChangeListener listener) {
     	prefChangeListeners.remove(listener);
     }
 
@@ -136,23 +136,21 @@ class PrefsDialog extends DialogShell implements ActionListener {
         for (int i = 0; i < count; i++) {
             lfNames[i] = lfinfo[i].getName();
         }
-        lafCombo.setModel(new DefaultComboBoxModel(lfNames));
+        lafCombo.setModel(new DefaultComboBoxModel<>(lfNames));
         lafCombo.setSelectedItem(lafName);
     }
     
-    private void initPasteModeComboBox()
-    {
-    	pasteModeCombo.setModel(new DefaultComboBoxModel(SHTMLEditorPane.PasteMode.values()));
+    private void initPasteModeComboBox() {
+    	pasteModeCombo.setModel(new DefaultComboBoxModel<>(PasteMode.values()));
     	pasteModeCombo.setSelectedItem(
-    			SHTMLEditorPane.PasteMode.valueOf(SHTMLEditorPane.PasteMode.class, prefs.get(PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name())));
-    	pasteModeCombo.setRenderer(new ListCellRenderer() {
+    			Enum.valueOf(PasteMode.class, prefs.get(PREFS_DEFAULT_PASTE_MODE, PasteMode.PASTE_HTML.name())));
+    	pasteModeCombo.setRenderer(new ListCellRenderer<PasteMode>() {
 
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) 
-			{
-				switch ((SHTMLEditorPane.PasteMode)value)
-				{
+			@Override
+			public Component getListCellRendererComponent(JList<? extends PasteMode> list,
+					PasteMode value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				switch (value) {
 				case PASTE_HTML:
 					return new JLabel(Util.getResourceString("pasteModeHTML"));
 				case PASTE_PLAIN_TEXT:
@@ -169,7 +167,8 @@ class PrefsDialog extends DialogShell implements ActionListener {
      * implements the ActionListener interface to be notified of
      * clicks onto the ok and cancel button.
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final Component src = (Component) e.getSource();
         if (src == okButton) {
             savePrefs(src);
@@ -190,8 +189,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
             String oldDefaultPasteMode = prefs.get(PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name());
             prefs.put(PREFS_DEFAULT_PASTE_MODE, ((SHTMLEditorPane.PasteMode)pasteModeCombo.getSelectedItem()).name());
 
-            for (SHTMLPrefsChangeListener listener: prefChangeListeners)
-            {
+            for (SHTMLPrefsChangeListener listener: prefChangeListeners) {
             	listener.shtmlPrefChanged(PREFS_USE_STD_STYLE_SHEET, new Boolean(useStdStyleSheet.isSelected()).toString(),
             			new Boolean(oldStyleSheetPref).toString());
             

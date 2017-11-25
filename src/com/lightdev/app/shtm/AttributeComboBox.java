@@ -40,7 +40,7 @@ import javax.swing.text.html.HTML;
  *
  * 
  */
-class AttributeComboBox extends JComboBox implements AttributeComponent {
+class AttributeComboBox extends JComboBox<String> implements AttributeComponent {
     /** CSS attribute key associated with this component */
     private final Object attributeKey;
     /** HTML attribute key associated with this component */
@@ -79,7 +79,8 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         //System.out.println("AttributeComboBox setValue");
         //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
         //hd.listAttributes(a, 2);
@@ -165,7 +166,8 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet a = new SimpleAttributeSet();
         final int value = getSelectedIndex();
         //System.out.println("AttributeComboBox getValue originalIndex=" + originalIndex + " value=" + value);
@@ -182,7 +184,8 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
         return a;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet a = new SimpleAttributeSet();
             final int value = getSelectedIndex();

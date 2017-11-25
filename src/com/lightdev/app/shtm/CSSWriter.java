@@ -66,7 +66,7 @@ class CSSWriter {
 
     /** write the style sheet to the given writer */
     public void write() throws IOException {
-        final Enumeration rules = styleSheet.getStyleNames();
+        final Enumeration<?> rules = styleSheet.getStyleNames();
         while (rules.hasMoreElements()) {
             writeRule((String) rules.nextElement());
             try {
@@ -129,7 +129,7 @@ class CSSWriter {
      */
     private boolean writeStyle(final AttributeSet style) throws IOException {
         boolean closed = false;
-        final Enumeration names = style.getAttributeNames();
+        final Enumeration<?> names = style.getAttributeNames();
         Object value;
         Object key;
         int count = 0;

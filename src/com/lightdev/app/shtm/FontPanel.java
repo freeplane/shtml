@@ -60,12 +60,11 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
     /** a text field to show a sample of the selected font attributes */
     JTextField sample = new JTextField();
     /** table for automatic font component value read/write */
-    private final Vector fontComponents = new Vector(0);
+    private final Vector<AttributeComponent> fontComponents = new Vector<>(0);
 
     public FontPanel(final boolean pickBgColor) {
         setLayout(new BorderLayout(5, 5));
         /** create a label for previewing font selections */
-        sample.setText("");
         sample.setEditable(false);
         sample.setPreferredSize(new Dimension(200, 50));
         sample.setHorizontalAlignment(SwingConstants.CENTER);
@@ -151,7 +150,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
      *
      * @param e  the ColorPanelEvent to handle
      */
-    public void colorChanged(final ColorPanel.ColorPanelEvent e) {
+    @Override
+	public void colorChanged(final ColorPanel.ColorPanelEvent e) {
         final ColorPanel source = (ColorPanel) e.getSource();
         if (source.getAttributeKey() == CSS.Attribute.COLOR) {
             sample.setForeground(source.getColor());
@@ -168,9 +168,9 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
      * @param a  the set of attributes to show
      */
     public void setAttributes(final AttributeSet a) {
-        final Enumeration components = fontComponents.elements();
+        final Enumeration<AttributeComponent> components = fontComponents.elements();
         while (components.hasMoreElements()) {
-            ((AttributeComponent) components.nextElement()).setValue(a);
+            components.nextElement().setValue(a);
         }
     }
 
@@ -182,9 +182,9 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
      */
     public AttributeSet getAttributes() {
         final SimpleAttributeSet attributes = new SimpleAttributeSet();
-        final Enumeration components = fontComponents.elements();
+        final Enumeration<AttributeComponent> components = fontComponents.elements();
         while (components.hasMoreElements()) {
-            attributes.addAttributes(((AttributeComponent) components.nextElement()).getValue());
+            attributes.addAttributes(components.nextElement().getValue());
         }
         return attributes;
     }
@@ -192,9 +192,9 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
     public AttributeSet getAttributes(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet attributes = new SimpleAttributeSet();
-            final Enumeration components = fontComponents.elements();
+            final Enumeration<AttributeComponent> components = fontComponents.elements();
             while (components.hasMoreElements()) {
-                attributes.addAttributes(((AttributeComponent) components.nextElement()).getValue(includeUnchanged));
+                attributes.addAttributes(components.nextElement().getValue(includeUnchanged));
             }
             return attributes;
         }
@@ -223,7 +223,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
      * if another value was picked from a list, update the
      * sample
      */
-    public void valueChanged(final TitledPickList.TitledPickListEvent e) {
+    @Override
+	public void valueChanged(final TitledPickList.TitledPickListEvent e) {
         final Object source = e.getSource();
         final Font saveFont = sample.getFont();
         if (source instanceof FamilyPickList) {
@@ -270,7 +271,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
          * @return true, if the set of attributes had a font family attribute,
          *            false if not
          */
-        public boolean setValue(final AttributeSet a) {
+        @Override
+		public boolean setValue(final AttributeSet a) {
             ignoreTextChanges = true;
             final String newSelection = Util.styleSheet().getFont(a).getFamily();
             setSelection(newSelection);
@@ -281,7 +283,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             return true;
         }
 
-        public AttributeSet getValue(final boolean includeUnchanged) {
+        @Override
+		public AttributeSet getValue(final boolean includeUnchanged) {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             final Object value = getSelection();
             if (includeUnchanged
@@ -294,7 +297,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             return set;
         }
 
-        public AttributeSet getValue() {
+        @Override
+		public AttributeSet getValue() {
             return getValue(false);
         }
 
@@ -335,7 +339,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
          * @return true, if the set of attributes had a font size attribute,
          *            false if not
          */
-        public boolean setValue(final AttributeSet a) {
+        @Override
+		public boolean setValue(final AttributeSet a) {
             ignoreTextChanges = true;
             final int size = Util.styleSheet().getFont(a).getSize();
             final String newSelection = Integer.toString(size);
@@ -346,7 +351,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             return true;
         }
 
-        public AttributeSet getValue(final boolean includeUnchanged) {
+        @Override
+		public AttributeSet getValue(final boolean includeUnchanged) {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             final String value = (String) getSelection();
             if ((includeUnchanged || (originalValue == null) && (value != null))
@@ -358,7 +364,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             return set;
         }
 
-        public AttributeSet getValue() {
+        @Override
+		public AttributeSet getValue() {
             return getValue(false);
         }
 
@@ -395,7 +402,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
          * @return true, if the set of attributes had a font style attribute,
          *            false if not
          */
-        public boolean setValue(final AttributeSet a) {
+        @Override
+		public boolean setValue(final AttributeSet a) {
             ignoreTextChanges = true;
             final boolean success = false;
             int styleNo = 0;
@@ -420,7 +428,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             return success;
         }
 
-        public AttributeSet getValue() {
+        @Override
+		public AttributeSet getValue() {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             final int styleNo = getIndex();
             switch (styleNo) {
@@ -444,7 +453,8 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             return set;
         }
 
-        public AttributeSet getValue(final boolean includeUnchanged) {
+        @Override
+		public AttributeSet getValue(final boolean includeUnchanged) {
             if (includeUnchanged) {
                 final String value = Util.CSS_ATTRIBUTE_NORMAL;
                 final SimpleAttributeSet set = new SimpleAttributeSet();

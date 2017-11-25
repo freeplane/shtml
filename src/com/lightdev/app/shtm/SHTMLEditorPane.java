@@ -3541,7 +3541,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param tag  the tag name to switche elements to
      * @param overwritableTags  Tags that may be overwritten by the new tag.
      */
-    public void applyParagraphTag(final String tag, final Vector overwritableTags) {
+    public void applyParagraphTag(final String tag, final Vector<String> overwritableTags) {
         final int selectionStart = getSelectionStart();
         final int selectionEnd = getSelectionEnd();
         final StringWriter stringWriter = new StringWriter();

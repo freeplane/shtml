@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -50,7 +49,8 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
         SHTMLPanelImpl.configureActionProperties(this, managePluginsAction);
     }
 
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final JPopupMenu menu = (JPopupMenu) ((Component) e.getSource()).getParent();
         final SHTMLPanelImpl shtmlPanel = (SHTMLPanelImpl) SwingUtilities.getAncestorOfClass(SHTMLPanelImpl.class,
             menu.getInvoker());
@@ -62,7 +62,7 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
         /** if the user made a selection, apply it to the document */
         if (pmd.getResult() == DialogShell.RESULT_OK) {
             shtmlPanel.clearDockPanels();
-            final Enumeration plugins = SHTMLPanelImpl.pluginManager.plugins();
+            final Enumeration<Object> plugins = SHTMLPanelImpl.pluginManager.plugins();
             SHTMLPlugin pi;
             while (plugins.hasMoreElements()) {
                 pi = (SHTMLPlugin) plugins.nextElement();
@@ -74,6 +74,7 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
         shtmlPanel.updateActions();
     }
 
-    public void update() {
+    @Override
+	public void update() {
     }
 }

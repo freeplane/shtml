@@ -47,12 +47,12 @@ class PluginManager {
     /** the class loader pointing to all plug-in locations (JARs) */
     private URLClassLoader loader;
     /** the class names of all loaded plug-ins */
-    private final Vector pluginClassNames = new Vector();
+    private final Vector<String> pluginClassNames = new Vector<>();
     /** the plug-in objects loaded by this <code>PluginManager</code> */
-    private final Hashtable loadedPlugins = new Hashtable();
-    private final Hashtable nameMap = new Hashtable();
+    private final Hashtable<String, Object> loadedPlugins = new Hashtable<>();
+    private final Hashtable<String, String> nameMap = new Hashtable<>();
     /** the URLs pointing to the classes in pluginClassNames */
-    private final Vector urls = new Vector();
+    private final Vector<URL> urls = new Vector<>();
     private final SHTMLPanelImpl owner;
 
     /**
@@ -66,7 +66,7 @@ class PluginManager {
     /**
      * get all plug-ins loaded by this <code>PluginManager</code>
      */
-    public Enumeration plugins() {
+    public Enumeration<Object> plugins() {
         return loadedPlugins.elements();
     }
 
@@ -83,7 +83,7 @@ class PluginManager {
      * with that name is present
      */
     public SHTMLPlugin pluginForName(final String guiName) {
-        final String intName = (String) nameMap.get(guiName);
+        final String intName = nameMap.get(guiName);
         return (SHTMLPlugin) loadedPlugins.get(intName);
     }
 
@@ -99,14 +99,14 @@ class PluginManager {
         final String pluginPrefix = this.getClass().getPackage().getName() + Util.CLASS_SEPARATOR + PLUGIN_PACKAGE
                 + Util.CLASS_SEPARATOR;
         findPlugins(pluginPrefix.replace(Util.CLASS_SEPARATOR_CHAR, Util.URL_SEPARATOR_CHAR));
-        final Enumeration cNames = pluginClassNames.elements();
-        Class cl;
+        final Enumeration<String> cNames = pluginClassNames.elements();
+        Class<?> cl;
         Object o;
         SHTMLPlugin p;
         String intName;
         while (cNames.hasMoreElements()) {
             try {
-                final String nextClass = (String) cNames.nextElement();
+                final String nextClass = cNames.nextElement();
                 //System.out.println("PluginManager loadPlugins loading " + pluginPrefix + nextClass /* pluginPrefix + (String) cNames.nextElement()*/);
                 cl = loader.loadClass(/*pluginPrefix +*/
                 /*(String) cNames.nextElement()*/pluginPrefix + nextClass);
@@ -136,10 +136,10 @@ class PluginManager {
      *
      * @return  the class loader
      */
-    private URLClassLoader createLoader(final Vector urls) {
+    private URLClassLoader createLoader(final Vector<URL> urls) {
         final URL[] urlArray = new URL[urls.size()];
         for (int i = 0; i < urls.size(); i++) {
-            urlArray[i] = (URL) urls.elementAt(i);
+            urlArray[i] = urls.elementAt(i);
             //System.out.println("urlArray[" + i + "]=" + urlArray[i]);
         }
         return new URLClassLoader(urlArray, this.getClass().getClassLoader());
@@ -223,11 +223,11 @@ class PluginManager {
      */
     private void readJar(final String filePath, final String pluginPath, final File jarFile, final String fileName) {
         try {
-            final Enumeration jarEntries = new JarFile(jarFile).entries();
+            final Enumeration<JarEntry> jarEntries = new JarFile(jarFile).entries();
             JarEntry je;
             String jeName;
             while (jarEntries.hasMoreElements()) {
-                je = (JarEntry) jarEntries.nextElement();
+                je = jarEntries.nextElement();
                 jeName = je.getName();
                 if (jeName.startsWith(pluginPath) && !je.isDirectory() && jeName.endsWith(Util.CLASS_EXT)) {
                     /*System.out.println("PluginManager.readJar adding URL " + Util.FILE_PREFIX +

@@ -38,11 +38,11 @@ import javax.swing.text.html.HTML;
  *
  * 
  */
-class TagSelector extends JComboBox {
+class TagSelector extends JComboBox<String> {
     /** table with available tags to select */
-    private final Vector tags = new Vector();
+    private final Vector<String> tags = new Vector<>();
     /** table with tag names corresponding to tags */
-    private final Vector tagNames = new Vector();
+    private final Vector<String> tagNames = new Vector<>();
 
     /**
      * construct a new TagSelector
@@ -50,7 +50,7 @@ class TagSelector extends JComboBox {
     public TagSelector() {
         super();
         initTags();
-        setModel(new DefaultComboBoxModel(tagNames));
+        setModel(new DefaultComboBoxModel<>(tagNames));
     }
 
     /**
@@ -67,7 +67,7 @@ class TagSelector extends JComboBox {
      *
      * @return a Vector of tags available from this component
      */
-    public Vector getTags() {
+    public Vector<String> getTags() {
         return tags;
     }
 

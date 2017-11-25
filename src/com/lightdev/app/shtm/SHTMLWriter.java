@@ -202,7 +202,7 @@ public class SHTMLWriter extends HTMLWriter {
         if (source == null) {
             return;
         }
-        final Enumeration sourceAttributeNames = source.getAttributeNames();
+        final Enumeration<?> sourceAttributeNames = source.getAttributeNames();
         String value = "";
         while (sourceAttributeNames.hasMoreElements()) {
             final Object sourceAttributeName = sourceAttributeNames.nextElement();
@@ -242,7 +242,7 @@ public class SHTMLWriter extends HTMLWriter {
         //convertedAttributeSet.removeAttributes(convertedAttributeSet);
         final MutableAttributeSet convertedAttributeSet = new SimpleAttributeSet();
         SHTMLWriter.convertStyleToHTMLStyle(attributeSet, convertedAttributeSet);
-        final Enumeration attributeNames = convertedAttributeSet.getAttributeNames();
+        final Enumeration<?> attributeNames = convertedAttributeSet.getAttributeNames();
         while (attributeNames.hasMoreElements()) {
             final Object attributeName = attributeNames.nextElement();
             if (attributeName instanceof HTML.Tag || attributeName instanceof StyleConstants

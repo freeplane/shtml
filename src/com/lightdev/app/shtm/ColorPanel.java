@@ -141,7 +141,8 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
      * display accordingly, when another color
      * is selected from the color chooser
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         final Color color = showColorChooserDialog();
         if (color != null) {
             setValCount++;
@@ -159,7 +160,8 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
                 chooser = c;
             }
 
-            public void actionPerformed(final ActionEvent e) {
+            @Override
+			public void actionPerformed(final ActionEvent e) {
                 color = chooser.getColor();
             }
         }
@@ -180,7 +182,8 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
     * @return true, if the set of attributes had a matching attribute,
     *            false if not
     */
-    public boolean setValue(final AttributeSet a) {
+    @Override
+	public boolean setValue(final AttributeSet a) {
         Color newSelection = null;
         if (getAttributeKey() == CSS.Attribute.COLOR) {
             newSelection = Util.styleSheet().getForeground(a);
@@ -225,7 +228,8 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    @Override
+	public AttributeSet getValue() {
         final SimpleAttributeSet set = new SimpleAttributeSet();
         final Color value = getColor();
         if (value != originalColor) {
@@ -241,7 +245,8 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
         return set;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    @Override
+	public AttributeSet getValue(final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             final Color value = getColor();
@@ -271,7 +276,7 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
 
     /* -------------- event listener implementation start ----------- */
     /** the listeners for ColorPanelEvents */
-    private final Vector listeners = new Vector(0);
+    private final Vector<ColorPanelListener> listeners = new Vector<>(0);
 
     /**
      * add an event listener.
@@ -293,9 +298,9 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
 
     /** fire a color changed event to all registered listeners */
     void fireColorChanged() {
-        final Enumeration listenerList = listeners.elements();
+        final Enumeration<ColorPanelListener> listenerList = listeners.elements();
         while (listenerList.hasMoreElements()) {
-            ((ColorPanelListener) listenerList.nextElement()).colorChanged(new ColorPanelEvent(this));
+            listenerList.nextElement().colorChanged(new ColorPanelEvent(this));
         }
     }
 

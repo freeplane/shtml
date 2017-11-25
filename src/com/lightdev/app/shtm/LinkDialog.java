@@ -67,17 +67,17 @@ import javax.swing.text.html.HTML;
  */
 class LinkDialog extends DialogShell implements ActionListener {
     /** table for link types: name -> type */
-    private Hashtable linkTypes;
+    private Hashtable<String, String> linkTypes;
     /** table for link types: type -> name */
-    private Hashtable linkTypeNames;
+    private Hashtable<String, String> linkTypeNames;
     /** cache for link address */
     private String addressCache = null;
     /** the document this dialog was constructed with */
     private final Document doc;
     private final SHTMLEditorPane editorPane;
     /** dialog components */
-    private final JComboBox linkStyle;
-    private final JComboBox linkType;
+    private final JComboBox<String> linkStyle;
+    private final JComboBox<String> linkType;
     private final JTextField linkAddress;
     private final JButton browseAddress;
     private final JTextField linkAnchor;
@@ -141,11 +141,11 @@ class LinkDialog extends DialogShell implements ActionListener {
         if (!simpleLinkDialog) {
             Util.addGridBagComponent(p, lb, g, c, 0, 0, GridBagConstraints.EAST);
         }
-        final Vector styleNames = Util
+        final Vector<String> styleNames = Util
             .getStyleNamesForTag(((SHTMLDocument) doc).getStyleSheet(), HTML.Tag.A.toString());
         final String standardStyleName = Util.getResourceString("standardStyleName");
         styleNames.insertElementAt(standardStyleName, 0);
-        linkStyle = new JComboBox(styleNames);
+        linkStyle = new JComboBox<String>(styleNames);
         if (!simpleLinkDialog) {
             Util.addGridBagComponent(p, linkStyle, g, c, 1, 0, GridBagConstraints.WEST);
         }
@@ -155,7 +155,7 @@ class LinkDialog extends DialogShell implements ActionListener {
             Util.addGridBagComponent(p, lb, g, c, 0, 1, GridBagConstraints.EAST);
         }
         buildLinkTypes();
-        linkType = new JComboBox(linkTypeNames.values().toArray());
+        linkType = new JComboBox<String>((String[]) linkTypeNames.values().toArray());
         linkType.addActionListener(this);
         if (!simpleLinkDialog) {
             Util.addGridBagComponent(p, linkType, g, c, 1, 1, GridBagConstraints.WEST);
@@ -410,10 +410,10 @@ class LinkDialog extends DialogShell implements ActionListener {
         String protName;
         final String protocol = url.getProtocol();
         if (protocol != null) {
-            protName = (String) linkTypeNames.get(protocol);
+            protName = linkTypeNames.get(protocol);
         }
         else {
-            protName = (String) linkTypeNames.get(LINK_TYPE_RELATIVE_KEY);
+            protName = linkTypeNames.get(LINK_TYPE_RELATIVE_KEY);
         }
         if (protName != null) {
             linkType.setSelectedItem(protName);
@@ -469,8 +469,8 @@ class LinkDialog extends DialogShell implements ActionListener {
     private void buildLinkTypes() {
         String name;
         String type;
-        linkTypes = new Hashtable(); // key = type name -> value = type
-        linkTypeNames = new Hashtable(); // key = type -> value = type name
+        linkTypes = new Hashtable<>(); // key = type name -> value = type
+        linkTypeNames = new Hashtable<>(); // key = type -> value = type name
         for (int i = 1; i < 9; i++) {
             type = Util.getResourceString(LINK_TYPE_KEY + Integer.toString(i));
             name = Util.getResourceString(LINK_TYPE_NAME_KEY + Integer.toString(i));
@@ -671,7 +671,8 @@ class LinkDialog extends DialogShell implements ActionListener {
     /**
      * actionListener implementation to control dialog components
      */
-    public void actionPerformed(final ActionEvent e) {
+    @Override
+	public void actionPerformed(final ActionEvent e) {
         if (!ignoreActions) {
             final Object source = e.getSource();
             if (source.equals(showAsText)) {
