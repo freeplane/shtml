@@ -14,7 +14,7 @@ sourceCompatibility='1.7'
 
 repositories {
     jcenter()
-	maven { url "http://dl.bintray.com/freeplane/freeplane" } 
+	maven { url "${project.gradle.gradleUserHomeDir}/local-artifacts" }
 }
 
 bintray {
@@ -35,7 +35,7 @@ bintray {
 
 dependencies {
 	compile 'javax.help:javahelp:2.0.05',
-          'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.4'  
+          'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.5'
 }
 
 sourceSets {  
@@ -102,6 +102,9 @@ publishing {
                 classifier "sources"
             }
         }
+    }
+    repositories {
+		maven { url "${project.gradle.gradleUserHomeDir}/local-artifacts"}
     }
 }
 
