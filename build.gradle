@@ -1,5 +1,5 @@
 plugins {
-    id "com.jfrog.bintray" version "1.6"
+    id "com.jfrog.bintray" version "1.8.4"
 }
 
 apply plugin: 'java'
@@ -54,9 +54,6 @@ sourceSets {
     }  
 } 
 
-// holds classes included into SimplyHTMLHelp.jar so they are to be excluded from SimplyHTML.jar
-ext.helpExcludes = []
-
 // help.jar
 task helpJar(type: Jar) {
 	baseName = 'SimplyHTMLHelp'
@@ -70,7 +67,7 @@ task helpJar(type: Jar) {
 task mainJar(type: Jar, dependsOn: classes) {  
 	baseName = 'SimplyHTML'
     from(sourceSets.main.output) {  
-        exclude project.ext.helpExcludes
+        exclude "com/lightdev/app/shtm/help/**" 
     }
 	manifest {
 	def classPath = (configurations.compile.collect { it.name } +
@@ -96,9 +93,8 @@ build.dependsOn javadoc
 publishing {
     publications {
         simplyhtml(MavenPublication) {
-            from components.java
             artifactId 'SimplyHTML'
-			artifacts = [mainJar]
+			artifact mainJar
 			artifact sourceJar {
                 classifier "sources"
             }
