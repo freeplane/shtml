@@ -59,7 +59,6 @@ task helpJar(type: Jar) {
 	baseName = 'SimplyHTMLHelp'
     from(sourceSets.main.output) {  
         include "com/lightdev/app/shtm/help/**" 
-        project.ext.helpExcludes.addAll(includes)
     }  
 }
 
@@ -84,7 +83,9 @@ task mainJar(type: Jar, dependsOn: classes) {
 task sourceJar(type: Jar) {
     baseName = 'SimplyHTML'
     classifier = 'sources'
-    from sourceSets.main.allSource
+    from (sourceSets.main.allSource){  
+        exclude "com/lightdev/app/shtm/help/**" 
+    }
 }
 
 build.dependsOn mainJar
