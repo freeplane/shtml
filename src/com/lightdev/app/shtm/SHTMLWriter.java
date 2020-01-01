@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -43,13 +45,15 @@ import javax.swing.text.html.HTMLWriter;
  * 
  */
 public class SHTMLWriter extends HTMLWriter {
-    private Element element;
+    private static final char NB_SPACE = '\u00A0';
+	private Element element;
     private Writer writer = null;
     private boolean replaceEntities;
     private boolean inTextArea;
     //final private MutableAttributeSet oConvAttr  = new SimpleAttributeSet();
     //final private MutableAttributeSet convertedAttributeSet  = new SimpleAttributeSet();
     private boolean inPre;
+	private char[] tempChars;
 
     public SHTMLWriter(final Writer w, final HTMLDocument doc, final int pos, final int len) {
         super(w, doc, pos, len);
@@ -66,31 +70,85 @@ public class SHTMLWriter extends HTMLWriter {
         this(w, doc, 0, doc.getLength());
     }
 
+    @Override
     protected ElementIterator getElementIterator() {
         if (element == null) {
             return super.getElementIterator();
         }
         return new ElementIterator(element);
     }
+    
+    @SuppressWarnings("serial")
+	private final static Map<Character, String> HTML_CHAR_ENTITIES = new HashMap<Character, String>(){{
+    	put('<', "&lt;");
+    	put('>', "&gt;");
+    	put('&', "&amp;");
+    	put('"', "&quot;");
+    	put('<', "&lt;");
+    	put(NB_SPACE, "&nbsp;");
+    }};
 
-    protected void output(final char[] chars, final int start, final int length) throws IOException {
-        if (replaceEntities) {
-            if (chars[start] == ' ') {
-                chars[start] = '\u00A0';
-            }
-            final int last = start + length - 1;
-            for (int i = start + 1; i < last; i++) {
-                if (chars[i] == ' ' && (chars[i - 1] == '\u00A0' || chars[i + 1] == ' ')) {
-                    chars[i] = '\u00A0';
-                }
-            }
-            //			if(chars[last] == ' '){
-            //				chars[last] = '\u00A0';
-            //			}
+    @Override
+    protected void output(char[] chars, int start, int length) throws IOException {
+    	if (!replaceEntities) {
+    		directOutput(chars, start, length);
+    		return;
+    	}
+    	
+    	replaceMultipleSpacesByNonBreakingSpaces(chars, start, length);
+        
+        int last = start;
+        length += start;
+        for (int counter = start; counter < length; counter++) {
+        	char c = chars[counter];
+        	String replacement = entity(c);
+			if(replacement != null) {
+				directOutput(chars, last, counter - last);
+				output(replacement);
+				last = counter + 1;
+			}
         }
-        super.output(chars, start, length);
+
+        if (last < length) {
+        	directOutput(chars, last, length - last);
+        }
     }
 
+    private String entity(char c) {
+    	if (c < ' ')
+    		return "&#x" + Integer.toHexString(c) + ';';
+    	String knownEntity = HTML_CHAR_ENTITIES.get(c);
+		return knownEntity;
+    }
+    
+	private void replaceMultipleSpacesByNonBreakingSpaces(char[] chars, int start, int length) {
+		if (chars[start] == ' ') {
+		    chars[start] = NB_SPACE;
+		}
+		final int last = start + length - 1;
+		for (int i = start + 1; i < last; i++) {
+		    if (chars[i] == ' ' && (chars[i - 1] == NB_SPACE || chars[i + 1] == ' ')) {
+		        chars[i] = NB_SPACE;
+		    }
+		}
+	}
+	
+    private void directOutput(char[] content, int start, int length)
+            throws IOException {
+    	getWriter().write(content, start, length);
+    	setCurrentLineLength(getCurrentLineLength() + length);
+    }
+
+    private void output(String string) throws IOException {
+        int length = string.length();
+        if (tempChars == null || tempChars.length < length) {
+            tempChars = new char[length];
+        }
+        string.getChars(0, length, tempChars, 0);
+        directOutput(tempChars, 0, length);
+    }
+
+    @Override
     protected void startTag(final Element elem) throws IOException, BadLocationException {
         if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
             inPre = true;
@@ -98,6 +156,7 @@ public class SHTMLWriter extends HTMLWriter {
         super.startTag(elem);
     }
 
+    @Override
     protected void endTag(final Element elem) throws IOException {
         if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
             inPre = false;
@@ -105,23 +164,27 @@ public class SHTMLWriter extends HTMLWriter {
         super.endTag(elem);
     }
 
+    @Override
     protected void text(final Element elem) throws BadLocationException, IOException {
         replaceEntities = !inPre;
         super.text(elem);
         replaceEntities = false;
     }
 
+    @Override
     protected void textAreaContent(final AttributeSet attr) throws BadLocationException, IOException {
         inTextArea = true;
         super.textAreaContent(attr);
         inTextArea = false;
     }
 
+    @Override
     public void write() throws IOException, BadLocationException {
         replaceEntities = false;
         super.write();
     }
 
+    @Override
     protected void writeLineSeparator() throws IOException {
         final boolean pre = replaceEntities;
         replaceEntities = false;
@@ -129,6 +192,7 @@ public class SHTMLWriter extends HTMLWriter {
         replaceEntities = pre;
     }
 
+    @Override
     protected void indent() throws IOException {
         if (inTextArea) {
             return;
@@ -177,6 +241,7 @@ public class SHTMLWriter extends HTMLWriter {
         }
     }
 
+    @Override
     protected boolean inRange(final Element next) {
         final Document document = next.getDocument();
         if (document instanceof SHTMLDocument
@@ -225,6 +290,7 @@ public class SHTMLWriter extends HTMLWriter {
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLWriter#writeAttributes(javax.swing.text.AttributeSet)
      */
+    @Override
     protected void writeAttributes(final AttributeSet attributeSet) throws IOException {
         final Object nameTag = (attributeSet != null) ? attributeSet.getAttribute(StyleConstants.NameAttribute) : null;
         final Object endTag = (attributeSet != null) ? attributeSet.getAttribute(HTML.Attribute.ENDTAG) : null;
@@ -339,12 +405,9 @@ public class SHTMLWriter extends HTMLWriter {
         writeLineSeparator();
     }
 
-    public void write(final String string) {
-        try {
-            writer.write(string);
-        }
-        catch (final IOException ex) {
-        }
+    @Override
+    public void write(final String string) throws IOException{
+    	writer.write(string);
     }
 
     public String toString() {
