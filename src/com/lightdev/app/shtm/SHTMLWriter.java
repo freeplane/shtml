@@ -248,13 +248,7 @@ public class SHTMLWriter extends HTMLWriter {
                 && next.getStartOffset() >= ((SHTMLDocument) document).getLastDocumentPosition()) {
             return false;
         }
-        final int startOffset = getStartOffset();
-        final int endOffset = getEndOffset();
-        if ((next.getStartOffset() >= startOffset && (next.getStartOffset() < endOffset) || next.getEndOffset() - 1 == endOffset)
-                || (startOffset >= next.getStartOffset() && startOffset < next.getEndOffset())) {
-            return true;
-        }
-        return false;
+        return super.inRange(next);
     }
 
     /**
