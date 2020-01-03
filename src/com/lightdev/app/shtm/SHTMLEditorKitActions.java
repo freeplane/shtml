@@ -745,20 +745,46 @@ class SHTMLEditorKitActions {
     
     static class FixedFontColorAction extends FontColorAction implements SHTMLAction {
 
-        private Color color;
+        private final Color darkColor;
+		private final Color lightColor;
 
-		public FixedFontColorAction(final SHTMLPanelImpl panel, String name, Color color) {
+		public FixedFontColorAction(final SHTMLPanelImpl panel, String name, Color darkColor, Color lightColor) {
             super(panel);
+			this.lightColor = lightColor;
             SHTMLPanelImpl.configureActionProperties(this, name);
-			this.color = color;
+			this.darkColor = darkColor;
         }
 
 		protected AttributeSet getColor() {
+			Color color = getColorCloserToCaretColor();
 			final SimpleAttributeSet set = new SimpleAttributeSet();
 			final String colorRGB = "#" + Integer.toHexString(color.getRGB()).substring(2);
 			Util.styleSheet().addCSSAttribute(set,  CSS.Attribute.COLOR, colorRGB);
 			set.addAttribute(HTML.Attribute.COLOR, colorRGB);
 			return set;
+		}
+
+		private Color getColorCloserToCaretColor() {
+			Color color = panel.getEditorPane().getCaretColor();
+			if(isDark(color))
+				return darkColor;
+			else
+				return lightColor;
+		}
+
+		private boolean isDark(Color color) {
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
+			
+			double brightness = Math.sqrt(
+			    0.299 * (r * r) +
+			    0.587 * (g * g) +
+			    0.114 * (b * b)
+			    );
+			
+			boolean isDark = brightness <= 127.5;
+			return isDark;
 		}
 
 		public void update() {

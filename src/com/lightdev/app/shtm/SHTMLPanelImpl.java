@@ -61,7 +61,7 @@ import java.util.prefs.*;
  *
  */
 public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
-    //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
+	//private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
     /* some public constants */
     public static final String APP_TEMP_DIR = "temp";
     public static final String IMAGE_DIR = "images";
@@ -731,10 +731,10 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
         addAction(fontColorAction, new SHTMLEditorKitActions.FontColorByDialogAction(this));
         addAction(selectedFontColorAction, new SHTMLEditorKitActions.SelectedFontColorAction(this));
-        addAction(redFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redFontColorAction, Color.RED));
-        addAction(greenFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenFontColorAction, new Color(0, 0x80, 0)));
-        addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, new Color(0, 0, 0xc0)));
-        addAction(blackFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blackFontColorAction, new Color(0, 0, 0)));
+        addAction(redFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redFontColorAction, DARK_RED, LIGHT_RED));
+        addAction(greenFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenFontColorAction, DARK_GREEN, LIGHT_GREEN));
+        addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, DARK_BLUE, LIGHT_BLUE));
+        addAction(blackFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blackFontColorAction, Color.BLACK, Color.WHITE));
         addAction(removeFontColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeFontColorAction, HTML.Attribute.COLOR, CSS.Attribute.COLOR));
         
         addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,

@@ -19,6 +19,7 @@
  */
 package com.lightdev.app.shtm;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionListener;
@@ -37,6 +38,12 @@ import javax.swing.text.html.HTMLDocument;
  * 14.01.2007
  */
 public abstract class SHTMLPanel extends JPanel implements SHTMLPrefsChangeListener {
+	public static final Color LIGHT_BLUE = new Color(0, 0xb6, 0xc6);
+    public static final Color DARK_BLUE = new Color(0, 0, 0xc0);
+	public static final Color LIGHT_GREEN = new Color(0x40, 0xff, 0x40);
+	public static final Color DARK_GREEN = new Color(0, 0x80, 0);
+	public static final Color LIGHT_RED = new Color(0xf7, 0x47, 0x3b);
+	public static final Color DARK_RED = Color.RED;
     SHTMLPanel(final LayoutManager layout) {
         super(layout);
     }
