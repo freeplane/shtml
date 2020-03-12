@@ -120,6 +120,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     private SHTMLEditorPane editorPane;
     /** currently active SHTMLDocument */
     protected SHTMLDocument doc;
+    private JPanel toolBarPanel;
     /** tool bar for formatting commands */
     private JToolBar formatToolBar;
     /** tool bar for formatting commands */
@@ -257,6 +258,18 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
 
     private void setJMenuBar(final JMenuBar bar) {
         add(bar, BorderLayout.NORTH);
+    }
+    
+    
+
+    @Override
+    public void shtmlPrefChanged(String propertyName, String newValue, String oldValue) {
+        if("show_toolbars".equals(propertyName)) {
+            toolBarPanel.setVisible(! "false".equalsIgnoreCase(newValue));
+            return;
+        }
+
+        super.shtmlPrefChanged(propertyName, newValue, oldValue);
     }
 
     /* (non-Javadoc)
@@ -780,7 +793,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             p.setVisible(false);
             splitPanel.addComponent(p, i);
         }
-        final JPanel toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
+        toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
             /**
              * 
              */
@@ -831,8 +844,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         paraToolBar = createToolBar("paraToolBar");
         toolBarPanel.add(formatToolBar);
         toolBarPanel.add(paraToolBar);
-        if (Util.getPreference("show_toolbars", "true").equalsIgnoreCase("true")) {
-            contentPane.add(toolBarPanel, BorderLayout.NORTH);
+        contentPane.add(toolBarPanel, BorderLayout.NORTH);
+        if (Util.getPreference("show_toolbars", "true").equalsIgnoreCase("false")) {
+            toolBarPanel.setVisible(false);
         }
         //contentPane.add(workPanel, BorderLayout.CENTER);
         contentPane.add(splitPanel, BorderLayout.CENTER);
