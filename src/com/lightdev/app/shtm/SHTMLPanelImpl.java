@@ -61,7 +61,9 @@ import java.util.prefs.*;
  *
  */
 public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
-	//private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
+    private static final String SHOW_TOOLBARS_PROPERTY = "show_toolbars";
+    private static final String SHOW_MENU_PROPERTY = "show_menu";
+    //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
     /* some public constants */
     public static final String APP_TEMP_DIR = "temp";
     public static final String IMAGE_DIR = "images";
@@ -264,8 +266,12 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
 
     @Override
     public void shtmlPrefChanged(String propertyName, String newValue, String oldValue) {
-        if("show_toolbars".equals(propertyName)) {
+        if(SHOW_TOOLBARS_PROPERTY.equals(propertyName)) {
             toolBarPanel.setVisible(! "false".equalsIgnoreCase(newValue));
+            return;
+        }
+        if(SHOW_MENU_PROPERTY.equals(propertyName)) {
+            menuBar.setVisible(! "false".equalsIgnoreCase(newValue));
             return;
         }
 
@@ -787,6 +793,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
 
     /** customize the frame to our needs */
     protected void customizeFrame() {
+        if (Util.getPreference(SHOW_MENU_PROPERTY, "true").equalsIgnoreCase("false")) {
+            menuBar.setVisible(false);
+        }
         splitPanel = new SplitPanel();
         for (int i = 0; i < 4; i++) {
             final JTabbedPane p = new JTabbedPane();
@@ -845,7 +854,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         toolBarPanel.add(formatToolBar);
         toolBarPanel.add(paraToolBar);
         contentPane.add(toolBarPanel, BorderLayout.NORTH);
-        if (Util.getPreference("show_toolbars", "true").equalsIgnoreCase("false")) {
+        if (Util.getPreference(SHOW_TOOLBARS_PROPERTY, "true").equalsIgnoreCase("false")) {
             toolBarPanel.setVisible(false);
         }
         //contentPane.add(workPanel, BorderLayout.CENTER);
