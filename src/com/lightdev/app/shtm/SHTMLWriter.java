@@ -52,7 +52,7 @@ public class SHTMLWriter extends HTMLWriter {
     private boolean inTextArea;
     //final private MutableAttributeSet oConvAttr  = new SimpleAttributeSet();
     //final private MutableAttributeSet convertedAttributeSet  = new SimpleAttributeSet();
-    private boolean inPre;
+    private int inPreLevel=0;
 	private char[] tempChars;
 
     public SHTMLWriter(final Writer w, final HTMLDocument doc, final int pos, final int len) {
@@ -95,7 +95,8 @@ public class SHTMLWriter extends HTMLWriter {
     		return;
     	}
     	
-    	replaceMultipleSpacesByNonBreakingSpaces(chars, start, length);
+    	if(inPreLevel == 0)
+    	    replaceMultipleSpacesByNonBreakingSpaces(chars, start, length);
         
         int last = start;
         length += start;
@@ -104,7 +105,7 @@ public class SHTMLWriter extends HTMLWriter {
         	String replacement = entity(c);
 			if(replacement != null) {
 				directOutput(chars, last, counter - last);
-				output(replacement);
+				directOutput(replacement);
 				last = counter + 1;
 			}
         }
@@ -139,7 +140,7 @@ public class SHTMLWriter extends HTMLWriter {
     	setCurrentLineLength(getCurrentLineLength() + length);
     }
 
-    private void output(String string) throws IOException {
+    private void directOutput(String string) throws IOException {
         int length = string.length();
         if (tempChars == null || tempChars.length < length) {
             tempChars = new char[length];
@@ -151,7 +152,7 @@ public class SHTMLWriter extends HTMLWriter {
     @Override
     protected void startTag(final Element elem) throws IOException, BadLocationException {
         if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
-            inPre = true;
+            inPreLevel++;
         }
         super.startTag(elem);
     }
@@ -159,18 +160,17 @@ public class SHTMLWriter extends HTMLWriter {
     @Override
     protected void endTag(final Element elem) throws IOException {
         if (matchNameAttribute(elem.getAttributes(), HTML.Tag.PRE)) {
-            inPre = false;
+            inPreLevel--;
         }
         super.endTag(elem);
     }
 
     @Override
     protected void text(final Element elem) throws BadLocationException, IOException {
-        replaceEntities = !inPre;
+        replaceEntities = true;
         super.text(elem);
         replaceEntities = false;
     }
-
     @Override
     protected void textAreaContent(final AttributeSet attr) throws BadLocationException, IOException {
         inTextArea = true;
