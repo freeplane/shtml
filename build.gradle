@@ -7,7 +7,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 group 'com.lightdev.app.shtm.simplyhtml'
-version = '0.17.6'
+version = '0.17.7'
 
 targetCompatibility='1.7'
 sourceCompatibility='1.7'
