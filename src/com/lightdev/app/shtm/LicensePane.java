@@ -75,15 +75,14 @@ class LicensePane extends JPanel {
     private String getLicenseText(final InputStream is) {
         final StringBuffer license = new StringBuffer();
         try {
-            // InputStream is = getClass().getResourceAsStream(getLicense());
-            final BufferedReader r = new BufferedReader(new InputStreamReader(is));
-            String buf = r.readLine();
-            while (buf != null) {
-                license.append(buf);
-                license.append(lineSeparator);
-                buf = r.readLine();
+            try (final BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
+                String buf = r.readLine();
+                while (buf != null) {
+                    license.append(buf);
+                    license.append(lineSeparator);
+                    buf = r.readLine();
+                }
             }
-            r.close();
             is.close();
         }
         catch (final Exception e) {

@@ -101,10 +101,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             final String propsLoc = "/com/lightdev/app/shtm/resources/SimplyHTML_common.properties";
             final URL defaultPropsURL = SHTMLPanelImpl.class.getResource(propsLoc);
             final Properties props = new Properties();
-            InputStream in = null;
-            in = defaultPropsURL.openStream();
-            props.load(in);
-            in.close();
+            try (InputStream in = defaultPropsURL.openStream()) {
+                props.load(in);
+            }
             final ResourceBundle resourceBundle = ResourceBundle.getBundle(
                 "com.lightdev.app.shtm.resources.SimplyHTML", Locale.getDefault());
             return new InternalUiResources(resourceBundle, props);

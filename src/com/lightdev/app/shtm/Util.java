@@ -340,22 +340,19 @@ public class Util {
     public static void copyFile(final File srcFile, final File destFile) throws FileNotFoundException, IOException {
         if (!srcFile.toString().equals(destFile.toString())) {
             if (!destFile.exists()) {
-                RandomAccessFile src;
-                RandomAccessFile dest;
                 File destDir;
                 final byte[] buf = new byte[blockSize];
                 int bytesRead = 0;
-                src = new RandomAccessFile(srcFile.getPath(), "r");
                 destDir = new File(destFile.getParent());
                 destDir.mkdirs();
-                dest = new RandomAccessFile(destFile.getPath(), "rw");
-                bytesRead = src.read(buf);
-                while (bytesRead > -1) {
-                    dest.write(buf, 0, bytesRead);
+                try(RandomAccessFile src = new RandomAccessFile(srcFile.getPath(), "r");
+                        RandomAccessFile dest = new RandomAccessFile(destFile.getPath(), "rw")) {
                     bytesRead = src.read(buf);
+                    while (bytesRead > -1) {
+                        dest.write(buf, 0, bytesRead);
+                        bytesRead = src.read(buf);
+                    }
                 }
-                src.close();
-                dest.close();
             }
         }
     }

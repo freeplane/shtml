@@ -328,9 +328,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             final SHTMLDocument doc = (SHTMLDocument) kit.createEmptyDocument();
             doc.putProperty("IgnoreCharsetDirective", new Boolean(true));
             doc.setBase(new File(url.getPath()).getParentFile().toURI().toURL()); // set the doc base
-            final InputStream in = url.openStream(); // get an input stream
-            kit.read(in, doc, 0); // ..and read the document contents from it
-            in.close(); // .. then properly close the stream
+            try (final InputStream in = url.openStream()){
+                kit.read(in, doc, 0); // ..and read the document contents from it
+            }
             doc.addDocumentListener(this); // listen to changes
             editorPane.setDocument(doc); // let the document be edited in our editor
             setSource(url); // remember where the document came from
@@ -382,14 +382,11 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                         editorPane.setText(sourceEditorPane.getText());
                     }
                     final SHTMLDocument doc = (SHTMLDocument) getDocument();
-                    final OutputStream os = new FileOutputStream(sourceUrl.getPath());
-                    final OutputStreamWriter osw = new OutputStreamWriter(os);
+                    try (final OutputStream os = new FileOutputStream(sourceUrl.getPath());
+                    final OutputStreamWriter osw = new OutputStreamWriter(os)) {
                     final SHTMLWriter hw = new SHTMLWriter(osw, doc);
-                    hw.write();
-                    osw.flush();
-                    osw.close();
-                    os.flush();
-                    os.close();
+                        hw.write();
+                    }
                     /* write the style sheet */
                     if (doc.hasStyleRef()) {
                         saveStyleSheet();
@@ -543,13 +540,10 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     mergeStyleSheets(loadStyleSheet(styleSheetFile), styles);
                 }
             }
-            final OutputStream os = new FileOutputStream(styleSheetFile);
-            final OutputStreamWriter osw = new OutputStreamWriter(os);
-            CSSWriter cssWriter;
-            cssWriter = new CSSWriter(osw, styles);
-            cssWriter.write();
-            osw.close();
-            os.close();
+            try (final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(styleSheetFile))) {
+                CSSWriter cssWriter = new CSSWriter(osw, styles);
+                cssWriter.write();
+            }
         }
     }
 
@@ -750,7 +744,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             if (isHtmlChanged()) {
                 editorPane.getEditorKit().write(stringWriter, editorPane.getDocument(), 0,
                     editorPane.getDocument().getLength());
-                stringWriter.close();
                 String newText = stringWriter.toString();
                 if (!Util.preferenceIsTrue("writeHead", "true")) {
                     newText = newText.replaceAll("(?ims)<head>.*?(<body)", "$1");
