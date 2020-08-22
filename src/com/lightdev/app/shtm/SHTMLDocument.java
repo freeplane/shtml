@@ -421,7 +421,7 @@ public class SHTMLDocument extends HTMLDocument {
         if (desc instanceof URL) {
             setBase((URL) desc);
         }
-        final SHTMLReader reader = new SHTMLReader(pos);
+        final SHTMLReader reader = new SHTMLReader(pos, getLength() == 0);
         return reader;
     }
 
@@ -436,6 +436,7 @@ public class SHTMLDocument extends HTMLDocument {
         AttributeSet styleAttributes;
         /** indicates whether we're inside a SPAN tag */
         boolean inSpan = false;
+        final boolean newDocument;
         private boolean inBody;
         private int inPreLevel = 0;
         private boolean isParagraphTag;
@@ -444,8 +445,9 @@ public class SHTMLDocument extends HTMLDocument {
          * Constructor
          * 
          */
-        public SHTMLReader(final int offset) {
+        public SHTMLReader(final int offset, final boolean newDocument) {
             super(offset, 0, 0, null);
+            this.newDocument = newDocument;
             inBody = false;
         }
 
@@ -543,9 +545,11 @@ public class SHTMLDocument extends HTMLDocument {
         public void handleEndTag(final HTML.Tag tag, final int pos) {
             if (tag == HTML.Tag.BODY) {
                 inBody = false;
-                super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);
-                super.handleText(" ".toCharArray(), pos);
-                super.handleEndTag(HTML.Tag.P, pos);
+                if (newDocument) {
+                    super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);
+                    super.handleText(" ".toCharArray(), pos);
+                    super.handleEndTag(HTML.Tag.P, pos);
+                }
                 super.handleEndTag(tag, pos);
             }
             else if (tag == HTML.Tag.SPAN && !keepSpanTag) {
@@ -559,6 +563,14 @@ public class SHTMLDocument extends HTMLDocument {
             }
         }
 
+        /* (non-Javadoc)
+         * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleComment(char[], int)
+         */
+        public void handleComment(final char[] data, final int pos) {
+            if (newDocument) {
+                super.handleComment(data, pos);
+            }
+        }
 
         /* (non-Javadoc)
          * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
