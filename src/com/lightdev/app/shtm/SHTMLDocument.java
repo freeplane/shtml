@@ -421,7 +421,7 @@ public class SHTMLDocument extends HTMLDocument {
         if (desc instanceof URL) {
             setBase((URL) desc);
         }
-        final SHTMLReader reader = new SHTMLReader(pos, getLength() == 0);
+        final SHTMLReader reader = new SHTMLReader(pos);
         return reader;
     }
 
@@ -436,23 +436,17 @@ public class SHTMLDocument extends HTMLDocument {
         AttributeSet styleAttributes;
         /** indicates whether we're inside a SPAN tag */
         boolean inSpan = false;
-        boolean emptyDocument;
-        private boolean paragraphInserted;
         private boolean inBody;
         private int inPreLevel = 0;
-        private boolean paragraphCreated;
         private boolean isParagraphTag;
 
         /**
          * Constructor
          * 
          */
-        public SHTMLReader(final int offset, final boolean emptyDocument) {
+        public SHTMLReader(final int offset) {
             super(offset, 0, 0, null);
-            this.emptyDocument = emptyDocument;
             inBody = false;
-            paragraphInserted = false;
-            paragraphCreated = false;
         }
 
         /**
@@ -471,20 +465,13 @@ public class SHTMLDocument extends HTMLDocument {
             else if (inBody) {
                 isParagraphTag = isParagraphTag(tag);
                 if (isParagraphTag) {
-                	if(HTML.Tag.PRE.equals(tag)) {
-						inPreLevel++;
-	                	if(inPreLevel > 1)
-	                		return;
-					}
-                	else if(inPreLevel >= 1)
-                		return;
-                    if (paragraphCreated && !paragraphInserted) {
-                        insertParagraphEndTag(pos);
+                    if(HTML.Tag.PRE.equals(tag)) {
+                        inPreLevel++;
+                        if(inPreLevel > 1)
+                            return;
                     }
-                    paragraphInserted = true;
-                }
-                else if (!paragraphCreated && !paragraphInserted) {
-                    insertParagraphStartTag(pos);
+                    else if(inPreLevel >= 1)
+                        return;
                 }
             }
             if (tag == HTML.Tag.SPAN && !keepSpanTag) {
@@ -496,17 +483,6 @@ public class SHTMLDocument extends HTMLDocument {
                     charAttr.removeAttribute(tag);
                 }
             }
-        }
-
-        private void insertParagraphStartTag(final int pos) {
-            super.handleStartTag(HTML.Tag.P, new SimpleAttributeSet(), pos);
-            paragraphCreated = true;
-            paragraphInserted = true;
-        }
-
-        private void insertParagraphEndTag(final int pos) {
-            super.handleEndTag(HTML.Tag.P, pos);
-            paragraphCreated = false;
         }
 
         private boolean isParagraphTag(final Tag t) {
@@ -547,10 +523,7 @@ public class SHTMLDocument extends HTMLDocument {
          * to handleStartTag and handleEndTag respectively.
          */
         public void handleSimpleTag(final HTML.Tag t, final MutableAttributeSet a, final int pos) {
-            if (inBody && !paragraphCreated && !paragraphInserted) {
-                insertParagraphStartTag(pos);
-            }
-            if (t == HTML.Tag.SPAN && !keepSpanTag) {
+             if (t == HTML.Tag.SPAN && !keepSpanTag) {
                 if (inSpan) {
                     handleEndTag(t, pos);
                 }
@@ -569,41 +542,23 @@ public class SHTMLDocument extends HTMLDocument {
          */
         public void handleEndTag(final HTML.Tag tag, final int pos) {
             if (tag == HTML.Tag.BODY) {
-                if (paragraphCreated) {
-                    insertParagraphEndTag(pos);
-                }
                 inBody = false;
-                if (emptyDocument) {
-                    if (!paragraphInserted) {
-                        super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);
-                        super.handleText("\n".toCharArray(), pos);
-                        super.handleEndTag(HTML.Tag.P, pos);
-                    }
-                    super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);
-                    super.handleText(" ".toCharArray(), pos);
-                    super.handleEndTag(HTML.Tag.P, pos);
-                }
+                super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);
+                super.handleText(" ".toCharArray(), pos);
+                super.handleEndTag(HTML.Tag.P, pos);
                 super.handleEndTag(tag, pos);
             }
             else if (tag == HTML.Tag.SPAN && !keepSpanTag) {
                 handleEndSpan();
             }
             else {
-            	if(HTML.Tag.PRE.equals(tag) && inPreLevel > 0)
-            		inPreLevel--;
-            	if(inPreLevel == 0 || ! isParagraphTag(tag))
-            		super.handleEndTag(tag, pos);
+                if(HTML.Tag.PRE.equals(tag) && inPreLevel > 0)
+                    inPreLevel--;
+                if(inPreLevel == 0 || ! isParagraphTag(tag))
+                    super.handleEndTag(tag, pos);
             }
         }
 
-        /* (non-Javadoc)
-         * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleComment(char[], int)
-         */
-        public void handleComment(final char[] data, final int pos) {
-            if (emptyDocument) {
-                super.handleComment(data, pos);
-            }
-        }
 
         /* (non-Javadoc)
          * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
