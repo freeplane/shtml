@@ -75,6 +75,8 @@ import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
+import com.lightdev.app.shtm.bugfix.MapElementRemovingWorkaround;
+
 /**
  * An editor pane for application SimplyHTML.
  *
@@ -335,6 +337,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             sText = "<html><body><p></p></body></html>";
         }
         doc.putProperty(SHTMLDocument.AdditionalComments, null);
+        MapElementRemovingWorkaround.removeAllMapElements(doc);
         super.setText(sText);
         setCaretPosition(0);
         doc.endCompoundEdit();
