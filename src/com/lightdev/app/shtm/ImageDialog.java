@@ -302,8 +302,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         if (a.isDefined(HTML.Attribute.SRC)) {
             File imgFile = null;
             if (doc != null) {
-                imgFile = new File(Util.resolveRelativePath(a.getAttribute(HTML.Attribute.SRC).toString(), doc
-                    .getBase().getFile()));
+                imgFile = new File(Util.resolveRelativePath(doc
+                    .getBase(), a.getAttribute(HTML.Attribute.SRC).toString()).getPath());
             }
             else {
                 imgFile = new File(a.getAttribute(HTML.Attribute.SRC).toString());

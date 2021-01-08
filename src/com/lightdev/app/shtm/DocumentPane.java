@@ -327,7 +327,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             final SHTMLEditorKit kit = (SHTMLEditorKit) editorPane.getEditorKit();
             final SHTMLDocument doc = (SHTMLDocument) kit.createEmptyDocument();
             doc.putProperty("IgnoreCharsetDirective", new Boolean(true));
-            doc.setBase(new File(url.getPath()).getParentFile().toURI().toURL()); // set the doc base
+            doc.setBase(url); // set the doc base
             try (final InputStream in = url.openStream()){
                 kit.read(in, doc, 0); // ..and read the document contents from it
             }
@@ -374,7 +374,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         if (!saveInProgress()) {
             saveThread = Thread.currentThread(); // store thread for saveInProgress
             saveSuccessful = false; // if something goes wrong, this remains false
-            File file = null;
             try {
                 if (sourceUrl != null) {
                     /* write the HTML document */
@@ -399,8 +398,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     /* clean up */
                     //System.out.println("DocumentPane textChanged = false");
                     setDocumentChanged(false); // indicate no changes pending anymore after the save
-                    file = new File(sourceUrl.getPath()).getParentFile();
-                    ((HTMLDocument) getDocument()).setBase(file.toURI().toURL()); // set the doc base
+                    ((HTMLDocument) getDocument()).setBase(sourceUrl); // set the doc base
                     deleteTempDir();
                     //System.out.println("DocumentPane saveSuccessful = true");
                     saveSuccessful = true; // signal that saving was successful
@@ -410,15 +408,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     throw new DocNameMissingException();
                 }
             }
-            catch (final MalformedURLException mue) {
-                if (file != null) {
-                    Util.errMsg(this, "Can not create a valid URL for\n" + file.getAbsolutePath(), mue);
-                }
-                else {
-                    Util.errMsg(this, mue.getMessage(), mue);
-                }
-            }
-            catch (final Exception e) {
+             catch (final Exception e) {
                 if (savedUrl != null) {
                     sourceUrl = savedUrl;
                 }
@@ -505,9 +495,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     public void saveStyleSheet() throws IOException {
         final SHTMLDocument doc = (SHTMLDocument) getDocument();
         final StyleSheet styles = doc.getStyleSheet();
-        final String styleSheetName = getStyleSheetName();
+        final URL styleSheetName = getStyleSheetName();
         if (styleSheetName != null) {
-            final File styleSheetFile = new File(new URL(styleSheetName).getFile());
+            final File styleSheetFile = new File(styleSheetName.getFile());
             if (!styleSheetFile.exists()) {
                 // no styles present at save location, create new style sheet
                 styleSheetFile.createNewFile();
@@ -591,31 +581,13 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      *
      * @return the URL of the style sheet
      */
-    private String getStyleSheetName() throws MalformedURLException {
-        String name = DEFAULT_STYLE_SHEET_NAME; //SHTMLEditorKit.DEFAULT_CSS;
+    private URL getStyleSheetName() throws MalformedURLException {
         final SHTMLDocument doc = (SHTMLDocument) getDocument();
         final String styleRef = doc.getStyleRef();
-        final File file = new File(sourceUrl.getPath()).getParentFile();
-        String newDocBase = null;
-        try {
-            newDocBase = file.toURI().toURL().toString();
-        }
-        catch (final Exception e) {
-            if (file != null) {
-                Util.errMsg(this, "Can not create a valid URL for\n" + file.getAbsolutePath(), e);
-            }
-            else {
-                Util.errMsg(this, e.getMessage(), e);
-            }
-        }
         if (styleRef != null) {
-            name = Util.resolveRelativePath(styleRef, newDocBase);
+           return new URL(sourceUrl, styleRef);
         }
-        else {
-            name = null; // Util.resolveRelativePath(name, newDocBase);
-        }
-        //System.out.println("DocumentPane.getStyleSheetName=" + name);
-        return name;
+        return null;
     }
 
     /**

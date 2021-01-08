@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -783,6 +785,7 @@ public class Util {
         container.add(comp);
     }
 
+
     /**
      * resolve a relative URL string against an absolute URL string.
      *
@@ -795,43 +798,32 @@ public class Util {
      *   relative path:  ../images/test.jpg
      *   result:         file:/d:/eigene dateien/images/test.jpg
      * </pre>
-     *
-     * @param relPath  the relative URL string to resolve
      * @param absPath  the absolute URL string to start at
+     * @param relPath  the relative URL string to resolve
      *
      * @return the absolute URL string resulting from resolving relPath
      *    against absPath
      */
-    public static String resolveRelativePath(final String relPath, final String absPath) {
-        String newAbsPath = absPath;
-        String newRelPath = relPath;
-        if (absPath.endsWith(URL_SEPARATOR)) {
-            newAbsPath = absPath.substring(0, absPath.length() - 1);
-        }
-        int relPos = newRelPath.indexOf(RELATIVE_PREFIX);
-        while (relPos > -1) {
-            newRelPath = newRelPath.substring(relPos + RELATIVE_PREFIX.length());
-            newAbsPath = newAbsPath.substring(0, newAbsPath.lastIndexOf(URL_SEPARATOR));
-            relPos = newRelPath.indexOf(RELATIVE_PREFIX);
-        }
-        if (newRelPath.startsWith(URL_SEPARATOR)) {
-            return newAbsPath + newRelPath;
-        }
-        else {
-            return newAbsPath + URL_SEPARATOR + newRelPath;
+    public static URL resolveRelativePath(final URL base, final String relPath) {
+        try {
+            return new URL(base, relPath);
+        } catch (MalformedURLException e) {
+           throw new UncheckedIOException(e);
         }
     }
-
+    
     /**
      * get the path to a given file relative to a given directory
      *
-     * @param fromDir  the directory having the file from which the link refers
+     * @param fromFile  the directory having the file from which the link refers
      * @param toFile  the file to which a link refers
      *
      * @return the relative path
      */
-    public static String getRelativePath(final File fromDir, final File toFile) {
-        String fromStr = fromDir.getAbsolutePath();
+    public static String getRelativePath(final File fromFile, final File toFile) {
+        if(! fromFile.isDirectory())
+            return getRelativePath(fromFile.getParentFile(), toFile);
+        String fromStr = fromFile.getAbsolutePath();
         if (!fromStr.endsWith(File.separator)) {
             fromStr = fromStr + File.separator;
         }

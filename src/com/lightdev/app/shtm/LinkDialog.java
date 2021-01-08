@@ -346,8 +346,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         String wStr = null;
         String hStr = null;
         if (imgAttr != null) {
-            imgFile = Util.resolveRelativePath(imgAttr.toString(), ((SHTMLDocument) doc).getBase().getPath()).replace(
-                Util.URL_SEPARATOR_CHAR, File.separatorChar);
+            imgFile = Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), imgAttr.toString()).getPath();
             while (imgFile.startsWith(File.separator)) {
                 imgFile = imgFile.substring(1);
             }
@@ -659,7 +658,7 @@ class LinkDialog extends DialogShell implements ActionListener {
                 new File(((SHTMLDocument) doc).getBase().getPath());
                 final String toStr = getLinkAddress();
                 new File(toStr);
-                file = new File(Util.resolveRelativePath(getLinkAddress(), ((SHTMLDocument) doc).getBase().getPath()));
+                file = new File(Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), getLinkAddress()).getPath());
             }
         }
         catch (final Exception e) {
@@ -726,7 +725,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         dlg.setVisible(true);
         /** if the user made a selection, apply it to the document */
         if (dlg.getResult() == DialogShell.RESULT_OK) {
-            imgFile = Util.resolveRelativePath(dlg.getImageSrc(), ((SHTMLDocument) doc).getBase().getPath()).replace(
+            imgFile = Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), dlg.getImageSrc()).getPath().replace(
                 Util.URL_SEPARATOR_CHAR, File.separatorChar);
             while (imgFile.startsWith(File.separator)) {
                 imgFile = imgFile.substring(1);
@@ -777,9 +776,8 @@ class LinkDialog extends DialogShell implements ActionListener {
         }
         else if (type.equalsIgnoreCase(LINK_TYPE_LOCAL)) {
             try {
-                final String absPath = ((SHTMLDocument) doc).getBase().getFile().substring(1);
                 final String relPath = getLinkAddress();
-                setLinkAddress(Util.URL_SEPARATOR + Util.resolveRelativePath(relPath, absPath));
+                setLinkAddress(Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), relPath).getPath());
             }
             catch (final Exception ex) {
                 Util.errMsg(this, ex.getMessage(), ex);

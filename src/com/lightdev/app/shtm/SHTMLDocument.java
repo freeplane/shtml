@@ -72,7 +72,6 @@ public class SHTMLDocument extends HTMLDocument {
     private CompoundEdit compoundEdit;
     private int compoundEditDepth;
     private boolean inSetParagraphAttributes = false;
-    private boolean baseDirChecked = false;
     private final boolean keepSpanTag = Util.preferenceIsTrue("keepSpanTag");
     private boolean copyExternalImages = true;
 
@@ -766,35 +765,5 @@ public class SHTMLDocument extends HTMLDocument {
             StyleConstants.setBackground(set, Color.GRAY);
         }
         return set;
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLDocument#getBase()
-     */
-    public URL getBase() {
-        URL url = super.getBase();
-        if (false == baseDirChecked) {
-            baseDirChecked = true;
-            final File docDir = new File(url.getFile());
-            if (!docDir.exists()) {
-                docDir.mkdirs();
-            }
-            try {
-                url = docDir.toURI().toURL();
-                super.setBase(url);
-                return url;
-            }
-            catch (final MalformedURLException e) {
-            }
-        }
-        return url;
-    }
-
-    /* (non-Javadoc)
-     * @see javax.swing.text.html.HTMLDocument#setBase(java.net.URL)
-     */
-    public void setBase(final URL u) {
-        baseDirChecked = false;
-        super.setBase(u);
     }
 }
