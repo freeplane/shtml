@@ -430,12 +430,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         File srcDir = null;
         if (savedUrl == null && newDocNo > 0) {
             // new Document: use temp dir as source
-            srcDir = new File(docTempDir + File.separator + SHTMLPanelImpl.IMAGE_DIR + File.separator);
+            srcDir = new File(docTempDir + File.separator + SHTMLDocument.IMAGE_DIR + File.separator);
         }
         else {
             if (savedUrl == null) {
                 // document has been saved before: source is 'sourceUrl'
-                srcDir = new File(new File(sourceUrl.getPath()).getParent() + File.separator + SHTMLPanelImpl.IMAGE_DIR
+                srcDir = new File(new File(sourceUrl.getPath()).getParent() + File.separator + SHTMLDocument.IMAGE_DIR
                         + File.separator);
             }
             else {
@@ -443,7 +443,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                    document has been saved before but now is
                    to be saved under new name: source is 'old' url
                 */
-                srcDir = new File(new File(savedUrl.getPath()).getParent() + File.separator + SHTMLPanelImpl.IMAGE_DIR
+                srcDir = new File(new File(savedUrl.getPath()).getParent() + File.separator + SHTMLDocument.IMAGE_DIR
                         + File.separator);
             }
         }
@@ -456,7 +456,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     private void saveImages() {
         final File srcDir = getImageDir();
         final File destDir = new File(new File(sourceUrl.getPath()).getParent() + File.separator
-                + SHTMLPanelImpl.IMAGE_DIR + File.separator);
+                + SHTMLDocument.IMAGE_DIR + File.separator);
         try {
             if (srcDir.exists()) {
                 final ExampleFileFilter filter = new ExampleFileFilter();

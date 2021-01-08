@@ -73,7 +73,8 @@ public class SHTMLDocument extends HTMLDocument {
     private int compoundEditDepth;
     private boolean inSetParagraphAttributes = false;
     private final boolean keepSpanTag = Util.preferenceIsTrue("keepSpanTag");
-    private boolean copyExternalImages = true;
+    private boolean copyExternalImages = false;
+    public static final String IMAGE_DIR = "images";
 
     /**
      * Constructs an SHTMLDocument.
@@ -302,10 +303,10 @@ public class SHTMLDocument extends HTMLDocument {
             return;
         try {
             URL sourceUrl = new URL(getBase(), source);
-            File baseDirectory = new File(getBase().toURI()).getCanonicalFile();
+            File imageDirectory = new File(new URL(getBase(), IMAGE_DIR).toURI()).getCanonicalFile();
             if(sourceUrl.getProtocol().equalsIgnoreCase("file")) {
                 File sourceFile = new File(sourceUrl.toURI()).getCanonicalFile();
-                String basePath = baseDirectory.getPath() + File.separatorChar;
+                String basePath = imageDirectory.getPath() + File.separatorChar;
                 if(sourceFile.getPath().startsWith(basePath)) {
                     String updatedSource = sourceFile.getPath().substring(basePath.length()).replace(File.separatorChar, '/');
                     if(! updatedSource.equals(source))
@@ -314,12 +315,12 @@ public class SHTMLDocument extends HTMLDocument {
                 }
             }
             String imageExtension = source.substring(extensionIndex);
-            File imageCopy = File.createTempFile("image-", imageExtension, baseDirectory);
+            File imageCopy = File.createTempFile("image-", imageExtension, imageDirectory);
             try(
                     ReadableByteChannel rbc = Channels.newChannel(sourceUrl.openStream());
                     FileOutputStream fos = new FileOutputStream(imageCopy)){
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, imageCopy.getName());
+                ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, IMAGE_DIR + '/' + imageCopy.getName());
             }
         }
         catch (Exception e) {

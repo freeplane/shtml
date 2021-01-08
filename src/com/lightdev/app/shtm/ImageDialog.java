@@ -372,7 +372,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         final StringBuffer buf = new StringBuffer();
         final Object value = imgFileList.getSelectedValue();
         if (value != null) {
-            buf.append(SHTMLPanelImpl.IMAGE_DIR);
+            buf.append(SHTMLDocument.IMAGE_DIR);
             buf.append(Util.URL_SEPARATOR);
             buf.append(value.toString());
         }

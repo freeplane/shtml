@@ -66,7 +66,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
     /* some public constants */
     public static final String APP_TEMP_DIR = "temp";
-    public static final String IMAGE_DIR = "images";
     public static final String ACTION_SELECTED_KEY = "selected";
     public static final String ACTION_SELECTED = "true";
     public static final String ACTION_UNSELECTED = "false";

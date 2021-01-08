@@ -3392,7 +3392,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                             	.replaceAll("<!--StartFragment-->", "")
                                 .replaceAll("<!--EndFragment-->", "");
                             final HTMLText htmlText = new HTMLText(htmlContent, stringContent);
-                            replaceSelection(htmlText);
+                            doc.copyingExternalImages(() -> replaceSelection(htmlText));
                             result = true;
                         }
                         else {
