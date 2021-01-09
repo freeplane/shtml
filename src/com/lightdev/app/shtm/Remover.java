@@ -1,110 +1,62 @@
 package com.lightdev.app.shtm;
 
-import java.util.Locale;
+import org.apache.commons.lang.StringUtils;
 
 class Remover {
-	final private String searchedText;
-	private String searchedSubstring;
-	private int begin;
-	private int end;
-	private int removedCharacterNumber;
 	private String processedText;
+    private int begin;
+    private int end;
 	
 	public String getProcessedText() {
-		return processedText;
+		return processedText.substring(begin, end);
 	}
 	public Remover(String text) {
 		super();
 		this.processedText = text;
-		this.searchedText = text.toLowerCase(Locale.ENGLISH);
-		begin = end = removedCharacterNumber = 0;
-	}
-	public int getBegin() {
-		return begin;
-	}
-	public int getEnd() {
-		return end;
-	}
-	
-	private String createSearchedSubstring(final String substring) {
-		return "<" + substring.toLowerCase(Locale.ENGLISH);
-	}
-	
-	public boolean findFirst(){
-		begin = removedCharacterNumber;
-		return findNext();
-	}
-	
-	public boolean findNext(){
-		begin = searchedText.indexOf(searchedSubstring, begin);
-		return findEndOfElement();
+		this.begin = 0;
+		this.end = text.length();
 	}
 
-	public boolean findLast(){
-		begin = searchedText.lastIndexOf(searchedSubstring);
-		return findEndOfElement();
-	}
-	
-	private boolean findEndOfElement() {
-		if(begin == -1)
-		{
-			end = -1;
-			return false;
-		}
-		end = searchedText.indexOf('>', begin + searchedSubstring.length());
-		if(end == -1){
-			begin = -1;
-			return false;
-		}
-		end++;
-		return true;
-	}
-	
-	public int getWhiteSpaceBefore(){
-		if(begin <= 0)
-			return begin;
-		for(int i = begin - 1; i > 0; i--){
-			if(! Character.isWhitespace(searchedText.charAt(i)))
-				return i + 1;
-		}
-		return 0;
-	}
-	
-	public int getWhiteSpaceAfter(){
-		if(end == -1)
-			return -1;
-		for(int i = end + 1; i < searchedText.length(); i++){
-			if(! Character.isWhitespace(searchedText.charAt(i)))
-				return i;
-		}
-		return searchedText.length();
-	}
-	
 	public Remover removeFirstAndBefore(String element){
-		searchedSubstring = createSearchedSubstring(element);
-		if(findFirst()){
-			final int lastIndex = getWhiteSpaceAfter() - removedCharacterNumber;
-			processedText = processedText.substring(lastIndex);
-			removedCharacterNumber += lastIndex;
-		}
-		return this;
+        this.begin = indexOfFirstCharacterAfter('<' + element);
+        return this;
 	}
 	
-	public Remover removeLastAndAfter(String element){
-		searchedSubstring = createSearchedSubstring(element);
-		if(findLast()){
-			final int firstIndex = getWhiteSpaceBefore() - removedCharacterNumber;
-			processedText = processedText.substring(0, firstIndex);
-		}
-		return this;
+	private int indexOfFirstCharacterAfter(String element) {
+        int index = StringUtils.indexOfIgnoreCase(processedText, element, begin) + 1;
+        if(index <= begin)
+            return begin;
+        index = processedText.indexOf('>', index) + 1;
+        if(index <= begin)
+            return begin;
+        while(index < end && Character.isWhitespace(processedText.charAt(index)))
+            index++;
+        return index;
+    }
+    public Remover removeLastAndAfter(String element){
+        this.end = indexOfLastCharacterBefore('<' + element);
+        return this;
 	}
-	
-	static public void main(String[] argv){
-		String text = "\n\t<body> 1 </body>";
-		final Remover removeFirstAndBefore = new Remover(text).removeFirstAndBefore("body");
-		String removeLastAndAfter = removeFirstAndBefore.removeLastAndAfter("/body").getProcessedText();
-		System.out.println ('"' + removeLastAndAfter + '"');
-		// assert removeLastAndAfter.equals("1");
-	}
-
+    
+    private int indexOfLastCharacterBefore(String element) {
+        int index = StringUtils.lastIndexOfIgnoreCase(processedText, element, end) - 1;
+        if(index < begin)
+            return end;
+         while(index > begin && Character.isWhitespace(processedText.charAt(index)))
+            index--;
+        return index + 1;
+    }
+    static public void main(String[] argv){
+        assert new Remover("<html>\n\t<body> 1 </body>\\n\\t<html>")
+        .removeFirstAndBefore("body").removeLastAndAfter("/body")
+        .getProcessedText().equals("1");
+        assert new Remover("<html>\n\t<body2> 1 </body>\\n\\t<html>")
+        .removeFirstAndBefore("body").removeLastAndAfter("/body")
+        .getProcessedText().equals("1");
+        assert new Remover("<html>\n\t<body>4 1 5</body>\\n\\t<html>")
+        .removeFirstAndBefore("body").removeLastAndAfter("/body")
+        .getProcessedText().equals("4 1 5");
+        System.out.println("Success");
+        // assert removeLastAndAfter.equals("1");
+    }
 }

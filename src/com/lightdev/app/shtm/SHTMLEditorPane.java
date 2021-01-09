@@ -3412,11 +3412,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                                 return importDataWithoutHtmlFlavor(comp, transferable);
                             }
                             stringContent = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                            htmlContent = new Remover(htmlContent).removeFirstAndBefore("body").removeLastAndAfter("/body")
+                            String bodyContent = new Remover(htmlContent).removeFirstAndBefore("body").removeLastAndAfter("/body")
                             	.getProcessedText()	
-                            	.replaceAll("<!--StartFragment-->", "")
-                                .replaceAll("<!--EndFragment-->", "");
-                            final HTMLText htmlText = new HTMLText(htmlContent, stringContent);
+                                .replaceAll("<!--(?:Start|End)Fragment-->", "");
+                            final HTMLText htmlText = new HTMLText(bodyContent, stringContent);
                             doc.copyingExternalImages(() -> replaceSelection(htmlText));
                             result = true;
                         }

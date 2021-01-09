@@ -36,7 +36,8 @@ bintray {
 
 dependencies {
 	compile 'javax.help:javahelp:2.0.05',
-          'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.5'
+          'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.5',
+          'commons-lang:commons-lang:2.6'
 }
 
 sourceSets {  
