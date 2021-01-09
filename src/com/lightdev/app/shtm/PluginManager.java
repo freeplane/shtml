@@ -173,7 +173,7 @@ class PluginManager {
         urls.clear();
         String fName;
         try {
-            final File plugindir = new File(filePath);//new URI(Util.FILE_PREFIX + Util.URL_SEPARATOR + appPath));
+            final File plugindir = new File(filePath);
             if (plugindir != null) {
                 final File[] content = plugindir.listFiles();
                 if (content != null) {

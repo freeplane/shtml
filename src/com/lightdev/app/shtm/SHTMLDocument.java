@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -308,7 +306,7 @@ public class SHTMLDocument extends HTMLDocument {
             URL sourceUrl = new URL(getBase(), source);
             File imageDirectory = getImageDirectory().getCanonicalFile();
             if(sourceUrl.getProtocol().equalsIgnoreCase("file")) {
-                File sourceFile = new File(sourceUrl.toURI()).getCanonicalFile();
+                File sourceFile = new File(sourceUrl.getPath()).getCanonicalFile();
                 String basePath = imageDirectory.getPath() + File.separatorChar;
                 if(sourceFile.getPath().startsWith(basePath)) {
                     String updatedSource = sourceFile.getPath().substring(basePath.length()).replace(File.separatorChar, '/');
@@ -318,6 +316,7 @@ public class SHTMLDocument extends HTMLDocument {
                 }
             }
             String imageExtension = source.substring(extensionIndex);
+            imageDirectory.mkdirs();
             File imageCopy = File.createTempFile("image-", imageExtension, imageDirectory);
             try(
                     ReadableByteChannel rbc = Channels.newChannel(sourceUrl.openStream());
@@ -777,9 +776,9 @@ public class SHTMLDocument extends HTMLDocument {
     
     public static File getImageDirectory(URL base) {
         try {
-            return new File(new URL(base, getImageDirectoryName(base)).toURI());
-        } catch (MalformedURLException | URISyntaxException e) {
-            throw new IllegalArgumentException(e);
+            return new File(new URL(base, getImageDirectoryName(base)).getPath());
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

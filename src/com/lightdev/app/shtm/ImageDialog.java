@@ -340,7 +340,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
             buf.append(Util.URL_SEPARATOR);
             buf.append(value.toString());
         }
-        return buf.toString();
+        return  buf.toString();
     }
 
     /**

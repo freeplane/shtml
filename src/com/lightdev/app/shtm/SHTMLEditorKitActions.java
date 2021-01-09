@@ -2567,7 +2567,7 @@ class SHTMLEditorKitActions {
         public void openDocument(final File file, final DocumentPane.DocumentPaneListener listener) {
             int openDocNo = -1;
             try {
-                openDocNo = getOpenDocument(file.toURI().toURL().toString());
+                openDocNo = getOpenDocument(file.toURL().toString());
             }
             catch (final MalformedURLException mue) {
             }
@@ -2628,7 +2628,7 @@ class SHTMLEditorKitActions {
             public void run() {
                 try {
                     JOptionPane.getFrameForComponent(panel);
-                    panel.setDocumentPane(new DocumentPane(file.toURI().toURL(), 0/*, renderMode*/));
+                    panel.setDocumentPane(new DocumentPane(file.toURL(), 0/*, renderMode*/));
                     if (l != null) {
                         panel.getDocumentPane().addDocumentPaneListener(l);
                     }
@@ -2793,7 +2793,7 @@ class SHTMLEditorKitActions {
                 }
                 if (canSave) {
                     try {
-                        final NewFileSaver saver = new NewFileSaver(panel.getDocumentPane(), selection.toURI().toURL(),
+                        final NewFileSaver saver = new NewFileSaver(panel.getDocumentPane(), selection.toURL(),
                             panel.getActiveTabNo());
                         saver.setName("NewFileSaver");
                         saver.start();

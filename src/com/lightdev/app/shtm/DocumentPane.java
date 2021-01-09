@@ -252,8 +252,10 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             //insertStyleRef(doc); // create style sheet reference in HTML header tag
             //styles = kit.getStyleSheet();
             doc.addDocumentListener(this); // listen to changes
-            doc.setBase(createTempDir());
+            URL tempDocumentUrl = new URL(createTempDir(), getDocumentName() + ".htm");
+            doc.setBase(tempDocumentUrl);
             editorPane.setDocument(doc); // let the document be edited in our editor
+            updateFileName();
             //doc.putProperty(Document.TitleProperty, getDocumentName());
             final boolean useStyle = Util.useSteStyleSheet();
             if (useStyle) {
@@ -290,7 +292,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     private URL createTempDir() throws MalformedURLException {
         docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() + File.separator + getDocumentName()
                 + File.separator);
-        return docTempDir.toURI().toURL();
+        return docTempDir.toURL();
     }
 
     /**
@@ -338,7 +340,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      */
     private StyleSheet loadStyleSheet(final File cssFile) throws MalformedURLException, IOException {
         final StyleSheet s = new StyleSheet();
-        s.importStyleSheet(cssFile.toURI().toURL());
+        s.importStyleSheet(cssFile.toURL());
         return s;
     }
 
@@ -385,6 +387,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     //System.out.println("DocumentPane textChanged = false");
                     setDocumentChanged(false); // indicate no changes pending anymore after the save
                     ((HTMLDocument) getDocument()).setBase(targetUrl); // set the doc base
+                    updateFileName();
                     deleteTempDir();
                     //System.out.println("DocumentPane saveSuccessful = true");
                     saveSuccessful = true; // signal that saving was successful
