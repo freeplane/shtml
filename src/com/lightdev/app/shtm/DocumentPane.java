@@ -252,7 +252,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             //insertStyleRef(doc); // create style sheet reference in HTML header tag
             //styles = kit.getStyleSheet();
             doc.addDocumentListener(this); // listen to changes
-            URL tempDocumentUrl = new URL(createTempDir(), getDocumentName() + ".htm");
+            docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() + File.separator + getDocumentName()
+            + File.separator);
+            URL tempDocumentUrl = new URL(docTempDir.toURL(), getDocumentName() + ".htm");
             doc.setBase(tempDocumentUrl);
             editorPane.setDocument(doc); // let the document be edited in our editor
             updateFileName();
@@ -280,19 +282,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         catch (final Exception e) {
             Util.errMsg(this, e.getMessage(), e);
         }
-    }
-
-    /**
-     * create temporary directory for a newly created document
-     * so that images can be stored and referenced until the document
-     * is saved.
-     *
-     * @return URL of created temporary document directoy
-     */
-    private URL createTempDir() throws MalformedURLException {
-        docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() + File.separator + getDocumentName()
-                + File.separator);
-        return docTempDir.toURL();
     }
 
     /**
