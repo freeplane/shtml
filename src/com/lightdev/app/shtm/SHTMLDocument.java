@@ -24,11 +24,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -74,7 +78,6 @@ public class SHTMLDocument extends HTMLDocument {
     private boolean inSetParagraphAttributes = false;
     private final boolean keepSpanTag = Util.preferenceIsTrue("keepSpanTag");
     private boolean copyExternalImages = false;
-    public static final String IMAGE_DIR = "images";
 
     /**
      * Constructs an SHTMLDocument.
@@ -303,7 +306,7 @@ public class SHTMLDocument extends HTMLDocument {
             return;
         try {
             URL sourceUrl = new URL(getBase(), source);
-            File imageDirectory = new File(new URL(getBase(), IMAGE_DIR).toURI()).getCanonicalFile();
+            File imageDirectory = getImageDirectory().getCanonicalFile();
             if(sourceUrl.getProtocol().equalsIgnoreCase("file")) {
                 File sourceFile = new File(sourceUrl.toURI()).getCanonicalFile();
                 String basePath = imageDirectory.getPath() + File.separatorChar;
@@ -320,7 +323,7 @@ public class SHTMLDocument extends HTMLDocument {
                     ReadableByteChannel rbc = Channels.newChannel(sourceUrl.openStream());
                     FileOutputStream fos = new FileOutputStream(imageCopy)){
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, IMAGE_DIR + '/' + imageCopy.getName());
+                ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, imageDirectory.getName() + '/' + imageCopy.getName());
             }
         }
         catch (Exception e) {
@@ -766,5 +769,32 @@ public class SHTMLDocument extends HTMLDocument {
             StyleConstants.setBackground(set, Color.GRAY);
         }
         return set;
+    }
+
+    public File getImageDirectory() {
+        return SHTMLDocument.getImageDirectory(getBase());
+    }
+    
+    public static File getImageDirectory(URL base) {
+        try {
+            return new File(new URL(base, getImageDirectoryName(base)).toURI());
+        } catch (MalformedURLException | URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public String getImageDirectoryName() {
+        return SHTMLDocument.getImageDirectoryName(getBase());
+    }
+
+    public static String getImageDirectoryName(URL documentUrl) {
+        Objects.requireNonNull(documentUrl);
+        String path = documentUrl.getPath();
+        int directoryEnd = path.lastIndexOf('/');
+        int filenameEnd = path.lastIndexOf('.');
+        if(directoryEnd >= 0 && filenameEnd > directoryEnd)
+            return path.substring(directoryEnd + 1, filenameEnd) + "_files";
+        else
+            return "images";
     }
 }

@@ -65,6 +65,7 @@ import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.ElementIterator;
 import javax.swing.text.MutableAttributeSet;
@@ -219,6 +220,15 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     
     
     @Override
+    public void updateUI() {
+        final SHTMLEditorKit kit = new SHTMLEditorKit(/*renderMode*/);
+        setEditorKit(kit);
+        super.updateUI();
+    }
+
+
+
+    @Override
 	public void setUI(TextUI newUI) {
 		super.setUI(newUI);
 		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke('\u0004'), DO_NOTHING);
@@ -228,7 +238,22 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
 
 
-	public PasteMode getPasteMode() {
+	@Override
+    public SHTMLDocument getDocument() {
+        Document document = super.getDocument();
+        return (SHTMLDocument) document;
+    }
+
+
+
+    @Override
+    public void setDocument(Document doc) {
+        super.setDocument((SHTMLDocument)doc);
+    }
+
+
+
+    public PasteMode getPasteMode() {
 		if (forceConstantPasteMode)
 		{ 
 			return pasteMode;

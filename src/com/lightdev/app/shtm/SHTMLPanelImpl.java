@@ -313,20 +313,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     /**
-     * get the file object for the document shown in the currently open DocumentPane
-     *
-     * @return the document file
-     */
-    File getCurrentFile() {
-        File file = null;
-        final URL url = getDocumentPane().getSource();
-        if (url != null) {
-            file = new File(url.getFile());
-        }
-        return file;
-    }
-
-    /**
      * get the name of the file for the document shown in the currently open DocumentPane
      *
      * @return the document name
@@ -1018,10 +1004,11 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * this is shared by save and saveAs so we put it here to avoid redundancy
      *
      * @param documentPane  the document pane containing the document to save
+     * @param target 
      */
-    void doSave(final DocumentPane documentPane) {
+    void doSave(final DocumentPane documentPane, URL target) {
     try {
-      documentPane.saveDocument();
+      documentPane.saveDocument(target);
     }
     /**
      * this exception should never happen as the menu allows to save a

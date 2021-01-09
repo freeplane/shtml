@@ -88,8 +88,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     private final SHTMLEditorPane editorPane;
     /** the editor displaying the document in HTML code view */
     private final SyntaxPane sourceEditorPane;
-    /** temporary storage location for this document */
-    private File docTempDir = null;
     /** the save thread, if a save operation is in progress */
     public Thread saveThread = null;
     /** indicator if a save operation was succesful */
@@ -130,21 +128,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
     /** the name of the document */
     private String docName;
-    /** the file the current style sheet was loaded from, if any */
-    private final File loadedStyleSheet = null;
-    /** the URL the document was loaded from (if applicable)*/
-    private URL sourceUrl = null;
     /** JTabbedPane for our views */
     private JComponent paneHoldingScrollPanes;
     private final JScrollPane richViewScrollPane;
     private final JScrollPane sourceViewScrollPane;
     public static final int VIEW_TAB_LAYOUT = 0;
     public static final int VIEW_TAB_HTML = 1;
-    /**
-     * a save place for sourceUrl, when a document is to be saved
-     * under a new name and this fails
-     */
-    private URL savedUrl = null;
     /** indicates if this document was loaded froma file */
     private boolean loadedFromFile = false;
     /** default document name */
@@ -167,9 +156,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         super();
         // EditorPane and ScrollPane for layout view
         editorPane = new SHTMLEditorPane();
-        final SHTMLEditorKit kit = new SHTMLEditorKit(/*renderMode*/);
-        //kit.resetStyleSheet();
-        editorPane.setEditorKit(kit);
         richViewScrollPane = new JScrollPane(); // create a new JScrollPane,
         richViewScrollPane.getViewport().setView(editorPane); // ..add the editor pane to it
         // EditorPane and ScrollPane for html view
@@ -309,6 +295,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
     /**
      * remove the temporary storage created for this <code>DocumentPane</code>
+     * @param docTempDir 
      */
     public void deleteTempDir() {
         if (docTempDir != null) {
@@ -333,7 +320,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             }
             doc.addDocumentListener(this); // listen to changes
             editorPane.setDocument(doc); // let the document be edited in our editor
-            setSource(url); // remember where the document came from
+            updateFileName(); // remember where the document came from
             loadedFromFile = true;
         }
         catch (final Exception ex) {
@@ -370,93 +357,57 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      *        that a save did not take place because of a missing name
      *        and location
      */
-    public void saveDocument() throws DocNameMissingException {
+    public void saveDocument(URL targetUrl) throws DocNameMissingException {
         if (!saveInProgress()) {
             saveThread = Thread.currentThread(); // store thread for saveInProgress
             saveSuccessful = false; // if something goes wrong, this remains false
             try {
-                if (sourceUrl != null) {
                     /* write the HTML document */
                     if (getSelectedTab() == VIEW_TAB_HTML) {
                         editorPane.setText(sourceEditorPane.getText());
                     }
                     final SHTMLDocument doc = (SHTMLDocument) getDocument();
-                    try (final OutputStream os = new FileOutputStream(sourceUrl.getPath());
+                    try (final OutputStream os = new FileOutputStream(targetUrl.getPath());
                     final OutputStreamWriter osw = new OutputStreamWriter(os)) {
                     final SHTMLWriter hw = new SHTMLWriter(osw, doc);
                         hw.write();
                     }
                     /* write the style sheet */
                     if (doc.hasStyleRef()) {
-                        saveStyleSheet();
+                        saveStyleSheet(targetUrl);
                     }
                     /*
                       copy image directory,
                       if new document or saved from different location
                     */
-                    saveImages();
+                    saveImages(targetUrl);
                     /* clean up */
                     //System.out.println("DocumentPane textChanged = false");
                     setDocumentChanged(false); // indicate no changes pending anymore after the save
-                    ((HTMLDocument) getDocument()).setBase(sourceUrl); // set the doc base
+                    ((HTMLDocument) getDocument()).setBase(targetUrl); // set the doc base
                     deleteTempDir();
                     //System.out.println("DocumentPane saveSuccessful = true");
                     saveSuccessful = true; // signal that saving was successful
-                }
-                else {
-                    saveThread = null;
-                    throw new DocNameMissingException();
-                }
             }
              catch (final Exception e) {
-                if (savedUrl != null) {
-                    sourceUrl = savedUrl;
-                }
                 Util.errMsg(this, "An exception occurred while saving the file", e);
             }
             saveThread = null;
-            savedUrl = sourceUrl;
         }
     }
+    
+    
 
-    /**
-     * determine the directory this <code>DocumentPane</code> references image
-     * files from
-     *
-     * @return the directory image files referenced by this
-     * <code>DocumentPane</code> are found
-     */
-    public File getImageDir() {
-        File srcDir = null;
-        if (savedUrl == null && newDocNo > 0) {
-            // new Document: use temp dir as source
-            srcDir = new File(docTempDir + File.separator + SHTMLDocument.IMAGE_DIR + File.separator);
-        }
-        else {
-            if (savedUrl == null) {
-                // document has been saved before: source is 'sourceUrl'
-                srcDir = new File(new File(sourceUrl.getPath()).getParent() + File.separator + SHTMLDocument.IMAGE_DIR
-                        + File.separator);
-            }
-            else {
-                /*
-                   document has been saved before but now is
-                   to be saved under new name: source is 'old' url
-                */
-                srcDir = new File(new File(savedUrl.getPath()).getParent() + File.separator + SHTMLDocument.IMAGE_DIR
-                        + File.separator);
-            }
-        }
-        return srcDir;
+    private File getImageDir() {
+        return getDocument().getImageDirectory();
     }
 
     /**
      * save image files
      */
-    private void saveImages() {
+    private void saveImages(URL targetUrl) {
         final File srcDir = getImageDir();
-        final File destDir = new File(new File(sourceUrl.getPath()).getParent() + File.separator
-                + SHTMLDocument.IMAGE_DIR + File.separator);
+        final File destDir = SHTMLDocument.getImageDirectory(targetUrl);
         try {
             if (srcDir.exists()) {
                 final ExampleFileFilter filter = new ExampleFileFilter();
@@ -492,7 +443,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * one with the same name/location. Styles in this style sheet overwrite
      * styles in the already existing style sheet.</p>
      */
-    public void saveStyleSheet() throws IOException {
+    public void saveStyleSheet(URL targetUrl) throws IOException {
         final SHTMLDocument doc = (SHTMLDocument) getDocument();
         final StyleSheet styles = doc.getStyleSheet();
         final URL styleSheetName = getStyleSheetName();
@@ -504,7 +455,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             }
             else {
                 if (loadedFromFile) {
-                    if ((savedUrl == null) || (!savedUrl.getPath().equals(sourceUrl.getPath()))) {
+                    if ((!getDocumentUrl().getPath().equals(targetUrl.getPath()))) {
                         /*
                             this style sheet was loaded from somewhere else and now is
                             being saved at a new location where a style sheet exists
@@ -585,7 +536,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         final SHTMLDocument doc = (SHTMLDocument) getDocument();
         final String styleRef = doc.getStyleRef();
         if (styleRef != null) {
-           return new URL(sourceUrl, styleRef);
+           return new URL(doc.getBase(), styleRef);
         }
         return null;
     }
@@ -616,36 +567,10 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         return isDocumentChanged();
     }
 
-    /**
-     * set the source this document is to be loaded from
-     *
-     * <p>This is only to be used when it is made sure,
-     * that the document is saved at the location specified
-     * by 'source'.</p>
-     *
-     * @param the URL of the source this document is to be loaded from
-     */
-    public void setSource(final URL source) {
-        savedUrl = sourceUrl;
-        sourceUrl = source;
-        final String fName = source.getFile();
+    private void updateFileName() {
+        final String fName = getDocumentUrl().getPath();
         docName = fName.substring(fName.lastIndexOf("/") + 1);
         fireNameChanged();
-    }
-
-    /**
-     * get the source, this document was having before its current sourceUrl
-     * was set.
-     *
-     * @return the source URL before a name change
-     */
-    public URL getOldSource() {
-        if (savedUrl == null) {
-            return sourceUrl;
-        }
-        else {
-            return savedUrl;
-        }
     }
 
     /**
@@ -654,7 +579,11 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * @return the URL this document can be loaded from
      */
     public URL getSource() {
-        return sourceUrl;
+        return isNewDoc() ? null : getDocumentUrl();
+    }
+
+    private URL getDocumentUrl() {
+        return getDocument().getBase();
     }
 
     /**
@@ -664,7 +593,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * @return true, if this is a new document that has not been saved so far
      */
     public boolean isNewDoc() {
-        return sourceUrl == null;
+        return docTempDir != null;
     }
 
     /**
@@ -672,12 +601,12 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      *
      * @return the <code>Document</code> of this <code>DocumentPane</code>
      */
-    public Document getDocument() {
+    public SHTMLDocument getDocument() {
         return editorPane.getDocument();
     }
 
     HTMLDocument getHTMLDocument() {
-        return (HTMLDocument) sourceEditorPane.getDocument();
+        return getDocument();
     }
 
     /**
@@ -847,6 +776,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
     /** listeners for DocumentPaneEvents */
     private final Vector dpListeners = new Vector();
+    private File docTempDir;
 
     /**
      * add a DocumentPaneListener to this Document

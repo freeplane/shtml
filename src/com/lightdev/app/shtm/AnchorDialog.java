@@ -74,7 +74,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
     private SHTMLEditorPane editor;
     private DocumentPane dp;
     /** the document this dialog was constructed with */
-    private Document doc = null;
+    private SHTMLDocument doc = null;
     /** the URL this document was loaded from (if loaded from this dialog) */
     private URL url = null;
     /** table for document anchors */
@@ -92,7 +92,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
      * @param title  the dialog title
      * @param doc  the document to edit anchors of
      */
-    public AnchorDialog(final Dialog parent, final String title, final Document doc) {
+    public AnchorDialog(final Dialog parent, final String title, final SHTMLDocument doc) {
         super(parent, title, helpTopicId);
         initDialog(doc, null/*, renderMode*/);
     }
@@ -104,7 +104,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
      * @param title  the dialog title
      * @param doc  the document to edit anchors of
      */
-    public AnchorDialog(final Frame parent, final String title, final Document doc) {
+    public AnchorDialog(final Frame parent, final String title, final SHTMLDocument doc) {
         super(parent, title, helpTopicId);
         initDialog(doc, null/*, renderMode*/);
     }
@@ -143,7 +143,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
      * @param doc  the document to edit anchors of, or null
      * @param url  the url to load a document from, or null
      */
-    private void initDialog(final Document doc, final URL url) {
+    private void initDialog(final SHTMLDocument doc, final URL url) {
         this.url = url;
         //this.renderMode = renderMode;
         // create anchor panel
@@ -262,7 +262,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
         if (needsSaving) {
             if (url != null) {
                 try {
-                    dp.saveDocument(/*renderMode*/);
+                    dp.saveDocument(doc.getBase());
                 }
                 catch (final Exception e) {
                     Util.errMsg(this, e.getMessage(), e);

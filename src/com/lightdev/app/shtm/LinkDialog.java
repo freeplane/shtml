@@ -73,7 +73,7 @@ class LinkDialog extends DialogShell implements ActionListener {
     /** cache for link address */
     private String addressCache = null;
     /** the document this dialog was constructed with */
-    private final Document doc;
+    private final SHTMLDocument doc;
     private final SHTMLEditorPane editorPane;
     /** dialog components */
     private final JComboBox linkStyle;
@@ -104,8 +104,6 @@ class LinkDialog extends DialogShell implements ActionListener {
     private final String LINK_TYPE_MAILTO = Util.getResourceString("linkTypeName8");
     /** indicates, whether or not action handlers should react on events */
     private boolean ignoreActions = false;
-    /** the image directory for the document links are edited from in this dialog */
-    private final File imgDir;
     /** the currently selected image file for this link */
     private String imgFile = null;
     /** the help id for this dialog */
@@ -124,13 +122,12 @@ class LinkDialog extends DialogShell implements ActionListener {
      * @param title  the dialog title
      * @param doc  the document to edit link settings for
      */
-    public LinkDialog(final Frame parent, final String title, final SHTMLEditorPane editorPane, final File imgDir/*, int renderMode*/) {
+    public LinkDialog(final Frame parent, final String title, final SHTMLEditorPane editorPane) {
         // initialize DialogShell
         super(parent, title, helpTopicId);
         // save document for later use
         this.editorPane = editorPane;
         doc = editorPane.getSHTMLDocument();
-        this.imgDir = imgDir;
         //this.renderMode = renderMode;
         // layout and constraints to use later on
         final GridBagLayout g = new GridBagLayout();
@@ -716,7 +713,7 @@ class LinkDialog extends DialogShell implements ActionListener {
      * selection of a link image
      */
     private void handleLinkImageAction() {
-        final ImageDialog dlg = new ImageDialog(this, Util.getResourceString("imageDialogTitle"), imgDir);
+        final ImageDialog dlg = new ImageDialog(this, Util.getResourceString("imageDialogTitle"), doc);
         if (imgFile != null) {
             dlg.setImage(imgFile, linkImgWidth.getText(), linkImgHeight.getText());
         }

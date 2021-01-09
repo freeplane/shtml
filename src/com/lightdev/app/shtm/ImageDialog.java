@@ -20,11 +20,10 @@ package com.lightdev.app.shtm;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -56,7 +55,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 
 import com.sun.demo.ExampleFileFilter;
 
@@ -76,8 +74,6 @@ import com.sun.demo.ExampleFileFilter;
  *
  */
 class ImageDialog extends DialogShell implements ActionListener, ListSelectionListener, ChangeListener {
-    /** directory this ImageDialog maintains */
-    private File imgDir;
     /** KeyListener for watching changes in the scale text field */
     private final KeyHandler keyHandler = new KeyHandler();
     /** FocusListener for watching changes in the scale text field */
@@ -119,34 +115,10 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     /** the document the image came from, if any */
     private SHTMLDocument doc;
 
-    /**
-     * construct a new ImageDialog
-     *
-     * @param parent  the parent frame of this ImageDialog
-     * @param title  the title of this ImageDialog
-     * @param imgDir  the directory of the image repository
-     */
-    public ImageDialog(final Dialog parent, final String title, final File imgDir) {
-        super(parent, title, helpTopicId);
-        initDialog(title, imgDir);
-    }
-
-    /**
-     * construct a new ImageDialog
-     *
-     * @param parent  the parent frame of this ImageDialog
-     * @param title  the title of this ImageDialog
-     * @param imgDir  the directory of the image repository
-     */
-    public ImageDialog(final Frame parent, final String title, final File imgDir) {
-        super(parent, title, helpTopicId);
-        initDialog(title, imgDir);
-    }
-
-    public ImageDialog(final Frame parent, final String title, final File imgDir, final SHTMLDocument sourceDoc) {
+    public ImageDialog(final Window parent, final String title, final SHTMLDocument sourceDoc) {
         super(parent, title, helpTopicId);
         doc = sourceDoc;
-        initDialog(title, imgDir);
+        initDialog(title);
     }
 
     /**
@@ -155,9 +127,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * @param title  the title of this ImageDialog
      * @param imgDir  the directory of the image repository
      */
-    private void initDialog(final String title, final File imgDir) {
-        //System.out.println("ImageDialog.initDialog imgDir=" + imgDir.getAbsolutePath());
-        this.imgDir = imgDir;
+    private void initDialog(final String title) {
         Dimension dim;
         // create an image directory panel
         final JPanel dirPanel = new JPanel(new BorderLayout());
@@ -300,14 +270,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         ignoreChangeEvents = true;
         originalAttributes.addAttributes(a);
         if (a.isDefined(HTML.Attribute.SRC)) {
-            File imgFile = null;
-            if (doc != null) {
-                imgFile = new File(Util.resolveRelativePath(doc
+            File imgFile = new File(Util.resolveRelativePath(doc
                     .getBase(), a.getAttribute(HTML.Attribute.SRC).toString()).getPath());
-            }
-            else {
-                imgFile = new File(a.getAttribute(HTML.Attribute.SRC).toString());
-            }
             //System.out.println("ImageDialog.setImageAttribute imgFile=" + imgFile.getAbsolutePath());
             imgFileList.setSelectedValue(imgFile.getName().toLowerCase(), true);
         }
@@ -349,7 +313,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     public String getImageHTML() {
         final SimpleAttributeSet set = new SimpleAttributeSet(originalAttributes);
         final StringWriter sw = new StringWriter();
-        final SHTMLWriter w = new SHTMLWriter(sw, doc == null ? new HTMLDocument() : doc);
+        final SHTMLWriter w = new SHTMLWriter(sw, doc);
         for (int i = 0; i < attributeComponents.size(); i++) {
             set.addAttributes(((AttributeComponent) attributeComponents.get(i)).getValue());
         }
@@ -372,7 +336,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         final StringBuffer buf = new StringBuffer();
         final Object value = imgFileList.getSelectedValue();
         if (value != null) {
-            buf.append(SHTMLDocument.IMAGE_DIR);
+            buf.append(doc.getImageDirectoryName());
             buf.append(Util.URL_SEPARATOR);
             buf.append(value.toString());
         }
@@ -395,6 +359,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
             chooser.setFileFilter(filter);
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 final File[] sFiles = chooser.getSelectedFiles();
+                File imgDir = doc.getImageDirectory();
                 if (!imgDir.exists()) {
                     imgDir.mkdirs();
                 }
@@ -418,6 +383,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     private void handleDeleteImage() {
         final String fName = imgFileList.getSelectedValue().toString();
         if (Util.msg(JOptionPane.YES_NO_OPTION, "confirmDelete", "deleteFileQuery", fName, "\r\n")) {
+            File imgDir = doc.getImageDirectory();
             final File delFile = new File(imgDir.getAbsolutePath() + File.separator + fName);
             delFile.delete();
             updateFileList();
@@ -428,7 +394,8 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * display all files found in the image directory
      */
     private void updateFileList() {
-        if (imgDir != null && imgFileList != null) {
+        File imgDir = doc.getImageDirectory();
+        if (imgFileList != null) {
             final String[] files = imgDir.list();
             if (files != null && files.length > 0) {
                 for (int i = 0; i < files.length; i++) {
@@ -546,6 +513,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
             /*System.out.println("ImageDialog.valueChanged setting preview image to " + imgDir.getAbsolutePath() +
                                  File.separator +
                                  imgFileList.getSelectedValue().toString());*/
+            File imgDir = doc.getImageDirectory();
             preview.setImage(new ImageIcon(imgDir.getAbsolutePath() + File.separator
                     + imgFileList.getSelectedValue().toString()));
             updateControls();

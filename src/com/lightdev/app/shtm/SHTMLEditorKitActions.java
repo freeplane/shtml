@@ -838,8 +838,7 @@ class SHTMLEditorKitActions {
         public void actionPerformed(final ActionEvent ae) {
             final Frame parent = JOptionPane.getFrameForComponent(panel);
             final LinkDialog dialog = new LinkDialog(parent, Util.getResourceString("linkDialogTitle"),
-                panel.getSHTMLEditorPane(), panel.getDocumentPane().getImageDir()/*,
-                                                                                 renderMode*/);
+                panel.getSHTMLEditorPane());
             if (parent != null) {
                 Util.center(parent, dialog);
             }
@@ -1355,8 +1354,7 @@ class SHTMLEditorKitActions {
 
         public void actionPerformed(final ActionEvent ae) {
             final Frame parent = JOptionPane.getFrameForComponent(panel);
-            final ImageDialog dlg = new ImageDialog(parent, Util.getResourceString("imageDialogTitle"), panel
-                .getDocumentPane().getImageDir(), (SHTMLDocument) panel.getDocumentPane().getDocument());
+            final ImageDialog dlg = new ImageDialog(parent, Util.getResourceString("imageDialogTitle"), panel.getDocumentPane().getDocument());
             final Element img = panel.getSHTMLDocument().getCharacterElement(
                 panel.getSHTMLEditorPane().getCaretPosition());
             if (img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
@@ -1579,16 +1577,16 @@ class SHTMLEditorKitActions {
 
         public void actionPerformed(final ActionEvent ae) {
             final Frame parent = JOptionPane.getFrameForComponent(panel);
-            final ImageDialog dlg = new ImageDialog(parent, Util.getResourceString("imageDialogTitle"), panel
-                .getDocumentPane().getImageDir());
+            SHTMLDocument document = panel.getSHTMLDocument();
+            final ImageDialog dlg = new ImageDialog(parent, Util.getResourceString("imageDialogTitle"), document);
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
             /** if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {
                 try {
-                    panel.getSHTMLDocument().insertBeforeStart(
-                        panel.getSHTMLDocument().getCharacterElement(panel.getSHTMLEditorPane().getSelectionEnd()),
+                    document.insertBeforeStart(
+                        document.getCharacterElement(panel.getSHTMLEditorPane().getSelectionEnd()),
                         dlg.getImageHTML());
                 }
                 catch (final Exception e) {
@@ -2689,7 +2687,7 @@ class SHTMLEditorKitActions {
             }
 
             public void run() {
-                panel.doSave(dp);
+                panel.doSave(dp, dp.getSource());
             }
         }
 
@@ -2833,8 +2831,7 @@ class SHTMLEditorKitActions {
             }
 
             public void run() {
-                dp.setSource(url);
-                panel.doSave(dp);
+                panel.doSave(dp, url);
                 if (dp.saveSuccessful) {
                     panel.getTabbedPaneForDocuments().setTitleAt(
                         panel.getTabbedPaneForDocuments().indexOfComponent(dp), dp.getDocumentName());
