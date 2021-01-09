@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -78,20 +79,8 @@ class DialogShell extends JDialog implements ActionListener {
      * @param parent  the parent dialog
      * @param title  the title for this dialog
      */
-    public DialogShell(final Dialog parent, final String title) {
-        super(parent, title);
-        buildDialog();
-    }
-
-    /**
-     * constructor
-     *
-     * @param parent  the parent frame
-     * @param title  the title for this dialog
-     */
-    public DialogShell(final Frame parent, final String title) {
-        super(parent, title);
-        buildDialog();
+    public DialogShell(final Window parent, final String title) {
+        this(parent, title, null);
     }
 
     /**
@@ -101,25 +90,13 @@ class DialogShell extends JDialog implements ActionListener {
      * @param title  the title for this dialog
      * @param helpTopicId  the id of the help topic to display for this dialog
      */
-    public DialogShell(final Frame parent, final String title, final String helpTopicId) {
+    public DialogShell(final Window parent, final String title, final String helpTopicId) {
         super(parent, title);
         this.helpTopicId = helpTopicId;
         buildDialog();
     }
 
-    /**
-     * constructor
-     *
-     * @param parent  the parent dialog
-     * @param title  the title for this dialog
-     * @param helpTopicId  the id of the help topic to display for this dialog
-     */
-    public DialogShell(final Dialog parent, final String title, final String helpTopicId) {
-        super(parent, title);
-        this.helpTopicId = helpTopicId;
-        buildDialog();
-    }
-
+ 
     /**
      * create dialog components
      */
