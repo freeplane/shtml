@@ -286,8 +286,12 @@ public class SHTMLDocument extends HTMLDocument {
         URL base = getBase();
         if(base == null || ! base.getProtocol().equalsIgnoreCase("file"))
             return;
-        
-        Stream.of(data).forEach(this::copyExternalImagesForElementSpec);
+        try {
+            Stream.of(data).forEach(this::copyExternalImagesForElementSpec);
+        }
+        catch (final UnknownDocumentBaseException e) {
+            Util.errMsg(null, e.getMessage(), null);
+        }
         
     }
     
@@ -325,8 +329,12 @@ public class SHTMLDocument extends HTMLDocument {
                 ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, imageDirectory.getName() + '/' + imageCopy.getName());
             }
         }
-        catch (Exception e) {
-            
+        catch (UnknownDocumentBaseException e) {
+            ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, "");
+            throw e;
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -787,13 +795,16 @@ public class SHTMLDocument extends HTMLDocument {
     }
 
     public static String getImageDirectoryName(URL documentUrl) {
-        Objects.requireNonNull(documentUrl);
+        if(documentUrl == null)
+            throw new UnknownDocumentBaseException(Util.getResourceString("unknownBaseUrlImageInsertionError"));
         String path = documentUrl.getPath();
-        int directoryEnd = path.lastIndexOf('/');
+        int filenameStart = path.lastIndexOf('/') + 1;
         int filenameEnd = path.lastIndexOf('.');
-        if(directoryEnd >= 0 && filenameEnd > directoryEnd)
-            return path.substring(directoryEnd + 1, filenameEnd) + "_files";
+        if(filenameEnd < filenameStart)
+            filenameEnd = path.length();
+        if(filenameStart < filenameEnd)
+            return path.substring(filenameStart + 1, filenameEnd) + "_files";
         else
-            return "images";
+            throw new UnknownDocumentBaseException(Util.getResourceString("unknownBaseUrlImageInsertionError"));
     }
 }
