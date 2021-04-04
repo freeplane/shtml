@@ -69,13 +69,13 @@ import javax.swing.undo.UndoableEdit;
  * 
  */
 public class SHTMLDocument extends HTMLDocument {
-    public static final String SUFFIX = "&nbsp;";
+	public static final String SUFFIX = "&nbsp;";
     private static Set paragraphElements;
     private CompoundEdit compoundEdit;
     private int compoundEditDepth;
     private boolean inSetParagraphAttributes = false;
     private final boolean keepSpanTag = Util.preferenceIsTrue("keepSpanTag");
-    private boolean copyExternalImages = false;
+    private CopiedImageSources copiedExternalImagesSources = CopiedImageSources.NONE;
 
     /**
      * Constructs an SHTMLDocument.
@@ -107,8 +107,8 @@ public class SHTMLDocument extends HTMLDocument {
         super(c, styles);
         compoundEdit = null;
     }
-
-    /**
+    
+ 	/**
      * apply a set of attributes to a given document element
      *
      * @param e  the element to apply attributes to
@@ -263,14 +263,14 @@ public class SHTMLDocument extends HTMLDocument {
         void run() throws T;
     }
     
-    public <T extends Exception> void copyingExternalImages(ThrowingRunnable<T> runnable) throws T{
-        boolean copyExternalImagesBackup = copyExternalImages;
+    public <T extends Exception> void copyingExternalImages(CopiedImageSources copiedExternalImagesSources, ThrowingRunnable<T> runnable) throws T{
+        CopiedImageSources copiedExternalImagesSourcesBackup = this.copiedExternalImagesSources;
+        this.copiedExternalImagesSources = copiedExternalImagesSources;
         try {
-            copyExternalImages = true;
             runnable.run();
         }
         finally {
-            copyExternalImages = copyExternalImagesBackup;
+        	this.copiedExternalImagesSources = copiedExternalImagesSourcesBackup;
         }
     }
 
@@ -281,7 +281,7 @@ public class SHTMLDocument extends HTMLDocument {
     }
 
     private void copyExternalImages(ElementSpec[] data) {
-        if(!copyExternalImages)
+        if(copiedExternalImagesSources == CopiedImageSources.NONE)
             return;
         URL base = getBase();
         if(base == null || ! base.getProtocol().equalsIgnoreCase("file"))
@@ -301,7 +301,7 @@ public class SHTMLDocument extends HTMLDocument {
          return;   
         } 
         final String source = (String) attributes.getAttribute(HTML.Attribute.SRC);
-        if(source == null)
+        if(! copiedExternalImagesSources.includes(source))
             return;
         int extensionIndex = source.lastIndexOf('.');
         if(extensionIndex == -1)

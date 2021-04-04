@@ -158,16 +158,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 				throw new RuntimeException("Expected value for SHTMLEditorPane.PasteMode: " + name());
 		}
 		
-		public static PasteMode getValueFromPrefs()
+		static PasteMode getPasteModeFromPrefs()
 		{
-			// try to get freeplane pref value, and use simplyhtml pref value if that fails
-			Preferences prefs = Preferences.userNodeForPackage(SHTMLEditorPane.class);
-			PasteMode pm = SHTMLEditorPane.PasteMode.valueOf(
-					SHTMLEditorPane.PasteMode.class, Util.getPreference(
-							"default_paste_mode", prefs.get(
-									PrefsDialog.PREFS_DEFAULT_PASTE_MODE,
-									SHTMLEditorPane.PasteMode.PASTE_HTML
-											.name())));
+			PasteMode pm = Util.getPreference("default_paste_mode",PasteMode.PASTE_HTML);
 			return pm;
 		}
 	}
@@ -260,7 +253,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 		}
 		else
 		{
-			return PasteMode.getValueFromPrefs();
+			return PasteMode.getPasteModeFromPrefs();
 		}
 	}
 
@@ -3416,7 +3409,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                             	.getProcessedText()	
                                 .replaceAll("<!--(?:Start|End)Fragment-->", "");
                             final HTMLText htmlText = new HTMLText(bodyContent, stringContent);
-                            doc.copyingExternalImages(() -> replaceSelection(htmlText));
+                            doc.copyingExternalImages(
+                            		Util.getPreference(PrefsDialog.PREFS_IMAGES_COPIED_BY_EDITOR, CopiedImageSources.ANY_ABSOLUTE_URL),
+                            		() -> replaceSelection(htmlText));
                             result = true;
                         }
                         else {

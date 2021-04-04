@@ -2145,7 +2145,7 @@ class SHTMLEditorKitActions {
             super();
             this.panel = panel;
             SHTMLPanelImpl.configureActionProperties(this, "pasteOther");
-            updateActionName(PasteMode.getValueFromPrefs().invert());
+            updateActionName(PasteMode.getPasteModeFromPrefs().invert());
         }
         
         public void updateActionName(final PasteMode pm)

@@ -939,6 +939,12 @@ public class Util {
         return resourceString != null ? resourceString : nm;
     }
 
+    static public <T extends Enum<T>> T getPreference(final String key, final T defaultValue) {
+    	@SuppressWarnings("unchecked")
+		final Class<T> valueClass = (Class<T>) defaultValue.getClass();
+		return Enum.valueOf(valueClass, Util.getPreference(key, defaultValue.name()));
+    }
+    
     static public String getPreference(final String key, final String defaultValue) {
         String paramValue = DynamicResource.getResourceString(SHTMLPanel.getResources(), key);
         if (paramValue != null) {

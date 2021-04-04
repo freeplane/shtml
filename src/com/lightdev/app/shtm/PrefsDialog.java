@@ -64,6 +64,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
     public static final String PREFSID_LOOK_AND_FEEL = "Laf";
     public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";
     public static final String PREFS_DEFAULT_PASTE_MODE ="default_paste_mode";
+    public static final String PREFS_IMAGES_COPIED_BY_EDITOR ="images_copied_by_editor";
     private final String lafName = UIManager.getLookAndFeel().getName();
     private final JComboBox lafCombo;
     private final JCheckBox useStdStyleSheet;
