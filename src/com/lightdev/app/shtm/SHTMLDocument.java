@@ -803,7 +803,7 @@ public class SHTMLDocument extends HTMLDocument {
         if(filenameEnd < filenameStart)
             filenameEnd = path.length();
         if(filenameStart < filenameEnd)
-            return path.substring(filenameStart + 1, filenameEnd) + "_files";
+            return path.substring(filenameStart, filenameEnd) + "_files";
         else
             throw new UnknownDocumentBaseException(Util.getResourceString("unknownBaseUrlImageInsertionError"));
     }
