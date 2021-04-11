@@ -1,43 +1,23 @@
-plugins {
-    id "com.jfrog.bintray" version "1.8.4"
-}
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
-group 'com.lightdev.app.shtm.simplyhtml'
+group 'org.freeplane.lightdev'
 version = '0.18.3'
 
 targetCompatibility='1.8'
 sourceCompatibility='1.8'
 
 repositories {
-    jcenter()
+    mavenCentral()
 	maven { url "${project.gradle.gradleUserHomeDir}/local-artifacts" }
-	maven { url 'https://dl.bintray.com/freeplane/freeplane' }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-	publications = ['simplyhtml'] 
-	pkg {
-        repo = 'freeplane'
-        name = 'simplyhtml'
-        userOrg = 'freeplane'
-        licenses = ['GPL-3.0', 'GPL-2.0']
-        vcsUrl = 'https://github.com/dpolivaev/simplyhtml.git'
-		version {
-                name = project.version
-		}
-    }
 }
 
 dependencies {
-	compile 'javax.help:javahelp:2.0.05',
-          'org.dpolivaev.mnemonicsetter:mnemonicsetter:0.5',
-          'commons-lang:commons-lang:2.6'
+	implementation 'javax.help:javahelp:2.0.05'
+    implementation 'org.freeplane.dpolivaev.mnemonicsetter:mnemonicsetter:0.6'
+    implementation 'commons-lang:commons-lang:2.6'
 }
 
 sourceSets {  
@@ -88,23 +68,70 @@ task sourceJar(type: Jar) {
         exclude "com/lightdev/app/shtm/help/**" 
     }
 }
-
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
 build.dependsOn mainJar
 build.dependsOn javadoc
 
 publishing {
     publications {
-        simplyhtml(MavenPublication) {
-            artifactId 'SimplyHTML'
+        maven(MavenPublication) {
+            artifactId 'simplyhtml'
+			groupId = project.group
+			version = project.version
 			artifact mainJar
-			artifact sourceJar {
-                classifier "sources"
+			artifact sourceJar
+			artifact javadocJar
+            pom {
+                name = project.name
+                description = 'Application and java components for html'
+                url = 'https://sourceforge.net/projects/simplyhtml/'
+
+                scm {
+                    url = 'https://github.com/freeplane/shtml'
+                    connection = 'scm:git:https://github.com/freeplane/shtml.git'
+                    developerConnection = 'scm:git:git@github.com:freeplane/shtml.git'
+                }
+
+                licenses {
+                    license {
+                        name = 'GPL, Version 2 or later'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'lightdev'
+                        name = 'Ulrich Hilger'
+                    }
+                    developer {
+                        id = 'dpolivaev'
+                        name = 'Dimitry Polivaev'
+                        email = 'dpolivaev@gmx.de'
+                    }
+                }
             }
         }
     }
     repositories {
-		maven { url "${project.gradle.gradleUserHomeDir}/local-artifacts"}
+        maven {
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+        maven { 
+			 url  = "${project.gradle.gradleUserHomeDir}/local-artifacts"
+		}
     }
+}
+
+signing {
+    sign publishing.publications.maven
 }
 
 javadoc {
