@@ -2945,6 +2945,12 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             final int nextPosition = getCaretPosition() + 1;
             final SHTMLDocument doc = getSHTMLDocument();
             final Element listAtNextPosition = getListElement(nextPosition);
+            Element listItemAtNextPosition = getListItemElement(nextPosition);
+            // Empty list
+            if(listAtNextPosition != null && listItemAtNextPosition != null 
+                    && listItemAtNextPosition.getStartOffset() < listAtNextPosition.getStartOffset())
+                return false;
+
             if (listAtNextPosition != null && listAtNextPosition.getStartOffset() == nextPosition) {
                 // List element starting at the next position.
                 if (!caretWithinListItem()) {
@@ -2952,7 +2958,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                         return false;
                     }
                     mergeSecondElementIntoFirst(getParagraphElement(getCaretPosition()),
-                        getListItemElement(nextPosition));
+                        listItemAtNextPosition);
                     return true;
                 }
                 else {
@@ -2962,7 +2968,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                         .getStartOffset() && listAtCaret.getEndOffset() >= listAtNextPosition.getEndOffset();
                     if (isSurroundingList) {
                         mergeNestedListItemIntoParent(getListItemElement(getCaretPosition()),
-                            getListItemElement(nextPosition));
+                            listItemAtNextPosition);
                         return true;
                     }
                     else {
@@ -2983,7 +2989,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 }
             }
             // List item element starting at the next position
-            final Element listItem = getListItemElement(nextPosition);
+            final Element listItem = listItemAtNextPosition;
             if (listItem != null && listItem.getStartOffset() == nextPosition) {
                 mergeSecondElementIntoFirst(getListItemElement(getCaretPosition()), listItem);
                 return true;
@@ -3012,6 +3018,12 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         private boolean deletePrevChar(final ActionEvent actionEvent) {
             final int selectionStart = getSelectionStart();
             final Element list = getListElement(selectionStart);
+            Element listItemAtSelectionStart = getListItemElement(selectionStart);
+            // Empty list
+            if(list != null && listItemAtSelectionStart != null 
+                    && listItemAtSelectionStart.getStartOffset() < list.getStartOffset())
+                return false;
+            
             if (list != null && list.getStartOffset() == selectionStart) {
                 // A list starts at the caret position.
                 final Element listAtPrevPosition = selectionStart == 0 ? null : getListElement(selectionStart - 1);
@@ -3023,7 +3035,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                         && listAtPrevPosition.getEndOffset() >= list.getEndOffset();
                 if (isSurroundingList) {
                     mergeNestedListItemIntoParent(getListItemElement(selectionStart - 1),
-                        getListItemElement(selectionStart));
+                        listItemAtSelectionStart);
                     return true;
                 }
                 else {
@@ -3042,11 +3054,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     return true;
                 }
             }
-            final Element listItem = getListItemElement(selectionStart);
-            if (listItem != null && listItem.getStartOffset() == selectionStart) {
+            if (listItemAtSelectionStart != null && listItemAtSelectionStart.getStartOffset() == selectionStart) {
                 // List item starts at the current position.
-                final int previousPosition = listItem.getStartOffset() - 1;
-                mergeSecondElementIntoFirst(getListItemElement(previousPosition), listItem);
+                final int previousPosition = listItemAtSelectionStart.getStartOffset() - 1;
+                mergeSecondElementIntoFirst(getListItemElement(previousPosition), listItemAtSelectionStart);
                 setCaretPosition(previousPosition);
                 return true;
             }
