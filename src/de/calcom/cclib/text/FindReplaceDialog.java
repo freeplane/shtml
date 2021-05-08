@@ -833,9 +833,6 @@ public class FindReplaceDialog extends JDialog {
             }
         });
         jbtnFindNext.setText(Util.getResourceString(SHTMLPanel.getResources(), "findNext"));
-        jbtnFindNext.setPreferredSize(new Dimension(100, 27));
-        jbtnFindNext.setMinimumSize(new Dimension(100, 27));
-        jbtnFindNext.setMaximumSize(new Dimension(100, 27));
         jbtnFindNext.addKeyListener(escapeKeyListender);
         jcbStartOnTop.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchFromStart"));
         jcbStartOnTop.setToolTipText(Util.getResourceString(SHTMLPanel.getResources(), "searchFromStart.tooltip"));
@@ -850,8 +847,6 @@ public class FindReplaceDialog extends JDialog {
         jpnlOptions.setBorder(titledBorder1);
         jpnlOptions.setLayout(gridLayout2);
         jpnlFind.setLayout(gridBagLayout5);
-        jtfReplace.setMinimumSize(new Dimension(4, 12));
-        jtfReplace.setPreferredSize(new Dimension(59, 12));
         jtfReplace.setText("jtfReplace");
         jtfReplace.addKeyListener(new KeyAdapter() {
             public void keyPressed(final KeyEvent e) {
@@ -868,8 +863,6 @@ public class FindReplaceDialog extends JDialog {
         });
         jpnlMain.setLayout(gridBagLayout6);
         jrbUp.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchUp"));
-        jcomboSearchTerm.setMinimumSize(new Dimension(4, 12));
-        jcomboSearchTerm.setPreferredSize(new Dimension(63, 12));
         //jcomboSearchTerm.setText("jtfPhrase");
         jcomboSearchTerm.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
             public void keyPressed(final KeyEvent e) {
@@ -892,9 +885,6 @@ public class FindReplaceDialog extends JDialog {
         
         jLabel3.setText(Util.getResourceString(SHTMLPanel.getResources(), "replaceWith"));
         jLabel4.setText(Util.getResourceString(SHTMLPanel.getResources(), "textToFind"));
-        jbtnClose.setMaximumSize(new Dimension(100, 27));
-        jbtnClose.setMinimumSize(new Dimension(100, 27));
-        jbtnClose.setPreferredSize(new Dimension(100, 27));
         jbtnClose.setText(Util.getResourceString(SHTMLPanel.getResources(), "closeBtnName"));
         jbtnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -905,9 +895,6 @@ public class FindReplaceDialog extends JDialog {
         gridLayout2.setColumns(2);
         this.setModal(true);
         this.setTitle(Util.getResourceString(SHTMLPanel.getResources(), "findReplaceDialogTitle"));
-        jbtnReplace.setMaximumSize(new Dimension(100, 27));
-        jbtnReplace.setMinimumSize(new Dimension(100, 27));
-        jbtnReplace.setPreferredSize(new Dimension(100, 27));
         jbtnReplace.setText(Util.getResourceString(SHTMLPanel.getResources(), "replace"));
         jbtnReplace.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -915,9 +902,6 @@ public class FindReplaceDialog extends JDialog {
             }
         });
         jbtnReplace.addKeyListener(escapeKeyListender);
-        jbtnCancel.setMaximumSize(new Dimension(100, 27));
-        jbtnCancel.setMinimumSize(new Dimension(100, 27));
-        jbtnCancel.setPreferredSize(new Dimension(100, 27));
         jbtnCancel.setText(Util.getResourceString(SHTMLPanel.getResources(), "cancelBtnName"));
         jbtnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -927,16 +911,16 @@ public class FindReplaceDialog extends JDialog {
         jcbProject.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchWholeProject"));
         this.getContentPane().add(jpnlMain, BorderLayout.NORTH);
         jpnlBtn.add(jbtnFindNext, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-            GridBagConstraints.NONE, new Insets(4, 4, 0, 4), 0, 0));
+            GridBagConstraints.HORIZONTAL, new Insets(4, 4, 0, 4), 0, 0));
         jpnlBtn.add(jbtnClose, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-            GridBagConstraints.NONE, new Insets(0, 4, 4, 4), 0, 0));
+            GridBagConstraints.HORIZONTAL, new Insets(0, 4, 4, 4), 0, 0));
         jpnlBtn.add(jbtnReplace, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-            GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+            GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
         jpnlBtn.add(jbtnCancel, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-            GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
+            GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
         jpnlMain.add(jpnlFind, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST,
-            GridBagConstraints.BOTH, new Insets(4, 4, 4, 4), 0, 0));
-        jpnlMain.add(jpnlBtn, new GridBagConstraints(1, 0, 1, 2, 1.0, 1.0, GridBagConstraints.NORTHEAST,
+            GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 0));
+        jpnlMain.add(jpnlBtn, new GridBagConstraints(1, 0, 1, 2, 0.0, 0.0, GridBagConstraints.NORTHEAST,
             GridBagConstraints.NONE, new Insets(4, 4, 4, 4), 0, 0));
         jpnlFind.add(jcomboSearchTerm, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
             GridBagConstraints.HORIZONTAL, new Insets(4, 4, 4, 4), 0, 12));
