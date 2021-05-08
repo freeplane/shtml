@@ -82,9 +82,6 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
         attributeKey = key;
         htmlAttrKey = htmlKey;
         valueSelector = new JSpinner(new SpinnerNumberModel());
-        final Dimension dim = new Dimension(50, 24);
-        valueSelector.setMinimumSize(dim);
-        valueSelector.setPreferredSize(dim);
         add(valueSelector);
         originalUnit = getUnit();
         this.allowNegative = allowNegative;
