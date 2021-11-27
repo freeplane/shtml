@@ -106,13 +106,9 @@ public class SHTMLEditorKit extends HTMLEditorKit {
     }
 
     Document createEmptyDocument() {
-        getStyleSheet();
+    	StyleSheet styles = getStyleSheet();
         final StyleSheet ss = new ScaledStyleSheet();
-        try {
-            ss.importStyleSheet(Class.forName("javax.swing.text.html.HTMLEditorKit").getResource(DEFAULT_CSS));
-        }
-        catch (final Exception e) {
-        }
+        ss.addStyleSheet(styles);
         final SHTMLDocument doc = new SHTMLDocument(ss);
         doc.setParser(getParser());
         doc.setAsynchronousLoadPriority(-1);
