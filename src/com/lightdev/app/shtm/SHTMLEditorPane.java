@@ -47,6 +47,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 
@@ -3564,6 +3566,11 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         doc.endCompoundEdit();
     }
 
+    private static final List elementsContainingParagraphs = Arrays.asList(
+    		HTML.Tag.BODY.toString(),
+    		HTML.Tag.TH.toString(),
+    		HTML.Tag.TD.toString()
+    		); 
     /**
      * Switches the elements in the current selection to the given tag. If allowedTags
      * is non-null, applies the tag only if it is contained in allowedTags.
@@ -3607,20 +3614,27 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                         writer.writeStartTag(tag.toString(), child.getAttributes());
                         writer.writeChildElements(child);
                         writer.writeEndTag(tag.toString());
-                        if (index < 0) {
-                            index = i;
-                        }
-                        if (replaceStart < 0 || replaceStart > elementStart) {
-                            replaceStart = elementStart;
-                        }
-                        if (replaceEnd < 0 || replaceEnd < elementEnd) {
-                            replaceEnd = elementEnd;
-                        }
+                     }
+                    else if (child.getName().equals(HTML.Tag.IMPLIED.toString()) 
+                    		&& elementsContainingParagraphs.contains(parentOfparagraphElement.getName())){
+                    	writer.writeStartTag(tag.toString(), null);
+                        writer.write(child);
+                        writer.writeEndTag(tag.toString());
                     }
                     else {
                         writer.write(child);
+                        continue;
                     }
-                }
+                    if (index < 0) {
+                        index = i;
+                    }
+                    if (replaceStart < 0 || replaceStart > elementStart) {
+                        replaceStart = elementStart;
+                    }
+                    if (replaceEnd < 0 || replaceEnd < elementEnd) {
+                        replaceEnd = elementEnd;
+                    }
+               }
             }
             //System.out.println("SHTMLEditorPane applyTag remove index=" + index + ", removeCount=" + removeCount);
             if (index > -1) {
