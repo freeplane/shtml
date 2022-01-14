@@ -51,7 +51,7 @@ import javax.swing.JFrame;
  */
 class FrmMain extends JFrame {
     public static final String APP_NAME = "SimplyHTML";
-    public static final String VERSION = "0.18.2";
+    public static final String VERSION = "0.18.8";
     /** static reference to this instance of class FrmMain */
     private SHTMLPanelImpl mainPane;
 

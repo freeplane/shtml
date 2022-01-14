@@ -88,19 +88,20 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * set up HTML patterns and attributes
      */
     private void setupPatterns() {
+    	boolean useLightBackgroundColors = hasLightBackground();
         Pattern p;
         SimpleAttributeSet set;
         patterns = new Vector();
         // content text
         p = Pattern.compile("\\b\\w+");
         set = new SimpleAttributeSet();
-        StyleConstants.setForeground(set, Color.BLACK);
+        StyleConstants.setForeground(set, useLightBackgroundColors ? Color.BLACK : Color.WHITE);
         StyleConstants.setBold(set, false);
         patterns.addElement(new RegExStyle(p, set));
         // a tag
         p = Pattern.compile("<[/a-zA-Z0-9\\s]+");
         set = new SimpleAttributeSet();
-        StyleConstants.setForeground(set, new Color(0, 0, 128));
+        StyleConstants.setForeground(set, useLightBackgroundColors ? new Color(0, 0, 128) : new Color(128, 128, 255));
         StyleConstants.setBold(set, true);
         patterns.addElement(new RegExStyle(p, set));
         // a tag end
@@ -109,18 +110,26 @@ class SyntaxPane extends JEditorPane implements CaretListener {
         // an attribute
         p = Pattern.compile("\\s[/a-zA-Z0-9]+=");
         set = new SimpleAttributeSet();
-        StyleConstants.setForeground(set, new Color(158, 119, 0));
+        StyleConstants.setForeground(set, useLightBackgroundColors ? new Color(158, 119, 0) : new Color(255, 200, 128));
         StyleConstants.setBold(set, true);
         patterns.addElement(new RegExStyle(p, set));
         // attribute values
         p = Pattern.compile("\"[\\x2D;:/.%#?=,\\w\\s]+\"");
         set = new SimpleAttributeSet();
-        StyleConstants.setForeground(set, Color.BLUE);
+        StyleConstants.setForeground(set, useLightBackgroundColors ? new Color(0, 0, 255) : new Color(192, 192, 255));
         StyleConstants.setBold(set, false);
         patterns.addElement(new RegExStyle(p, set));
     }
 
-    /**
+    private boolean hasLightBackground() {
+		Color background = getBackground();
+		int r = background.getRed();
+		int g = background.getGreen();
+		int b = background.getBlue();
+		return r*r+g*g+b*b >= 0x80*0x80*3;
+	}
+
+	/**
      * apply syntax highlighting to all HTML tags found in the given
      * area of the given document
      *
