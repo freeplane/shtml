@@ -24,6 +24,8 @@ sourceSets {
     main {  
         java {  
             srcDir 'src'  
+			exclude 'com/lightdev/app/shtm/resources/**'
+			exclude 'com/lightdev/app/shtm/help/**'
         }  
     }  
     main {  
@@ -50,13 +52,11 @@ task mainJar(type: Jar, dependsOn: classes) {
         exclude "com/lightdev/app/shtm/help/**" 
     }
 	manifest {
-	def classPath = (configurations.compile.collect { it.name } +
-                   helpJar.outputs.files.collect { it.name }).join(' ')
+
     attributes(
 		'Implementation-Title': project.name,
         'Implementation-Version': project.version,
         'Main-Class': 'com.lightdev.app.shtm.App',
-        'Class-Path': classPath
 		)
   }	
 }
@@ -139,5 +139,3 @@ javadoc {
     options.encoding = "UTF-8"
     failOnError = false
 }
-
-apply from: './dist.gradle'
