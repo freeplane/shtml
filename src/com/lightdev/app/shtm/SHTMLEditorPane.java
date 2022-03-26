@@ -1127,9 +1127,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     public void appendTableRow() {
         final Element cell = getCurrentTableCell();
         if (cell != null) {
-            final Element table = cell.getParentElement().getParentElement();
-            final Element lastRow = table.getElement(table.getElementCount() - 1);
-            createTableRow(lastRow, Util.getRowIndex(lastRow.getElement(0)), false, null);
+            createTableRow(cell.getParentElement(), Util.getRowIndex(cell), false, null);
         }
     }
 

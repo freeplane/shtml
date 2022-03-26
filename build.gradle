@@ -4,7 +4,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group 'org.freeplane.lightdev'
-version = '0.18.8'
+version = '0.18.9'
 
 targetCompatibility='1.8'
 sourceCompatibility='1.8'
