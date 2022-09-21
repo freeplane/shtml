@@ -68,6 +68,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
+import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.ElementIterator;
 import javax.swing.text.MutableAttributeSet;
@@ -211,19 +212,15 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         /** init drag and drop */
         initDnd();
     }
-    
-    
-    
-    @Override
-    public void updateUI() {
-        final SHTMLEditorKit kit = new SHTMLEditorKit(/*renderMode*/);
-        setEditorKit(kit);
-        super.updateUI();
-    }
-
-
 
     @Override
+	protected EditorKit createDefaultEditorKit() {
+		return new SHTMLEditorKit();
+	}
+
+
+
+	@Override
 	public void setUI(TextUI newUI) {
 		super.setUI(newUI);
 		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke('\u0004'), DO_NOTHING);
