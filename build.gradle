@@ -4,7 +4,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group 'org.freeplane.lightdev'
-version = '0.18.10'
+version = '0.18.11'
 
 targetCompatibility='1.8'
 sourceCompatibility='1.8'
@@ -20,36 +20,36 @@ dependencies {
     implementation 'commons-lang:commons-lang:2.6'
 }
 
-sourceSets {  
-    main {  
-        java {  
-            srcDir 'src'  
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
 			exclude 'com/lightdev/app/shtm/resources/**'
 			exclude 'com/lightdev/app/shtm/help/**'
-        }  
-    }  
-    main {  
-        resources {  
+        }
+    }
+    main {
+        resources {
             srcDir 'src'
 			include 'com/lightdev/app/shtm/resources/**'
 			include 'com/lightdev/app/shtm/help/**'
-        }  
-    }  
-} 
+        }
+    }
+}
 
 // help.jar
 task helpJar(type: Jar) {
 	baseName = 'SimplyHTMLHelp'
-    from(sourceSets.main.output) {  
-        include "com/lightdev/app/shtm/help/**" 
-    }  
+    from(sourceSets.main.output) {
+        include "com/lightdev/app/shtm/help/**"
+    }
 }
 
 // lib.jar
-task mainJar(type: Jar, dependsOn: classes) {  
+task mainJar(type: Jar, dependsOn: classes) {
 	baseName = 'SimplyHTML'
-    from(sourceSets.main.output) {  
-        exclude "com/lightdev/app/shtm/help/**" 
+    from(sourceSets.main.output) {
+        exclude "com/lightdev/app/shtm/help/**"
     }
 	manifest {
 
@@ -58,14 +58,14 @@ task mainJar(type: Jar, dependsOn: classes) {
         'Implementation-Version': project.version,
         'Main-Class': 'com.lightdev.app.shtm.App',
 		)
-  }	
+  }
 }
 
 task sourceJar(type: Jar) {
     baseName = 'SimplyHTML'
     classifier = 'sources'
-    from (sourceSets.main.allSource){  
-        exclude "com/lightdev/app/shtm/help/**" 
+    from (sourceSets.main.allSource){
+        exclude "com/lightdev/app/shtm/help/**"
     }
 }
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -124,7 +124,7 @@ publishing {
                 password ossrhPassword
             }
         }
-        maven { 
+        maven {
 			 url  = "${project.gradle.gradleUserHomeDir}/local-artifacts"
 		}
     }

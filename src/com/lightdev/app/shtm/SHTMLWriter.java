@@ -42,7 +42,7 @@ import javax.swing.text.html.HTMLWriter;
 /**
  * FixedHTMLWriter
  *
- * 
+ *
  */
 public class SHTMLWriter extends HTMLWriter {
     private static final char NB_SPACE = '\u00A0';
@@ -77,7 +77,7 @@ public class SHTMLWriter extends HTMLWriter {
         }
         return new ElementIterator(element);
     }
-    
+
     @SuppressWarnings("serial")
 	private final static Map<Character, String> HTML_CHAR_ENTITIES = new HashMap<Character, String>(){{
     	put('<', "&lt;");
@@ -94,10 +94,10 @@ public class SHTMLWriter extends HTMLWriter {
     		directOutput(chars, start, length);
     		return;
     	}
-    	
+
     	if(inPreLevel == 0)
     	    replaceMultipleSpacesByNonBreakingSpaces(chars, start, length);
-        
+
         int last = start;
         length += start;
         for (int counter = start; counter < length; counter++) {
@@ -115,13 +115,13 @@ public class SHTMLWriter extends HTMLWriter {
         }
     }
 
-    private String entity(char c) {
+    protected String entity(char c) {
     	if (c < ' ')
     		return "&#x" + Integer.toHexString(c) + ';';
     	String knownEntity = HTML_CHAR_ENTITIES.get(c);
 		return knownEntity;
     }
-    
+
 	private void replaceMultipleSpacesByNonBreakingSpaces(char[] chars, int start, int length) {
 		if (chars[start] == ' ') {
 		    chars[start] = NB_SPACE;
@@ -133,7 +133,7 @@ public class SHTMLWriter extends HTMLWriter {
 		    }
 		}
 	}
-	
+
     private void directOutput(char[] content, int start, int length)
             throws IOException {
     	getWriter().write(content, start, length);
@@ -256,7 +256,7 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
     /**
-     * Create an older style of HTML attributes.  This will 
+     * Create an older style of HTML attributes.  This will
      * convert character level attributes that have a StyleConstants
      * mapping over to an HTML tag/attribute.  Other CSS attributes
      * will be placed in an HTML style attribute.
