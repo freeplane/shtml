@@ -81,7 +81,7 @@ import com.sun.demo.ExampleFileFilter;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     /** the editor displaying the document in layout view */
@@ -286,7 +286,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
     /**
      * remove the temporary storage created for this <code>DocumentPane</code>
-     * @param docTempDir 
+     * @param docTempDir
      */
     public void deleteTempDir() {
         if (docTempDir != null) {
@@ -387,8 +387,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             saveThread = null;
         }
     }
-    
-    
+
+
 
     private File getImageDir() {
         return getDocument().getImageDirectory();
@@ -743,6 +743,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
         if (getSelectedTab() == VIEW_TAB_LAYOUT) {
             editorPane.updateInputAttributes();
+            setHtmlChanged(true);
             setDocumentChanged(true);
         }
     }
