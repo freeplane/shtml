@@ -66,7 +66,7 @@ import javax.swing.undo.UndoableEdit;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 public class SHTMLDocument extends HTMLDocument {
 	public static final String SUFFIX = "&nbsp;";
@@ -74,7 +74,6 @@ public class SHTMLDocument extends HTMLDocument {
     private CompoundEdit compoundEdit;
     private int compoundEditDepth;
     private boolean inSetParagraphAttributes = false;
-    private final boolean keepSpanTag = Util.preferenceIsTrue("keepSpanTag");
     private CopiedImageSources copiedExternalImagesSources = CopiedImageSources.NONE;
 
     /**
@@ -107,7 +106,7 @@ public class SHTMLDocument extends HTMLDocument {
         super(c, styles);
         compoundEdit = null;
     }
-    
+
  	/**
      * apply a set of attributes to a given document element
      *
@@ -257,12 +256,12 @@ public class SHTMLDocument extends HTMLDocument {
             endCompoundEdit();
         }
     }
-    
+
     @FunctionalInterface
     public interface  ThrowingRunnable<T extends Exception> {
         void run() throws T;
     }
-    
+
     public <T extends Exception> void copyingExternalImages(CopiedImageSources copiedExternalImagesSources, ThrowingRunnable<T> runnable) throws T{
         CopiedImageSources copiedExternalImagesSourcesBackup = this.copiedExternalImagesSources;
         this.copiedExternalImagesSources = copiedExternalImagesSources;
@@ -292,14 +291,14 @@ public class SHTMLDocument extends HTMLDocument {
         catch (final UnknownDocumentBaseException e) {
             Util.errMsg(null, e.getMessage(), null);
         }
-        
+
     }
-    
+
     private void copyExternalImagesForElementSpec(ElementSpec data) {
         AttributeSet attributes = data.getAttributes();
         if(!(attributes instanceof MutableAttributeSet) || !HTML.Tag.IMG.equals(attributes.getAttribute(StyleConstants.NameAttribute))) {
-         return;   
-        } 
+         return;
+        }
         final String source = (String) attributes.getAttribute(HTML.Attribute.SRC);
         if(! copiedExternalImagesSources.includes(source))
             return;
@@ -529,7 +528,7 @@ public class SHTMLDocument extends HTMLDocument {
 
         /**
          * Constructor
-         * 
+         *
          */
         public SHTMLReader(final int offset, final boolean newDocument) {
             super(offset, 0, 0, null);
@@ -562,7 +561,7 @@ public class SHTMLDocument extends HTMLDocument {
                         return;
                 }
             }
-            if (tag == HTML.Tag.SPAN && !keepSpanTag) {
+            if (tag == HTML.Tag.SPAN) {
                 handleStartSpan(attributeSet);
             }
             else {
@@ -590,8 +589,8 @@ public class SHTMLDocument extends HTMLDocument {
         private void handleStartSpan(final MutableAttributeSet attributeSet) {
             if (attributeSet.isDefined(HTML.Attribute.STYLE)) {
                 final String styleAttributeValue = (String) attributeSet.getAttribute(HTML.Attribute.STYLE);
-                attributeSet.removeAttribute(HTML.Attribute.STYLE);
                 styleAttributes = getStyleSheet().getDeclaration(styleAttributeValue);
+                attributeSet.removeAttribute(HTML.Attribute.STYLE);
                 attributeSet.addAttributes(styleAttributes);
             }
             else {
@@ -611,7 +610,7 @@ public class SHTMLDocument extends HTMLDocument {
          * to handleStartTag and handleEndTag respectively.
          */
         public void handleSimpleTag(final HTML.Tag t, final MutableAttributeSet a, final int pos) {
-             if (t == HTML.Tag.SPAN && !keepSpanTag) {
+             if (t == HTML.Tag.SPAN) {
                 if (inSpan) {
                     handleEndTag(t, pos);
                 }
@@ -638,7 +637,7 @@ public class SHTMLDocument extends HTMLDocument {
                 }
                 super.handleEndTag(tag, pos);
             }
-            else if (tag == HTML.Tag.SPAN && !keepSpanTag) {
+            else if (tag == HTML.Tag.SPAN) {
                 handleEndSpan();
             }
             else {
@@ -781,7 +780,7 @@ public class SHTMLDocument extends HTMLDocument {
     public File getImageDirectory() {
         return SHTMLDocument.getImageDirectory(getBase());
     }
-    
+
     public static File getImageDirectory(URL base) {
         try {
             return new File(new URL(base, getImageDirectoryName(base)).getPath());

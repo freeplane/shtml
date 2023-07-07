@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -50,8 +51,6 @@ public class SHTMLWriter extends HTMLWriter {
     private Writer writer = null;
     private boolean replaceEntities;
     private boolean inTextArea;
-    //final private MutableAttributeSet oConvAttr  = new SimpleAttributeSet();
-    //final private MutableAttributeSet convertedAttributeSet  = new SimpleAttributeSet();
     private int inPreLevel=0;
 	private char[] tempChars;
 
@@ -299,7 +298,7 @@ public class SHTMLWriter extends HTMLWriter {
         if (attributeSet instanceof Element) {
             final Element element = (Element) attributeSet;
             if (element.isLeaf() || element.getName().equalsIgnoreCase("p-implied")) {
-                super.writeAttributes(attributeSet);
+                superWriteAttributes(attributeSet);
                 return;
             }
         }
@@ -316,6 +315,25 @@ public class SHTMLWriter extends HTMLWriter {
             write(" " + attributeName + "=\"" + convertedAttributeSet.getAttribute(attributeName) + "\"");
         }
     }
+
+
+    private void superWriteAttributes(AttributeSet attr) throws IOException {
+        // translate css attributes to html
+        attr = convertToHTML(attr);
+
+        Enumeration<?> names = attr.getAttributeNames();
+        while (names.hasMoreElements()) {
+            Object name = names.nextElement();
+            if (name instanceof HTML.Tag ||
+                name instanceof StyleConstants ||
+                name == HTML.Attribute.ENDTAG) {
+                continue;
+            }
+            write(" " + name + "=\"" + attr.getAttribute(name) + "\"");
+        }
+    }
+
+
 
     /**
      * write an element and all its children. If a given element is reached,
@@ -408,6 +426,7 @@ public class SHTMLWriter extends HTMLWriter {
     	writer.write(string);
     }
 
+    @Override
     public String toString() {
         if (writer instanceof StringWriter) {
             final StringWriter stringWriter = (StringWriter) writer;
@@ -432,6 +451,155 @@ public class SHTMLWriter extends HTMLWriter {
             while (stringWriter.getBuffer().charAt(--charIdx) <= 13) {
                 stringWriter.getBuffer().deleteCharAt(charIdx);
             }
+        }
+    }
+
+
+    /*
+     * Stores all embedded tags. Embedded tags are tags that are
+     * stored as attributes in other tags. Generally they're
+     * character level attributes.  Examples include
+     * &lt;b&gt;, &lt;i&gt;, &lt;font&gt;, and &lt;a&gt;.
+     */
+    private Vector<HTML.Tag> tags = new Vector<HTML.Tag>(10);
+
+    /**
+     * Values for the tags.
+     */
+    private Vector<Object> tagValues = new Vector<Object>(10);
+
+     /*
+     * This is used in closeOutUnwantedEmbeddedTags.
+     */
+    private Vector<HTML.Tag> tagsToRemove = new Vector<HTML.Tag>(10);
+
+    @Override
+    protected void writeEmbeddedTags(AttributeSet attr) throws IOException {
+
+        // translate css attributes to html
+        attr = convertToHTML(attr);
+
+        Enumeration<?> names = attr.getAttributeNames();
+        while (names.hasMoreElements()) {
+            Object name = names.nextElement();
+            if (name instanceof HTML.Tag) {
+                HTML.Tag tag = (HTML.Tag)name;
+                if (tag == HTML.Tag.FORM || tags.contains(tag)) {
+                    continue;
+                }
+                write('<');
+                write(tag.toString());
+                Object o = attr.getAttribute(tag);
+                if (o != null && o instanceof AttributeSet) {
+                    writeAttributes((AttributeSet)o);
+                }
+                write('>');
+                tags.addElement(tag);
+                tagValues.addElement(o);
+            }
+        }
+    }
+    @Override
+    protected void closeOutUnwantedEmbeddedTags(AttributeSet attr) throws IOException {
+
+        tagsToRemove.removeAllElements();
+
+
+        attr = convertToHTML(attr);
+
+        HTML.Tag t;
+        Object tValue;
+        int firstIndex = -1;
+        int size = tags.size();
+        // First, find all the tags that need to be removed.
+        for (int i = size - 1; i >= 0; i--) {
+            t = tags.elementAt(i);
+            tValue = tagValues.elementAt(i);
+            if ((attr == null) || noMatchForTagInAttributes(attr, t, tValue)) {
+                firstIndex = i;
+                tagsToRemove.addElement(t);
+            }
+        }
+        if (firstIndex != -1) {
+            // Then close them out.
+            boolean removeAll = ((size - firstIndex) == tagsToRemove.size());
+            for (int i = size - 1; i >= firstIndex; i--) {
+                t = tags.elementAt(i);
+                if (removeAll || tagsToRemove.contains(t)) {
+                    tags.removeElementAt(i);
+                    tagValues.removeElementAt(i);
+                }
+                write('<');
+                write('/');
+                write(t.toString());
+                write('>');
+            }
+            // Have to output any tags after firstIndex that still remaing,
+            // as we closed them out, but they should remain open.
+            size = tags.size();
+            for (int i = firstIndex; i < size; i++) {
+                t = tags.elementAt(i);
+                write('<');
+                write(t.toString());
+                Object o = tagValues.elementAt(i);
+                if (o != null && o instanceof AttributeSet) {
+                    writeAttributes((AttributeSet)o);
+                }
+                write('>');
+            }
+        }
+    }
+    /**
+     * Searches the attribute set for a tag, both of which
+     * are passed in as a parameter.  Returns true if no match is found
+     * and false otherwise.
+     */
+    private boolean noMatchForTagInAttributes(AttributeSet attr, HTML.Tag t,
+                                              Object tagValue) {
+        if (attr != null && attr.isDefined(t)) {
+            Object newValue = attr.getAttribute(t);
+
+            if ((tagValue == null) ? (newValue == null) :
+                (newValue != null && tagValue.equals(newValue))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    private MutableAttributeSet convAttr = new SimpleAttributeSet();
+
+    private AttributeSet convertToHTML(AttributeSet attr) {
+        convAttr.removeAttributes(convAttr);
+        convertToHTML40(attr, convAttr);
+        return convAttr;
+    }
+
+    /**
+     * Copies the given AttributeSet to a new set, converting
+     * any CSS attributes found to arguments of an HTML style
+     * attribute.
+     */
+    private static void convertToHTML40(AttributeSet from, MutableAttributeSet to) {
+        if (from == null) {
+            return;
+        }
+        Enumeration<?> keys = from.getAttributeNames();
+        String value = "";
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            if (key instanceof CSS.Attribute) {
+                value = (value.isEmpty() ? key : value  + " " + key) + ": " + from.getAttribute(key) + ";";
+            } else {
+                to.addAttribute(key, from.getAttribute(key));
+            }
+        }
+        if (value.length() > 0) {
+            SimpleAttributeSet styleAttribute = new SimpleAttributeSet();
+            styleAttribute.addAttribute(HTML.Attribute.STYLE, value);
+            to.addAttribute(HTML.Tag.SPAN, styleAttribute);
         }
     }
 }
