@@ -70,7 +70,6 @@ import javax.swing.undo.UndoableEdit;
  */
 public class SHTMLDocument extends HTMLDocument {
 	public static final String SUFFIX = "&nbsp;";
-    private static Set paragraphElements;
     private CompoundEdit compoundEdit;
     private int compoundEditDepth;
     private boolean inSetParagraphAttributes = false;
@@ -515,16 +514,9 @@ public class SHTMLDocument extends HTMLDocument {
      * to handle SPAN tags
      */
     public class SHTMLReader extends HTMLDocument.HTMLReader {
-        /** action needed to handle SPAN tags */
-        SHTMLCharacterAction characterAction = new SHTMLCharacterAction();
-        /** the attributes found in a STYLE attribute */
-        AttributeSet styleAttributes;
-        /** indicates whether we're inside a SPAN tag */
-        boolean inSpan = false;
         final boolean newDocument;
         private boolean inBody;
         private int inPreLevel = 0;
-        private boolean isParagraphTag;
 
         /**
          * Constructor
@@ -533,24 +525,15 @@ public class SHTMLDocument extends HTMLDocument {
         public SHTMLReader(final int offset, final boolean newDocument) {
             super(offset, 0, 0, null);
             this.newDocument = newDocument;
-            inBody = false;
         }
 
-        /**
-         * Handles the start tag received by the parser.
-         *
-         * If it is a SPAN tag, converts the contents of the STYLE
-         * attribute to an AttributeSet, and adds it to the contents
-         * of this tag.
-         *
-         * Otherwise lets HTMLDocument.HTMLReader do the work.
-         */
+
         public void handleStartTag(final HTML.Tag tag, final MutableAttributeSet attributeSet, final int pos) {
             if (tag == HTML.Tag.BODY) {
                 inBody = true;
             }
             else if (inBody) {
-                isParagraphTag = isParagraphTag(tag);
+                boolean isParagraphTag = tag.breaksFlow();
                 if (isParagraphTag) {
                     if(HTML.Tag.PRE.equals(tag)) {
                         inPreLevel++;
@@ -561,72 +544,12 @@ public class SHTMLDocument extends HTMLDocument {
                         return;
                 }
             }
-            if (tag == HTML.Tag.SPAN) {
-                handleStartSpan(attributeSet);
-            }
-            else {
                 super.handleStartTag(tag, attributeSet, pos);
                 if (tag == HTML.Tag.FONT) {
                     charAttr.removeAttribute(tag);
                 }
-            }
         }
 
-        private boolean isParagraphTag(final Tag t) {
-            if (paragraphElements == null) {
-                paragraphElements = new HashSet();
-                final Object[] elementList = new Object[] { HTML.Tag.BLOCKQUOTE, HTML.Tag.DIR, HTML.Tag.DIV,
-                        HTML.Tag.DL, HTML.Tag.DT, HTML.Tag.FRAMESET, HTML.Tag.H1, HTML.Tag.H2, HTML.Tag.H3,
-                        HTML.Tag.H4, HTML.Tag.H5, HTML.Tag.H6, HTML.Tag.HR, HTML.Tag.LI, HTML.Tag.MENU, HTML.Tag.OL,
-                        HTML.Tag.P, HTML.Tag.PRE, HTML.Tag.TABLE, HTML.Tag.TD, HTML.Tag.TH, HTML.Tag.TR, HTML.Tag.UL };
-                for (int i = 0; i < elementList.length; i++) {
-                    paragraphElements.add(elementList[i]);
-                }
-            }
-            return paragraphElements.contains(t);
-        }
-
-        private void handleStartSpan(final MutableAttributeSet attributeSet) {
-            if (attributeSet.isDefined(HTML.Attribute.STYLE)) {
-                final String styleAttributeValue = (String) attributeSet.getAttribute(HTML.Attribute.STYLE);
-                styleAttributes = getStyleSheet().getDeclaration(styleAttributeValue);
-                attributeSet.removeAttribute(HTML.Attribute.STYLE);
-                attributeSet.addAttributes(styleAttributes);
-            }
-            else {
-                styleAttributes = null;
-            }
-            final TagAction action = characterAction;
-            if (action != null) {
-                /** Remembers which part we're in for handleSimpleTag. */
-                inSpan = true;
-                action.start(HTML.Tag.SPAN, attributeSet);
-            }
-        }
-
-        /**
-         * SPAN tags are directed to handleSimpleTag by the parser.
-         * If a SPAN tag is detected in this method, it gets redirected
-         * to handleStartTag and handleEndTag respectively.
-         */
-        public void handleSimpleTag(final HTML.Tag t, final MutableAttributeSet a, final int pos) {
-             if (t == HTML.Tag.SPAN) {
-                if (inSpan) {
-                    handleEndTag(t, pos);
-                }
-                else {
-                    handleStartTag(t, a, pos);
-                }
-            }
-            else {
-                super.handleSimpleTag(t, a, pos);
-            }
-        }
-
-        /**
-         * Handles end tag. If a SPAN tag is directed to this method, end its action,
-         * otherwise, let HTMLDocument.HTMLReader do the work
-         */
         public void handleEndTag(final HTML.Tag tag, final int pos) {
             if (tag == HTML.Tag.BODY) {
                 inBody = false;
@@ -637,13 +560,10 @@ public class SHTMLDocument extends HTMLDocument {
                 }
                 super.handleEndTag(tag, pos);
             }
-            else if (tag == HTML.Tag.SPAN) {
-                handleEndSpan();
-            }
             else {
                 if(HTML.Tag.PRE.equals(tag) && inPreLevel > 0)
                     inPreLevel--;
-                if(inPreLevel == 0 || ! isParagraphTag(tag))
+                if(inPreLevel == 0 || ! tag.breaksFlow())
                     super.handleEndTag(tag, pos);
             }
         }
@@ -657,46 +577,6 @@ public class SHTMLDocument extends HTMLDocument {
             }
         }
 
-        /* (non-Javadoc)
-         * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleText(char[], int)
-         */
-        private void handleEndSpan() {
-            final TagAction action = characterAction;
-            if (action != null) {
-                /**
-                 * remember which part we're in for handleSimpleTag
-                 */
-                inSpan = false;
-                action.end(HTML.Tag.SPAN);
-            }
-        }
-
-        /**
-         * Is used to read the style attribute from
-         * a SPAN tag and to map from HTML to Java attributes.
-         */
-        class SHTMLCharacterAction extends HTMLDocument.HTMLReader.CharacterAction {
-            public void start(final HTML.Tag tag, final MutableAttributeSet attr) {
-                pushCharacterStyle();
-                if (attr.isDefined(IMPLIED)) {
-                    attr.removeAttribute(IMPLIED);
-                }
-                charAttr.addAttribute(tag, attr.copyAttributes());
-                if (styleAttributes != null) {
-                    charAttr.addAttributes(styleAttributes);
-                }
-                if (charAttr.isDefined(HTML.Tag.SPAN)) {
-                    charAttr.removeAttribute(HTML.Tag.SPAN);
-                }
-                //System.out.println("mapping attributes");
-                charAttr = (MutableAttributeSet) new AttributeMapper(charAttr)
-                    .getMappedAttributes(AttributeMapper.toJava);
-            }
-
-            public void end(final HTML.Tag t) {
-                popCharacterStyle();
-            }
-        }
     }
 
     /* -------- custom reader implementation end -------- */

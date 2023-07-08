@@ -36,6 +36,7 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.CSS;
+import javax.swing.text.html.CSS.Attribute;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLWriter;
@@ -590,10 +591,12 @@ public class SHTMLWriter extends HTMLWriter {
         String value = "";
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
+            Object attributeValue = from.getAttribute(key);
             if (key instanceof CSS.Attribute) {
-                value = (value.isEmpty() ? key : value  + " " + key) + ": " + from.getAttribute(key) + ";";
+                if(! containsExplicitTag(keys, (CSS.Attribute)key, attributeValue))
+                value = (value.isEmpty() ? key : value  + " " + key) + ": " + attributeValue + ";";
             } else {
-                to.addAttribute(key, from.getAttribute(key));
+                to.addAttribute(key, attributeValue);
             }
         }
         if (value.length() > 0) {
@@ -601,5 +604,35 @@ public class SHTMLWriter extends HTMLWriter {
             styleAttribute.addAttribute(HTML.Attribute.STYLE, value);
             to.addAttribute(HTML.Tag.SPAN, styleAttribute);
         }
+    }
+
+    @SuppressWarnings("serial")
+    private static Object[][] explicitTags = {
+            {CSS.Attribute.FONT_WEIGHT, "bold", HTML.Tag.B},
+            {CSS.Attribute.FONT_STYLE, "italic", HTML.Tag.I},
+            {CSS.Attribute.TEXT_DECORATION, "underline", HTML.Tag.U},
+            {CSS.Attribute.TEXT_DECORATION, "line-through", HTML.Tag.STRIKE},
+            {CSS.Attribute.VERTICAL_ALIGN, "sup", HTML.Tag.SUP},
+            {CSS.Attribute.VERTICAL_ALIGN, "sub", HTML.Tag.SUB},
+            {CSS.Attribute.TEXT_DECORATION, "line-through", HTML.Tag.STRIKE},
+    };
+
+    private static boolean containsExplicitTag(Enumeration<?> keys, CSS.Attribute key, Object attributeValue) {
+        for(Object[] cssTagTripple : explicitTags) {
+            if(key == cssTagTripple[0]
+                    && attributeValue.equals(cssTagTripple[1])) {
+                return containsValue(keys, cssTagTripple[2]);
+            }
+        }
+        return false;
+
+    }
+
+    private static boolean containsValue(Enumeration<?> values, Object value) {
+        while(values.hasMoreElements()) {
+            if(values.nextElement().equals(value))
+                return true;
+        }
+        return false;
     }
 }
