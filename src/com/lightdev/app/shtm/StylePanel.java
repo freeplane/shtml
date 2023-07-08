@@ -38,7 +38,7 @@ import javax.swing.text.html.HTML;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class StylePanel extends AttributePanel {
     public static final int TYPE_PARAGRAPH = 1;
@@ -68,7 +68,7 @@ class StylePanel extends AttributePanel {
         String[] items = new String[] { Util.getResourceString("alignLeft"), Util.getResourceString("alignCenter"),
                 Util.getResourceString("alignRight") };
         String[] names = new String[] { "left", "center", "right" };
-        ctAlgn = new AttributeComboBox(items, names, CSS.Attribute.TEXT_ALIGN, HTML.Attribute.ALIGN);
+        ctAlgn = new AttributeComboBox(items, names, CSS.Attribute.TEXT_ALIGN);
         Util.addGridBagComponent(this, ctAlgn, g, c, 1, 1, GridBagConstraints.WEST);
         // vertical alignment label
         lb = new JLabel(Util.getResourceString("valignLabel"));
@@ -77,7 +77,7 @@ class StylePanel extends AttributePanel {
         items = new String[] { Util.getResourceString("valignTop"), Util.getResourceString("valignMiddle"),
                 Util.getResourceString("valignBottom"), Util.getResourceString("valignBaseline") };
         names = new String[] { "top", "middle", "bottom", "baseline" };
-        cAlgn = new AttributeComboBox(items, names, CSS.Attribute.VERTICAL_ALIGN, HTML.Attribute.VALIGN);
+        cAlgn = new AttributeComboBox(items, names, CSS.Attribute.VERTICAL_ALIGN);
         Util.addGridBagComponent(this, cAlgn, g, c, 1, 2, GridBagConstraints.WEST);
         switch (type) {
             case TYPE_PARAGRAPH:

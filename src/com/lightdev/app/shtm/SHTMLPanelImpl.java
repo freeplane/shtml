@@ -259,8 +259,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     private void setJMenuBar(final JMenuBar bar) {
         add(bar, BorderLayout.NORTH);
     }
-    
-    
+
+
 
     @Override
     public void shtmlPrefChanged(String propertyName, String newValue, String oldValue) {
@@ -712,7 +712,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(fontSizeAction, new SHTMLEditorKitActions.FontSizeAction(this));
         addAction(increaseFontSizeAction, new SHTMLEditorKitActions.ChangeFontSizeAction(this, increaseFontSizeAction, Change.INCREASE));
         addAction(decreaseFontSizeAction, new SHTMLEditorKitActions.ChangeFontSizeAction(this, decreaseFontSizeAction, Change.DECREASE));
-        
+
         addAction(insertTableAction, new SHTMLEditorKitActions.InsertTableAction(this));
         addAction(insertTableRowAction, new SHTMLEditorKitActions.InsertTableRowAction(this, null,
             insertTableRowAction));
@@ -739,7 +739,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, DARK_BLUE, LIGHT_BLUE));
         addAction(blackFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blackFontColorAction, Color.BLACK, Color.WHITE));
         addAction(removeFontColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeFontColorAction, HTML.Attribute.COLOR, CSS.Attribute.COLOR));
-        
+
         addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));
         addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
@@ -758,7 +758,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
 
     public void addAction(String text, Action action) {
 		dynRes.addAction(text, action);
-		
+
 	}
 
 	/**
@@ -788,7 +788,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
         toolBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
             /**
-             * 
+             *
              */
             private static final long serialVersionUID = 1L;
 
@@ -821,7 +821,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         };
         final Container contentPane = new JPanel() {
             /**
-            * 
+            *
             */
             private static final long serialVersionUID = 1L;
 
@@ -1004,7 +1004,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * this is shared by save and saveAs so we put it here to avoid redundancy
      *
      * @param documentPane  the document pane containing the document to save
-     * @param target 
+     * @param target
      */
     void doSave(final DocumentPane documentPane, URL target) {
     try {
@@ -1050,7 +1050,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         if (toolTip != null) {
             action.putValue(Action.SHORT_DESCRIPTION, toolTip);
         }
-        
+
         final String accelerator = Util.getResourceString(uiResources, cmd + DynamicResource.acceleratorSuffix);
         if (accelerator != null) {
             action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(accelerator));
@@ -1207,6 +1207,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
              */
             super(FONT_SIZES);
             key = CSS.Attribute.FONT_SIZE;
+            setEditable(true);
         }
 
         boolean ignore() {
@@ -1226,9 +1227,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             ignoreActions = true;
             final int size = Util.styleSheet().getFont(a).getSize();
             final String newSelection = Integer.toString(size);
-            setEditable(true);
             setSelectedItem(newSelection);
-            setEditable(false);
             ignoreActions = false;
             return true;
         }
@@ -1240,9 +1239,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
          */
         public AttributeSet getValue() {
             final SimpleAttributeSet set = new SimpleAttributeSet();
-            final String relativeSize = Integer.toString(getSelectedIndex() + 1);
-            set.addAttribute(HTML.Attribute.SIZE, relativeSize);
-            Util.styleSheet().addCSSAttributeFromHTML(set, CSS.Attribute.FONT_SIZE, relativeSize /*+ "pt"*/);
+            final String size = getSelectedItem().toString();
+            Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE, size + "pt");
             return set;
         }
 

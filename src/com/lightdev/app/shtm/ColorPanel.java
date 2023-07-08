@@ -54,7 +54,7 @@ import javax.swing.text.html.HTML;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
     /** the component showing the chosen color */
@@ -231,12 +231,6 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
         if (value != originalColor) {
             final String color = "#" + Integer.toHexString(value.getRGB()).substring(2);
             Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) getAttributeKey(), color);
-            if (getAttributeKey() == CSS.Attribute.COLOR) {
-                set.addAttribute(HTML.Attribute.COLOR, color);
-            }
-            else if (getAttributeKey() == CSS.Attribute.BACKGROUND_COLOR) {
-                set.addAttribute(HTML.Attribute.BGCOLOR, color);
-            }
         }
         return set;
     }

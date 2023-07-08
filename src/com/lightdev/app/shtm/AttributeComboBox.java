@@ -38,13 +38,11 @@ import javax.swing.text.html.HTML;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class AttributeComboBox extends JComboBox implements AttributeComponent {
     /** CSS attribute key associated with this component */
     private final Object attributeKey;
-    /** HTML attribute key associated with this component */
-    private final Object htmlAttributeKey;
     /** attribute names associated with the items of this component */
     private final String[] names;
     /** indicates wether or not a call to setValue is the initial one */
@@ -63,11 +61,10 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
      *
      * @see getValue
      */
-    public AttributeComboBox(final String[] items, final String[] names, final Object key, final Object htmlKey) {
+    public AttributeComboBox(final String[] items, final String[] names, final Object key) {
         super(items);
         this.names = names;
         attributeKey = key;
-        htmlAttributeKey = htmlKey;
     }
 
     /**
@@ -80,23 +77,11 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
      *            false if not
      */
     public boolean setValue(final AttributeSet a) {
-        //System.out.println("AttributeComboBox setValue");
-        //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-        //hd.listAttributes(a, 2);
         boolean success = false;
         Object valObj;
         if (attributeKey != null) {
             valObj = a.getAttribute(attributeKey);
-            if (valObj == null && htmlAttributeKey != null) {
-                valObj = a.getAttribute(htmlAttributeKey);
-                if (valObj != null) {
-                	success = setValue(valObj);
-                }
-            }
-            /*
-             correction start: missing list-style-type attribute from style sheet
-             */
-            else if (valObj == null && attributeKey.equals(CSS.Attribute.LIST_STYLE_TYPE)) {
+            if (valObj == null && attributeKey.equals(CSS.Attribute.LIST_STYLE_TYPE)) {
                 final Object name = a.getAttribute(StyleConstants.NameAttribute);
                 if (name != null && name.toString().equalsIgnoreCase(HTML.Tag.UL.toString())) {
                 	success = setValue("disc");
@@ -105,8 +90,8 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
                 	success = setValue("decimal");
                 }
             }
-            if (valObj == null && htmlAttributeKey != null) {
-                if (htmlAttributeKey.equals(HTML.Attribute.ALIGN) || htmlAttributeKey.equals(HTML.Attribute.VALIGN)) {
+            if (valObj == null ) {
+                if (attributeKey.equals(HTML.Attribute.ALIGN) || attributeKey.equals(HTML.Attribute.VALIGN)) {
                 	success = setValue(names[0]);
                 }
             }
@@ -116,14 +101,6 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
             else {
                 //System.out.println("AttributeComboBox setValue value=" + valObj);
             	success = setValue(valObj);
-            }
-        }
-        else {
-            if (htmlAttributeKey != null) {
-                valObj = a.getAttribute(htmlAttributeKey);
-                if (valObj != null) {
-                	success = setValue(valObj);
-                }
             }
         }
         return success;
@@ -175,9 +152,6 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
                 Util.styleSheet().addCSSAttribute(a, (CSS.Attribute) attributeKey, names[value]);
                 //a.addAttribute(attributeKey, names[value]);
             }
-            if (htmlAttributeKey != null) {
-                a.addAttribute(htmlAttributeKey, names[value]);
-            }
         }
         return a;
     }
@@ -188,9 +162,6 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
             final int value = getSelectedIndex();
             if (attributeKey != null) {
                 Util.styleSheet().addCSSAttribute(a, (CSS.Attribute) attributeKey, names[value]);
-            }
-            if (htmlAttributeKey != null) {
-                a.addAttribute(htmlAttributeKey, names[value]);
             }
             return a;
         }

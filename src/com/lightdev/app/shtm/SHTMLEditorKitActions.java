@@ -130,7 +130,7 @@ class SHTMLEditorKitActions {
     /**
      * Applies a tag to the <i>paragraph element</i> surrounding the selection,
      * based on the paragraph tag previously stored in the tag selector; tag selector
-     * is a combo box. If constructed when the tag name passed, it applies that tag. 
+     * is a combo box. If constructed when the tag name passed, it applies that tag.
      */
     static class SetTagAction extends AbstractAction implements SHTMLAction {
         /**
@@ -141,7 +141,7 @@ class SHTMLEditorKitActions {
         private String tag = null;
 
         public SetTagAction(final SHTMLPanelImpl panel) {
-        	this(panel, null);            
+        	this(panel, null);
         }
 
         public SetTagAction(final SHTMLPanelImpl panel, final String tag) {
@@ -699,11 +699,11 @@ class SHTMLEditorKitActions {
 				panel.updateActions();
             }
         }
-		
+
 		abstract protected AttributeSet getColor();
 
     }
-    
+
     static class FontColorByDialogAction extends FontColorAction implements SHTMLAction {
 
         public FontColorByDialogAction(final SHTMLPanelImpl panel) {
@@ -742,7 +742,7 @@ class SHTMLEditorKitActions {
         public void update() {
         }
     }
-    
+
     static class FixedFontColorAction extends FontColorAction implements SHTMLAction {
 
         private final Color darkColor;
@@ -776,13 +776,13 @@ class SHTMLEditorKitActions {
 			int r = color.getRed();
 			int g = color.getGreen();
 			int b = color.getBlue();
-			
+
 			double brightness = Math.sqrt(
 			    0.299 * (r * r) +
 			    0.587 * (g * g) +
 			    0.114 * (b * b)
 			    );
-			
+
 			boolean isDark = brightness <= 127.5;
 			return isDark;
 		}
@@ -1007,13 +1007,13 @@ class SHTMLEditorKitActions {
 		    for(Object attribute : attributes)
 		    	SHTMLEditorKit.removeCharacterAttributes((StyledDocument) editor.getDocument(), attribute, selectionStart, selectionEnd - selectionStart);
 	    }
-		
+
         public void update() {
             this.setEnabled(panel.isWYSIWYGEditorActive());
         }
    }
-	
-	
+
+
     static class ClearFormatAction extends AbstractAction implements SHTMLAction {
         /**
          *
@@ -1326,9 +1326,7 @@ class SHTMLEditorKitActions {
         private void setSize(int index) {
         	if(index >= 0 && index < SHTMLPanelImpl.FONT_SIZES.length) {
                 final SimpleAttributeSet set = new SimpleAttributeSet();
-                final String relativeSize = Integer.toString(index + 1);
-                set.addAttribute(HTML.Attribute.SIZE, relativeSize);
-                Util.styleSheet().addCSSAttributeFromHTML(set, CSS.Attribute.FONT_SIZE, relativeSize /*+ "pt"*/);
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE, SHTMLPanelImpl.FONT_SIZES[index] + "pt");
                 panel.getSHTMLEditorPane().applyAttributes(set, false);
                 panel.updateActions();
         	}
@@ -2129,7 +2127,7 @@ class SHTMLEditorKitActions {
             }
         }
     }
-    
+
     /**
      * This action does either "Paste as HTML" or "Paste as Text", depending on default_paste_mode!
      * @author Felix Natter
@@ -2147,13 +2145,13 @@ class SHTMLEditorKitActions {
             SHTMLPanelImpl.configureActionProperties(this, "pasteOther");
             updateActionName(PasteMode.getPasteModeFromPrefs().invert());
         }
-        
+
         public void updateActionName(final PasteMode pm)
         {
         	if (pm == PasteMode.PASTE_HTML)
         	{
         		putValue(Action.NAME, Util.getResourceString("pasteHTMLLabel"));
-        	} 
+        	}
         	else if (pm == PasteMode.PASTE_PLAIN_TEXT)
         	{
         		putValue(Action.NAME, Util.getResourceString("pastePlainTextLabel"));
@@ -2168,10 +2166,10 @@ class SHTMLEditorKitActions {
         public void actionPerformed(final ActionEvent e) {
         	PasteMode pm = panel.getSHTMLEditorPane().getPasteMode().invert();
         	panel.getSHTMLEditorPane().setPasteMode(pm);
-        	
+
             super.actionPerformed(e);
             panel.updateActions();
-            
+
             panel.getSHTMLEditorPane().setPasteModeFromPrefs();
         }
 
@@ -2200,9 +2198,9 @@ class SHTMLEditorKitActions {
         public void actionPerformed(final ActionEvent ae) {
             final Frame parent = JOptionPane.getFrameForComponent(panel);
             final PrefsDialog dlg = new PrefsDialog(parent, Util.getResourceString("prefsDialogTitle"));
-            
+
             dlg.addPrefChangeListener(panel);
-            
+
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
@@ -2210,7 +2208,7 @@ class SHTMLEditorKitActions {
             if (dlg.getResult() == DialogShell.RESULT_OK) {
             }
             panel.updateActions();
-            
+
             dlg.removePrefChangeListener(panel);
         }
 

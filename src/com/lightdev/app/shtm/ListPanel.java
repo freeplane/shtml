@@ -43,7 +43,7 @@ import javax.swing.text.html.HTML;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class ListPanel extends JPanel implements AttributeComponent {
     /** selector for list type */
@@ -76,7 +76,7 @@ class ListPanel extends JPanel implements AttributeComponent {
                 Util.getResourceString("listTypeCircle"), Util.getResourceString("listTypeSquare") };
         String[] names = new String[] { "none", "decimal", "lower-roman", "upper-roman", "lower-alpha", "upper-alpha",
                 "disc", "circle", "square" };
-        listType = new AttributeComboBox(items, names, CSS.Attribute.LIST_STYLE_TYPE, null);
+        listType = new AttributeComboBox(items, names, CSS.Attribute.LIST_STYLE_TYPE);
         Util.addGridBagComponent(formatPanel, listType, g, c, 1, 0, GridBagConstraints.WEST);
         // add label for list position
         Util.addGridBagComponent(formatPanel, new JLabel(Util.getResourceString("listPositionLabel")), g, c, 0, 1,
@@ -84,7 +84,7 @@ class ListPanel extends JPanel implements AttributeComponent {
         // add combo box for list postion selection
         items = new String[] { Util.getResourceString("listPosInside"), Util.getResourceString("listPosOutside") };
         names = new String[] { "inside", "outside" };
-        listPosition = new AttributeComboBox(items, names, CSS.Attribute.LIST_STYLE_POSITION, null);
+        listPosition = new AttributeComboBox(items, names, CSS.Attribute.LIST_STYLE_POSITION);
         Util.addGridBagComponent(formatPanel, listPosition, g, c, 1, 1, GridBagConstraints.WEST);
         // create list boundaries panel
         bndPanel = new BoundariesPanel(CSS.Attribute.MARGIN);

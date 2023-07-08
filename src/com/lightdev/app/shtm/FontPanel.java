@@ -54,7 +54,7 @@ import javax.swing.text.html.HTML;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class FontPanel extends JPanel implements TitledPickList.TitledPickListListener, ColorPanel.ColorPanelListener {
     /** a text field to show a sample of the selected font attributes */
@@ -289,7 +289,6 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
                     || ((originalValue != null) && (value != null) && (!originalValue.toString().equalsIgnoreCase(
                         value.toString())))) {
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_FAMILY, value.toString());
-                set.addAttribute(HTML.Attribute.FACE, value.toString());
             }
             return set;
         }
@@ -351,9 +350,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
             final String value = (String) getSelection();
             if ((includeUnchanged || (originalValue == null) && (value != null))
                     || ((originalValue != null) && (!originalValue.equalsIgnoreCase(value)))) {
-                final String relativeSize = Integer.toString(getIndex() + 1);
-                set.addAttribute(HTML.Attribute.SIZE, relativeSize);
-                Util.styleSheet().addCSSAttributeFromHTML(set, CSS.Attribute.FONT_SIZE, relativeSize /*+ "pt"*/);
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE, value + "pt");
             }
             return set;
         }

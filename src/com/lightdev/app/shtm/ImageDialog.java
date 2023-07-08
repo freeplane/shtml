@@ -222,7 +222,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
                 Util.getResourceString("imgAlignLeft"), Util.getResourceString("imgAlignCenter"),
                 Util.getResourceString("imgAlignRight") };
         final String[] names = new String[] { "top", "middle", "bottom", "left", "center", "right" };
-        final AttributeComboBox imgAlign = new AttributeComboBox(items, names, null, HTML.Attribute.ALIGN);
+        final AttributeComboBox imgAlign = new AttributeComboBox(items, names, HTML.Attribute.ALIGN);
         attributeComponents.addElement(imgAlign);
         Util.addGridBagComponent(propertiesPanel, imgAlign, g, c, 1, 5, GridBagConstraints.WEST);
         // add original width component

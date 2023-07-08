@@ -50,7 +50,7 @@ import javax.swing.text.html.HTML;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class TableDialog extends DialogShell {
     /** collection of all components with table related attributes */
@@ -215,8 +215,7 @@ class TableDialog extends DialogShell {
         final String[] items = new String[] { Util.getResourceString("alignLeft"),
                 Util.getResourceString("alignCenter"), Util.getResourceString("alignRight") };
         final String[] names = new String[] { "left", "center", "right" };
-        final AttributeComboBox tAlgn = new AttributeComboBox(items, names, CSS.Attribute.TEXT_ALIGN,
-            HTML.Attribute.ALIGN);
+        final AttributeComboBox tAlgn = new AttributeComboBox(items, names, CSS.Attribute.TEXT_ALIGN);
         Util.addGridBagComponent(tablePanel, tAlgn, g, c, 1, 2, GridBagConstraints.WEST);
         tableComponents.addElement(tAlgn);
         return tablePanel;
