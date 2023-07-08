@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;

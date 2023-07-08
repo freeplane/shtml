@@ -18,7 +18,6 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

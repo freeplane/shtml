@@ -36,7 +36,6 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.CSS;
-import javax.swing.text.html.HTML;
 
 /**
  * A panel for showing and manipulating font information.
