@@ -592,7 +592,7 @@ public class SHTMLWriter extends HTMLWriter {
             Object key = keys.nextElement();
             Object attributeValue = from.getAttribute(key);
             if (key instanceof CSS.Attribute) {
-                if(! containsExplicitTag(keys, (CSS.Attribute)key, attributeValue))
+                if(! containsExplicitTag(from.getAttributeNames(), (CSS.Attribute)key, attributeValue))
                 value = (value.isEmpty() ? key : value  + " " + key) + ": " + attributeValue + ";";
             } else {
                 to.addAttribute(key, attributeValue);
@@ -619,7 +619,7 @@ public class SHTMLWriter extends HTMLWriter {
     private static boolean containsExplicitTag(Enumeration<?> keys, CSS.Attribute key, Object attributeValue) {
         for(Object[] cssTagTripple : explicitTags) {
             if(key == cssTagTripple[0]
-                    && attributeValue.equals(cssTagTripple[1])) {
+                    && attributeValue.toString().equals(cssTagTripple[1])) {
                 return containsValue(keys, cssTagTripple[2]);
             }
         }
