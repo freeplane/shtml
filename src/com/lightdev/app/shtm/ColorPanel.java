@@ -55,13 +55,9 @@ import javax.swing.text.html.CSS;
  *
  *
  */
-class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
+class ColorPanel extends JPanel implements ActionListener {
     /** the component showing the chosen color */
     JTextField colorDisplay = new JTextField();
-    /** default color */
-    private final Color defaultColor;
-    /** the attribute key, this component returns values for */
-    private final Object attributeKey;
     /** value to compare for determining changes */
     private Color originalColor;
     /** indicates if setValue is called initially */
@@ -76,12 +72,9 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
     * @param titleFont  font for title
     * @param key  the attribute key this component shall return color values for
     */
-    public ColorPanel(final String title, final Color col, final Object key) {
+    public ColorPanel(final String title) {
         super(new BorderLayout(5, 5));
-        defaultColor = col;
-        attributeKey = key;
         /** adjust the color display */
-        colorDisplay.setBackground(col);
         Dimension dim = new Dimension(20, 15);
         colorDisplay.setMinimumSize(dim);
         colorDisplay.setMaximumSize(dim);
@@ -179,12 +172,12 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
     * @return true, if the set of attributes had a matching attribute,
     *            false if not
     */
-    public boolean setValue(final AttributeSet a) {
+    public boolean setValue(final AttributeSet a, CSS.Attribute attributeKey) {
         Color newSelection = null;
-        if (getAttributeKey() == CSS.Attribute.COLOR) {
+        if (attributeKey == CSS.Attribute.COLOR) {
             newSelection = Util.styleSheet().getForeground(a);
         }
-        if (getAttributeKey() == CSS.Attribute.BACKGROUND_COLOR) {
+        if (attributeKey == CSS.Attribute.BACKGROUND_COLOR) {
             newSelection = Util.styleSheet().getBackground(a);
             if (newSelection == null) {
                 newSelection = SystemColor.text;
@@ -224,43 +217,35 @@ class ColorPanel extends JPanel implements ActionListener, AttributeComponent {
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue() {
+    public AttributeSet getValue(CSS.Attribute attributeKey) {
         final SimpleAttributeSet set = new SimpleAttributeSet();
         final Color value = getColor();
         if (value != originalColor) {
             final String color = "#" + Integer.toHexString(value.getRGB()).substring(2);
-            Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) getAttributeKey(), color);
+            Util.styleSheet().addCSSAttribute(set, attributeKey, color);
         }
         return set;
     }
 
-    public AttributeSet getValue(final boolean includeUnchanged) {
+    public AttributeSet getValue(CSS.Attribute attributeKey, final boolean includeUnchanged) {
         if (includeUnchanged) {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             final Color value = getColor();
             final String color = "#" + Integer.toHexString(value.getRGB()).substring(2);
             try {
-                Util.styleSheet().addCSSAttribute(set, (CSS.Attribute) getAttributeKey(), color);
+                Util.styleSheet().addCSSAttribute(set, attributeKey, color);
             }
             catch (final Exception e) {
-                set.addAttribute(getAttributeKey(), color);
+                set.addAttribute(attributeKey, color);
             }
             //System.out.println("ColorPanel getValue color=" + color);
             return set;
         }
         else {
-            return getValue();
+            return getValue(attributeKey);
         }
     }
 
-    /**
-     * get the attribute key this object was created for
-     *
-     * @return the attribute key this ColorPanel returns values for
-     */
-    public Object getAttributeKey() {
-        return attributeKey;
-    }
 
     /* -------------- event listener implementation start ----------- */
     /** the listeners for ColorPanelEvents */

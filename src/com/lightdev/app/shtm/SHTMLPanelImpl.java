@@ -169,6 +169,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String fontStrikethroughAction = "fontStrikethrough";
     public static final String fontItalicAction = "fontItalic";
     public static final String fontUnderlineAction = "fontUnderline";
+
     public static final String fontColorAction = "fontColor";
     public static final String removeFontColorAction = "removeFontColor";
     public static final String selectedFontColorAction = "selectedFontColor";
@@ -176,6 +177,15 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String blueFontColorAction = "blueFontColor";
     public static final String blackFontColorAction = "blackFontColor";
     public static final String greenFontColorAction = "greenFontColor";
+
+    public static final String highlightColorAction = "highlightColor";
+    public static final String removeHighlightColorAction = "removeHighlightColor";
+    public static final String selectedHighlightColorAction = "selectedHighlightColor";
+    public static final String redHighlightColorAction = "redHighlightColor";
+    public static final String blueHighlightColorAction = "blueHighlightColor";
+    public static final String greenHighlightColorAction = "greenHighlightColor";
+    public static final String yellowHighlightColorAction = "yellowHighlightColor";
+
     public static final String helpTopicsAction = "helpTopics";
     public static final String aboutAction = "about";
     public static final String gcAction = "gc";
@@ -731,13 +741,22 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(fontBoldAction, new SHTMLEditorKitActions.BoldAction(this));
         addAction(fontItalicAction, new SHTMLEditorKitActions.ItalicAction(this));
         addAction(fontUnderlineAction, new SHTMLEditorKitActions.UnderlineAction(this));
-        addAction(fontColorAction, new SHTMLEditorKitActions.FontColorByDialogAction(this));
-        addAction(selectedFontColorAction, new SHTMLEditorKitActions.SelectedFontColorAction(this));
-        addAction(redFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redFontColorAction, DARK_RED, LIGHT_RED));
-        addAction(greenFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenFontColorAction, DARK_GREEN, LIGHT_GREEN));
-        addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, DARK_BLUE, LIGHT_BLUE));
-        addAction(blackFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blackFontColorAction, Color.BLACK, Color.WHITE));
-        addAction(removeFontColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeFontColorAction, HTML.Attribute.COLOR, CSS.Attribute.COLOR));
+
+        addAction(fontColorAction, new SHTMLEditorKitActions.FontColorByDialogAction(fontColorAction, this, CSS.Attribute.COLOR));
+        addAction(selectedFontColorAction, new SHTMLEditorKitActions.SelectedFontColorAction(selectedFontColorAction, this, CSS.Attribute.COLOR));
+        addAction(redFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redFontColorAction, CSS.Attribute.COLOR, DARK_RED, LIGHT_RED));
+        addAction(greenFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenFontColorAction, CSS.Attribute.COLOR, DARK_GREEN, LIGHT_GREEN));
+        addAction(blueFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueFontColorAction, CSS.Attribute.COLOR, DARK_BLUE, LIGHT_BLUE));
+        addAction(blackFontColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blackFontColorAction, CSS.Attribute.COLOR, Color.BLACK, Color.WHITE));
+        addAction(removeFontColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeFontColorAction, CSS.Attribute.COLOR));
+
+        addAction(highlightColorAction, new SHTMLEditorKitActions.FontColorByDialogAction(highlightColorAction, this, CSS.Attribute.BACKGROUND_COLOR));
+        addAction(selectedHighlightColorAction, new SHTMLEditorKitActions.SelectedFontColorAction(selectedHighlightColorAction, this, CSS.Attribute.BACKGROUND_COLOR));
+        addAction(redHighlightColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, redHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR, LIGHT_RED.brighter(), DARK_RED.darker()));
+        addAction(greenHighlightColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, greenHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR, LIGHT_GREEN.brighter(), DARK_GREEN.darker()));
+        addAction(blueHighlightColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, blueHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR, LIGHT_BLUE.brighter(), DARK_BLUE.darker()));
+        addAction(yellowHighlightColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, yellowHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR, Color.YELLOW, Color.ORANGE.darker()));
+        addAction(removeHighlightColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR));
 
         addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));

@@ -55,13 +55,13 @@ import javax.swing.text.html.CSS;
  *
  *
  */
-class FontPanel extends JPanel implements TitledPickList.TitledPickListListener, ColorPanel.ColorPanelListener {
+class FontPanel extends JPanel implements TitledPickList.TitledPickListListener {
     /** a text field to show a sample of the selected font attributes */
     JTextField sample = new JTextField();
     /** table for automatic font component value read/write */
-    private final Vector fontComponents = new Vector(0);
+    private final Vector<AttributeComponent> fontComponents = new Vector(0);
 
-    public FontPanel(final boolean pickBgColor) {
+    public FontPanel() {
         setLayout(new BorderLayout(5, 5));
         /** create a label for previewing font selections */
         sample.setText("");
@@ -107,20 +107,16 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
         final JPanel colorPanel = new JPanel(new GridLayout(2, 1, 3, 3));
         colorPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("colorLabel")));
-        final ColorPanel fCol = new ColorPanel(Util.getResourceString("foregroundLabel"), Color.black,
-            CSS.Attribute.COLOR);
-        fCol.addColorPanelListener(this);
-        fontComponents.add(fCol);
+        ColorPanel fCol = new ColorPanel(Util.getResourceString("foregroundLabel"));
+        fCol.addColorPanelListener( e -> sample.setForeground(fCol.getColor()));
+        fontComponents.add(new ColorAttributePanel(fCol, CSS.Attribute.COLOR));
         colorPanel.add(fCol);
         sample.setForeground(Color.black);
-        if (pickBgColor) {
-            final ColorPanel bCol = new ColorPanel(Util.getResourceString("backgroundLabel"), Color.white,
-                CSS.Attribute.BACKGROUND_COLOR);
-            bCol.addColorPanelListener(this);
-            fontComponents.add(bCol);
-            colorPanel.add(bCol);
-            sample.setBackground(Color.white);
-        }
+        ColorPanel bCol = new ColorPanel(Util.getResourceString("backgroundLabel"));
+        bCol.addColorPanelListener( e -> sample.setBackground(bCol.getColor()));
+        fontComponents.add(new ColorAttributePanel(bCol, CSS.Attribute.BACKGROUND_COLOR));
+        colorPanel.add(bCol);
+        sample.setBackground(Color.white);
         /** create a panel to combine line and color choices */
         final JPanel eastPanel = new JPanel(new BorderLayout());
         eastPanel.add(linePanel, BorderLayout.NORTH);
@@ -139,27 +135,11 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener,
      * @param frame  the main frame having the TextResources
      * @param a  the set of attributes to display
      */
-    public FontPanel(final AttributeSet a, final boolean pickBgColor) {
-        this(pickBgColor);
+    public FontPanel(final AttributeSet a) {
+        this();
         /** set the new FontPanel to display our set of attributes */
         setAttributes(a);
     }
-
-    /**
-     * handle ColorChangeEvents from one of our color panels
-     *
-     * @param e  the ColorPanelEvent to handle
-     */
-    public void colorChanged(final ColorPanel.ColorPanelEvent e) {
-        final ColorPanel source = (ColorPanel) e.getSource();
-        if (source.getAttributeKey() == CSS.Attribute.COLOR) {
-            sample.setForeground(source.getColor());
-        }
-        else if (source.getAttributeKey() == CSS.Attribute.BACKGROUND_COLOR) {
-            sample.setBackground(source.getColor());
-        }
-    }
-
     /**
      * set all components of this FontPanel to reflect a set of
      * attributes.

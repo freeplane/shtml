@@ -66,7 +66,7 @@ import javax.swing.text.html.StyleSheet;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionListener, ListSelectionListener,
         ChangeListener {
@@ -213,7 +213,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
         // add paragraph panel to tabbed pane
         tp.add(Util.getResourceString("paraTabLabel"), paraPanel);
         // create font panel and add to tabbed pane
-        fp = new FontPanel(true);
+        fp = new FontPanel();
         // add tabbed pane to content pane of dialog
         contentPane.add(tp, BorderLayout.CENTER);
         cancelButton.setVisible(mode != MODE_NAMED_STYLES);

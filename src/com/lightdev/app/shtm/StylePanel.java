@@ -18,7 +18,6 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -58,7 +57,7 @@ class StylePanel extends AttributePanel {
             lb = new JLabel(Util.getResourceString("tableBgColLabel"));
             Util.addGridBagComponent(this, lb, g, c, 0, 0, GridBagConstraints.EAST);
             // background color panel
-            final ColorPanel cp = new ColorPanel(null, Color.white, CSS.Attribute.BACKGROUND_COLOR);
+            final ColorPanel cp = new ColorPanel(null);
             Util.addGridBagComponent(this, cp, g, c, 1, 0, GridBagConstraints.WEST);
         }
         // text alignment label

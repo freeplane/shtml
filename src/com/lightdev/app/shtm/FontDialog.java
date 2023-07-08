@@ -36,7 +36,7 @@ import javax.swing.text.AttributeSet;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class FontDialog extends DialogShell {
     /** the font panel to use in this dialog */
@@ -52,7 +52,7 @@ class FontDialog extends DialogShell {
     public FontDialog(final Frame parent, final String title, final AttributeSet a) {
         super(parent, title);
         // construct font panel
-        fontPanel = new FontPanel(a, false);
+        fontPanel = new FontPanel(a);
         // add font panel to content pane of DialogShell
         final Container contentPane = super.getContentPane();
         contentPane.add(fontPanel, BorderLayout.CENTER);

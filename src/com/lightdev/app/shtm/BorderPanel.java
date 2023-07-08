@@ -18,7 +18,6 @@
  */
 package com.lightdev.app.shtm;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Enumeration;
@@ -45,7 +44,7 @@ import javax.swing.text.html.CSS;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class BorderPanel extends JPanel implements AttributeComponent {
     private final Vector components = new Vector();
@@ -186,7 +185,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
             // add the color control and label
             Util.addGridBagComponent(this, new JLabel(Util.getResourceString("borderColorLabel")), g, c, 0, 1,
                 GridBagConstraints.EAST);
-            bColor = new ColorPanel(null, Color.black, CSS.Attribute.BORDER_COLOR);
+            bColor = new ColorPanel(null);
             Util.addGridBagComponent(this, bColor, g, c, 1, 1, GridBagConstraints.WEST);
         }
 

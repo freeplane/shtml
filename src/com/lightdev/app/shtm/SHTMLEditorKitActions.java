@@ -683,7 +683,7 @@ class SHTMLEditorKitActions {
     }
 
     abstract static class FontColorAction extends AbstractAction implements SHTMLAction {
-    	protected static ColorPanel hiddenColorPanel = new ColorPanel("Select Color", Color.BLACK, CSS.Attribute.COLOR);
+    	protected static ColorPanel hiddenColorPanel = new ColorPanel("Select Color");
     	protected final SHTMLPanelImpl panel;
 
         public FontColorAction(SHTMLPanelImpl panel) {
@@ -705,17 +705,19 @@ class SHTMLEditorKitActions {
     }
 
     static class FontColorByDialogAction extends FontColorAction implements SHTMLAction {
+        private final CSS.Attribute cssAttributeName;
 
-        public FontColorByDialogAction(final SHTMLPanelImpl panel) {
+        public FontColorByDialogAction(String actionName, final SHTMLPanelImpl panel, CSS.Attribute cssAttributeName) {
             super(panel);
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontColorAction);
+            this.cssAttributeName = cssAttributeName;
+            SHTMLPanelImpl.configureActionProperties(this, actionName);
         }
 
 		protected AttributeSet getColor() {
 			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
-			hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane, null));
+			hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane, null), cssAttributeName);
 			hiddenColorPanel.actionPerformed(null); // show the color chooser
-			final AttributeSet color = hiddenColorPanel.getValue();
+			final AttributeSet color = hiddenColorPanel.getValue(cssAttributeName);
 			return color;
 		}
 
@@ -724,17 +726,19 @@ class SHTMLEditorKitActions {
     }
 
     static class SelectedFontColorAction extends FontColorAction implements SHTMLAction {
+        private final CSS.Attribute cssAttributeName;
 
-        public SelectedFontColorAction(final SHTMLPanelImpl panel) {
+        public SelectedFontColorAction(String actionName, final SHTMLPanelImpl panel, CSS.Attribute cssAttributeNam) {
             super(panel);
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.selectedFontColorAction);
+            cssAttributeName = cssAttributeNam;
+            SHTMLPanelImpl.configureActionProperties(this, actionName);
         }
 
 		protected AttributeSet getColor() {
 			final Color color = hiddenColorPanel.getColor();
 			final SimpleAttributeSet set = new SimpleAttributeSet();
 			final String colorRGB = "#" + Integer.toHexString(color.getRGB()).substring(2);
-			Util.styleSheet().addCSSAttribute(set,  CSS.Attribute.COLOR, colorRGB);
+			Util.styleSheet().addCSSAttribute(set, cssAttributeName, colorRGB);
 			set.addAttribute(HTML.Attribute.COLOR, colorRGB);
 			return set;
 		}
@@ -745,11 +749,13 @@ class SHTMLEditorKitActions {
 
     static class FixedFontColorAction extends FontColorAction implements SHTMLAction {
 
+        private final CSS.Attribute cssAttributeName;
         private final Color darkColor;
 		private final Color lightColor;
 
-		public FixedFontColorAction(final SHTMLPanelImpl panel, String name, Color darkColor, Color lightColor) {
+		public FixedFontColorAction(final SHTMLPanelImpl panel, String name, CSS.Attribute cssAttributeName, Color darkColor, Color lightColor) {
             super(panel);
+            this.cssAttributeName = cssAttributeName;
 			this.lightColor = lightColor;
             SHTMLPanelImpl.configureActionProperties(this, name);
 			this.darkColor = darkColor;
@@ -759,7 +765,7 @@ class SHTMLEditorKitActions {
 			Color color = getColorCloserToCaretColor();
 			final SimpleAttributeSet set = new SimpleAttributeSet();
 			final String colorRGB = "#" + Integer.toHexString(color.getRGB()).substring(2);
-			Util.styleSheet().addCSSAttribute(set,  CSS.Attribute.COLOR, colorRGB);
+			Util.styleSheet().addCSSAttribute(set,  cssAttributeName, colorRGB);
 			set.addAttribute(HTML.Attribute.COLOR, colorRGB);
 			return set;
 		}

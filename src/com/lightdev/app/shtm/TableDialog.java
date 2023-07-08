@@ -19,7 +19,6 @@
 package com.lightdev.app.shtm;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -205,7 +204,7 @@ class TableDialog extends DialogShell {
         lb = new JLabel(Util.getResourceString("tableBgColLabel"));
         Util.addGridBagComponent(tablePanel, lb, g, c, 0, 1, GridBagConstraints.EAST);
         // table background color panel
-        final ColorPanel cp = new ColorPanel(null, Color.white, CSS.Attribute.BACKGROUND_COLOR);
+        final ColorPanel cp = new ColorPanel(null);
         Util.addGridBagComponent(tablePanel, cp, g, c, 1, 1, GridBagConstraints.WEST);
         tableComponents.addElement(cp);
         // table alignment label

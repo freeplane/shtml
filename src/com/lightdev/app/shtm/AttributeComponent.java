@@ -32,7 +32,7 @@ import javax.swing.text.AttributeSet;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 interface AttributeComponent {
     /**
