@@ -66,11 +66,11 @@ import javax.swing.text.html.StyleSheet;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 public class SHTMLEditorKit extends HTMLEditorKit {
- 
-	SHTMLEditorKit() {
+
+	public SHTMLEditorKit() {
         super();
         final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
         setDefaultCursor(textCursor);
@@ -110,7 +110,6 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         final StyleSheet ss = new ScaledStyleSheet();
         ss.addStyleSheet(styles);
         final SHTMLDocument doc = new SHTMLDocument(ss);
-        doc.setParser(getParser());
         doc.setAsynchronousLoadPriority(-1);
         doc.setTokenThreshold(1);
         return doc;

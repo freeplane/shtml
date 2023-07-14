@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
@@ -44,8 +45,12 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLEditorKit.Parser;
+import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 import javax.swing.text.html.StyleSheet;
+import javax.swing.text.html.parser.DTD;
+import javax.swing.text.html.parser.DocumentParser;
+import javax.swing.text.html.parser.ParserDelegator;
 import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
 
@@ -70,6 +75,14 @@ public class SHTMLDocument extends HTMLDocument {
     private int compoundEditDepth;
     private boolean inSetParagraphAttributes = false;
     private CopiedImageSources copiedExternalImagesSources = CopiedImageSources.NONE;
+    private Parser defaultParser = new ParserDelegator() {
+        @Override
+        public void parse(Reader r, ParserCallback cb, boolean ignoreCharSet) throws IOException {
+            setDefaultDTD();
+            DocumentParser documentParser = new SHTMLDocumentParser(DTD.getDTD("html32"));
+            documentParser.parse(r, cb, ignoreCharSet);
+        }
+    };
 
     /**
      * Constructs an SHTMLDocument.
@@ -100,6 +113,7 @@ public class SHTMLDocument extends HTMLDocument {
     public SHTMLDocument(final Content c, final StyleSheet styles) {
         super(c, styles);
         compoundEdit = null;
+        setParser(defaultParser);
     }
 
  	/**
@@ -490,92 +504,6 @@ public class SHTMLDocument extends HTMLDocument {
     }
 
     /* ------------------ custom style sheet reference handling end -------------------- */
-    /* -------- custom reader implementation start ------ */
-    /**
-     * Fetches the reader for the parser to use to load the document
-     * with HTML.  This is implemented to return an instance of
-     * SHTMLDocument.SHTMLReader.
-     */
-    public HTMLEditorKit.ParserCallback getReader(final int pos) {
-        final Object desc = getProperty(Document.StreamDescriptionProperty);
-        if (desc instanceof URL) {
-            setBase((URL) desc);
-        }
-        final SHTMLReader reader = new SHTMLReader(pos, getLength() == 0);
-        return reader;
-    }
-
-    /**
-     * This reader extends HTMLDocument.HTMLReader by the capability
-     * to handle SPAN tags
-     */
-    public class SHTMLReader extends HTMLDocument.HTMLReader {
-        final boolean newDocument;
-        private boolean inBody;
-        private int inPreLevel = 0;
-
-        /**
-         * Constructor
-         *
-         */
-        public SHTMLReader(final int offset, final boolean newDocument) {
-            super(offset, 0, 0, null);
-            this.newDocument = newDocument;
-        }
-
-
-        public void handleStartTag(final HTML.Tag tag, final MutableAttributeSet attributeSet, final int pos) {
-            if (tag == HTML.Tag.BODY) {
-                inBody = true;
-            }
-            else if (inBody) {
-                boolean isParagraphTag = tag.breaksFlow();
-                if (isParagraphTag) {
-                    if(HTML.Tag.PRE.equals(tag)) {
-                        inPreLevel++;
-                        if(inPreLevel > 1)
-                            return;
-                    }
-                    else if(inPreLevel >= 1)
-                        return;
-                }
-            }
-                super.handleStartTag(tag, attributeSet, pos);
-                if (tag == HTML.Tag.FONT) {
-                    charAttr.removeAttribute(tag);
-                }
-        }
-
-        public void handleEndTag(final HTML.Tag tag, final int pos) {
-            if (tag == HTML.Tag.BODY) {
-                inBody = false;
-                if (newDocument) {
-                    super.handleStartTag(HTML.Tag.P, getEndingAttributeSet(), pos);
-                    super.handleText(" ".toCharArray(), pos);
-                    super.handleEndTag(HTML.Tag.P, pos);
-                }
-                super.handleEndTag(tag, pos);
-            }
-            else {
-                if(HTML.Tag.PRE.equals(tag) && inPreLevel > 0)
-                    inPreLevel--;
-                if(inPreLevel == 0 || ! tag.breaksFlow())
-                    super.handleEndTag(tag, pos);
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see javax.swing.text.html.HTMLDocument.HTMLReader#handleComment(char[], int)
-         */
-        public void handleComment(final char[] data, final int pos) {
-            if (newDocument) {
-                super.handleComment(data, pos);
-            }
-        }
-
-    }
-
-    /* -------- custom reader implementation end -------- */
     public Element getParagraphElement(final int pos) {
         return getParagraphElement(pos, inSetParagraphAttributes);
     }

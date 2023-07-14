@@ -3419,9 +3419,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                                 return importDataWithoutHtmlFlavor(comp, transferable);
                             }
                             stringContent = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                            String bodyContent = "<body>" + new Remover(htmlContent).removeFirstAndBefore("body").removeLastAndAfter("/body")
-                            	.getProcessedText()
-                                .replaceAll("<!--(?:Start|End)Fragment-->", "");
+                            String bodyContent = htmlContent.replaceAll("<!--(?:Start|End)Fragment-->", "");
                             final HTMLText htmlText = new HTMLText(bodyContent, stringContent);
                             doc.copyingExternalImages(
                             		Util.getPreference(PrefsDialog.PREFS_IMAGES_COPIED_BY_EDITOR, CopiedImageSources.ANY_ABSOLUTE_URL),

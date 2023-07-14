@@ -477,9 +477,9 @@ public class SHTMLWriter extends HTMLWriter {
     protected void writeEmbeddedTags(AttributeSet attr) throws IOException {
 
         // translate css attributes to html
-        attr = convertToHTML(attr);
+        AttributeSet htmlAttr = convertToHTML(attr);
 
-        Enumeration<?> names = attr.getAttributeNames();
+        Enumeration<?> names = htmlAttr.getAttributeNames();
         while (names.hasMoreElements()) {
             Object name = names.nextElement();
             if (name instanceof HTML.Tag) {
@@ -489,7 +489,7 @@ public class SHTMLWriter extends HTMLWriter {
                 }
                 write('<');
                 write(tag.toString());
-                Object o = attr.getAttribute(tag);
+                Object o = htmlAttr.getAttribute(tag);
                 if (o != null && o instanceof AttributeSet) {
                     writeAttributes((AttributeSet)o);
                 }
@@ -582,7 +582,7 @@ public class SHTMLWriter extends HTMLWriter {
      * any CSS attributes found to arguments of an HTML style
      * attribute.
      */
-    private static void convertToHTML40(AttributeSet from, MutableAttributeSet to) {
+    private void convertToHTML40(AttributeSet from, MutableAttributeSet to) {
         if (from == null) {
             return;
         }
@@ -599,9 +599,13 @@ public class SHTMLWriter extends HTMLWriter {
             }
         }
         if (value.length() > 0) {
-            SimpleAttributeSet styleAttribute = new SimpleAttributeSet();
-            styleAttribute.addAttribute(HTML.Attribute.STYLE, value);
-            to.addAttribute(HTML.Tag.SPAN, styleAttribute);
+            if (matchNameAttribute(from, HTML.Tag.CONTENT)) {
+                SimpleAttributeSet styleAttribute = new SimpleAttributeSet();
+                styleAttribute.addAttribute(HTML.Attribute.STYLE, value);
+                to.addAttribute(HTML.Tag.SPAN, styleAttribute);
+            }
+            else
+                to.addAttribute(HTML.Attribute.STYLE, value);
         }
     }
 
