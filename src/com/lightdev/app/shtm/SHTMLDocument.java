@@ -70,12 +70,7 @@ import javax.swing.undo.UndoableEdit;
  *
  */
 public class SHTMLDocument extends HTMLDocument {
-	public static final String SUFFIX = "&nbsp;";
-    private CompoundEdit compoundEdit;
-    private int compoundEditDepth;
-    private boolean inSetParagraphAttributes = false;
-    private CopiedImageSources copiedExternalImagesSources = CopiedImageSources.NONE;
-    private Parser defaultParser = new ParserDelegator() {
+    static final Parser defaultParser = new ParserDelegator() {
         @Override
         public void parse(Reader r, ParserCallback cb, boolean ignoreCharSet) throws IOException {
             setDefaultDTD();
@@ -83,6 +78,11 @@ public class SHTMLDocument extends HTMLDocument {
             documentParser.parse(r, cb, ignoreCharSet);
         }
     };
+	public static final String SUFFIX = "&nbsp;";
+    private CompoundEdit compoundEdit;
+    private int compoundEditDepth;
+    private boolean inSetParagraphAttributes = false;
+    private CopiedImageSources copiedExternalImagesSources = CopiedImageSources.NONE;
     private int suffixLength = 0;
 
     /**

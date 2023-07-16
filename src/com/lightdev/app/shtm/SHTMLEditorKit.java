@@ -35,6 +35,7 @@ import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.HTMLEditorKit.Parser;
 import javax.swing.text.html.MinimalHTMLWriter;
 import javax.swing.text.html.StyleSheet;
 
@@ -75,6 +76,15 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         final Cursor textCursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
         setDefaultCursor(textCursor);
     }
+
+
+
+    @Override
+    protected Parser getParser() {
+        return SHTMLDocument.defaultParser;
+    }
+
+
 
     /* --------------- SHTMLDocument implementation start ------------ */
     /**
