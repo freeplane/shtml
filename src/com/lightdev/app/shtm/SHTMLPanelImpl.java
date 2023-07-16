@@ -976,6 +976,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                     else {
                         newButton = toolBar.add(action);
                     }
+                    if(newButton.getToolTipText() == null) {
+                        newButton.setToolTipText((String) action.getValue(Action.NAME));
+                    }
                 }
                 if (System.getProperty("os.name").equals("Mac OS X")) {
                     newButton.putClientProperty("JButton.buttonType", "segmented");
