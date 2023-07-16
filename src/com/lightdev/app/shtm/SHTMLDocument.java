@@ -83,6 +83,7 @@ public class SHTMLDocument extends HTMLDocument {
             documentParser.parse(r, cb, ignoreCharSet);
         }
     };
+    private int suffixLength = 0;
 
     /**
      * Constructs an SHTMLDocument.
@@ -115,6 +116,56 @@ public class SHTMLDocument extends HTMLDocument {
         compoundEdit = null;
         setParser(defaultParser);
     }
+
+    /**
+     * Creates the root element to be used to represent the
+     * default document structure.
+     *
+     * @return the element base
+     */
+    protected AbstractElement createDefaultRoot() {
+        writeLock();
+        MutableAttributeSet a = new SimpleAttributeSet();
+        a.addAttribute(StyleConstants.NameAttribute, HTML.Tag.HTML);
+        BlockElement html = new BlockElement(null, a.copyAttributes());
+        a.removeAttributes(a);
+        a.addAttribute(StyleConstants.NameAttribute, HTML.Tag.BODY);
+        BlockElement body = new BlockElement(html, a.copyAttributes());
+        a.removeAttributes(a);
+        a.addAttribute(StyleConstants.NameAttribute, HTML.Tag.P);
+//        getStyleSheet().addCSSAttributeFromHTML(a, CSS.Attribute.MARGIN_TOP, "0");
+        BlockElement paragraph = new BlockElement(body, a.copyAttributes());
+        a.removeAttributes(a);
+        a.addAttribute(StyleConstants.NameAttribute, HTML.Tag.CONTENT);
+        RunElement brk = new RunElement(paragraph, a, 0, 1);
+        Element[] buff = new Element[1];
+        buff[0] = brk;
+        paragraph.replace(0, 0, buff);
+        buff[0] = paragraph;
+        body.replace(0, 0, buff);
+        buff[0] = body;
+        html.replace(0, 0, buff);
+        writeUnlock();
+        return html;
+    }
+
+
+    void setSuffix(String suffix) {
+        try {
+            Element root = getDefaultRootElement();
+            Element body = root.getElement(root.getElementCount() - 1);
+            super.insertBeforeEnd(body, suffix);
+            Element suffixParagraph = body.getElement(body.getElementCount() - 1);
+            suffixLength = getLength() - suffixParagraph.getStartOffset();
+        }
+        catch (final BadLocationException e) {
+            e.printStackTrace();
+        }
+        catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
  	/**
      * apply a set of attributes to a given document element
@@ -524,8 +575,7 @@ public class SHTMLDocument extends HTMLDocument {
 
     public int getLastDocumentPosition() {
         final int length = getLength();
-        final int suffixLength = 1;
-        return length > suffixLength ? length - suffixLength : length;
+        return length - suffixLength;
     }
 
     /* (non-Javadoc)
@@ -610,4 +660,5 @@ public class SHTMLDocument extends HTMLDocument {
         else
             throw new UnknownDocumentBaseException(Util.getResourceString("unknownBaseUrlImageInsertionError"));
     }
+
 }

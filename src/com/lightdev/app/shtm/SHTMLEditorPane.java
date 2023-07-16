@@ -46,6 +46,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +62,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
+import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
@@ -353,15 +356,28 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
        * Convenience method for setting the document text
        * @param sText the html-text of the document
        */
-    public void setText(String sText) {
+    public void setText(String text) {
         final SHTMLDocument doc = (SHTMLDocument) getDocument();
         doc.startCompoundEdit();
-        if (sText == null || sText.equals("")) {
-            sText = "<html><body><p></p></body></html>";
+        if (text == null || text.equals("")) {
+            text = "<html><body><p></p></body></html>";
         }
         doc.putProperty(SHTMLDocument.AdditionalComments, null);
         MapElementRemovingWorkaround.removeAllMapElements(doc);
-        super.setText(sText);
+        try {
+            doc.remove(0, doc.getLength());
+            if (text == null || text.isEmpty()) {
+                return;
+            }
+            Reader r = new StringReader(text);
+            SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
+            kit.read(r, doc, 0);
+            kit.setStandardSuffix(doc);
+        } catch (IOException ioe) {
+            UIManager.getLookAndFeel().provideErrorFeedback(SHTMLEditorPane.this);
+        } catch (BadLocationException ble) {
+            UIManager.getLookAndFeel().provideErrorFeedback(SHTMLEditorPane.this);
+        }
         setCaretPosition(0);
         doc.endCompoundEdit();
         if (OLD_JAVA_VERSION) {
@@ -2082,7 +2098,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 sDocument.insertAfterStart(paragraphElement, pasteHtmlTextModified);
                 // Remove whitespace before the end tag of paragraph element to avoid quircky behavior.
                 final Element newParagraph = getCurrentParagraphElement();
-                final String fixedContent = elementToHTML(newParagraph).replaceAll("(?ims)\\s*</p>", "</p>");
+                String elementHtmlText = elementToHTML(newParagraph);
+                final String fixedContent = elementHtmlText.replaceAll("(?ims)\\s*</p>", "</p>");
                 sDocument.setOuterHTML(newParagraph, fixedContent);
                 //
                 setCaretPosition(newParagraph.getEndOffset() - 1);

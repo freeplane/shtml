@@ -83,30 +83,29 @@ public class SHTMLEditorKit extends HTMLEditorKit {
      *
      * @return the model
      */
-    public Document createDefaultDocument() {
-        final SHTMLDocument doc = (SHTMLDocument) createEmptyDocument();
-        try {
-            final String standardContent;
-            if (Util.preferenceIsTrue("gray_row_below_end")) {
-                standardContent = "<p>\n</p>\n<p style=\"background-color: #808080\">\n" + SHTMLDocument.SUFFIX
-                        + "\n</p>\n";
-            }
-            else {
-                standardContent = "<p>\n</p>\n<p>\n" + SHTMLDocument.SUFFIX + "\n</p>\n";
-            }
-            doc.setOuterHTML(doc.getParagraphElement(doc.getLength()), standardContent);
+	@Override
+	public Document createDefaultDocument() {
+	    SHTMLDocument doc = createEmptyDocument();
+	    setStandardSuffix(doc);
+	    return doc;
+	}
+
+
+    void setStandardSuffix(SHTMLDocument doc) {
+        final String standardContent;
+        if (Util.preferenceIsTrue("gray_row_below_end")) {
+            standardContent = "<p style=\"background-color: #808080\">\n" + SHTMLDocument.SUFFIX
+                    + "\n</p>\n";
         }
-        catch (final BadLocationException e) {
-            e.printStackTrace();
+        else {
+            standardContent = "<p>\n" + SHTMLDocument.SUFFIX + "\n</p>\n";
         }
-        catch (final IOException e) {
-            e.printStackTrace();
-        }
-        return doc;
+        doc.setSuffix(standardContent);
     }
 
-    Document createEmptyDocument() {
-    	StyleSheet styles = getStyleSheet();
+
+	private  SHTMLDocument createEmptyDocument() {
+	    StyleSheet styles = getStyleSheet();
         final StyleSheet ss = new ScaledStyleSheet();
         ss.addStyleSheet(styles);
         final SHTMLDocument doc = new SHTMLDocument(ss);
@@ -175,7 +174,8 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             BadLocationException {
         if (doc instanceof SHTMLDocument) {
             try {
-                final SHTMLWriter w = new SHTMLWriter(out, (SHTMLDocument) doc, pos, len);
+                SHTMLDocument shtmlDoc = (SHTMLDocument) doc;
+                final SHTMLWriter w = new SHTMLWriter(out, shtmlDoc, pos, Math.max(0, Math.min(len, shtmlDoc.getLastDocumentPosition() - pos)));
                 w.write();
             }
             catch (final Exception e) {

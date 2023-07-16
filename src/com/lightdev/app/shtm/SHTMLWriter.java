@@ -29,7 +29,6 @@ import java.util.Vector;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.ElementIterator;
 import javax.swing.text.MutableAttributeSet;
@@ -62,11 +61,11 @@ public class SHTMLWriter extends HTMLWriter {
     /** Constructs the SHTMLWriter with a new StringWriter. See also the method
      * getWrittenString. */
     public SHTMLWriter(final HTMLDocument doc) {
-        this(new StringWriter(), doc, 0, doc.getLength());
+        this(new StringWriter(), doc);
     }
 
     public SHTMLWriter(final Writer w, final HTMLDocument doc) {
-        this(w, doc, 0, doc.getLength());
+        this(w, doc, 0, (doc instanceof SHTMLDocument) ? ((SHTMLDocument)doc).getLastDocumentPosition() : doc.getLength());
     }
 
     @Override
@@ -242,16 +241,6 @@ public class SHTMLWriter extends HTMLWriter {
             childElement = parentElement.getElement(i);
             write(childElement);
         }
-    }
-
-    @Override
-    protected boolean inRange(final Element next) {
-        final Document document = next.getDocument();
-        if (document instanceof SHTMLDocument
-                && next.getStartOffset() >= ((SHTMLDocument) document).getLastDocumentPosition()) {
-            return false;
-        }
-        return super.inRange(next);
     }
 
     /**
