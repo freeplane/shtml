@@ -715,7 +715,7 @@ class SHTMLEditorKitActions {
 
 		protected AttributeSet getColor() {
 			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
-			hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane, null), cssAttributeName);
+			hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane), cssAttributeName);
 			hiddenColorPanel.actionPerformed(null); // show the color chooser
 			final AttributeSet color = hiddenColorPanel.getValue(cssAttributeName);
 			return color;
@@ -978,7 +978,7 @@ class SHTMLEditorKitActions {
                 panel.getSHTMLDocument());
             Util.center(parent, dlg);
             dlg.setModal(true);
-            dlg.setValue(panel.getMaxAttributes(panel.getSHTMLEditorPane(), null));
+            dlg.setValue(panel.getMaxAttributes(panel.getSHTMLEditorPane()));
             dlg.setVisible(true);
             panel.updateActions();
         }
@@ -1206,7 +1206,7 @@ class SHTMLEditorKitActions {
             panel.getSHTMLEditorPane().requestFocus();
             /** create a modal FontDialog, center and show it */
             final FontDialog fd = new FontDialog(parent, Util.getResourceString("fontDialogTitle"),
-                panel.getMaxAttributes(panel.getSHTMLEditorPane(), null));
+                panel.getMaxAttributes(panel.getSHTMLEditorPane()));
             Util.center(parent, fd);
             fd.setModal(true);
             fd.setVisible(true);
@@ -1306,7 +1306,7 @@ class SHTMLEditorKitActions {
 
         public void actionPerformed(final ActionEvent ae) {
 			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
-			final AttributeSet a = panel.getMaxAttributes(editorPane, null);
+			final AttributeSet a = panel.getMaxAttributes(editorPane);
 			final int size = Util.styleSheet().getFont(a).getSize();
 			int index = 0;
 			for (String availableSizeAsString : SHTMLPanelImpl.FONT_SIZES){
@@ -1474,7 +1474,7 @@ class SHTMLEditorKitActions {
             dlg.setModal(true);
             //SHTMLDocument doc = (SHTMLDocument) dp.getDocument();
             final int caretPosition = panel.getSHTMLEditorPane().getCaretPosition();
-            dlg.setValue(panel.getMaxAttributes(caretPosition));
+            dlg.setValue(panel.getMaxParagraphAttributes(caretPosition));
             dlg.setVisible(true);
             /** if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {

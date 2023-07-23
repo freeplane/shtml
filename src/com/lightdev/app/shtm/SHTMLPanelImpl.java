@@ -28,6 +28,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
+import javax.swing.text.html.HTML.Tag;
 import javax.swing.undo.*;
 import java.util.*;
 import java.beans.PropertyChangeListener;
@@ -1117,8 +1118,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * current caret position
      */
     void updateFormatControls() {
-        updateAToolBar(formatToolBar);
-        updateAToolBar(paraToolBar);
+        final AttributeSet a = getMaxAttributes(getSHTMLEditorPane());
+        updateAToolBar(formatToolBar, a);
+        updateAToolBar(paraToolBar, a);
         if (tagSelector != null) {
             final SetTagAction sta = (SetTagAction) tagSelector.getAction();
             sta.setIgnoreActions(true);
@@ -1128,11 +1130,10 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
     }
 
-    private void updateAToolBar(final JToolBar bar) {
+    private void updateAToolBar(final JToolBar bar, AttributeSet a) {
         Component c;
         Action action;
         final int count = bar.getComponentCount();
-        final AttributeSet a = getMaxAttributes(getSHTMLEditorPane(), null);
         for (int i = 0; i < count; i++) {
             c = bar.getComponentAtIndex(i);
             if (c instanceof AttributeComponent) {
@@ -1295,35 +1296,29 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
     }
 
-    public AttributeSet getMaxAttributes(final int caretPosition) {
+    public AttributeSet getMaxParagraphAttributes(final int caretPosition) {
         final Element paragraphElement = getSHTMLDocument().getParagraphElement(caretPosition);
         final StyleSheet styleSheet = getSHTMLDocument().getStyleSheet();
         return SHTMLPanelImpl.getMaxAttributes(paragraphElement, styleSheet);
     }
 
-    /**
-     * Gets all the attributes that can be found in the element tree
-     * starting at the highest parent down to the character element
-     * at the current position in the document. Combine element
-     * attributes with attributes from the style sheet.
-     *
-     * @param editorPane  the editor pane to combine attributes from
-     *
-     * @return the resulting set of combined attributes
-     */
-    AttributeSet getMaxAttributes(final SHTMLEditorPane editorPane, final String elemName) {
+    AttributeSet getMaxAttributes(final SHTMLEditorPane editorPane) {
         Element element = doc.getCharacterElement(editorPane.getSelectionStart());
         final StyleSheet styleSheet = doc.getStyleSheet();
-        if (elemName != null && elemName.length() > 0) {
-            element = Util.findElementUp(elemName, element);
-            return SHTMLPanelImpl.getMaxAttributes(element, styleSheet);
-        }
         final MutableAttributeSet maxAttributes = (MutableAttributeSet) SHTMLPanelImpl.getMaxAttributes(element,
             styleSheet);
         final StyledEditorKit editorKit = (StyledEditorKit) editorPane.getEditorKit();
         final MutableAttributeSet inputAttributes = editorKit.getInputAttributes();
         maxAttributes.addAttributes(inputAttributes);
         return maxAttributes;
+    }
+
+
+    AttributeSet getMaxAttributes(final SHTMLEditorPane editorPane, final String elemName) {
+        Element element = doc.getCharacterElement(editorPane.getSelectionStart());
+        final StyleSheet styleSheet = doc.getStyleSheet();
+        element = Util.findElementUp(elemName, element);
+        return SHTMLPanelImpl.getMaxAttributes(element, styleSheet);
     }
 
     Frame getMainFrame() {
@@ -1357,9 +1352,12 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 a.addAttributes(Util.resolveAttributes(attrs));
             }
             else {
-                attrs = s.getStyle(elemName);
-                if (attrs != null) {
-                    a.addAttributes(Util.resolveAttributes(attrs));
+                Tag tag = HTML.getTag(elemName);
+                if(tag !=  null) {
+                    attrs = s.getRule(tag, e);
+                    if (attrs != null) {
+                        a.addAttributes(attrs);
+                    }
                 }
             }
             a.addAttributes(Util.resolveAttributes(e.getAttributes()));
