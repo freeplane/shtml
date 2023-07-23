@@ -35,7 +35,6 @@ import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTMLEditorKit.Parser;
 import javax.swing.text.html.MinimalHTMLWriter;
 import javax.swing.text.html.StyleSheet;
 
