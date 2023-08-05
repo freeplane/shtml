@@ -87,7 +87,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
     protected JTextComponent editor;
     /** Model for the tree. */
     protected ElementTreeModel treeModel;
-    /** Set to true when updatin the selection. */
+    /** Set to true when updating the selection. */
     protected boolean updatingSelection;
 
     public ElementTreePanel(final JTextComponent editor) {
@@ -533,7 +533,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
         }
 
         /**
-         * Returns the path to a particluar node. This is recursive.
+         * Returns the path to a particular node. This is recursive.
          */
         protected TreeNode[] getPathToRoot(final TreeNode aNode, int depth) {
             TreeNode[] retNodes;

@@ -229,7 +229,7 @@ class CombinedAttribute {
     }
 
     /**
-     * copy the atribute value(s) found in a 'shorthand property' such
+     * copy the attribute value(s) found in a 'shorthand property' such
      * as PADDING or MARGIN into the structure top, right, bottom, left of
      * this <code>CombinedAttribute</code>
      *

@@ -321,7 +321,7 @@ public class PseudoDamerauLevenshtein {
 		sortAlignments(alignmentsDone);
 
 		/*
-		System.out.format("--NON-OVERLAPPPING ALIGNMENTS-------------------\n");
+		System.out.format("--NON-OVERLAPPING ALIGNMENTS-------------------\n");
 		for (Alignment ali: alignmentsDone)
 		{
 			ali.print();

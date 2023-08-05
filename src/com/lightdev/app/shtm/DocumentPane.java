@@ -69,7 +69,7 @@ import com.sun.demo.ExampleFileFilter;
  *
  * <p>If for instance an application wants to create a new document, it simply
  * creates an instance of this class instead of having to implement own
- * methods for instatiating each element (editor pane, scroll pane, etc.)
+ * methods for instantiating each element (editor pane, scroll pane, etc.)
  * separately.</p>
  *
  * @author Ulrich Hilger
@@ -90,7 +90,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     private final SyntaxPane sourceEditorPane;
     /** the save thread, if a save operation is in progress */
     public Thread saveThread = null;
-    /** indicator if a save operation was succesful */
+    /** indicator if a save operation was successful */
     public boolean saveSuccessful = false;
     /** indicates if the document text has changed */
     private boolean documentChanged = false;
@@ -134,7 +134,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     private final JScrollPane sourceViewScrollPane;
     public static final int VIEW_TAB_LAYOUT = 0;
     public static final int VIEW_TAB_HTML = 1;
-    /** indicates if this document was loaded froma file */
+    /** indicates if this document was loaded from a file */
     private boolean loadedFromFile = false;
     /** default document name */
     private String DEFAULT_DOC_NAME = "Untitled";
@@ -193,7 +193,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     }
 
     /**
-     * construct a new DocumentPane with either a new Document or an exisiting
+     * construct a new DocumentPane with either a new Document or an existing
      * Document that is to be loaded into the DocumentPane upon construction.
      *
      * @param docToLoad the document to be loaded. If this is null, a new
@@ -451,7 +451,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                         /*
                             this style sheet was loaded from somewhere else and now is
                             being saved at a new location where a style sheet exists
-                            havig the same name --> merge
+                            having the same name --> merge
                         */
                         mergeStyleSheets(loadStyleSheet(styleSheetFile), styles);
                     }
@@ -468,7 +468,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     /*
                         this style sheet was newly created and now is
                         being saved at a location where a style sheet exists
-                        havig the same name --> merge
+                        having the same name --> merge
                     */
                     mergeStyleSheets(loadStyleSheet(styleSheetFile), styles);
                 }

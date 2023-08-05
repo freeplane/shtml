@@ -63,7 +63,7 @@ FontPanel</font> and partly introduces additional components.
       javax.swing.text</font> provides a good way of grouping an arbitrary 
       number of attributes and passing them between elements and components. 
       For this reason application SimplyHTML uses interface <font face="'Courier New',Monospaced,Monospace">
-AttributeComponent</font> (renamend from FontComponent of stage 3) to define a 
+AttributeComponent</font> (renamed from FontComponent of stage 3) to define a
       common way of setting and getting attributes to and from GUI components 
       via <font face="'Courier New',Monospaced,Monospace">AttributeSets</font>.
     </p>
@@ -83,7 +83,7 @@ setTableAttributes</font> and <font face="'Courier New',Monospaced,Monospace">
 Vectors</font> calling method <font face="'Courier New',Monospaced,Monospace">
       setValue</font> on each of their components. Each component then picks 
       its attribute(s) from the attribute set and displays them accordingly. 
-      Similarly, attributes are returnd by <font face="'Courier New',Monospaced,Monospace">
+      Similarly, attributes are returned by <font face="'Courier New',Monospaced,Monospace">
 TableDialog</font> with methods <font face="'Courier New',Monospaced,Monospace">
 getTableAttributes</font> and <font face="'Courier New',Monospaced,Monospace">
       getCellAttributes</font>. Again these methods iterate through the 
@@ -102,7 +102,7 @@ getTableAttributes</font> and <font face="'Courier New',Monospaced,Monospace">
       This mechanism ensures only attributes being applied, that have been set 
       through the dialog although other attributes were shown in the dialog as 
       well. Without this mechanism always all attributes would be returned by 
-      the dialog regardless of wheteher they changed, returning only changed 
+      the dialog regardless of whether they changed, returning only changed
       attributes avoids redundant storage of attributes.
     </p>
     <p class="heading2">

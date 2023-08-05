@@ -91,7 +91,7 @@ class AboutBox extends JDialog implements ActionListener {
         final JLabel appTitleLabel = new JLabel(FrmMain.APP_NAME);
         final JLabel appStageLabel = new JLabel(FrmMain.VERSION);
         final JLabel appCopyrightLabel = new JLabel("Copyright (c) 2002-2008 Ulrich Hilger, Dimitry Polivaev");
-        final JLabel appHomepageLabel = new JLabel("http://simplyhtml.sf.net/");
+        final JLabel appHomepageLabel = new JLabel("https://simplyhtml.sf.net/");
         /* set the dialog title */
         setTitle("About this application");
         /* highlight the application name with an appropriate font */

@@ -45,7 +45,7 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
     private final Object attributeKey;
     /** attribute names associated with the items of this component */
     private final String[] names;
-    /** indicates wether or not a call to setValue is the initial one */
+    /** indicates weather or not a call to setValue is the initial one */
     private int setValCount = 0;
     /** stores the initial value for tracking changes */
     private int originalIndex = -2;

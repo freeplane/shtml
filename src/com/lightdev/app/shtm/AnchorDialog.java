@@ -202,7 +202,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
     }
 
     /**
-     * overridden to addd some custom cleanup upon closing of dialog
+     * overridden to add some custom cleanup upon closing of dialog
      */
     public void dispose() {
         editor.removeCaretListener(this);
@@ -295,7 +295,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
     }
 
     /**
-     * ActionListener implementatin for proper handling of
+     * ActionListener implementation for proper handling of
      * buttons
      */
     public void actionPerformed(final ActionEvent e) {

@@ -31,7 +31,7 @@
    <indexitem text="API documents" target="item1" />
    <indexitem text="App" target="item11" />
    <indexitem text="append row" target="item102" />
-   <indexitem text="appent column" target="item102" />
+   <indexitem text="append column" target="item102" />
    <indexitem text="application" target="item4" />
    <indexitem text="application creating" target="item11" />
    <indexitem text="application, documenting" target="item39" />
@@ -54,7 +54,7 @@
    <indexitem text="audience" target="item16" />
    <indexitem text="author" target="item7" />
    <indexitem text="automate menu construction" target="item68" />
-   <indexitem text="aviod redundancy of code" target="item28" />
+   <indexitem text="avoid redundancy of code" target="item28" />
    <indexitem text="avoiding loss of data in the close process" target="item33" />
    <indexitem text="border rendering, enhancing" target="item99" />
    <indexitem text="border-color" target="item100" />
@@ -383,9 +383,9 @@
    <indexitem text="JAR" target="item52" />
    <indexitem text="JAR files" target="item110" />
    <indexitem text="Java" target="item6" />
-   <indexitem text="Java 2 Standard Editition J2SE" target="item6" />
+   <indexitem text="Java 2 Standard Edition J2SE" target="item6" />
    <indexitem text="Java Network Launching Protocol" target="item151" />
-   <indexitem text="Java Runtime Environemt" target="item11" />
+   <indexitem text="Java Runtime Environment" target="item11" />
    <indexitem text="Java Runtime Environment">
       <indexitem text="Requirements" target="item6" />
       <indexitem text="Starting SimplyHTML" target="item52" />
@@ -417,7 +417,7 @@
       <indexitem text="The class FrmMain" target="item17" />
       <indexitem text="Customizing the main window" target="item18" />
    </indexitem>
-   <indexitem text="laguages, other" target="item111" />
+   <indexitem text="languages, other" target="item111" />
    <indexitem text="language">
       <indexitem text="Using resource bundles" target="item67" />
       <indexitem text="Presenting SimplyHTML in multiple languages" target="item70" />
@@ -523,7 +523,7 @@
    <indexitem text="previewing images" target="item130" />
    <indexitem text="process oriented perspective" target="item34" />
    <indexitem text="processWindowEvent" target="item14" />
-   <indexitem text="propertiers" target="item66" />
+   <indexitem text="properties" target="item66" />
    <indexitem text="properties files" target="item111" />
    <indexitem text="protocol, for links" target="item153" />
    <indexitem text="range of text" target="item78" />
@@ -724,7 +724,7 @@
    <indexitem text="transport" target="item69" />
    <indexitem text="transport of data" target="item65" />
    <indexitem text="transport of HTML" target="item69" />
-   <indexitem text="trnasferable" target="item69" />
+   <indexitem text="transferable" target="item69" />
    <indexitem text="turning list formatting on or off" target="item126" />
    <indexitem text="tutorial">
       <indexitem text="Parts of the distribution package" target="item24" />

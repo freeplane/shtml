@@ -63,7 +63,7 @@ import de.calcom.cclib.text.FindReplaceDialog;
 import de.calcom.cclib.text.FindReplaceEvent;
 import de.calcom.cclib.text.FindReplaceListener;
 
-/** A class groupping actions. Most actions forward the operation to editor pane. */
+/** A class grouping actions. Most actions forward the operation to editor pane. */
 class SHTMLEditorKitActions {
     /**
      * action to set the style
@@ -2317,7 +2317,7 @@ class SHTMLEditorKitActions {
                                 else { // else
                                     panel.dynRes.getAction(SHTMLPanelMultipleDocImpl.saveAction).actionPerformed(ae); // 'save'
                                 }
-                                scheduleClose(dp); //..and wait until it is finshed, then close
+                                scheduleClose(dp); //..and wait until it is finished, then close
                                 break;
                             case JOptionPane.NO_OPTION: // if the user don't like to save
                                 closeDoc(dp); // close the document without saving
@@ -2340,7 +2340,7 @@ class SHTMLEditorKitActions {
          * schedule closing of a document.
          *
          * <p>This creates a <code>Timer</code> thread for which a
-         * <code>TimerTask</code> is scheduled to peridically check
+         * <code>TimerTask</code> is scheduled to periodically check
          * whether or not the save process for respective document commenced
          * successfully.</p>
          *

@@ -104,7 +104,7 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
     /**
      * this method listens and reacts to changes to either the JTabbedPane of FrmMain or
      * a given StyleSheet this component was registered with. Once either one changes
-     * the list of styles of this componment is refreshed accordingly.
+     * the list of styles of this component is refreshed accordingly.
      */
     public void stateChanged(final ChangeEvent e) {
         paragraphType = null;

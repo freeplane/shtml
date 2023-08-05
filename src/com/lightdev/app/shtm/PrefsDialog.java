@@ -56,7 +56,7 @@ import javax.swing.UIManager;
  * 
  */
 class PrefsDialog extends DialogShell implements ActionListener {
-    /** the look and feels avaliable in the system */
+    /** the look and feels available in the system */
     private UIManager.LookAndFeelInfo[] lfinfo;
     /** reference for user preferences for this class */
     protected Preferences prefs = Preferences.userNodeForPackage(getClass());
@@ -105,7 +105,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
                                  GridBagConstraints.EAST);
         */
         Util.addGridBagComponent(layoutPanel, appPrefsPanel, g, c, 0, 0, GridBagConstraints.WEST);
-        // add option for standard stlye sheet
+        // add option for standard style sheet
         useStdStyleSheet = new JCheckBox(Util.getResourceString("linkDefaultStyleSheetLabel"));
         final boolean useStyle = prefs.getBoolean(PrefsDialog.PREFS_USE_STD_STYLE_SHEET, false);
         useStdStyleSheet.setSelected(useStyle);

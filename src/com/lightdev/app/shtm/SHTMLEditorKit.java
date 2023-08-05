@@ -200,7 +200,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         }
     }
 
-    /* --------------- SHTMLDocument implementaion end --------------- */
+    /* --------------- SHTMLDocument implementation end --------------- */
     void updateInputAttributes(final SHTMLEditorPane e) {
         // EditorKit might not have installed the StyledDocument yet.
         final Document aDoc = e.getDocument();
@@ -217,7 +217,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         final Element currentParagraph = doc.getParagraphElement(start);
         if (currentParagraph.getStartOffset() == start || start != e.getSelectionEnd()) {
             // Get the attributes from the character at the selection
-            // if in a different paragrah!
+            // if in a different paragraph!
             run = doc.getCharacterElement(start);
         }
         else {

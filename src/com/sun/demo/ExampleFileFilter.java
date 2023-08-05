@@ -50,9 +50,9 @@ import javax.swing.filechooser.FileFilter;
  * all files except for those type extensions that it knows about.
  *
  * Extensions are of the type ".foo", which is typically found on
- * Windows and Unix boxes, but not on Macinthosh. Case is ignored.
+ * Windows and Unix boxes, but not on Macintosh. Case is ignored.
  *
- * Example - create a new filter that filerts out all files
+ * Example - create a new filter that filters out all files
  * but gif and jpg image files:
  *
  *     JFileChooser chooser = new JFileChooser();
@@ -249,7 +249,7 @@ public class ExampleFileFilter extends FileFilter {
      * Determines whether the extension list (.jpg, .gif, etc) should
      * show up in the human readable description.
      *
-     * Only relevent if a description was provided in the constructor
+     * Only relevant if a description was provided in the constructor
      * or using setDescription();
      *
      * @see getDescription
@@ -265,7 +265,7 @@ public class ExampleFileFilter extends FileFilter {
      * Returns whether the extension list (.jpg, .gif, etc) should
      * show up in the human readable description.
      *
-     * Only relevent if a description was provided in the constructor
+     * Only relevant if a description was provided in the constructor
      * or using setDescription();
      *
      * @see getDescription

@@ -169,7 +169,7 @@ class InvisibleView extends View {
      * the view has been removed from the hierarchy as
      * well. When this method is called to set the parent to
      * null, this method does the same for each of its children,
-     * propogating the notification that they have been
+     * propagating the notification that they have been
      * disconnected from the view tree. If this is
      * reimplemented, <code>super.setParent()</code> should
      * be called.

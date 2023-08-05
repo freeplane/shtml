@@ -46,7 +46,7 @@ import javax.swing.text.html.CSS;
 class BoundariesPanel extends JPanel implements AttributeComponent {
     /** the components used for single attributes */
     private final Vector components = new Vector();
-    /** the attributes represented by this compoent */
+    /** the attributes represented by this component */
     private CombinedAttribute ca;
     /** the value to compare to determine changes */
     private String originalValue;

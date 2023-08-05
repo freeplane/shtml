@@ -77,7 +77,7 @@ class PluginManager {
     /**
      * get a loaded plug-in by its GUI name.
      *
-     * @param guiName  the GUI name of this plaug-in
+     * @param guiName  the GUI name of this plug-in
      *
      * @return the plug-in having the given GUI name, or null of no plug-in
      * with that name is present
@@ -212,7 +212,7 @@ class PluginManager {
      *
      * <p>Some of the parameters required below could be extracted from
      * others passed to this method but as previous methods already determined
-     * respective paramaters, it is faster to pass the existing values as
+     * respective parameters, it is faster to pass the existing values as
      * parameters than to re-build the values locally.</p>
      *
      * @param filePath  the absolute path pointing to the JAR file, e.g.

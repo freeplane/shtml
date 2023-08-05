@@ -291,7 +291,7 @@ class LinkDialog extends DialogShell implements ActionListener {
     }
 
     /**
-     * set components of this dialog from an exisiting link in
+     * set components of this dialog from an existing link in
      * the associated document (if any).
      *
      * @param selectionStart  the start position of the text currently selected in the document
