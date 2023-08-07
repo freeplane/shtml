@@ -1,6 +1,7 @@
 package com.lightdev.app.shtm;
 
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 class Remover {
 	private String processedText;
