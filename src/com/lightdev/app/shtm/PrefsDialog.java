@@ -193,8 +193,8 @@ class PrefsDialog extends DialogShell implements ActionListener {
 
             for (SHTMLPrefsChangeListener listener: prefChangeListeners)
             {
-            	listener.shtmlPrefChanged(PREFS_USE_STD_STYLE_SHEET, new Boolean(useStdStyleSheet.isSelected()).toString(),
-            			new Boolean(oldStyleSheetPref).toString());
+            	listener.shtmlPrefChanged(PREFS_USE_STD_STYLE_SHEET, String.valueOf(useStdStyleSheet.isSelected()),
+                        String.valueOf(oldStyleSheetPref));
             
             	listener.shtmlPrefChanged(PREFS_DEFAULT_PASTE_MODE, prefs.get(PREFS_DEFAULT_PASTE_MODE, null),
             			oldDefaultPasteMode);

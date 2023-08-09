@@ -938,8 +938,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 Util.getRelativePath(new File(doc.getBase().getFile()), new File(linkImage)));
             set.addAttribute(HTML.Attribute.BORDER, "0");
             if (size != null) {
-                set.addAttribute(HTML.Attribute.WIDTH, Integer.toString(new Double(size.getWidth()).intValue()));
-                set.addAttribute(HTML.Attribute.HEIGHT, Integer.toString(new Double(size.getHeight()).intValue()));
+                set.addAttribute(HTML.Attribute.WIDTH, String.valueOf((int) size.getWidth()));
+                set.addAttribute(HTML.Attribute.HEIGHT, String.valueOf((int) size.getHeight()));
+
             }
             w.writeStartTag(HTML.Tag.IMG.toString(), set);
             w.writeEndTag(a);

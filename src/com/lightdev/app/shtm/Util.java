@@ -621,7 +621,7 @@ public class Util {
      */
     public static void msgStart(final String startMsg) {
         final long startTime = System.currentTimeMillis();
-        startTimes.addElement(new Long(startTime));
+        startTimes.addElement(startTime);
         //System.out.println(startMsg + " startTime=" + startTime);
     }
 
