@@ -24,10 +24,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.LabelView;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -249,12 +251,15 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         for (int i = start; i < end;) {
             final Element characterElement = doc.getCharacterElement(i);
             sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
+            MutableAttributeSet spanAttributes = attributeName != null ? (MutableAttributeSet) sasText.getAttribute(HTML.Tag.SPAN) : null;
             final int endOffset = characterElement.getEndOffset();
             final ArrayList<?> attributeNames = Collections.list(sasText.getAttributeNames());
             for (final Object entryKey : attributeNames) {
                 if (attributeName != null && entryKey.equals(attributeName) || attributeName == null
                         && !entryKey.equals(StyleConstants.NameAttribute)) {
                     sasText.removeAttribute(entryKey);
+                    if(spanAttributes != null)
+                        spanAttributes.removeAttribute(entryKey);
                 }
             }
             final int last = end < endOffset ? end : endOffset;
