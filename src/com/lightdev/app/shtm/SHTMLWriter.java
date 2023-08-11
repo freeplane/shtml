@@ -580,10 +580,13 @@ public class SHTMLWriter extends HTMLWriter {
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             Object attributeValue = from.getAttribute(key);
+            if (key == CSS.Attribute.FONT_SIZE) {
+                attributeValue = cssFontSizeFromHtmlFont(attributeValue);
+            }
             if (key instanceof CSS.Attribute) {
                 if(! containsExplicitTag(from.getAttributeNames(), (CSS.Attribute)key, attributeValue))
-                value = (value.isEmpty() ? key : value  + " " + key) + ": " + attributeValue + ";";
-            } else {
+                    value = (value.isEmpty() ? key : value  + " " + key) + ": " + attributeValue + ";";
+            } else if(key != HTML.Tag.FONT){
                 to.addAttribute(key, attributeValue);
             }
         }
@@ -598,6 +601,20 @@ public class SHTMLWriter extends HTMLWriter {
         }
     }
 
+    private Object cssFontSizeFromHtmlFont(Object cssFontSizeValue) {
+        if(cssFontSizeValue == null)
+            return null;
+        String cssFontSizeString = cssFontSizeValue.toString();
+        if(cssFontSizeString.length() != 1)
+            return cssFontSizeValue;
+
+        int fontSizeIndex = cssFontSizeString.charAt(0) - '1';
+        String[] cssFontSizes = {"xx-small", "x-small", "small", "medium", "large", "x-large", "xx-large"};
+        if(fontSizeIndex >= 0 && fontSizeIndex < cssFontSizes.length)
+            return cssFontSizes[fontSizeIndex];
+        return cssFontSizeValue;
+    }
+
     @SuppressWarnings("serial")
     private static Object[][] explicitTags = {
             {CSS.Attribute.FONT_WEIGHT, "bold", HTML.Tag.B},
@@ -608,6 +625,7 @@ public class SHTMLWriter extends HTMLWriter {
             {CSS.Attribute.VERTICAL_ALIGN, "sub", HTML.Tag.SUB},
             {CSS.Attribute.TEXT_DECORATION, "line-through", HTML.Tag.STRIKE},
     };
+
 
     private static boolean containsExplicitTag(Enumeration<?> keys, CSS.Attribute key, Object attributeValue) {
         for(Object[] cssTagTripple : explicitTags) {
