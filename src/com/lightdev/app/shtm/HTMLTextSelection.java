@@ -41,8 +41,8 @@ import java.io.IOException;
  *
  * 
  *
- * @see java.awt.datatransfer.DataFlavor.stringFlavor
- * @see java.awt.datatransfer.DataFlavor.plainTextFlavor
+ * @see java.awt.datatransfer.DataFlavor#stringFlavor
+ * @see java.awt.datatransfer.DataFlavor#plainTextFlavor
  * @see com.lightdev.app.shtm.HTMLText
  */
 class HTMLTextSelection implements Transferable {

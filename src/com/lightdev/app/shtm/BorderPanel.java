@@ -162,10 +162,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
          * construct a <code>BorderSettings</code> panel
          *
          * @param title  the title of this object
-         * @param borderKey  the attribute key for the border width this
-         * object represents
-         * @param colorKey  the attribute key for the border color this
-         * object represents
+         * @param side the side of this object
          */
         public BorderSettings(final String title, final int side) {
             super();
@@ -199,8 +196,6 @@ class BorderPanel extends JPanel implements AttributeComponent {
 
         /**
          * set the value of this <code>AttributeComponent</code>
-         *
-         * @param color  the <code>CombinedAttribute</code> to take the color from
          *
          */
         public void setValue(final CombinedAttribute borderWidths, final CombinedAttribute borderColors) {

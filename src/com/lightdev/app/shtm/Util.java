@@ -798,7 +798,7 @@ public class Util {
      *   relative path:  ../images/test.jpg
      *   result:         file:/d:/eigene dateien/images/test.jpg
      * </pre>
-     * @param absPath  the absolute URL string to start at
+     * @param base  the absolute URL to start at
      * @param relPath  the relative URL string to resolve
      *
      * @return the absolute URL string resulting from resolving relPath

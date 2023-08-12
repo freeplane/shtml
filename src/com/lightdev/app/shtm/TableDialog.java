@@ -64,7 +64,6 @@ class TableDialog extends DialogShell {
      *
      * @param parent  the main frame having the TextResources
      * @param title  the title for this dialog
-     * @param a  the set of attributes to show and manipulate
      */
     public TableDialog(final Frame parent, final String title) {
         super(parent, title);
@@ -122,7 +121,6 @@ class TableDialog extends DialogShell {
 
     /**
      * build the contents of the cell panel
-     *
      * this is moved to a separate method to make the code more
      * legible.
      */
@@ -180,7 +178,6 @@ class TableDialog extends DialogShell {
 
     /**
      * build the contents of the table panel
-     *
      * this is moved to a separate method to make the code more
      * legible.
      */
