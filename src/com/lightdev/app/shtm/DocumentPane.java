@@ -50,6 +50,8 @@ import javax.swing.text.html.StyleSheet;
 
 import com.sun.demo.ExampleFileFilter;
 
+import static java.lang.Boolean.TRUE;
+
 /**
  * GUI representation of a document.
  *
@@ -304,7 +306,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         try {
             final SHTMLEditorKit kit = (SHTMLEditorKit) editorPane.getEditorKit();
             final SHTMLDocument doc = (SHTMLDocument) kit.createDefaultDocument();
-            doc.putProperty("IgnoreCharsetDirective", new Boolean(true));
+            doc.putProperty("IgnoreCharsetDirective", TRUE);
             doc.setBase(url); // set the doc base
             try (final InputStream in = url.openStream()){
                 kit.read(in, doc, 0); // ..and read the document contents from it

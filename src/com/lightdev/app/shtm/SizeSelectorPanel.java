@@ -144,7 +144,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
         }
         newVal = (int) aVal; // new Float(lv.getValue(100)).intValue();
         //System.out.println("SizeSelectorPanel setValue newVal=" + newVal);
-        valueSelector.setValue(new Integer(newVal));
+        valueSelector.setValue(newVal);
         //}
         /*
         else {
@@ -203,13 +203,13 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
         }
         if (unit.equalsIgnoreCase(UNIT_PERCENT)) {
             //System.out.println("adjustMinMax percent");
-            model.setMinimum(new Integer(minVal));
-            model.setMaximum(new Integer(100));
+            model.setMinimum(minVal);
+            model.setMaximum(100);
         }
         else {
             //System.out.println("adjustMinMax pt");
-            model.setMinimum(new Integer(minVal));
-            model.setMaximum(new Integer(Integer.MAX_VALUE));
+            model.setMinimum(minVal);
+            model.setMaximum(Integer.MAX_VALUE);
         }
         //}
     }

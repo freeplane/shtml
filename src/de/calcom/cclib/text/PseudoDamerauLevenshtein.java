@@ -161,11 +161,11 @@ public class PseudoDamerauLevenshtein {
 		{
 			if (prob == other.prob)
 			{
-				return new Integer(getMatch().length()).compareTo(new Integer(other.getMatch().length())); 
+				return Integer.compare(getMatch().length(), other.getMatch().length());
 			}
 			else
 			{
-				return new Double(prob).compareTo(new Double(other.prob));
+				return Double.compare(prob, other.prob);
 			}
 		}
 		
@@ -388,7 +388,7 @@ public class PseudoDamerauLevenshtein {
 				{
 
 					public int compare(Alignment o1, Alignment o2) {
-						return new Integer(o1.matchStart).compareTo(o2.matchStart);
+						return Integer.compare(o1.matchStart, o2.matchStart);
 					}
 			
 				});
