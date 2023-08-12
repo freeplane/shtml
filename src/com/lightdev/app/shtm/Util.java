@@ -441,14 +441,14 @@ public class Util {
         if (pos > -1) {
             unit = pt;
             valStr = valStr.substring(0, pos);
-            len = Float.valueOf(valStr).floatValue();
+            len = Float.parseFloat(valStr);
         }
         else {
             pos = valStr.indexOf(px);
             if (pos > -1) {
                 unit = px;
                 valStr = valStr.substring(0, pos);
-                len = Float.valueOf(valStr).floatValue() * 1.3f;
+                len = Float.parseFloat(valStr) * 1.3f;
             }
             else {
                 pos = valStr.indexOf(pct);
@@ -456,13 +456,13 @@ public class Util {
                     unit = pct;
                     valStr = valStr.substring(0, pos);
                     //System.out.println("Util.getPtValue valStr=" + valStr);
-                    len = Float.valueOf(valStr).floatValue() / 100f;
+                    len = Float.parseFloat(valStr) / 100f;
                     //System.out.println("Util.getPtValue len=" + len);
                 }
                 else {
                     // assume relative value 1 .. 6
                     try {
-                        len = Float.valueOf(valStr).floatValue();
+                        len = Float.parseFloat(valStr);
                         unit = pt;
                         /*
                         switch((int) len) {
@@ -547,14 +547,14 @@ public class Util {
             }
             if (pos > -1) {
                 valStr = valStr.substring(0, pos);
-                return Float.valueOf(valStr).floatValue();
+                return Float.parseFloat(valStr);
             }
             else {
                 unit = "";
             }
         }
         try {
-            return Float.valueOf(valStr).floatValue();
+            return Float.parseFloat(valStr);
         }
         catch (final Exception e) {
             // unsupported number format (em ex, etc.)

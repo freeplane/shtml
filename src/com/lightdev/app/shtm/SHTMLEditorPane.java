@@ -780,7 +780,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             // get width of each cell according to column count
             // build cell width attribute
             Util.styleSheet().addCSSAttribute(tableAttributeSet, CSS.Attribute.WIDTH,
-                Integer.toString(100 / colCount) + Util.pct);
+                    100 / colCount + Util.pct);
             tableAttributeSet.addAttribute(HTML.Attribute.VALIGN, DEFAULT_VERTICAL_ALIGN);
             Util.styleSheet().addCSSAttribute(tableAttributeSet, CSS.Attribute.BORDER_TOP_WIDTH, "1");
             Util.styleSheet().addCSSAttribute(tableAttributeSet, CSS.Attribute.BORDER_RIGHT_WIDTH, "1");
@@ -819,7 +819,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             for (Element parent = para.getParentElement(); !parent.getName().equalsIgnoreCase(HTML.Tag.BODY.toString())
                     && !parent.getName().equalsIgnoreCase(HTML.Tag.TD.toString()); para = parent, parent = parent
                 .getParentElement()) {
-                ;
             }
             if (para != null) {
                 try {
@@ -1104,7 +1103,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             //System.out.println("SHTMLEditorPane.createTableColumn width=" + width);
             final String unit = Util.getLastAttrUnit();
             //System.out.println("SHTMLEditorPane.createTableColumn unit=" + unit);
-            final String widthString = Integer.toString(width / 2) + unit;
+            final String widthString = width / 2 + unit;
             //System.out.println("SHTMLEditorPane.createTableColumn widthString=" + widthString);
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.WIDTH, widthString);
         }
@@ -1329,7 +1328,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 width += widthC;
                 width += widthA;
                 if (width > 0) {
-                    final String widthString = Integer.toString(width) + cUnit;
+                    final String widthString = width + cUnit;
                     set = new SimpleAttributeSet(row.getElement(cIndex + offset).getAttributes());
                     Util.styleSheet().addCSSAttribute(set, CSS.Attribute.WIDTH, widthString);
                 }
@@ -3628,15 +3627,15 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     elementsToRemoveCount++;
                     if (overwritableTags.contains(child.getName())) {
                         //System.out.println("SHTMLEditorPane applyTag element is in selection");
-                        writer.writeStartTag(tag.toString(), child.getAttributes());
+                        writer.writeStartTag(tag, child.getAttributes());
                         writer.writeChildElements(child);
-                        writer.writeEndTag(tag.toString());
+                        writer.writeEndTag(tag);
                      }
                     else if (child.getName().equals(HTML.Tag.IMPLIED.toString())
                     		&& elementsContainingParagraphs.contains(parentOfparagraphElement.getName())){
-                    	writer.writeStartTag(tag.toString(), null);
+                    	writer.writeStartTag(tag, null);
                         writer.write(child);
-                        writer.writeEndTag(tag.toString());
+                        writer.writeEndTag(tag);
                     }
                     else {
                         writer.write(child);

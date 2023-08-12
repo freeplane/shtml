@@ -156,7 +156,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             final ParserCallback receiver = hdoc.getReader(pos);
             if (doc.getLength() == 0) {
                 final Boolean ignoreCharset = (Boolean) doc.getProperty("IgnoreCharsetDirective");
-                parser.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset.booleanValue());
+                parser.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset);
             }
             else {
                 parser.parse(in, receiver, true);

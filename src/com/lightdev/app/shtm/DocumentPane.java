@@ -543,7 +543,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     public String getDocumentName() {
         String theName;
         if (docName == null || docName.length() < 1) {
-            theName = DEFAULT_DOC_NAME + " " + Integer.toString(newDocNo);
+            theName = DEFAULT_DOC_NAME + " " + newDocNo;
         }
         else {
             theName = docName;

@@ -338,7 +338,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         if (value != null) {
             buf.append(doc.getImageDirectoryName());
             buf.append(Util.URL_SEPARATOR);
-            buf.append(value.toString());
+            buf.append(value);
         }
         return  buf.toString();
     }
@@ -418,9 +418,9 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         //System.out.println("updateControls origW=" + preview.getOriginalWidth());
         //System.out.println("updateControls add WIDTH attr as " + Integer.toString(
         //            preview.getOriginalWidth() * scalePct / 100) + SizeSelectorPanel.UNIT_PT);
-        set.addAttribute(HTML.Attribute.WIDTH, Integer.toString(preview.getOriginalWidth() * scalePct / 100)
+        set.addAttribute(HTML.Attribute.WIDTH, preview.getOriginalWidth() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
-        set.addAttribute(HTML.Attribute.HEIGHT, Integer.toString(preview.getOriginalHeight() * scalePct / 100)
+        set.addAttribute(HTML.Attribute.HEIGHT, preview.getOriginalHeight() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
         imgWidth.setValue(set);
         imgHeight.setValue(set);
@@ -451,12 +451,12 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     private void applyPreviewWidth() {
         //System.out.println("applyPreviewWidth width=" + imgWidth.getIntValue().intValue());
         ignoreChangeEvents = true;
-        preview.setPreviewWidth(imgWidth.getIntValue().intValue());
+        preview.setPreviewWidth(imgWidth.getIntValue());
         final int scalePct = preview.getScale();
         //System.out.println("applyPreviewWidth scale now " + scalePct);
         final SimpleAttributeSet set = new SimpleAttributeSet();
         scale.setText(Integer.toString(scalePct));
-        set.addAttribute(HTML.Attribute.HEIGHT, Integer.toString(preview.getOriginalHeight() * scalePct / 100)
+        set.addAttribute(HTML.Attribute.HEIGHT, preview.getOriginalHeight() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
         //System.out.println("applyPreviewWidth, changing height to " + Integer.toString(
         //    preview.getOriginalHeight() * scalePct / 100) + SizeSelectorPanel.UNIT_PT);
@@ -471,12 +471,12 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     private void applyPreviewHeight() {
         //System.out.println("applyPreviewHeight height=" + imgHeight.getIntValue().intValue());
         ignoreChangeEvents = true;
-        preview.setPreviewHeight(imgHeight.getIntValue().intValue());
+        preview.setPreviewHeight(imgHeight.getIntValue());
         final int scalePct = preview.getScale();
         //System.out.println("applyPreviewHeight scale now " + scalePct);
         final SimpleAttributeSet set = new SimpleAttributeSet();
         scale.setText(Integer.toString(scalePct));
-        set.addAttribute(HTML.Attribute.WIDTH, Integer.toString(preview.getOriginalWidth() * scalePct / 100)
+        set.addAttribute(HTML.Attribute.WIDTH, preview.getOriginalWidth() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
         //System.out.println("applyPreviewHeight, changing width to " + Integer.toString(
         //    preview.getOriginalWidth() * scalePct / 100) + SizeSelectorPanel.UNIT_PT);

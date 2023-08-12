@@ -293,7 +293,7 @@ class SHTMLEditorKitActions {
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT, StyleConstants.Bold.toString());
             }
             else {
-                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT, Util.CSS_ATTRIBUTE_NORMAL.toString());
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT, Util.CSS_ATTRIBUTE_NORMAL);
             }
             /*}
                    else {
@@ -1289,7 +1289,8 @@ class SHTMLEditorKitActions {
 			private Change(int changeAmount) {
 				this.changeAmount = changeAmount;
 			}
-    	};
+    	}
+
         /**
          *
          */
@@ -1310,7 +1311,7 @@ class SHTMLEditorKitActions {
 			final int size = Util.styleSheet().getFont(a).getSize();
 			int index = 0;
 			for (String availableSizeAsString : SHTMLPanelImpl.FONT_SIZES){
-				final Integer availableSizeAsNumber = Integer.valueOf(availableSizeAsString);
+				final int availableSizeAsNumber = Integer.parseInt(availableSizeAsString);
 				if(size < availableSizeAsNumber) {
 					setSize(change == Change.INCREASE ? index + 1 : index);
 					return;
@@ -1900,7 +1901,7 @@ class SHTMLEditorKitActions {
         public AttributeSet getValue() {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(SHTMLPanelImpl.ACTION_SELECTED)) {
-                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE, Util.CSS_ATTRIBUTE_NORMAL.toString());
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE, Util.CSS_ATTRIBUTE_NORMAL);
             }
             else {
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_STYLE, StyleConstants.Italic.toString());
