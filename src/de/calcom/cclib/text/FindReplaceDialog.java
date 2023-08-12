@@ -160,7 +160,7 @@ public class FindReplaceDialog extends JDialog {
      *
      * @param owner  the <code>Frame</code> that owns this dialog
      * @param editor  <code>JEditorPane</code> displaying the
-     *                    <code>Document</code> to seach in
+     *                    <code>Document</code> to search in
      *
      * @see javax.swing.JEditorPane
      * @see javax.swing.text.Document
@@ -193,7 +193,7 @@ public class FindReplaceDialog extends JDialog {
      *
      * @param owner  the <code>Frame</code> that owns this dialog
      * @param editor  <code>JEditorPane</code> displaying the
-     *                    <code>Document</code> to seach in
+     *                    <code>Document</code> to search in
      * @param listener  listener for handling FindReplaceEvents
      *
      * @see javax.swing.JEditorPane
@@ -553,7 +553,7 @@ public class FindReplaceDialog extends JDialog {
      * or as part of a word, depending on the current dialog setting.
      *
      * <p>If the phrase is found (again), its position is 'remembered' for a
-     * possible findNext and its postion is highlighted in the underlying
+     * possible findNext and its position is highlighted in the underlying
      * <code>JEditorPane</code>.
      *
      * @return  true, if the phrase was found (again), false if not
@@ -726,7 +726,7 @@ public class FindReplaceDialog extends JDialog {
     /* ----------- Replace implementation end ------- */
     /* ----------- Helper methods start ------- */
     /**
-     * Set dialog components to their inital state
+     * Set dialog components to their initial state
      */
     private void initDialogContents() {
         jbtnCancel.setEnabled(false);

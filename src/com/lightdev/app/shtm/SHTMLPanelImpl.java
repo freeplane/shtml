@@ -135,7 +135,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     private final RepeatKeyWatcher rkw = new RepeatKeyWatcher(40);
     /** counter for newly created documents */
     int newDocCounter = 0;
-    /** reference to applicatin temp directory */
+    /** reference to application temp directory */
     private static File appTempDir;
 	private static ActionBuilder actionBuilder;
     /** tool bar selector for certain tags */

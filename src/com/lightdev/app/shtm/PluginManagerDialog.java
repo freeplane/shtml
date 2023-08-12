@@ -56,7 +56,7 @@ import javax.swing.event.ListSelectionListener;
 class PluginManagerDialog extends DialogShell implements ListSelectionListener, ActionListener {
     /** combo box for selecting the dock location */
     private final JComboBox dockLocation;
-    /** indicates if we can ignore changes (when happenig programmatically */
+    /** indicates if we can ignore changes (when happening programmatically */
     private boolean ignoreChanges = false;
     /** the list with available plug-ins */
     private final JList pluginNames;
@@ -93,7 +93,7 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         pluginNames.setMinimumSize(new Dimension(250, 400));
         pluginNames.setPreferredSize(new Dimension(250, 400));
         pluginPanel.add(new JScrollPane(pluginNames), BorderLayout.CENTER);
-        /** create panel for actins on loaded plug-ins */
+        /** create panel for actions on loaded plug-ins */
         final JPanel actionPanel = new JPanel();
         toggleActivationButton = new JButton(activateName);
         toggleActivationButton.setEnabled(false);

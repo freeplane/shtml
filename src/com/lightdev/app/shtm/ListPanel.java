@@ -81,7 +81,7 @@ class ListPanel extends JPanel implements AttributeComponent {
         // add label for list position
         Util.addGridBagComponent(formatPanel, new JLabel(Util.getResourceString("listPositionLabel")), g, c, 0, 1,
             GridBagConstraints.EAST);
-        // add combo box for list postion selection
+        // add combo box for list position selection
         items = new String[] { Util.getResourceString("listPosInside"), Util.getResourceString("listPosOutside") };
         names = new String[] { "inside", "outside" };
         listPosition = new AttributeComboBox(items, names, CSS.Attribute.LIST_STYLE_POSITION);

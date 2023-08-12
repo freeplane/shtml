@@ -95,7 +95,7 @@ class CSSWriter {
     /**
      * write out a rule with a given name and style
      *
-     * <p>Takes the style passed in paramter 'rule' and writes it under
+     * <p>Takes the style passed in parameter 'rule' and writes it under
      * the given name to the writer passed in the constructor.</p>.
 
      * @param ruleName  the name of the rule to write out

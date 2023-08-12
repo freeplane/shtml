@@ -725,7 +725,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param listTag  the list tag type to toggle on or off (UL or OL)
      * @param attributeSet  the attributes to use for the list to toggle to
      * @param forceOff  indicator for toggle operation. If true, possibly
-     * exisiting list formatting inside the selected parts always is switched
+     * existing list formatting inside the selected parts always is switched
      * off. If false, the method decides, if list formatting for the parts
      * inside the selection needs to be switched on or off.
      */
@@ -2245,7 +2245,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * a drop has occurred. If the dragged element has a suitable
      * <code>DataFlavor</code>, do the drop.
      *
-     * @param event - the event specifiying the drop operation
+     * @param event - the event specifying the drop operation
      * @see java.awt.datatransfer.DataFlavor
      */
     public void drop(final DropTargetDropEvent event) {
@@ -2328,7 +2328,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         event.getDropTargetContext().dropComplete(true);
     }
 
-    /** A groupping of list operations, mostly related to toggling of lists. */
+    /** A grouping of list operations, mostly related to toggling of lists. */
     private class ListManager {
         //private Element parentElement;
         class SwitchListException extends Exception {
@@ -3306,7 +3306,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /**
      * this message goes to DragSourceListener, informing it that
-     * the dragging is currently ocurring over the DropSite
+     * the dragging is currently occurring over the DropSite
      */
     public void dragOver(final DragSourceDragEvent event) {
     }
@@ -3551,7 +3551,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param attributeSet  the set of attributes to apply
      * @param applyToCompleteParagraph  true, if the attributes shall be applied to the whole
      *     paragraph, false, if only the selected range of characters shall have them
-     * @param replace  true, if existing attribtes are to be replaced, false if not
+     * @param replace  true, if existing attributes are to be replaced, false if not
      */
     public void applyAttributes(final AttributeSet attributeSet, final boolean applyToCompleteParagraph,
                                 final boolean replace) {
@@ -3594,7 +3594,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * TODO: The new parameter does not work. So the method only works for paragraph tags,
      * like H1, H2 etc. --Dan
      *
-     * @param tag  the tag name to switche elements to
+     * @param tag  the tag name to switch elements to
      * @param overwritableTags  Tags that may be overwritten by the new tag.
      */
     public void applyParagraphTag(final String tag, final Vector overwritableTags) {

@@ -397,7 +397,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      *
      * <p>This will ask for a name a style shall be saved under. If the name
      * exists, the user is prompted whether or not it shall be overwritten.
-     * The sytle is saved according to the user's choices.</p>
+     * The style is saved according to the user's choices.</p>
      */
     private void doSaveStyleAs() {
         String initialName = getSelectedStyleName();
@@ -487,7 +487,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      *
      * @param styleName  the name of the style to be looked for
      *
-     * @return true, if the given style name alread is used in the style sheet,
+     * @return true, if the given style name already is used in the style sheet,
      *    false if not
      */
     private boolean styleNameExists(final String styleName) {
@@ -496,7 +496,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     }
 
     /**
-     * overridden to addd some custom cleanup upon closing of dialog
+     * overridden to add some custom cleanup upon closing of dialog
      */
     public void dispose() {
         if (mode == MODE_NAMED_STYLES) {

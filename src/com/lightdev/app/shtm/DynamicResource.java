@@ -50,9 +50,9 @@ import org.dpolivaev.mnemonicsetter.MnemonicSetter;
  *
  * <p><b>IMPORTANT:</b> Action command names must be unique, if actions
  * or menus are added to an instance of this class and if the actions or
- * menus are defined in different TextResourcess, the action names
- * must be unique over all TextResourcess involved, because the action
- * names are used as identifiers for connection of actions to compnents
+ * menus are defined in different TextResources, the action names
+ * must be unique over all TextResources involved, because the action
+ * names are used as identifiers for connection of actions to components
  * such as menus and menu items.</p>
  *
  * <p>Component creation methods such as createMenu or createMenuItem
@@ -415,7 +415,7 @@ class DynamicResource {
      * get the icon for a given command.
      *
      * <p>If the resource bundle has a reference to an icon for the
-     * given commamd, an icon is created for the respective image resource.
+     * given command, an icon is created for the respective image resource.
      * otherwise, null is returned.</p>
      *
      * @param resources  the TextResources to get the icon from

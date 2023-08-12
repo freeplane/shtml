@@ -253,7 +253,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
     /**
      * get a menu of actions this plug-in provides.
      *
-     * <p><code>JMenu</code> is a decendant of <code>JMenuItem</code>
+     * <p><code>JMenu</code> is a descendant of <code>JMenuItem</code>
      * so this method may return a single menu item up to a whole
      * structure of submenus in its return value.</p>
      *
@@ -267,7 +267,7 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
      * get a menu item providing documentation about this
      * plug-in.
      *
-     * <p><code>JMenu</code> is a decendant of <code>JMenuItem</code>
+     * <p><code>JMenu</code> is a descendant of <code>JMenuItem</code>
      * so this method may return a single menu item up to a whole
      * structure of submenus in its return value.</p>
      *

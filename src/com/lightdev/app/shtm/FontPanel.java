@@ -90,7 +90,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
         final JPanel familySizePanel = new JPanel(new BorderLayout(5, 5));
         familySizePanel.add(family, BorderLayout.CENTER);
         familySizePanel.add(size, BorderLayout.EAST);
-        /** create a panel to put font parts family, size and stlye in */
+        /** create a panel to put font parts family, size and style in */
         final JPanel fontPartsPanel = new JPanel(new BorderLayout(5, 5));
         fontPartsPanel.add(familySizePanel, BorderLayout.CENTER);
         final String[] fontStyles = new String[] { Util.getResourceString("plainName"),

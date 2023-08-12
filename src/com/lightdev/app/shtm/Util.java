@@ -310,7 +310,7 @@ public class Util {
      * delete a directory with all its contents
      *
      * <p>CAUTION: This method deletes all content of the given
-     * directory including all subdirectories and their conent</p>
+     * directory including all subdirectories and their content</p>
      *
      * @param dir the directory to delete
      */
@@ -582,7 +582,7 @@ public class Util {
     }
 
     /**
-     * Get an arry of strings from a given string having several entries
+     * Get an array of strings from a given string having several entries
      * delimited by blanks.
      *
      * <p>In the resource file of SimplyHTML for instance menu bar and menu
@@ -684,7 +684,7 @@ public class Util {
 
     /**
      * convenience method for adding a component to a container
-     * layed out by a GridBagLayout
+     * layered out by a GridBagLayout
      *
      * @param container  the container to add a component to
      * @param comp  the component to add to container
@@ -711,7 +711,7 @@ public class Util {
 
     /**
      * convenience method for adding a component to a container
-     * layed out by a GridBagLayout
+     * layered out by a GridBagLayout
      *
      * @param container  the container to add a component to
      * @param comp  the component to add to container
@@ -731,7 +731,7 @@ public class Util {
 
     /**
      * convenience method for adding a component to a container
-     * layed out by a GridBagLayout
+     * layered out by a GridBagLayout
      *
      * @param container  the container to add a component to
      * @param comp  the component to add to container
@@ -752,7 +752,7 @@ public class Util {
 
     /**
      * convenience method for adding a component to a container
-     * layed out by a GridBagLayout
+     * layered out by a GridBagLayout
      *
      * @param container  the container to add a component to
      * @param comp  the component to add to container

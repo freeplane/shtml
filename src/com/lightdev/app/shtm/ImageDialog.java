@@ -133,7 +133,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         final JPanel dirPanel = new JPanel(new BorderLayout());
         dirPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("imgDirPanelTitle")));
-        // create a list to disply image files in
+        // create a list to display image files in
         imgFileList = new JList();
         dim = new Dimension(100, 100);
         imgFileList.setMinimumSize(dim);
