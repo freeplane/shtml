@@ -256,7 +256,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             doc.addDocumentListener(this); // listen to changes
             docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() + File.separator + getDocumentName()
             + File.separator);
-            URL tempDocumentUrl = new URL(docTempDir.toURL(), getDocumentName() + ".htm");
+            URL tempDocumentUrl = new URL(docTempDir.toURI().toURL(), getDocumentName() + ".htm");
             doc.setBase(tempDocumentUrl);
             editorPane.setDocument(doc); // let the document be edited in our editor
             updateFileName();
@@ -330,7 +330,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      */
     private StyleSheet loadStyleSheet(final File cssFile) throws MalformedURLException, IOException {
         final StyleSheet s = new StyleSheet();
-        s.importStyleSheet(cssFile.toURL());
+        s.importStyleSheet(cssFile.toURI().toURL());
         return s;
     }
 

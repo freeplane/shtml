@@ -793,7 +793,7 @@ class LinkDialog extends DialogShell implements ActionListener {
                 anchorDialog = new AnchorDialog(this, Util.getResourceString("anchorDialogTitle"), doc);
             }
             else {
-                anchorDialog = new AnchorDialog(this, Util.getResourceString("anchorDialogTitle"), file.toURL());
+                anchorDialog = new AnchorDialog(this, Util.getResourceString("anchorDialogTitle"), file.toURI().toURL());
             }
             Util.center(this, anchorDialog);
             anchorDialog.setModal(true);

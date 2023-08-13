@@ -100,7 +100,7 @@ class PluginManager {
                 + Util.CLASS_SEPARATOR;
         findPlugins(pluginPrefix.replace(Util.CLASS_SEPARATOR_CHAR, Util.URL_SEPARATOR_CHAR));
         final Enumeration cNames = pluginClassNames.elements();
-        Class cl;
+        Class<?> cl;
         Object o;
         SHTMLPlugin p;
         String intName;
@@ -111,7 +111,7 @@ class PluginManager {
                 cl = loader.loadClass(/*pluginPrefix +*/
                 /*(String) cNames.nextElement()*/pluginPrefix + nextClass);
                 //System.out.println("PluginManager loadPlugins calling newInstance ");
-                o = cl.newInstance();
+                o = cl.getDeclaredConstructor().newInstance();
                 if (o instanceof SHTMLPlugin) {
                     p = (SHTMLPlugin) o;
                     p.initPlugin(owner, null, null, null);
