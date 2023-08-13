@@ -379,7 +379,7 @@ class DynamicResource {
      * its property are associated to.
      */
     private class ActionChangedListener implements PropertyChangeListener {
-        AbstractButton menuItem;
+        final AbstractButton menuItem;
 
         ActionChangedListener(final AbstractButton mi) {
             super();

@@ -57,7 +57,7 @@ import javax.swing.text.html.CSS;
  */
 class ColorPanel extends JPanel implements ActionListener {
     /** the component showing the chosen color */
-    JTextField colorDisplay = new JTextField();
+    final JTextField colorDisplay = new JTextField();
     /** value to compare for determining changes */
     private Color originalColor;
     /** indicates if setValue is called initially */
@@ -144,7 +144,7 @@ class ColorPanel extends JPanel implements ActionListener {
     private Color showColorChooserDialog() {
         // the listener for OK button of the Color Choose Dialog:
         class ColorTracker implements ActionListener {
-            JColorChooser chooser;
+            final JColorChooser chooser;
             Color color;
 
             public ColorTracker(final JColorChooser c) {
@@ -286,7 +286,7 @@ class ColorPanel extends JPanel implements ActionListener {
 
     /** the event listener definition for ColorPanels */
     interface ColorPanelListener extends EventListener {
-        public void colorChanged(ColorPanelEvent e);
+        void colorChanged(ColorPanelEvent e);
     }
     /* -------------- event listener implementation end ----------- */
 }

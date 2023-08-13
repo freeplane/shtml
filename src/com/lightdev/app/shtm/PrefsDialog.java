@@ -59,7 +59,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
     /** the look and feels available in the system */
     private UIManager.LookAndFeelInfo[] lfinfo;
     /** reference for user preferences for this class */
-    protected Preferences prefs = Preferences.userNodeForPackage(getClass());
+    protected final Preferences prefs = Preferences.userNodeForPackage(getClass());
     /** constant for dock location setting in preferences file */
     public static final String PREFSID_LOOK_AND_FEEL = "Laf";
     public static final String PREFS_USE_STD_STYLE_SHEET = "use_std_styles";

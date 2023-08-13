@@ -53,7 +53,7 @@ import javax.swing.border.EtchedBorder;
  */
 class AboutBox extends JDialog implements ActionListener {
     /** button to close the dialog */
-    JButton closeButton = new JButton("Close");
+    final JButton closeButton = new JButton("Close");
     /** name of the license file */
     private final String LICENSE = "resources/gpl.txt";
 

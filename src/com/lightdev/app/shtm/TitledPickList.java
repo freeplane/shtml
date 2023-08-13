@@ -250,7 +250,7 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
 
     /** the event listener definition for ColorPanels */
     interface TitledPickListListener extends EventListener {
-        public void valueChanged(TitledPickListEvent e);
+        void valueChanged(TitledPickListEvent e);
     }
     /* ------------- event handling end ------------ */
 }

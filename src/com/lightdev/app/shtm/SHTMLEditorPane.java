@@ -142,7 +142,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
 		private final String displayName;
 
-		private PasteMode(final String displayName)
+		PasteMode(final String displayName)
 		{
 			this.displayName = displayName;
 		}
@@ -249,7 +249,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     @Override
     public void setDocument(Document doc) {
-        super.setDocument((SHTMLDocument)doc);
+        super.setDocument(doc);
     }
 
 
@@ -341,7 +341,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
     */
     protected boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
-        final int maximumEndSelection = ((SHTMLDocument) getDocument()).getLastDocumentPosition();
+        final int maximumEndSelection = getDocument().getLastDocumentPosition();
         if (getSelectionStart() >= maximumEndSelection
                 && !(ks.getKeyCode() == KeyEvent.VK_LEFT || ks.getKeyCode() == KeyEvent.VK_UP || ks.getKeyCode() == KeyEvent.VK_HOME)) {
             return true;
@@ -357,7 +357,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
        * @param sText the html-text of the document
        */
     public void setText(String text) {
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         if (text == null || text.equals("")) {
             text = "<html><body><p></p></body></html>";
@@ -404,7 +404,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     }
 
     private int getValidPosition(int position) {
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         final int lastValidPosition = doc.getLastDocumentPosition() - 1;
         if (position > lastValidPosition) {
             position = lastValidPosition;
@@ -421,7 +421,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         public void actionPerformed(final ActionEvent actionEvent) {
             final int selectionStart = getSelectionStart();
             final int selectionEnd = getSelectionEnd();
-            final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            final SHTMLDocument doc = getDocument();
             if (selectionEnd >= doc.getLastDocumentPosition()) {
                 return;
             }
@@ -445,7 +445,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         public void actionPerformed(final ActionEvent actionEvent) {
             final int selectionStart = getSelectionStart();
             if (selectionStart == getSelectionEnd()) {
-                final SHTMLDocument doc = (SHTMLDocument) getDocument();
+                final SHTMLDocument doc = getDocument();
                 if (selectionStart >= doc.getLastDocumentPosition() - 1) {
                     return;
                 }
@@ -652,7 +652,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param a  the set of attributes to apply
      */
     public void applyListAttributes(final AttributeSet a) {
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         final Element list = listManager.getListElement(getSelectionStart());
         if (list != null) {
             if (a.getAttributeCount() > 0) {
@@ -755,7 +755,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final int selectionStart = getSelectionStart();
         final int start = selectionStart;
         final StringWriter sw = new StringWriter();
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         final SHTMLWriter w = new SHTMLWriter(sw, doc);
         // some needed constants
         final String table = HTML.Tag.TABLE.toString();
@@ -865,7 +865,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     public void insertBreak() {
         final int caretPos = getCaretPosition();
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         try {
             ((SHTMLEditorKit) getEditorKit()).insertHTML(doc, caretPos, "<BR>", 0, 0, HTML.Tag.BR);
         }
@@ -1043,7 +1043,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     //System.out.println("removing anchor name=" + nameAttr);
                     final SimpleAttributeSet newSet = new SimpleAttributeSet(attrs);
                     newSet.removeAttribute(HTML.Tag.A);
-                    final SHTMLDocument doc = (SHTMLDocument) getDocument();
+                    final SHTMLDocument doc = getDocument();
                     final int start = elem.getStartOffset();
                     doc.setCharacterAttributes(elem.getStartOffset(), elem.getEndOffset() - start, newSet, true);
                 }
@@ -1090,7 +1090,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     private void createTableColumn(final Element cell, final int cIndex, final boolean before) {
         // get the new width setting for this column and the new column
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         final Element table = cell.getParentElement().getParentElement();
         Element srcCell = table.getElement(0).getElement(cIndex);
@@ -1210,7 +1210,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     private String createTableRowHTML(final Element modelRow, final String forcedCellName) {
         final StringWriter stringWriter = new StringWriter();
-        final SHTMLWriter shtmlWriter = new SHTMLWriter(stringWriter, (SHTMLDocument) getDocument());
+        final SHTMLWriter shtmlWriter = new SHTMLWriter(stringWriter, getDocument());
         final String tr = HTML.Tag.TR.toString();
         try {
             shtmlWriter.writeStartTag(tr, modelRow.getAttributes());
@@ -1253,7 +1253,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     private String createTableCellHTML(final Element srcCell) {
         final StringWriter sw = new StringWriter();
-        final SHTMLWriter w = new SHTMLWriter(sw, (SHTMLDocument) getDocument());
+        final SHTMLWriter w = new SHTMLWriter(sw, getDocument());
         try {
             createTableCellHTML(w, srcCell, srcCell.getName());
         }
@@ -1336,7 +1336,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             }
         }
         final Element table = row.getParentElement();
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         if (cIndex < lastColIndex) {
             offset = 0;
@@ -1589,7 +1589,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             final Element table = cell.getParentElement().getParentElement();
             if (a.getAttributeCount() > 0) {
                 //System.out.println("applyTableAttributes count=" + a.getAttributeCount() + " a=" + a);
-                ((SHTMLDocument) getDocument()).addAttributes(table, a);
+                getDocument().addAttributes(table, a);
                 /**
                  * for some reason above code does not show the changed attributes
                  * of the table, although the element really has them (maybe somebody
@@ -1633,7 +1633,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final Element cell = getCurrentTableCell();
         int cIndex = 0;
         int rIndex = 0;
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         if (cell != null) {
             Element row = cell.getParentElement();
             final Element table = row.getParentElement();
@@ -1673,7 +1673,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     }
 
     public SHTMLDocument getSHTMLDocument() {
-        return (SHTMLDocument) getDocument();
+        return getDocument();
     }
 
     /**
@@ -1818,7 +1818,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
          */
         public void actionPerformed(final ActionEvent ae) {
             try {
-                final SHTMLDocument doc = (SHTMLDocument) getDocument();
+                final SHTMLDocument doc = getDocument();
                 final int caretPosition = getCaretPosition();
                 final Element paragraphElement = doc.getParagraphElement(caretPosition);
                 if (paragraphElement != null) {
@@ -2059,7 +2059,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param replacementHTMLText  the content to replace the selection with
      */
     public void replaceSelection(final HTMLText replacementHTMLText) {
-        final SHTMLDocument document = (SHTMLDocument) getDocument();
+        final SHTMLDocument document = getDocument();
         final Caret caret = getCaret();
         if (document != null) {
             try {
@@ -2080,7 +2080,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /** */
     private void pasteHTML(final HTMLText pastedHTMLText, final int position) throws Exception {
-        final SHTMLDocument sDocument = (SHTMLDocument) getDocument();
+        final SHTMLDocument sDocument = getDocument();
         if (!pastedHTMLText.usesStringRepresenation()) {
             pastedHTMLText.pasteHTML(sDocument, position);
             return;
@@ -2256,7 +2256,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             select(lastSelStart, lastSelEnd);
         }
         else {
-            final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            final SHTMLDocument doc = getDocument();
             doc.startCompoundEdit();
             try {
                 final Transferable transferable = event.getTransferable();
@@ -3116,7 +3116,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         /** Merges the second paragraph element into the first one,
          * setting the caret at the point where the two elements are newly joined. */
         private void mergeSecondElementIntoFirst(final Element first, final Element second) {
-            final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            final SHTMLDocument doc = getDocument();
             final SHTMLWriter writer = new SHTMLWriter(doc);
             doc.startCompoundEdit();
             try {
@@ -3148,7 +3148,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
          * @param childListItem a list item
          */
         private void mergeNestedListItemIntoParent(final Element parentListItem, final Element childListItem) {
-            final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            final SHTMLDocument doc = getDocument();
             final SHTMLWriter writer = new SHTMLWriter(doc);
             doc.startCompoundEdit();
             try {
@@ -3338,7 +3338,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
              * @see javax.swing.TransferHandler#exportToClipboard(javax.swing.JComponent, java.awt.datatransfer.Clipboard, int)
              */
             public void exportToClipboard(final JComponent comp, final Clipboard clip, final int action) {
-                final SHTMLDocument document = (SHTMLDocument) getDocument();
+                final SHTMLDocument document = getDocument();
                 if (document.getParagraphElement(getSelectionStart()) != document
                     .getParagraphElement(getSelectionEnd())) {
                     defaultTransferHandler.exportToClipboard(comp, clip, action);
@@ -3404,7 +3404,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
              * @see javax.swing.TransferHandler#importData(javax.swing.JComponent, java.awt.datatransfer.Transferable)
              */
             public boolean importData(final JComponent comp, final Transferable transferable) {
-            	final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            	final SHTMLDocument doc = getDocument();
                 doc.startCompoundEdit();
                 boolean result = false;
                 try {
@@ -3523,7 +3523,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final int p0 = getSelectionStart();
         final int p1 = getSelectionEnd();
         if (p0 != p1) {
-            final SHTMLDocument doc = (SHTMLDocument) getDocument();
+            final SHTMLDocument doc = getDocument();
             doc.startCompoundEdit();
             SHTMLEditorKit.removeCharacterAttributes(doc, null, p0, p1 - p0);
             doc.endCompoundEdit();
@@ -3533,7 +3533,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     public void removeParagraphAttributes() {
         final int p0 = getSelectionStart();
         final int p1 = getSelectionEnd();
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         doc.removeParagraphAttributes(p0, p1 - p0 + 1);
         select(p0, p1);
     }
@@ -3578,7 +3578,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     public void applyCharacterTag(final String tag) {
         final int selectionStart = getSelectionStart();
         final int selectionEnd = getSelectionEnd();
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         doc.endCompoundEdit();
     }
@@ -3602,7 +3602,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final int selectionStart = getSelectionStart();
         final int selectionEnd = getSelectionEnd();
         final StringWriter stringWriter = new StringWriter();
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         try {
             doc.startCompoundEdit();
             final SHTMLWriter writer = new SHTMLWriter(stringWriter, doc);
@@ -3737,7 +3737,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /** Returns the string HTML representation of the element. */
     public String elementToHTML(final Element element) {
-        final HTMLDocument document = (HTMLDocument) getDocument();
+        final HTMLDocument document = getDocument();
         final StringWriter stringWriter = new StringWriter();
         final SHTMLWriter shtmlWriter = new SHTMLWriter(stringWriter, document);
         try {

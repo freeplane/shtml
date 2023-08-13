@@ -372,11 +372,11 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
     /** current dock location */
     protected int dockLocation = SHTMLPlugin.DOCK_LOCATION_LEFT;
     /** component of this plug-in */
-    protected JComponent c = null;
+    protected final JComponent c = null;
     /** JFrame for dockLocation=none */
     protected JFrame frame = null;
     /** reference for user preferences for this class */
-    protected Preferences prefs;
+    protected final Preferences prefs;
     /** the owner of this plug in */
     protected SHTMLPanelImpl owner;
     /* ------------- class fields end ------------------ */

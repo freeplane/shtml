@@ -89,7 +89,7 @@ class HTMLText {
      */
     public void copyHTML(final SHTMLEditorPane src, final int start, final int length) throws BadLocationException,
             IOException {
-        final HTMLDocument doc = (HTMLDocument) src.getDocument();
+        final HTMLDocument doc = src.getDocument();
         if (doc.getParagraphElement(start).equals(doc.getParagraphElement(start + length))) {
             stringRepresentation = false;
             clearStyledText();

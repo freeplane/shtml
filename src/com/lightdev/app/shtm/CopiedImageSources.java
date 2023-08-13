@@ -10,10 +10,10 @@ public enum CopiedImageSources {
 	private final Pattern pattern;
 	
 
-	private CopiedImageSources() {
+	CopiedImageSources() {
 		this(null);
 	}
-	private CopiedImageSources(Pattern pattern) {
+	CopiedImageSources(Pattern pattern) {
 		this.pattern = pattern;
 	}
 	boolean includes(String source) {

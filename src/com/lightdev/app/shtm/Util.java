@@ -80,12 +80,12 @@ public class Util {
     public static final String pt = "pt";
     public static final String px = "px";
     /** the default block size in bytes for file operations */
-    private static int blockSize = 1024;
-    private static Vector startTimes = new Vector();
+    private static final int blockSize = 1024;
+    private static final Vector startTimes = new Vector();
     private static final String ERR_TITLE = "Error";
     private static String unit = "";
     /** a style sheet instanciated once for access to its utility methods */
-    private static StyleSheet s = new StyleSheet();
+    private static final StyleSheet s = new StyleSheet();
     /* CSS Attribute constants */
     public static final String CSS_ATTRIBUTE_NORMAL = "normal";
     public static final String CSS_ATTRIBUTE_UNDERLINE = "underline";
@@ -604,7 +604,7 @@ public class Util {
     public static String[] tokenize(final String input, final String delim) {
         final Vector v = new Vector();
         final StringTokenizer t = new StringTokenizer(input, delim);
-        String result[];
+        String[] result;
         while (t.hasMoreTokens()) {
             v.addElement(t.nextToken());
         }

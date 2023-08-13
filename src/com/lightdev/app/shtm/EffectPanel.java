@@ -48,11 +48,11 @@ import javax.swing.text.html.CSS;
  */
 class EffectPanel extends JPanel implements AttributeComponent {
     /** a radio button for the underline attribute */
-    JRadioButton uLine;
+    final JRadioButton uLine;
     /** a radio button for the strike through attribute */
-    JRadioButton strike;
+    final JRadioButton strike;
     /** a radio button if no line effect is set */
-    JRadioButton noLine;
+    final JRadioButton noLine;
     private Object originalValue;
     private int setValCount = 0;
     String selection = Util.CSS_ATTRIBUTE_NONE;

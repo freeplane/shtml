@@ -113,7 +113,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     /** the help id for this dialog */
     private static final String helpTopicId = "item166";
     /** the document the image came from, if any */
-    private SHTMLDocument doc;
+    private final SHTMLDocument doc;
 
     public ImageDialog(final Window parent, final String title, final SHTMLDocument sourceDoc) {
         super(parent, title, helpTopicId);

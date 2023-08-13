@@ -82,7 +82,7 @@ import javax.swing.tree.TreePath;
 public class ElementTreePanel extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener,
         TreeSelectionListener {
     /** Tree showing the documents element structure. */
-    protected JTree tree;
+    protected final JTree tree;
     /** Text component showing elemenst for. */
     protected JTextComponent editor;
     /** Model for the tree. */
@@ -438,7 +438,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
      * methods have been subclassed, primarily to special case the root.
      */
     public static class ElementTreeModel extends DefaultTreeModel {
-        protected Element[] rootElements;
+        protected final Element[] rootElements;
 
         public ElementTreeModel(final Document document) {
             super(new DefaultMutableTreeNode("root"), false);

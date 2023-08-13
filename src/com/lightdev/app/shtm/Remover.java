@@ -3,7 +3,7 @@ package com.lightdev.app.shtm;
 import org.apache.commons.lang.StringUtils;
 
 class Remover {
-	private String processedText;
+	private final String processedText;
     private int begin;
     private int end;
 	

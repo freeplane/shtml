@@ -205,13 +205,13 @@ public class SHTMLEditorKit extends HTMLEditorKit {
     /* --------------- SHTMLDocument implementation end --------------- */
     void updateInputAttributes(final SHTMLEditorPane e) {
         // EditorKit might not have installed the StyledDocument yet.
-        final Document aDoc = e.getDocument();
+        final StyledDocument aDoc = e.getDocument();
         if (!(aDoc instanceof StyledDocument)) {
             return;
         }
         final int start = e.getSelectionStart();
         // record current character attributes.
-        final StyledDocument doc = (StyledDocument) aDoc;
+        final StyledDocument doc = aDoc;
         // If nothing is selected, get the attributes from the character
         // before the start of the selection, otherwise get the attributes
         // from the character element at the start of the selection.

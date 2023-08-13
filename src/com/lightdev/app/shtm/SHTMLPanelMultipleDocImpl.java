@@ -98,7 +98,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
      */
     protected void registerDocument() {
         super.registerDocument();
-        ((SHTMLDocument) getDocumentPane().getDocument()).getStyleSheet().addChangeListener(styleSelector);
+        getDocumentPane().getDocument().getStyleSheet().addChangeListener(styleSelector);
     }
 
     /* (non-Javadoc)
@@ -106,7 +106,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
      */
     protected void unregisterDocument() {
         super.unregisterDocument();
-        ((SHTMLDocument) getDocumentPane().getDocument()).getStyleSheet().removeChangeListener(styleSelector);
+        getDocumentPane().getDocument().getStyleSheet().removeChangeListener(styleSelector);
     }
 
     /**
@@ -130,7 +130,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
             setDocumentPane((DocumentPane) jtpDocs.getComponentAt(activeTabNo));
             setEditorPane(getDocumentPane().getEditor());
             //System.out.println("FrmMain stateChanged docName now " + documentPane.getDocumentName());
-            doc = (SHTMLDocument) getSHTMLEditorPane().getDocument();
+            doc = getSHTMLEditorPane().getDocument();
             //fireDocumentChanged();
             if (!ignoreActivateDoc) {
                 getDocumentPane().fireActivated();

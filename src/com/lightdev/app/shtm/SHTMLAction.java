@@ -39,5 +39,5 @@ import javax.swing.Action;
  */
 public interface SHTMLAction extends Action {
     /** update the action's state */
-    public void update();
+    void update();
 }

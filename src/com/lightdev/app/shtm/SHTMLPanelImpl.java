@@ -72,7 +72,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String FILE_LAST_OPEN = "lastOpenFileName";
     public static final String FILE_LAST_SAVE = "lastSaveFileName";
     /** single instance of a dynamic resource for use by all */
-    public DynamicResource dynRes = new DynamicResource();
+    public final DynamicResource dynRes = new DynamicResource();
     /** SimplyHTML's main resource bundle (plug-ins use their own) */
     private static UIResources uiResources = null;
 
@@ -591,7 +591,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         panelNo = SplitPanel.NORTH;
                         break;
                 }
-                p = (JTabbedPane) splitPanel.getPanel(panelNo);
+                p = splitPanel.getPanel(panelNo);
                 p.setVisible(true);
                 p.add(pi.getGUIName(), pc);
                 if (((panelNo == SplitPanel.WEST) && splitPanel.getDivLoc(panelNo) < this.getWidth() / 10)
@@ -641,7 +641,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     class PluginInfo implements Runnable {
-        SHTMLPlugin pi;
+        final SHTMLPlugin pi;
 
         PluginInfo(final SHTMLPlugin pi) {
             this.pi = pi;
@@ -1205,7 +1205,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         public AttributeSet getValue() {
             final SimpleAttributeSet set = new SimpleAttributeSet();
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_FAMILY, (String) getSelectedItem());
-            set.addAttribute(HTML.Attribute.FACE, (String) getSelectedItem());
+            set.addAttribute(HTML.Attribute.FACE, getSelectedItem());
             return set;
         }
 
@@ -1275,7 +1275,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * a listener for property change events on ToggleFontActions
      */
     private class ToggleActionChangedListener implements PropertyChangeListener {
-        JToggleButton button;
+        final JToggleButton button;
 
         ToggleActionChangedListener(final JToggleButton button) {
             super();
@@ -1405,7 +1405,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     }
 
     public JEditorPane getSourceEditorPane() {
-        return (JEditorPane) getDocumentPane().getHtmlEditor();
+        return getDocumentPane().getHtmlEditor();
     }
 
     /**

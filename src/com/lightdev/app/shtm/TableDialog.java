@@ -53,9 +53,9 @@ import javax.swing.text.html.HTML;
  */
 class TableDialog extends DialogShell {
     /** collection of all components with table related attributes */
-    Vector tableComponents = new Vector();
+    final Vector tableComponents = new Vector();
     /** collection of all components with cell related attributes */
-    Vector cellComponents = new Vector();
+    final Vector cellComponents = new Vector();
     /** selector for cell range to apply cell attributes to */
     JComboBox cellRange;
 
