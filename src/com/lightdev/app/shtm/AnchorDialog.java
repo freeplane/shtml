@@ -30,7 +30,6 @@ import java.net.URL;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
