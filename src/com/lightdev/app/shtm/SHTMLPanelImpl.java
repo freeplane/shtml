@@ -147,7 +147,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     private final JPopupMenu editorPopup;
     /**
      * action names
-     *
      * these have to correspond with the keys in the
      * resource bundle to allow for dynamic
      * menu creation and control
@@ -680,7 +679,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
     * instantiate Actions and put them into the commands
     * Hashtable for later use along with their action commands.
-    *
     * This is hard coded as Actions need to be instantiated
     * hard coded anyway, so we do the storage in <code>commands</code>
     * right away.
@@ -907,7 +905,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         final String[] itemKeys = Util.tokenize(Util.getResourceString(uiResources, nm), " ");
         final JToolBar toolBar = new JToolBar();
         for (int i = 0; i < itemKeys.length; i++) {
-            /** special handling for separators */
+            /* special handling for separators */
             final String itemKey = itemKeys[i];
             createToolbarItem(toolBar, itemKey);
         }
@@ -920,7 +918,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             separator = new JSeparator(JSeparator.VERTICAL);
             toolBar.add(separator);
         }
-        /**
+        /*
          * special handling for list elements in the
          * tool bar
          */
@@ -959,7 +957,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                     toolBar.add(newButton);
                 }
                 else {
-                    /**
+                    /*
                      * special handling for JToggleButtons in the tool bar
                      */
                     final Action action = dynRes.getAction(itemKey);
@@ -971,7 +969,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         newButton.setVerticalAlignment(SwingConstants.CENTER);
                         toolBar.add(newButton);
                     }
-                    /**
+                    /*
                      * this is the usual way to add tool bar buttons finally
                      */
                     else {
@@ -1006,7 +1004,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * remove FrmMain as a registered object from a given
      * document pane and its components
-     *
      * remove all plug-ins owned by this FrmMain from
      * SimplyHTML objects too
      */
@@ -1022,21 +1019,19 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
 
     /**
      * save a document and catch possible errors
-     *
      * this is shared by save and saveAs so we put it here to avoid redundancy
      *
      * @param documentPane  the document pane containing the document to save
-     * @param target
+     * @param target target
      */
     void doSave(final DocumentPane documentPane, URL target) {
     try {
       documentPane.saveDocument(target);
     }
-    /**
+    /*
      * this exception should never happen as the menu allows to save a
      * document only if a name has been set. For new documents, whose
      * name is not set, only save as is enabled anyway.
-     *
      * Just in case this is changed without remembering why it was designed
      * that way, we catch the exception here.
      */
@@ -1168,7 +1163,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         private boolean ignoreActions = false;
 
         FontFamilyPicker() {
-            /**
+            /*
              * add the font family names available in the system
              * to the combo box
              */
@@ -1224,7 +1219,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         final private Object key;
 
         FontSizePicker() {
-            /**
+            /*
              * add font sizes to the combo box
              */
             super(FONT_SIZES);

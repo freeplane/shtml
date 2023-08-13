@@ -133,7 +133,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * apply syntax highlighting to all HTML tags found in the given
      * area of the given document
      *
-     * @param doc  the document to apply syntax highlighting to
+     * @param sDoc  the document to apply syntax highlighting to
      * @param offset  the position inside the given document to start to apply syntax highlighting to
      * @param len  the number of characters to apply syntax highlighting to
      */
@@ -145,7 +145,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * overridden from JEditorPane
      * to suppress line wraps
      *
-     * @see setSize
+     * @see #setSize
      */
     public boolean getScrollableTracksViewportWidth() {
         return false;
@@ -155,7 +155,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * overridden from JEditorPane
      * to suppress line wraps
      *
-     * @see getScrollableTracksViewportWidth
+     * @see #getScrollableTracksViewportWidth
      */
     public void setSize(final Dimension d) {
         if (d.width < getParent().getSize().width) {

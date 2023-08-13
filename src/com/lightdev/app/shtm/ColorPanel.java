@@ -68,19 +68,16 @@ class ColorPanel extends JPanel implements ActionListener {
     * construct a color panel
     *
     * @param title  the title of the color panel
-    * @param col  the color to be displayed first
-    * @param titleFont  font for title
-    * @param key  the attribute key this component shall return color values for
     */
     public ColorPanel(final String title) {
         super(new BorderLayout(5, 5));
-        /** adjust the color display */
+
         Dimension dim = new Dimension(20, 15);
         colorDisplay.setMinimumSize(dim);
         colorDisplay.setMaximumSize(dim);
         colorDisplay.setPreferredSize(dim);
         colorDisplay.setEditable(false);
-        /** a button to open a color chooser window */
+
         final JButton browseButton = new JButton();
         browseButton.setText("...");
         dim = new Dimension(20, 15);
@@ -88,11 +85,11 @@ class ColorPanel extends JPanel implements ActionListener {
         browseButton.setMaximumSize(dim);
         browseButton.setPreferredSize(dim);
         browseButton.addActionListener(this);
-        /** a helper panel for proper component placement */
+
         final JPanel eastPanel = new JPanel(new FlowLayout());
         eastPanel.add(colorDisplay);
         eastPanel.add(browseButton);
-        /** set the title */
+
         if ((title != null) && (title.length() > 0)) {
             final JLabel titleLabel = new JLabel(title);
             titleLabel.setFont(UIManager.getFont("TextField.font"));

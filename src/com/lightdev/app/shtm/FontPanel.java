@@ -63,7 +63,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
 
     public FontPanel() {
         setLayout(new BorderLayout(5, 5));
-        /** create a label for previewing font selections */
+        /* create a label for previewing font selections */
         sample.setText("");
         sample.setEditable(false);
         sample.setPreferredSize(new Dimension(200, 50));
@@ -73,7 +73,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
         previewPanel.add(sample, BorderLayout.CENTER);
         previewPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("previewLabel")));
-        /**
+        /*
          * create a pick list for family filled with
          * available font family names
          */
@@ -82,15 +82,15 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
             Util.getResourceString("familyLabel"));
         family.addTitledPickListListener(this);
         fontComponents.add(family);
-        /** create a pick list for font size */
+        /* create a pick list for font size */
         final SizePickList size = new SizePickList(SHTMLPanelImpl.FONT_SIZES, Util.getResourceString("sizeLabel"));
         size.addTitledPickListListener(this);
         fontComponents.add(size);
-        /** wrap together family and size */
+        /* wrap together family and size */
         final JPanel familySizePanel = new JPanel(new BorderLayout(5, 5));
         familySizePanel.add(family, BorderLayout.CENTER);
         familySizePanel.add(size, BorderLayout.EAST);
-        /** create a panel to put font parts family, size and style in */
+        /* create a panel to put font parts family, size and style in */
         final JPanel fontPartsPanel = new JPanel(new BorderLayout(5, 5));
         fontPartsPanel.add(familySizePanel, BorderLayout.CENTER);
         final String[] fontStyles = new String[] { Util.getResourceString("plainName"),
@@ -100,10 +100,10 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
         style.addTitledPickListListener(this);
         fontPartsPanel.add(style, BorderLayout.EAST);
         fontComponents.add(style);
-        /** create a panel for underline / line through */
+        /* create a panel for underline / line through */
         final EffectPanel linePanel = new EffectPanel();
         fontComponents.add(linePanel);
-        /** create a panel for color choices */
+        /* create a panel for color choices */
         final JPanel colorPanel = new JPanel(new GridLayout(2, 1, 3, 3));
         colorPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("colorLabel")));
@@ -117,11 +117,11 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
         fontComponents.add(new ColorAttributePanel(bCol, CSS.Attribute.BACKGROUND_COLOR));
         colorPanel.add(bCol);
         sample.setBackground(Color.white);
-        /** create a panel to combine line and color choices */
+        /* create a panel to combine line and color choices */
         final JPanel eastPanel = new JPanel(new BorderLayout());
         eastPanel.add(linePanel, BorderLayout.NORTH);
         eastPanel.add(colorPanel, BorderLayout.SOUTH);
-        /** add all font controls to our font panel */
+        /* add all font controls to our font panel */
         add(fontPartsPanel, BorderLayout.CENTER);
         add(eastPanel, BorderLayout.EAST);
         add(previewPanel, BorderLayout.SOUTH);
@@ -132,12 +132,10 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
     /**
      * construct a FontPanel and display a set of attributes
      *
-     * @param frame  the main frame having the TextResources
      * @param a  the set of attributes to display
      */
     public FontPanel(final AttributeSet a) {
         this();
-        /** set the new FontPanel to display our set of attributes */
         setAttributes(a);
     }
     /**

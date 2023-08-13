@@ -125,7 +125,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * build the dialog contents after construction
      *
      * @param title  the title of this ImageDialog
-     * @param imgDir  the directory of the image repository
      */
     private void initDialog(final String title) {
         Dimension dim;

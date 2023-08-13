@@ -23,7 +23,6 @@ import javax.swing.Icon;
 
 /**
  * interface for getting text based resources
- * 
  *  * @author Dimitri Polivaev
  * 14.01.2007
  */

@@ -329,7 +329,6 @@ class SHTMLEditorKitActions {
          * @param attributeName the name of the attribute to be modified
          * @param attributeValue the value the attribute should be set to
          * @param applyToParagraph TODO
-         * @param uVal the value for the attribute not being selected
          */
         public ApplyCSSAttributeAction(final SHTMLPanelImpl panel, final String actionName, final Object attributeName,
                                        final Object attributeValue, final boolean applyToParagraph) {
@@ -451,7 +450,6 @@ class SHTMLEditorKitActions {
     /**
      * Action that brings up a JFrame with a JTree showing the structure
      * of the document in the currently active DocumentPane.
-     *
      * will be hidden from menu if not in development mode (DEV_MODE = false)
      */
     static class ShowElementTreeAction extends AbstractAction implements SHTMLAction {
@@ -1204,13 +1202,13 @@ class SHTMLEditorKitActions {
         public void actionPerformed(final ActionEvent ae) {
             final Frame parent = JOptionPane.getFrameForComponent(panel);
             panel.getSHTMLEditorPane().requestFocus();
-            /** create a modal FontDialog, center and show it */
+            /* create a modal FontDialog, center and show it */
             final FontDialog fd = new FontDialog(parent, Util.getResourceString("fontDialogTitle"),
                 panel.getMaxAttributes(panel.getSHTMLEditorPane()));
             Util.center(parent, fd);
             fd.setModal(true);
             fd.setVisible(true);
-            /** if the user made a selection, apply it to the document */
+            /* if the user made a selection, apply it to the document */
             if (fd.getResult() == FontDialog.RESULT_OK) {
                 panel.getSHTMLEditorPane().applyAttributes(fd.getAttributes(), false);
                 panel.updateFormatControls();
@@ -1366,7 +1364,7 @@ class SHTMLEditorKitActions {
                 dlg.setImageAttributes(img.getAttributes());
                 dlg.setModal(true);
                 dlg.setVisible(true);
-                /** if the user made a selection, apply it to the document */
+                /* if the user made a selection, apply it to the document */
                 if (dlg.getResult() == DialogShell.RESULT_OK) {
                     try {
                         panel.getSHTMLDocument().setOuterHTML(img, dlg.getImageHTML());
@@ -1428,7 +1426,7 @@ class SHTMLEditorKitActions {
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
-            /** if the user made a selection, apply it to the document */
+            /* if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {
                 final AttributeSet a = dlg.getListAttributes();
                 final String newTag = dlg.getListTag();
@@ -1476,7 +1474,7 @@ class SHTMLEditorKitActions {
             final int caretPosition = panel.getSHTMLEditorPane().getCaretPosition();
             dlg.setValue(panel.getMaxParagraphAttributes(caretPosition));
             dlg.setVisible(true);
-            /** if the user made a selection, apply it to the document */
+            /* if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {
                 panel.getSHTMLEditorPane().applyAttributes(dlg.getValue(), true);
             }
@@ -1514,7 +1512,7 @@ class SHTMLEditorKitActions {
             Util.center(parent, td);
             td.setModal(true);
             td.setVisible(true);
-            /** if the user made a selection, apply it to the document */
+            /* if the user made a selection, apply it to the document */
             if (td.getResult() == DialogShell.RESULT_OK) {
                 final SHTMLDocument doc = editor.getDocument();
                 doc.startCompoundEdit();
@@ -1539,11 +1537,9 @@ class SHTMLEditorKitActions {
     /**
      * force a garbage collection. This can be helpful to find out
      * whether or not objects are properly disposed.
-     *
      * Without forcing a garbage collection, this would happen
      * at random intervals so although an object might be properly
      * disposed, it might still be around until the next GC.
-     *
      * will be hidden from menu if not in development mode (DEV_MODE = false)
      */
     static class GarbageCollectionAction extends AbstractAction implements SHTMLAction {
@@ -1586,7 +1582,7 @@ class SHTMLEditorKitActions {
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
-            /** if the user made a selection, apply it to the document */
+            /* if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {
                 try {
                     document.insertBeforeStart(
@@ -2210,7 +2206,7 @@ class SHTMLEditorKitActions {
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
-            /** if the user made a selection, apply it to the document */
+            /* if the user made a selection, apply it to the document */
             if (dlg.getResult() == DialogShell.RESULT_OK) {
             }
             panel.updateActions();
@@ -2293,8 +2289,7 @@ class SHTMLEditorKitActions {
          * <p>The method takes care of saving the document if necessary prior
          * to closing.</p>
          *
-         * @param the tab index number of the document in the tabbed pane.
-         * @return true, if the document was closed successfully.
+         * @param index the tab index number of the document in the tabbed pane.
          */
         public void closeDocument(final int index, final ActionEvent ae, final boolean ignoreChanges) {
             exitApp = ae.getActionCommand().indexOf(SHTMLPanelImpl.exitAction) > -1;
@@ -2348,7 +2343,6 @@ class SHTMLEditorKitActions {
          * is closed. If not, the document remains open.</p>
          *
          * @param dp  the document to close
-         * @param index  the number of the tab for that document
          */
         private void scheduleClose(final DocumentPane dp) {
             final java.util.Timer timer = new java.util.Timer();

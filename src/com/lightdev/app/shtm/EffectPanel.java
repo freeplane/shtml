@@ -59,7 +59,7 @@ class EffectPanel extends JPanel implements AttributeComponent {
 
     public EffectPanel() {
         super(new GridLayout(3, 1, 3, 3));
-        /** initialize the line effects button group */
+        /* initialize the line effects button group */
         noLine = new JRadioButton(Util.getResourceString("noLineLabel"));
         uLine = new JRadioButton(Util.getResourceString("uLineLabel"));
         strike = new JRadioButton(Util.getResourceString("strikeLabel"));

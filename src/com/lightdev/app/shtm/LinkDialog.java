@@ -112,14 +112,12 @@ class LinkDialog extends DialogShell implements ActionListener {
     //private int renderMode;
     /**
      * construct a new LinkDialog
-     *
      * If the selection (selectionStart and selectionEnd) has an existing link,
      * edit this link
      * Create a link for the selected text otherwise.
      *
      * @param parent  the parent frame for the dialog
      * @param title  the dialog title
-     * @param doc  the document to edit link settings for
      */
     public LinkDialog(final Frame parent, final String title, final SHTMLEditorPane editorPane) {
         // initialize DialogShell
@@ -662,7 +660,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         return file;
     }
 
-    /** -------- ActionListener implementation start (including additional handling methods) ---------- */
+    /* -------- ActionListener implementation start (including additional handling methods) ---------- */
     /**
      * actionListener implementation to control dialog components
      */
@@ -719,7 +717,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         Util.center(this, dlg);
         dlg.setModal(true);
         dlg.setVisible(true);
-        /** if the user made a selection, apply it to the document */
+        /* if the user made a selection, apply it to the document */
         if (dlg.getResult() == DialogShell.RESULT_OK) {
             imgFile = Util.resolveRelativePath(doc.getBase(), dlg.getImageSrc()).getPath().replace(
                 Util.URL_SEPARATOR_CHAR, File.separatorChar);
@@ -808,5 +806,5 @@ class LinkDialog extends DialogShell implements ActionListener {
             Util.errMsg(this, ex.getMessage(), ex);
         }
     }
-    /** -------- ActionListener implementation end  (including additional handling methods) ---------- */
+    /* -------- ActionListener implementation end  (including additional handling methods) ---------- */
 }

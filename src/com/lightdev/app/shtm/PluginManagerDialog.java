@@ -82,7 +82,7 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         cancelButton.setVisible(false);
         GridBagLayout g;
         final GridBagConstraints c = new GridBagConstraints();
-        /** create panel to show and select plug-ins */
+        /* create panel to show and select plug-ins */
         final JPanel pluginPanel = new JPanel(new BorderLayout());
         pluginPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("pluginPanelTitle")));
@@ -93,14 +93,14 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         pluginNames.setMinimumSize(new Dimension(250, 400));
         pluginNames.setPreferredSize(new Dimension(250, 400));
         pluginPanel.add(new JScrollPane(pluginNames), BorderLayout.CENTER);
-        /** create panel for actions on loaded plug-ins */
+        /* create panel for actions on loaded plug-ins */
         final JPanel actionPanel = new JPanel();
         toggleActivationButton = new JButton(activateName);
         toggleActivationButton.setEnabled(false);
         toggleActivationButton.addActionListener(this);
         actionPanel.add(toggleActivationButton);
         pluginPanel.add(actionPanel, BorderLayout.SOUTH);
-        /** create panel to edit settings for a plug-in */
+        /* create panel to edit settings for a plug-in */
         g = new GridBagLayout();
         final JPanel pluginSettingsPanel = new JPanel(g);
         toggleActivationCheckbox = new JCheckBox("togglePluginActivationCheckbox");
@@ -116,7 +116,7 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         dockLocation.setEnabled(false);
         dockLocation.addActionListener(this);
         Util.addGridBagComponent(pluginSettingsPanel, dockLocation, g, c, 1, 1, GridBagConstraints.WEST);
-        /** add components to dialog */
+        /* add components to dialog */
         contentPane.add(pluginPanel, BorderLayout.WEST);
         final JPanel centerPanel = new JPanel(new BorderLayout());
         final JPanel centerWestPanel = new JPanel(new BorderLayout());

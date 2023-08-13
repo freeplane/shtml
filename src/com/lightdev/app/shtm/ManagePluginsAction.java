@@ -58,7 +58,7 @@ class ManagePluginsAction extends AbstractAction implements SHTMLAction {
         Util.center(shtmlPanel, pmd);
         pmd.setModal(true);
         pmd.setVisible(true);
-        /** if the user made a selection, apply it to the document */
+        /* if the user made a selection, apply it to the document */
         if (pmd.getResult() == DialogShell.RESULT_OK) {
             shtmlPanel.clearDockPanels();
             final Enumeration plugins = SHTMLPanelImpl.pluginManager.plugins();

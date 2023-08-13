@@ -208,9 +208,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             }
         });
         setPasteModeFromPrefs();
-        /** implement customized caret movement */
+        /* implement customized caret movement */
         adjustKeyBindings();
-        /** init drag and drop */
+        /* init drag and drop */
         initDnd();
     }
 
@@ -279,7 +279,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * adjust the key bindings of the key map existing for this
      * editor pane to our needs (i.e. add actions to certain keys
      * such as tab/shift tab for caret movement inside tables, etc.)
-     *
      * This method had to be redone for using InputMap / ActionMap
      * instead of Keymap.
      */
@@ -354,7 +353,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /**
        * Convenience method for setting the document text
-       * @param sText the html-text of the document
+       * @param text the html-text of the document
        */
     public void setText(String text) {
         final SHTMLDocument doc = getDocument();
@@ -657,13 +656,12 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         if (list != null) {
             if (a.getAttributeCount() > 0) {
                 doc.addAttributes(list, a);
-                /**
+                /*
                  * for some reason above code does not show the changed attributes
                  * of the table, although the element really has them (maybe somebody
                  * could let me know why...). Therefore we update the editor pane
                  * contents comparably rude (any other more elegant alternatives
                  * welcome!)
-                 *
                  * --> found out why: the swing package does not render short hand
                  *                    properties such as MARGIN or PADDING. When
                  *                    contained in a document inside an AttributeSet
@@ -1077,7 +1075,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /**
      * create a table column before or after a given column
-     *
      * the width of the first cell in the column
      * (if there is a width attribute) is split into
      * half so that the new column and the column
@@ -1165,7 +1162,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     /**
      * Creates a new table row, inserting it before, or appending after the given
      * row, depending on a parameter.
-     *
      * Is shared by appendRow and insertRow actions.
      *
      * @param srcRow  the row element to copy from
@@ -1196,14 +1192,13 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     /**
      * Returns the HTML string of the given table row, without the cell contents, possibly
      * forcing the cell name on "td" or "th", if the parameter for forced cell name is non-null.
-     *
      * For each table column found in srcRow, a start and end
      * tag TD is created with the same attributes as in the
      * column found in srcRow. The attributes of srcRow
      * are applied to the newly created row HTML string as well.
      *
      * @param modelRow  the table row Element to copy from
-     * @param insert  indicates if a row is inserted before another row
+     * @param forcedCellName  forcedCellName
      *
      * @return an HTML string representing the new table row
      * (without cell contents)
@@ -1244,9 +1239,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * build an HTML string copying from an existing table cell
      *
      * @param srcCell the cell to get the HTML for
-     * @param a  set of attributes to copy if we are inserting first table column
-     * @param insertFirst  indicates if we are inserting first table column
-     * @param rNum  number of row a cell is to be inserted to
      *     (can be any value if insertFirst is false)
      *
      * @return the HTML string for the given cell (without cell contents)
@@ -1590,13 +1582,13 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             if (a.getAttributeCount() > 0) {
                 //System.out.println("applyTableAttributes count=" + a.getAttributeCount() + " a=" + a);
                 getDocument().addAttributes(table, a);
-                /**
+                
+                /*
                  * for some reason above code does not show the changed attributes
                  * of the table, although the element really has them (maybe somebody
                  * could let me know why...). Therefore we update the editor pane
                  * contents comparably rude (any other more elegant alternatives
                  * welcome!)
-                 *
                  * --> found out why: the swing package does not render short hand
                  *                    properties such as MARGIN or PADDING. When
                  *                    contained in a document inside an AttributeSet
@@ -1702,7 +1694,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * to the next table cell.
      */
     private class TabAction extends AbstractAction {
-        /** action to use when not inside a table */
+        /* action to use when not inside a table */
         /* removed for changes in J2SE 1.4.1
         private Action alternateAction;
          */
@@ -1711,7 +1703,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             super(actionName);
         }
 
-        /**
+        /*
          * construct a <code>NextTableCellAction</code>
          *
          * @param altAction  the action to use when the caret
@@ -1725,7 +1717,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         /**
          * move to the previous cell or invoke an alternate action if the
          * caret is not inside a table
-         *
          * this will append a new table row when the caret
          * is inside the last table cell
          */
@@ -1759,7 +1750,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * to the previous table cell.
      */
     private class ShiftTabAction extends AbstractAction {
-        /** action to use when not inside a table */
+        /* action to use when not inside a table */
         /* removed for changes in J2SE 1.4.1
         private Action alternateAction;
         */
@@ -1768,7 +1759,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             super(actionName);
         }
 
-        /**
+        /*
          * construct a <code>PrevTableCellAction</code>
          *
          * @param altAction  the action to use when the caret
@@ -2398,8 +2389,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
          * given tag.</p>
          *
          * <p>Splits lists if the selection covers only part of a list.</p>
-         * @throws BadLocationException
-         * @throws IOException
+         * @throws BadLocationException BadLocationException
+         * @throws IOException IOException
          */
         private void listOff() throws IOException, BadLocationException {
             final int selectionStart = getSelectionStart();
@@ -2505,8 +2496,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
          *
          * <p>Takes care of merging existing lists before, after and inside
          * respective element block.</p>
-         * @throws BadLocationException
-         * @throws IOException
+         * @throws BadLocationException BadLocationException
+         * @throws IOException IOException
          *
          */
         private void listOn(final String listTag, final AttributeSet attributeSet, final boolean forceOff)
@@ -2621,8 +2612,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
         /**
          * decide to switch on or off list formatting
-         * @return  true, if list formatting is to be switched on, false if not
-         * @throws SwitchListException
+         * @return true, if list formatting is to be switched on, false if not
+         * @throws SwitchListException SwitchListException
          */
         private boolean switchOn(final String listTag, final AttributeSet attributeSet, final boolean forceOff,
                                  final int start, final int end, final Element parentElement)
@@ -3591,7 +3582,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     /**
      * Switches the elements in the current selection to the given tag. If allowedTags
      * is non-null, applies the tag only if it is contained in allowedTags.
-     *
      * TODO: The new parameter does not work. So the method only works for paragraph tags,
      * like H1, H2 etc. --Dan
      *

@@ -52,7 +52,7 @@ import javax.swing.text.html.StyleSheet;
  *
  * <p>With stage 9 some additional views have been added to
  * the view factory as a workaround for bug id 4765271
- * (see http://developer.java.sun.com/developer/bugParade/bugs/4765271.html).</p>
+ * (see <a href="http://developer.java.sun.com/developer/bugParade/bugs/4765271.html">4765271</a>).</p>
  *
  * <p>OK, I give up: With release 2 of stage 9 above views are used no longer and
  * bug fixing is not done anymore. The HTML support is almost taken as is in the hope

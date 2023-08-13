@@ -99,7 +99,7 @@ class CSSWriter {
      * the given name to the writer passed in the constructor.</p>.
 
      * @param ruleName  the name of the rule to write out
-     * @apram rule  the style to write out
+     * @param rule  the style to write out
      *
      * @exception IOException if i/o fails
      */

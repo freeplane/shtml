@@ -288,7 +288,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
 
     /**
      * remove the temporary storage created for this <code>DocumentPane</code>
-     * @param docTempDir
      */
     public void deleteTempDir() {
         if (docTempDir != null) {
@@ -338,11 +337,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     /**
      * saves the document to the file specified in the source of the
      * <code>DocumentPane</code> and creates the associated style sheet.
-     *
      * The actual save process only is done, when there is a name to save
      * to. The class(es) calling this method have to make sure that a
      * name for new documents is requested from the user, for instance.
-     *
      * The desired name and location for the save need then to be set using method
      * setSource prior to a call to this method
      *

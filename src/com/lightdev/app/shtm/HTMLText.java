@@ -83,8 +83,6 @@ class HTMLText {
      * @param  start  the position to start copying at
      * @param  length  the length of the content portion to copy
      *
-     * @return an HTML string representation of the copied portion of content
-     *
      * @see com.lightdev.app.shtm.SHTMLEditorPane
      */
     public void copyHTML(final SHTMLEditorPane src, final int start, final int length) throws BadLocationException,
@@ -114,7 +112,7 @@ class HTMLText {
      * @param  position  the text position to insert at
      */
     public void pasteHTML(final Document document, int position) throws BadLocationException, IOException {
-        /**
+        /*
          * if only text within one paragraph is to be inserted,
          * iterate over copied text chunks and insert each
          * chunk with its own set of copied attributes. Else
@@ -245,7 +243,7 @@ class HTMLText {
     /**
      * get the attributes of a certain chunk of styled text
      *
-     * @param chunkPos - the number of the chunk to get the attributes for
+     * @param chunkNo - the number of the chunk to get the attributes for
      * @return the attributes for respective character position
      */
     private AttributeSet getCharacterAttributes(final int chunkNo) {

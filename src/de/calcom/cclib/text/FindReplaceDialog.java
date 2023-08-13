@@ -249,7 +249,6 @@ public class FindReplaceDialog extends JDialog {
     /**
      * notify listeners interested in this event that it occurred
      *
-     * @param  node  the node, that is affected by the event
      */
     private void fireGetNextDocument() {
         final Enumeration listenerList = listeners.elements();
@@ -261,7 +260,6 @@ public class FindReplaceDialog extends JDialog {
     /**
      * notify listeners interested in this event that it occurred
      *
-     * @param  node  the node, that is affected by the event
      */
     private void fireGetFirstDocument() {
         final Enumeration listenerList = listeners.elements();
@@ -273,7 +271,6 @@ public class FindReplaceDialog extends JDialog {
     /**
      * notify listeners interested in this event that it occurred
      *
-     * @param  node  the node, that is affected by the event
      */
     private void fireFindReplaceTerminated() {
         final Enumeration listenerList = listeners.elements();

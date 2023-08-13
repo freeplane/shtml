@@ -44,11 +44,9 @@ import javax.swing.event.ListSelectionListener;
  * A pick list typically being used in font dialogs, consisting
  * of a list title, a text field for the currently selected
  * value and the actual pick list containing all possible values.
- *
  * As three different lists are needed in our font panel for
  * family, style and size, its quite handy to have the code
  * making up such a component in a separate class only once.
- *
  * As well in a separate class it is easier to implement the
  * special 'behaviour', i.e. when list is clicked, the value
  * of the text field is set accordingly and when a value is

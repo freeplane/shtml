@@ -33,7 +33,6 @@ import javax.swing.border.EmptyBorder;
  * a center panel, other panels can be placed very similar
  * to BorderLayout. The difference of this class to BorderLayout is
  * that it creates JSplitPanes for each panel.
- *
  * (Dan: This class is a JPanel somehow trying to achieve what would
  * better be achieved with Layout. Ideally, it would be removed
  * altogether.)
@@ -259,7 +258,7 @@ class SplitPanel extends JPanel {
     /**
      * Adds a plug-in container to this SplitPanel ata given location.
      *
-     * @param c  the plug-in container to add
+     * @param component  the plug-in container to add
      * @param location  the location to add to (SplitPanel.NORTH, SOUTH, etc.)
      */
     public void addComponent(final JComponent component, final int location) {
