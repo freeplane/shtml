@@ -39,8 +39,9 @@ import java.util.Stack;
  *
  */
 public class PseudoDamerauLevenshtein {
-	public enum Type { Global, SemiGlobal };
-	private int[][] matrix;
+	public enum Type { Global, SemiGlobal }
+
+    private int[][] matrix;
 	private String searchTerm;
 	private String searchText;
 	private final int costIndel = 1;

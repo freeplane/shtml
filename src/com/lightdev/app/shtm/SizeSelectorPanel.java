@@ -238,7 +238,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
 
     public boolean valueChanged() {
         final Integer value = (Integer) valueSelector.getValue();
-        return ((value.intValue() != originalValue) || (getUnit() != originalUnit));
+        return ((value != originalValue) || (getUnit() != originalUnit));
     }
 
     public String getAttr() {

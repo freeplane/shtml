@@ -390,7 +390,7 @@ class DynamicResource {
             }
             else if (propertyName.equals("enabled")) {
                 final Boolean enabledState = (Boolean) e.getNewValue();
-                menuItem.setEnabled(enabledState.booleanValue());
+                menuItem.setEnabled(enabledState);
             }
         }
     }

@@ -465,8 +465,8 @@ class LinkDialog extends DialogShell implements ActionListener {
         linkTypes = new Hashtable(); // key = type name -> value = type
         linkTypeNames = new Hashtable(); // key = type -> value = type name
         for (int i = 1; i < 9; i++) {
-            type = Util.getResourceString(LINK_TYPE_KEY + Integer.toString(i));
-            name = Util.getResourceString(LINK_TYPE_NAME_KEY + Integer.toString(i));
+            type = Util.getResourceString(LINK_TYPE_KEY + i);
+            name = Util.getResourceString(LINK_TYPE_NAME_KEY + i);
             linkTypes.put(name, type);
             linkTypeNames.put(type, name);
         }

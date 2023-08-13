@@ -190,7 +190,7 @@ class ColorPanel extends JPanel implements ActionListener {
     public void setValue(final String value) {
         //System.out.println("ColorPanel setValue value=" + value);
         try {
-            setColor(new Color(Integer.parseInt(value.toString().substring(1).toUpperCase(), 16)));
+            setColor(new Color(Integer.parseInt(value.substring(1).toUpperCase(), 16)));
         }
         catch (final Exception e) {
             try {

@@ -1338,7 +1338,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             elemName = e.getName();
             styleName = elemName;
             if (classAttr != null) {
-                styleName = elemName + "." + classAttr.toString();
+                styleName = elemName + "." + classAttr;
                 a.addAttribute(HTML.Attribute.CLASS, classAttr);
             }
             //System.out.println("getMaxAttributes name=" + styleName);

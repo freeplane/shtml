@@ -441,7 +441,7 @@ public class SHTMLDocument extends HTMLDocument {
         }
         else {
             if (compoundEdit == null) {
-                compoundEdit = new CompoundEdit();;
+                compoundEdit = new CompoundEdit();
             }
             compoundEdit.addEdit(e.getEdit());
         }
