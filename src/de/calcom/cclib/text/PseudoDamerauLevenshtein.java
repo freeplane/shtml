@@ -277,8 +277,8 @@ public class PseudoDamerauLevenshtein {
 	
 	public List<Alignment> computeAlignments(final double minProb)
 	{
-		alignmentsInProgress = new Stack<Alignment>();
-		alignmentsDone = new ArrayList<Alignment>();
+		alignmentsInProgress = new Stack<>();
+		alignmentsDone = new ArrayList<>();
 		
 		int dist = distance(); // this computes the Dynamic Programming matrix according to Levenshtein
 		
@@ -342,12 +342,12 @@ public class PseudoDamerauLevenshtein {
 	static ArrayList<Alignment> filterAlignments(final ArrayList<Alignment> alignments)
 	{
 		if (alignments.isEmpty())
-			return new ArrayList<Alignment>();
+			return new ArrayList<>();
 		
 		// sort by score and match length (see Alignment.compareTo()) 
-		Collections.sort(alignments, Collections.reverseOrder());
+		alignments.sort(Collections.reverseOrder());
 		
-		ArrayList<Alignment> clusters = new ArrayList<Alignment>(alignments.size());
+		ArrayList<Alignment> clusters = new ArrayList<>(alignments.size());
 		// start with a single cluster
 		clusters.add(alignments.get(0));
 		alignments.remove(0);
@@ -382,14 +382,13 @@ public class PseudoDamerauLevenshtein {
 	 */
 	static void sortAlignments(final ArrayList<Alignment> alignments)
 	{
-		Collections.sort(alignments, new Comparator<Alignment>()
-				{
+		alignments.sort(new Comparator<Alignment>() {
 
-					public int compare(Alignment o1, Alignment o2) {
-						return Integer.compare(o1.matchStart, o2.matchStart);
-					}
-			
-				});
+            public int compare(Alignment o1, Alignment o2) {
+                return Integer.compare(o1.matchStart, o2.matchStart);
+            }
+
+        });
 	}
 	
 //	private void printAlignmentsFrom(final String searchTermSuffix, final String searchTextSuffix, final int r, final int c,

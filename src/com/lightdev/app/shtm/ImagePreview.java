@@ -158,12 +158,7 @@ class ImagePreview extends JComponent implements Scrollable {
             //System.out.println("ImagePreview getScale ps.getHeight() " + ps.getHeight());
             //System.out.println("ImagePreview getScale pic.getIconHeight() " + pic.getIconHeight());
             //System.out.println("ImagePreview getScale vPct " + vPct + "\r\n\r\n");
-            if (hPct < vPct) {
-                scale = hPct;
-            }
-            else {
-                scale = vPct;
-            }
+            scale = Math.min(hPct, vPct);
         }
         //System.out.println("ImagePreview getScale=" + scale + "\r\n\r\n");
         return scale;

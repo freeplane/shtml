@@ -213,7 +213,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
                 final int length = sDoc.getLength();
                 if (length > 0 && len > 0) {
                     final String text = sDoc.getText(offset, len);
-                    if (text != null && text.length() > 0) {
+                    if (text != null && !text.isEmpty()) {
                         final Enumeration pe = patterns.elements();
                         while (pe.hasMoreElements()) {
                             style = (RegExStyle) pe.nextElement();

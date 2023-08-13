@@ -545,9 +545,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                     try {
                         EventQueue.invokeAndWait(this);
                     }
-                    catch (final InterruptedException e) {
-                    }
-                    catch (final InvocationTargetException e) {
+                    catch (final InterruptedException | InvocationTargetException e) {
                     }
                 }
             }
@@ -984,10 +982,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                     newButton.putClientProperty("JButton.segmentPosition", "middle");
                 }
             }
-            catch (final Exception ex) {
+            catch (final Exception | NoClassDefFoundError ex) {
             }
-            catch (final java.lang.NoClassDefFoundError e) {
-            } //When one of the help components is not there
+            //When one of the help components is not there
         }
     }
 
@@ -1025,20 +1022,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      * @param target target
      */
     void doSave(final DocumentPane documentPane, URL target) {
-    try {
-      documentPane.saveDocument(target);
+        documentPane.saveDocument(target);
     }
-    /*
-     * this exception should never happen as the menu allows to save a
-     * document only if a name has been set. For new documents, whose
-     * name is not set, only save as is enabled anyway.
-     * Just in case this is changed without remembering why it was designed
-     * that way, we catch the exception here.
-     */
-    catch(DocNameMissingException e) {
-      Util.errMsg(this, Util.getResourceString(uiResources, "docNameMissingError"), e);
-    }
-  }
 
     public boolean isWYSIWYGEditorActive() {
         return getDocumentPane() != null && editorPane != null && getDocumentPane().getSelectedTab() == DocumentPane.VIEW_TAB_LAYOUT;

@@ -73,7 +73,7 @@ class LicensePane extends JPanel {
      * @return the license text
      */
     private String getLicenseText(final InputStream is) {
-        final StringBuffer license = new StringBuffer();
+        final StringBuilder license = new StringBuilder();
         try {
             try (final BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
                 String buf = r.readLine();

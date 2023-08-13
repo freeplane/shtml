@@ -164,8 +164,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
 		static PasteMode getPasteModeFromPrefs()
 		{
-			PasteMode pm = Util.getPreference("default_paste_mode",PasteMode.PASTE_HTML);
-			return pm;
+            return Util.getPreference("default_paste_mode",PasteMode.PASTE_HTML);
 		}
 	}
 
@@ -359,7 +358,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     public void setText(String text) {
         final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
-        if (text == null || text.equals("")) {
+        if (text == null || text.isEmpty()) {
             text = "<html><body><p></p></body></html>";
         }
         doc.putProperty(SHTMLDocument.AdditionalComments, null);
@@ -373,9 +372,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
             kit.read(r, doc, 0);
             kit.setStandardSuffix(doc);
-        } catch (IOException ioe) {
-            UIManager.getLookAndFeel().provideErrorFeedback(SHTMLEditorPane.this);
-        } catch (BadLocationException ble) {
+        } catch (IOException | BadLocationException ioe) {
             UIManager.getLookAndFeel().provideErrorFeedback(SHTMLEditorPane.this);
         }
         setCaretPosition(0);
@@ -413,8 +410,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         if (doc.getDefaultRootElement().getElementCount() > 1) {
             startPos = doc.getDefaultRootElement().getElement(1).getStartOffset();
         }
-        final int validPosition = Math.max(position, startPos);
-        return validPosition;
+        return Math.max(position, startPos);
     }
 
     private class DeletePrevCharAction extends AbstractAction {
@@ -752,7 +748,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     public void insertNewTable(final int colCount) {
         final int selectionStart = getSelectionStart();
-        final int start = selectionStart;
         final StringWriter sw = new StringWriter();
         final SHTMLDocument doc = getDocument();
         final SHTMLWriter w = new SHTMLWriter(sw, doc);
@@ -837,7 +832,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         catch (final Exception ex) {
             Util.errMsg(null, ex.getMessage(), ex);
         }
-        select(start, start);
+        select(selectionStart, selectionStart);
     }
 
     /**
@@ -1126,11 +1121,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     doc.insertAfterEnd(srcCell, createTableCellHTML(srcCell));
                 }
             }
-            catch (final IOException ioe) {
+            catch (final IOException | BadLocationException ioe) {
                 Util.errMsg(null, ioe.getMessage(), ioe);
-            }
-            catch (final BadLocationException ble) {
-                Util.errMsg(null, ble.getMessage(), ble);
             }
         }
         //adjustColumnBorders(table.getElement(0).getElement(cIndex));
@@ -1181,11 +1173,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 rowIndex++;
             }
         }
-        catch (final IOException ioe) {
+        catch (final IOException | BadLocationException ioe) {
             Util.errMsg(null, ioe.getMessage(), ioe);
-        }
-        catch (final BadLocationException ble) {
-            Util.errMsg(null, ble.getMessage(), ble);
         }
     }
 
@@ -1265,12 +1254,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         if (cell != null) {
             removeElement(cell.getParentElement());
             final int docLength = getDocument().getLength();
-            if (docLength >= finalCaretPosition) {
-                setCaretPosition(finalCaretPosition);
-            }
-            else {
-                setCaretPosition(docLength);
-            }
+            setCaretPosition(Math.min(docLength, finalCaretPosition));
         }
     }
 
@@ -1944,8 +1928,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     private Element getLastTableCell(final Element cell) {
         final Element table = cell.getParentElement().getParentElement();
         final Element lastRow = table.getElement(table.getElementCount() - 1);
-        final Element lastCell = lastRow.getElement(lastRow.getElementCount() - 1);
-        return lastCell;
+        return lastRow.getElement(lastRow.getElementCount() - 1);
     }
 
     /**
@@ -1956,8 +1939,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     private Element getFirstTableCell(final Element cell) {
         final Element table = cell.getParentElement().getParentElement();
-        final Element firstCell = table.getElement(0).getElement(0);
-        return firstCell;
+        return table.getElement(0).getElement(0);
     }
 
     /**
@@ -2354,8 +2336,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
          */
         private Element getListElement(final int caretPosition) {
             final Element paragraphElement = getParagraphElement(caretPosition);
-            final Element listElement = Util.findElementUp("ul", "ol", paragraphElement);
-            return listElement;
+            return Util.findElementUp("ul", "ol", paragraphElement);
         }
 
         private boolean isValidParentElement(final Element e) {
@@ -2997,9 +2978,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 }
             }
             // List item element starting at the next position
-            final Element listItem = listItemAtNextPosition;
-            if (listItem != null && listItem.getStartOffset() == nextPosition) {
-                mergeSecondElementIntoFirst(getListItemElement(getCaretPosition()), listItem);
+            if (listItemAtNextPosition != null && listItemAtNextPosition.getStartOffset() == nextPosition) {
+                mergeSecondElementIntoFirst(getListItemElement(getCaretPosition()), listItemAtNextPosition);
                 return true;
             }
             final Element listElementAtCurrentPosition = getListElement(getCaretPosition());
@@ -3118,10 +3098,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 finalCaretPosition = Math.min(finalCaretPosition, first.getEndOffset() - 1);
                 setCaretPosition(finalCaretPosition);
             }
-            catch (final IOException e) {
-                e.printStackTrace();
-            }
-            catch (final BadLocationException e) {
+            catch (final IOException | BadLocationException e) {
                 e.printStackTrace();
             }
             finally {
@@ -3171,10 +3148,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 getDocument().setOuterHTML(parentListItem, writer.getWrittenString());
                 setCaretPosition(finalCaretPosition);
             }
-            catch (final IOException e) {
-                e.printStackTrace();
-            }
-            catch (final BadLocationException e) {
+            catch (final IOException | BadLocationException e) {
                 e.printStackTrace();
             }
             finally {

@@ -87,10 +87,7 @@ class FrmMain extends JFrame {
                 }
             });
         }
-        catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
-        catch (final InvocationTargetException e) {
+        catch (final InterruptedException | InvocationTargetException e) {
             e.printStackTrace();
         }
         SplashScreen.hideInstance();
