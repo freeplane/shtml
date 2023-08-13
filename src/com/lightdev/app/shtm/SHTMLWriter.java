@@ -281,7 +281,7 @@ public class SHTMLWriter extends HTMLWriter {
         final Object nameTag = (attributeSet != null) ? attributeSet.getAttribute(StyleConstants.NameAttribute) : null;
         final Object endTag = (attributeSet != null) ? attributeSet.getAttribute(HTML.Attribute.ENDTAG) : null;
         // write no attributes for end tags
-        if (nameTag != null && endTag != null && (endTag instanceof String) && ((String) endTag).equals("true")) {
+        if (nameTag != null && endTag != null && (endTag instanceof String) && endTag.equals("true")) {
             return;
         }
         if (attributeSet instanceof Element) {
@@ -450,17 +450,17 @@ public class SHTMLWriter extends HTMLWriter {
      * character level attributes.  Examples include
      * &lt;b&gt;, &lt;i&gt;, &lt;font&gt;, and &lt;a&gt;.
      */
-    private Vector<HTML.Tag> tags = new Vector<HTML.Tag>(10);
+    private final Vector<HTML.Tag> tags = new Vector<HTML.Tag>(10);
 
     /**
      * Values for the tags.
      */
-    private Vector<Object> tagValues = new Vector<Object>(10);
+    private final Vector<Object> tagValues = new Vector<Object>(10);
 
      /*
      * This is used in closeOutUnwantedEmbeddedTags.
      */
-    private Vector<HTML.Tag> tagsToRemove = new Vector<HTML.Tag>(10);
+    private final Vector<HTML.Tag> tagsToRemove = new Vector<HTML.Tag>(10);
 
     @Override
     protected void writeEmbeddedTags(AttributeSet attr) throws IOException {
@@ -558,7 +558,7 @@ public class SHTMLWriter extends HTMLWriter {
 
 
 
-    private MutableAttributeSet convAttr = new SimpleAttributeSet();
+    private final MutableAttributeSet convAttr = new SimpleAttributeSet();
 
     private AttributeSet convertToHTML(AttributeSet attr) {
         convAttr.removeAttributes(convAttr);
@@ -616,7 +616,7 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
     @SuppressWarnings("serial")
-    private static Object[][] explicitTags = {
+    private static final Object[][] explicitTags = {
             {CSS.Attribute.FONT_WEIGHT, "bold", HTML.Tag.B},
             {CSS.Attribute.FONT_STYLE, "italic", HTML.Tag.I},
             {CSS.Attribute.TEXT_DECORATION, "underline", HTML.Tag.U},

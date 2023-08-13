@@ -39,7 +39,7 @@ public class ScaledStyleSheet extends StyleSheet{
 	    return super.getFont(font.getFamily(), font.getStyle(), Math.round(font.getSize2D() * fontScaleFactor));
     }
 
-	public static float FONT_SCALE_FACTOR;
+	public static final float FONT_SCALE_FACTOR;
 	static {
 		float factor = 1f; 
 		try {

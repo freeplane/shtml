@@ -230,7 +230,7 @@ class SHTMLEditorKitActions {
             super.actionPerformed(e);
             //if(unselectedValue != null) {
             if (panel.getSHTMLEditorPane() != null) {
-                final SHTMLDocument doc = (SHTMLDocument) panel.getSHTMLEditorPane().getDocument();
+                final SHTMLDocument doc = panel.getSHTMLEditorPane().getDocument();
                 if (doc != null) {
                     final AttributeSet a = doc.getCharacterElement(panel.getSHTMLEditorPane().getSelectionStart())
                         .getAttributes();
@@ -317,7 +317,7 @@ class SHTMLEditorKitActions {
          */
         private final SHTMLPanelImpl panel;
         /** the attribute this action represents values for */
-        Object attributeName;
+        final Object attributeName;
         /** the value for the attribute being selected */
         final private Object attributeValue;
         private final boolean applyToParagraph;
@@ -611,7 +611,7 @@ class SHTMLEditorKitActions {
             super.actionPerformed(e);
             //if(unselectedValue != null) {
             if (panel.getSHTMLEditorPane() != null) {
-                final SHTMLDocument doc = (SHTMLDocument) panel.getSHTMLEditorPane().getDocument();
+                final SHTMLDocument doc = panel.getSHTMLEditorPane().getDocument();
                 if (doc != null) {
                     final AttributeSet a = doc.getCharacterElement(panel.getSHTMLEditorPane().getSelectionStart())
                         .getAttributes();
@@ -681,7 +681,7 @@ class SHTMLEditorKitActions {
     }
 
     abstract static class FontColorAction extends AbstractAction implements SHTMLAction {
-    	protected static ColorPanel hiddenColorPanel = new ColorPanel("Select Color");
+    	protected static final ColorPanel hiddenColorPanel = new ColorPanel("Select Color");
     	protected final SHTMLPanelImpl panel;
 
         public FontColorAction(SHTMLPanelImpl panel) {
@@ -1284,7 +1284,7 @@ class SHTMLEditorKitActions {
     	enum Change{INCREASE(1), DECREASE(-1);
     		final int changeAmount;
 
-			private Change(int changeAmount) {
+			Change(int changeAmount) {
 				this.changeAmount = changeAmount;
 			}
     	};
@@ -1292,7 +1292,7 @@ class SHTMLEditorKitActions {
          *
          */
         private final SHTMLPanelImpl panel;
-		private Change change;
+		private final Change change;
 
         ChangeFontSizeAction(final SHTMLPanelImpl panel, String name, Change change ) {
             super(name);
@@ -1514,7 +1514,7 @@ class SHTMLEditorKitActions {
             td.setVisible(true);
             /* if the user made a selection, apply it to the document */
             if (td.getResult() == DialogShell.RESULT_OK) {
-                final SHTMLDocument doc = (SHTMLDocument) editor.getDocument();
+                final SHTMLDocument doc = editor.getDocument();
                 doc.startCompoundEdit();
                 AttributeSet a = td.getTableAttributes();
                 if (a.getAttributeCount() > 0) {
@@ -1840,7 +1840,7 @@ class SHTMLEditorKitActions {
         public void actionPerformed(final ActionEvent e) {
             super.actionPerformed(e);
             if (panel.getSHTMLEditorPane() != null) {
-                final SHTMLDocument doc = (SHTMLDocument) panel.getSHTMLEditorPane().getDocument();
+                final SHTMLDocument doc = panel.getSHTMLEditorPane().getDocument();
                 if (doc != null) {
                     final AttributeSet a = doc.getCharacterElement(panel.getSHTMLEditorPane().getSelectionStart())
                         .getAttributes();
@@ -2609,8 +2609,8 @@ class SHTMLEditorKitActions {
          * a lengthy load operation
          */
         class FileLoader extends Thread {
-            File file;
-            Component owner;
+            final File file;
+            final Component owner;
             DocumentPane.DocumentPaneListener l;
 
             public FileLoader(final File file, final Component owner) {
@@ -2676,7 +2676,7 @@ class SHTMLEditorKitActions {
          * a lengthy save operation
          */
         class FileSaver extends Thread {
-            DocumentPane dp;
+            final DocumentPane dp;
             Component owner;
 
             FileSaver(final DocumentPane dp) {
@@ -2811,9 +2811,9 @@ class SHTMLEditorKitActions {
          * a lengthy save operation
          */
         class NewFileSaver extends Thread {
-            DocumentPane dp;
-            URL url;
-            int activeTabNo;
+            final DocumentPane dp;
+            final URL url;
+            final int activeTabNo;
             DocumentPane.DocumentPaneListener l;
 
             NewFileSaver(final DocumentPane dp, final URL url, final int activeTabNo) {

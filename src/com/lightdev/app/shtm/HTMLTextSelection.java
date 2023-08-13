@@ -73,7 +73,7 @@ class HTMLTextSelection implements Transferable {
      * @return an array of data flavors in which this data can be transferred
      */
     public DataFlavor[] getTransferDataFlavors() {
-        return (DataFlavor[]) flavors.clone();
+        return flavors.clone();
     }
 
     /**

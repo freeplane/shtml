@@ -131,7 +131,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     /** the name of the document */
     private String docName;
     /** JTabbedPane for our views */
-    private JComponent paneHoldingScrollPanes;
+    private final JComponent paneHoldingScrollPanes;
     private final JScrollPane richViewScrollPane;
     private final JScrollPane sourceViewScrollPane;
     public static final int VIEW_TAB_LAYOUT = 0;
@@ -141,7 +141,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     /** default document name */
     private String DEFAULT_DOC_NAME = "Untitled";
     /** default name for style sheet, when saved */
-    public static String DEFAULT_STYLE_SHEET_NAME = "style.css";
+    public static final String DEFAULT_STYLE_SHEET_NAME = "style.css";
     /** number for title of a new document */
     private int newDocNo;
     private int activeView;
@@ -274,7 +274,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     public void setDocument(final Document docToSet) {
         try {
             editorPane.getEditorKit();
-            final HTMLDocument doc = (HTMLDocument) getDocument();
+            final HTMLDocument doc = getDocument();
             if (doc != null) {
                 doc.removeDocumentListener(this);
             }
@@ -356,7 +356,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     if (getSelectedTab() == VIEW_TAB_HTML) {
                         editorPane.setText(sourceEditorPane.getText());
                     }
-                    final SHTMLDocument doc = (SHTMLDocument) getDocument();
+                    final SHTMLDocument doc = getDocument();
                     try (final OutputStream os = new FileOutputStream(targetUrl.getPath());
                     final OutputStreamWriter osw = new OutputStreamWriter(os)) {
                     final SHTMLWriter hw = new SHTMLWriter(osw, doc);
@@ -374,7 +374,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     /* clean up */
                     //System.out.println("DocumentPane textChanged = false");
                     setDocumentChanged(false); // indicate no changes pending anymore after the save
-                    ((HTMLDocument) getDocument()).setBase(targetUrl); // set the doc base
+                    getDocument().setBase(targetUrl); // set the doc base
                     updateFileName();
                     deleteTempDir();
                     //System.out.println("DocumentPane saveSuccessful = true");
@@ -435,7 +435,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * styles in the already existing style sheet.</p>
      */
     public void saveStyleSheet(URL targetUrl) throws IOException {
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         final StyleSheet styles = doc.getStyleSheet();
         final URL styleSheetName = getStyleSheetName();
         if (styleSheetName != null) {
@@ -524,7 +524,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * @return the URL of the style sheet
      */
     private URL getStyleSheetName() throws MalformedURLException {
-        final SHTMLDocument doc = (SHTMLDocument) getDocument();
+        final SHTMLDocument doc = getDocument();
         final String styleRef = doc.getStyleRef();
         if (styleRef != null) {
            return new URL(doc.getBase(), styleRef);
@@ -754,9 +754,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * changes to the name of this document
      */
     public interface DocumentPaneListener {
-        public void nameChanged(DocumentPaneEvent e);
+        void nameChanged(DocumentPaneEvent e);
 
-        public void activated(DocumentPaneEvent e);
+        void activated(DocumentPaneEvent e);
     }
 
     /** the event object definition for DocumentPaneEvents */

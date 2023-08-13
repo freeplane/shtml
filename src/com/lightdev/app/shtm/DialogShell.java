@@ -63,9 +63,9 @@ class DialogShell extends JDialog implements ActionListener {
      */
     private int result;
     /** result value for a cancelled operation */
-    public static int RESULT_CANCEL = 1;
+    public static final int RESULT_CANCEL = 1;
     /** result value for a confirmed operation */
-    public static int RESULT_OK = 0;
+    public static final int RESULT_OK = 0;
     /** id of associated help topic (if any) */
     protected String helpTopicId = null;
     /** Listens to enter and cancel. */

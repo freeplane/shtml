@@ -107,7 +107,7 @@ class LinkDialog extends DialogShell implements ActionListener {
     private String imgFile = null;
     /** the help id for this dialog */
     private static final String helpTopicId = "item164";
-    private static boolean simpleLinkDialog = Util.preferenceIsTrue("simpleLinkDialog");
+    private static final boolean simpleLinkDialog = Util.preferenceIsTrue("simpleLinkDialog");
 
     //private int renderMode;
     /**
@@ -136,7 +136,7 @@ class LinkDialog extends DialogShell implements ActionListener {
             Util.addGridBagComponent(p, lb, g, c, 0, 0, GridBagConstraints.EAST);
         }
         final Vector styleNames = Util
-            .getStyleNamesForTag(((SHTMLDocument) doc).getStyleSheet(), HTML.Tag.A.toString());
+            .getStyleNamesForTag(doc.getStyleSheet(), HTML.Tag.A.toString());
         final String standardStyleName = Util.getResourceString("standardStyleName");
         styleNames.insertElementAt(standardStyleName, 0);
         linkStyle = new JComboBox(styleNames);
@@ -340,7 +340,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         String wStr = null;
         String hStr = null;
         if (imgAttr != null) {
-            imgFile = Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), imgAttr.toString()).getPath();
+            imgFile = Util.resolveRelativePath(doc.getBase(), imgAttr.toString()).getPath();
             while (imgFile.startsWith(File.separator)) {
                 imgFile = imgFile.substring(1);
             }
@@ -517,7 +517,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         File file = null;
         final JFileChooser chooser = new JFileChooser();
         chooser.setMultiSelectionEnabled(false);
-        chooser.setSelectedFile(new File(((SHTMLDocument) doc).getBase().getFile()));
+        chooser.setSelectedFile(new File(doc.getBase().getFile()));
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             file = chooser.getSelectedFile();
         }
@@ -649,10 +649,10 @@ class LinkDialog extends DialogShell implements ActionListener {
                 file = new File(getLinkAddress().replace(Util.URL_SEPARATOR_CHAR, File.separatorChar));
             }
             else if (prot.equalsIgnoreCase(LINK_TYPE_RELATIVE)) {
-                new File(((SHTMLDocument) doc).getBase().getPath());
+                new File(doc.getBase().getPath());
                 final String toStr = getLinkAddress();
                 new File(toStr);
-                file = new File(Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), getLinkAddress()).getPath());
+                file = new File(Util.resolveRelativePath(doc.getBase(), getLinkAddress()).getPath());
             }
         }
         catch (final Exception e) {
@@ -719,7 +719,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         dlg.setVisible(true);
         /* if the user made a selection, apply it to the document */
         if (dlg.getResult() == DialogShell.RESULT_OK) {
-            imgFile = Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), dlg.getImageSrc()).getPath().replace(
+            imgFile = Util.resolveRelativePath(doc.getBase(), dlg.getImageSrc()).getPath().replace(
                 Util.URL_SEPARATOR_CHAR, File.separatorChar);
             while (imgFile.startsWith(File.separator)) {
                 imgFile = imgFile.substring(1);
@@ -759,7 +759,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         browseAnchor.setEnabled(type.equalsIgnoreCase(LINK_TYPE_LOCAL) || type.equalsIgnoreCase(LINK_TYPE_RELATIVE));
         if (type.equalsIgnoreCase(LINK_TYPE_RELATIVE)) {
             try {
-                final File from = new File(((SHTMLDocument) doc).getBase().getPath());
+                final File from = new File(doc.getBase().getPath());
                 final String toStr = getLinkAddress();
                 final File to = new File(toStr);
                 setLinkAddress(Util.getRelativePath(from, to));
@@ -771,7 +771,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         else if (type.equalsIgnoreCase(LINK_TYPE_LOCAL)) {
             try {
                 final String relPath = getLinkAddress();
-                setLinkAddress(Util.resolveRelativePath(((SHTMLDocument) doc).getBase(), relPath).getPath());
+                setLinkAddress(Util.resolveRelativePath(doc.getBase(), relPath).getPath());
             }
             catch (final Exception ex) {
                 Util.errMsg(this, ex.getMessage(), ex);

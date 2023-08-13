@@ -57,7 +57,7 @@ import javax.swing.text.html.CSS;
  */
 class FontPanel extends JPanel implements TitledPickList.TitledPickListListener {
     /** a text field to show a sample of the selected font attributes */
-    JTextField sample = new JTextField();
+    final JTextField sample = new JTextField();
     /** table for automatic font component value read/write */
     private final Vector<AttributeComponent> fontComponents = new Vector(0);
 

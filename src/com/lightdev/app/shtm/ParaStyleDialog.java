@@ -72,9 +72,9 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
         ChangeListener {
     private final String standardStyleName = Util.getResourceString("standardStyleName");
     /** mode to edit named styles with this dialog */
-    private static int MODE_NAMED_STYLES = 1;
+    private static final int MODE_NAMED_STYLES = 1;
     /** mode to set a paragraph style with this dialog */
-    private static int MODE_PARAGRAPH_STYLE = 2;
+    private static final int MODE_PARAGRAPH_STYLE = 2;
     /** button to save a named style */
     private JButton saveStyleBtn;
     /** button to save a named style under a different name */

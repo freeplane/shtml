@@ -126,7 +126,7 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
             updateRunning = true;
             final DocumentPane currentDocumentPane = shtmlPanel.getCurrentDocumentPane();
             final int selectionStart = currentDocumentPane.getEditor().getSelectionStart();
-            final SHTMLDocument document = (SHTMLDocument) currentDocumentPane.getDocument();
+            final SHTMLDocument document = currentDocumentPane.getDocument();
             final String newParagraphType = document.getParagraphElement(selectionStart, true).getName();
             if (paragraphType == newParagraphType) {
                 return;

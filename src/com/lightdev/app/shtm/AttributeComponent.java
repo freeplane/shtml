@@ -44,14 +44,14 @@ interface AttributeComponent {
      * @return true, if the set of attributes had a matching attribute,
      *            false if not
      */
-    public boolean setValue(AttributeSet a);
+    boolean setValue(AttributeSet a);
 
     /**
      * get the value of this <code>AttributeComponent</code>
      *
      * @return the value selected from this component
      */
-    public AttributeSet getValue();
+    AttributeSet getValue();
 
-    public AttributeSet getValue(boolean includeUnchanged);
+    AttributeSet getValue(boolean includeUnchanged);
 }

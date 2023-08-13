@@ -39,15 +39,15 @@ import javax.swing.JMenuItem;
  */
 public interface SHTMLPlugin {
     /** indicates docking is not requested */
-    public static final int DOCK_LOCATION_NONE = 0;
+    int DOCK_LOCATION_NONE = 0;
     /** indicates docking requested on top of a given container */
-    public static final int DOCK_LOCATION_TOP = 1;
+    int DOCK_LOCATION_TOP = 1;
     /** indicates docking requested on the right of a given container */
-    public static final int DOCK_LOCATION_RIGHT = 2;
+    int DOCK_LOCATION_RIGHT = 2;
     /** indicates docking requested on bottom of a given container */
-    public static final int DOCK_LOCATION_BOTTOM = 3;
+    int DOCK_LOCATION_BOTTOM = 3;
     /** indicates docking requested on the left of a given container */
-    public static final int DOCK_LOCATION_LEFT = 4;
+    int DOCK_LOCATION_LEFT = 4;
 
     /**
      * get the name of the plug-in as it shall appear
@@ -55,14 +55,14 @@ public interface SHTMLPlugin {
      *
      * @return the name of the plug-in
      */
-    public String getGUIName();
+    String getGUIName();
 
     /**
      * get the name used internally for this plug-in
      *
      * @return the internal name of this plug-in
      */
-    public String getInternalName();
+    String getInternalName();
 
     /**
      * get a menu of actions this plug-in provides.
@@ -73,7 +73,7 @@ public interface SHTMLPlugin {
      *
      * @return the plug-in menu
      */
-    public JMenuItem getPluginMenu();
+    JMenuItem getPluginMenu();
 
     /**
      * get a menu item providing documentation about this
@@ -85,7 +85,7 @@ public interface SHTMLPlugin {
      *
      * @return a menu item with help for this plug-in
      */
-    public JMenuItem getHelpMenu();
+    JMenuItem getHelpMenu();
 
     /**
      * get the location the component returned by getDockComponent()
@@ -95,7 +95,7 @@ public interface SHTMLPlugin {
      * DOCK_LOCATION.LEFT, DOCK_LOCATION_RIGHT or DOCK_LOCATION_NONE, if the
      * component shall not dock.
      */
-    public int getDockLocation();
+    int getDockLocation();
 
     /**
      * set the location the component returned by getDockComponent()
@@ -105,7 +105,7 @@ public interface SHTMLPlugin {
      * DOCK_LOCATION.LEFT, DOCK_LOCATION_RIGHT or DOCK_LOCATION_NONE, if the
      * component shall not dock.
      */
-    public void setDockLocation(int location);
+    void setDockLocation(int location);
 
     /**
      * get the component that this plug-in produces, if any
@@ -113,35 +113,35 @@ public interface SHTMLPlugin {
      * @return the component produced by this plug-in, or null if none
      * is produced
      */
-    public JComponent getComponent();
+    JComponent getComponent();
 
     /**
      * get the status of the plug-in
      *
      * @return true, if activated, false if not
      */
-    public boolean isActive();
+    boolean isActive();
 
     /**
      * set status of plug-in
      *
      * @param isActive  indicates whether or not the plug-in shall be activated
      */
-    public void setStatus(boolean isActive);
+    void setStatus(boolean isActive);
 
     /**
      * set the owner of this plug-in
      *
      * @param owner  the main frame of the instance of SimplyHTML creating the plug-in
      */
-    public void setOwner(SHTMLPanelImpl owner);
+    void setOwner(SHTMLPanelImpl owner);
 
     /**
      * get the owner of this plug-in
      *
      * @return   the main frame of the instance of SimplyHTML that created the plug-in
      */
-    public SHTMLPanelImpl getOwner();
+    SHTMLPanelImpl getOwner();
 
     /**
      * get a string from the resource bundle of the owner of this plug-in
@@ -150,7 +150,7 @@ public interface SHTMLPlugin {
      *
      * @return the string with the given name or null, if none is found
      */
-    public String getOwnerResString(String nm);
+    String getOwnerResString(String nm);
 
     /**
      * get an action from the resource bundle of the owner of this plug-in
@@ -159,7 +159,7 @@ public interface SHTMLPlugin {
      *
      * @return the action with the given name or null, if none is found
      */
-    public Action getOwnerAction(String cmd);
+    Action getOwnerAction(String cmd);
 
     /**
      * init the plug-in
@@ -171,9 +171,9 @@ public interface SHTMLPlugin {
      * @param helpMenuId  the id of the help menu for this plug-in in the
      * TextResources, or null if no help menu is to be created
      */
-    public void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId, String helpMenuId);
+    void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId, String helpMenuId);
 
-    public void initHelpMenu();
+    void initHelpMenu();
 
-    public void showInitialInfo();
+    void showInitialInfo();
 }

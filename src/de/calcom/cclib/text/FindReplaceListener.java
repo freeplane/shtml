@@ -48,7 +48,7 @@ public interface FindReplaceListener extends EventListener {
      *
      * @param  e  the object having details for the event
      */
-    public void getNextDocument(FindReplaceEvent e);
+    void getNextDocument(FindReplaceEvent e);
 
     /**
      * this events gets fired, when a FindReplaceDialog has initiated
@@ -57,7 +57,7 @@ public interface FindReplaceListener extends EventListener {
      *
      * @param  e  the object having details for the event
      */
-    public void getFirstDocument(FindReplaceEvent e);
+    void getFirstDocument(FindReplaceEvent e);
 
     /**
      * this event gets fired when a FindReplaceDialog has finalized its
@@ -65,5 +65,5 @@ public interface FindReplaceListener extends EventListener {
      *
      * @param  e  the object having details for the event
      */
-    public void findReplaceTerminated(FindReplaceEvent e);
+    void findReplaceTerminated(FindReplaceEvent e);
 }

@@ -191,7 +191,7 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
         helpPanel.add(docPanel, BorderLayout.CENTER);
         // get content pane of DialogShell to add components to
         final Container contentPane = super.getContentPane();
-        ((JComponent) contentPane).setPreferredSize(new Dimension(600, 500));
+        contentPane.setPreferredSize(new Dimension(600, 500));
         contentPane.add(helpPanel, BorderLayout.CENTER);
         // add help button
         // cause optimal placement of all elements
