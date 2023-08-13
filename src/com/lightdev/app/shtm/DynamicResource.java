@@ -179,7 +179,7 @@ class DynamicResource {
             }
         }
         menu.addMenuListener(new DynamicMenuListener());
-        /**
+        /*
          * store the menu in the menus hashtable for possible later use
          */
         menus.put(key, menu);
@@ -229,7 +229,7 @@ class DynamicResource {
      * @return the created menu item
      */
     public JMenuItem createMenuItem(final UIResources resources, final String cmd) {
-        /**
+        /*
          * create a new menu item with the appropriate label from the
          * resource file. This label later is set from the action this
          * menu item is associated to (see below).
@@ -237,7 +237,7 @@ class DynamicResource {
         JMenuItem mi;
         mi = new JMenuItem();
         mi.setActionCommand(cmd);
-        /**
+        /*
          * connect action and menu item with appropriate listeners
          */
         final Action a = getAction(cmd);
@@ -246,19 +246,19 @@ class DynamicResource {
             if (aKey != null) {
                 mi.setAccelerator((KeyStroke) aKey);
             }
-            /**
+            /*
              * add Action 'a' as the listener to action events
              * fired from this menu, i.e. execute action 'a' with
              * menu item 'mi'
              */
             mi.addActionListener(a);
-            /**
+            /*
              * cause an instance of inner class ActionChangeListener
              * to listen to property changes of Action 'a' and to apply
              * changed properties of Action 'a' to menu item 'mi'
              */
             a.addPropertyChangeListener(createActionChangeListener(mi));
-            /**
+            /*
              * if the action has an image,
              * associate it with the menu item
              */
@@ -271,7 +271,7 @@ class DynamicResource {
             if(name == null)
             	name = Util.getResourceString(resources, cmd + labelSuffix);
 			mi.setText(name);
-            /**
+            /*
              * initially set the enabled state of the menu item
              * according to its action's enabled state
              */
@@ -281,7 +281,7 @@ class DynamicResource {
         	mi.setText(Util.getResourceString(resources, cmd + labelSuffix));
             mi.setEnabled(false);
         }
-        /**
+        /*
          * store the menu item in the menuItems hashtable for possible later use
          */
         menuItems.put(cmd, mi);
@@ -292,7 +292,7 @@ class DynamicResource {
      * get a string from the resources file
      *
      * @param resources  the TextResources to get the string from
-     * @param nm  the key of the string
+     * @param key the key of the string
      * @return the string for the given key or null if not found
      */
     static public String getResourceString(final UIResources resources, final String key) {
@@ -307,11 +307,9 @@ class DynamicResource {
 
     /**
      * listen to menu select events for proper updating of menu items
-     *
      * whenever a menu is selected, its menu items are iterated and the
      * update method of the item's action is called causing
      * the menu item to reflect the correct enabled state.
-     *
      * As each menu item is connected with a PropertyChangeListener
      * listening to property changes on it'Saction, the menu item is
      * updated by the PropertyChangeListener whenever the enabledState
@@ -369,11 +367,9 @@ class DynamicResource {
 
     /**
      * associate a menu item to an action.
-     *
      * When registering this
      * action listener with an action, it gets informed by
      * property changes of that particular action.
-     *
      * By passing a menu item to the constructor of ActionChangedListener,
      * an instance of ActionChangedListener 'remembers' the menu item
      * its property are associated to.
@@ -472,7 +468,7 @@ class DynamicResource {
         final JToolBar toolBar = new JToolBar();
         toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
         for (int i = 0; i < itemKeys.length; i++) {
-            /** special handling for separators */
+            /* special handling for separators */
             if (itemKeys[i].equals(menuSeparatorKey)) {
                 separator = new JSeparator(JSeparator.VERTICAL);
                 toolBar.add(separator);

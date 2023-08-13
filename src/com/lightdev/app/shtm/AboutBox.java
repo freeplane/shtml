@@ -76,7 +76,6 @@ class AboutBox extends JDialog implements ActionListener {
      * construct the dialog contents
      */
     private void constructFrame() {
-        /** initialize dialog components */
         final Container contentPane = getContentPane();
         final JPanel infoPane = new JPanel();
         final JPanel imagePane = new JPanel();
@@ -100,7 +99,7 @@ class AboutBox extends JDialog implements ActionListener {
         imagePane.setLayout(new FlowLayout());
         imagePane.add(imageLabel);
         imagePane.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-        /**
+        /*
          * textPane is the panel where all the application infos are shown.
          * Infos are shown in a one columns grid of labels, each on one row.
          */
@@ -110,14 +109,14 @@ class AboutBox extends JDialog implements ActionListener {
         textPane.add(appStageLabel);
         textPane.add(appCopyrightLabel);
         textPane.add(appHomepageLabel);
-        /**
+        /*
          * infoPane shows the application image and the application info text
          * in a one row, two column grid.
          */
         infoPane.setLayout(new GridLayout(1, 2, 5, 5));
         infoPane.add(imagePane);
         infoPane.add(textPane);
-        /**
+        /*
          * northPane is a helper pane to show application image and application
          * info text left aligned in the upper left corner of the dialog.
          */
@@ -127,7 +126,7 @@ class AboutBox extends JDialog implements ActionListener {
         /* panel for showing the close button at the dialog bottom */
         buttonPane.setLayout(new FlowLayout());
         buttonPane.add(closeButton);
-        /**
+        /*
          * now put together all parts of above application info and combine them
          * with license information
          */

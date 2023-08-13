@@ -57,9 +57,8 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
      * @param names  the attributes to associate with items
      *        (in the same order)
      * @param key  the CSS attribute key this component represents
-     * @param htmlKey  the HTL attribute key this component represents
      *
-     * @see getValue
+     * @see #getValue
      */
     public AttributeComboBox(final String[] items, final String[] names, final Object key) {
         super(items);

@@ -163,7 +163,6 @@ public interface SHTMLPlugin {
 
     /**
      * init the plug-in
-     *
      * this is called by the PluginManager directly after instantiating the plug-in
      * @param owner  the owner of this plug-in
      * @param internalName  the internal name this plug-in shall have

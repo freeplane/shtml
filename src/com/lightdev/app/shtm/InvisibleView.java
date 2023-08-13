@@ -27,6 +27,7 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.View;
+import javax.swing.text.BadLocationException;
 
 /**
  * A view to hide HTML tags (e.g. comments)
@@ -73,8 +74,6 @@ class InvisibleView extends View {
      * Determines the maximum span for this view along an
      * axis.
      *
-     * @param axis may be either <code>View.X_AXIS</code> or
-     *		<code>View.Y_AXIS</code>
      * @return  the maximum span the view can be rendered into
      * @see View#getPreferredSpan
      */
@@ -86,8 +85,6 @@ class InvisibleView extends View {
      * Determines the minimum span for this view along an
      * axis.
      *
-     * @param axis may be either <code>View.X_AXIS</code> or
-     *		<code>View.Y_AXIS</code>
      * @return  the minimum span the view can be rendered into
      * @see View#getPreferredSpan
      */
@@ -157,7 +154,7 @@ class InvisibleView extends View {
      * @see View#viewToModel
      */
     public Shape modelToView(final int pos, final Shape a, final Position.Bias b)
-            throws javax.swing.text.BadLocationException {
+            throws BadLocationException {
         return new Rectangle(0, 0);
     }
 

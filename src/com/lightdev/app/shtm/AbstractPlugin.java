@@ -77,7 +77,6 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
 
     /**
      * init the plug-in
-     *
      * this is called by the PluginManager directly after instantiating the plug-in
      */
     public void initPlugin(final SHTMLPanelImpl owner) {

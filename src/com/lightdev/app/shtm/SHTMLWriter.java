@@ -233,7 +233,7 @@ public class SHTMLWriter extends HTMLWriter {
     /**
      * invoke HTML creation for all children of a given element.
      *
-     * @param elem  the element which children are to be written as HTML
+     * @param parentElement  the element which children are to be written as HTML
      */
     public void writeChildElements(final Element parentElement) throws IOException, BadLocationException {
         Element childElement; //Not necessarily a paragraph element.
