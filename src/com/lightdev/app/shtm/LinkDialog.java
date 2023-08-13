@@ -124,7 +124,7 @@ class LinkDialog extends DialogShell implements ActionListener {
         super(parent, title, helpTopicId);
         // save document for later use
         this.editorPane = editorPane;
-        doc = editorPane.getSHTMLDocument();
+        doc = editorPane.getDocument();
         //this.renderMode = renderMode;
         // layout and constraints to use later on
         final GridBagLayout g = new GridBagLayout();
