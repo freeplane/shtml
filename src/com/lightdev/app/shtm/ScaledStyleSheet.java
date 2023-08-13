@@ -28,9 +28,9 @@ import javax.swing.text.html.StyleSheet;
 
 
 public class ScaledStyleSheet extends StyleSheet{
-	
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 	public Font getFont(AttributeSet a) {
@@ -39,9 +39,10 @@ public class ScaledStyleSheet extends StyleSheet{
 	    return super.getFont(font.getFamily(), font.getStyle(), Math.round(font.getSize2D() * fontScaleFactor));
     }
 
-	public static final float FONT_SCALE_FACTOR;
+	/* Keep this field non final because its value is changed from Freeplane code */
+	public static float FONT_SCALE_FACTOR;
 	static {
-		float factor = 1f; 
+		float factor = 1f;
 		try {
 	        factor = Toolkit.getDefaultToolkit().getScreenResolution()  / 72f;
         }
@@ -49,14 +50,14 @@ public class ScaledStyleSheet extends StyleSheet{
         }
 		FONT_SCALE_FACTOR = factor;
 	}
-	
+
 	private float getFontScaleFactor(AttributeSet a) {
 		final Object attribute = a.getAttribute(CSS.Attribute.FONT_SIZE);
 		if(attribute == null)
 			return FONT_SCALE_FACTOR;
 		final String fontSize = attribute.toString();
 		final int fsLength = fontSize.length();
-		if(fsLength <= 1 
+		if(fsLength <= 1
 				|| Character.isDigit(fontSize.charAt(fsLength-1))
 				|| fontSize.endsWith("pt"))
 			return FONT_SCALE_FACTOR;
