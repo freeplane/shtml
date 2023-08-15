@@ -18,7 +18,6 @@
  */
 package com.lightdev.app.shtm;
 
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -239,7 +238,7 @@ class CombinedAttribute {
     private void copyValues(final String[] v) {
         switch (v.length) {
             case 1:
-                Arrays.fill(values, v[0]);
+                values[0] = v[0];
                 break;
             case 2:
                 values[ATTR_TOP] = v[ATTR_TOP];
