@@ -41,9 +41,9 @@ import javax.swing.text.BadLocationException;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
-class InvisibleView extends View {
+public class InvisibleView extends View {
     /** indicates whether or not this view is to be shown in its component */
     boolean isVisible = false;
 
@@ -177,7 +177,7 @@ class InvisibleView extends View {
     public void setParent(final View parent) {
         if (parent != null) {
             final Container host = parent.getContainer();
-            if (host != null) {
+            if (host instanceof JTextComponent) {
                 isVisible = ((JTextComponent) host).isEditable();
             }
         }
