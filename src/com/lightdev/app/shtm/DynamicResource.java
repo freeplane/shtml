@@ -443,8 +443,7 @@ class DynamicResource {
     static public URL getResource(final UIResources resources, final String key) {
         final String name = Util.getResourceString(resources, key);
         if (name != null/* && !name.endsWith(IMAGE_EMPTY)*/) {
-            final URL url = DynamicResource.class.getResource(name);
-            return url;
+            return DynamicResource.class.getResource(name);
         }
         return null;
     }

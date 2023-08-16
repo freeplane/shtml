@@ -570,7 +570,7 @@ class SHTMLEditorKitActions {
             }
             newTitle = Util.nameInput(JOptionPane.getFrameForComponent(panel), newTitle, ".*", "docTitleTitle",
                 "docTitleQuery");
-            if (newTitle != null && newTitle.length() > 0) {
+            if (newTitle != null && !newTitle.isEmpty()) {
                 panel.getSHTMLDocument().setDocumentTitle(newTitle);
             }
         }
@@ -715,8 +715,7 @@ class SHTMLEditorKitActions {
 			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
 			hiddenColorPanel.setValue(panel.getMaxAttributes(editorPane), cssAttributeName);
 			hiddenColorPanel.actionPerformed(null); // show the color chooser
-			final AttributeSet color = hiddenColorPanel.getValue(cssAttributeName);
-			return color;
+            return hiddenColorPanel.getValue(cssAttributeName);
 		}
 
         public void update() {
@@ -787,8 +786,7 @@ class SHTMLEditorKitActions {
 			    0.114 * (b * b)
 			    );
 
-			boolean isDark = brightness <= 127.5;
-			return isDark;
+            return brightness <= 127.5;
 		}
 
 		public void update() {
@@ -2293,7 +2291,7 @@ class SHTMLEditorKitActions {
          * @param index the tab index number of the document in the tabbed pane.
          */
         public void closeDocument(final int index, final ActionEvent ae, final boolean ignoreChanges) {
-            exitApp = ae.getActionCommand().indexOf(SHTMLPanelImpl.exitAction) > -1;
+            exitApp = ae.getActionCommand().contains(SHTMLPanelImpl.exitAction);
             final DocumentPane dp = (DocumentPane) panel.getTabbedPaneForDocuments().getComponentAt(index);
             if (!dp.saveInProgress()) { // if no save is going on and..
                 if (ignoreChanges) {
@@ -2546,7 +2544,7 @@ class SHTMLEditorKitActions {
             filter.setDescription(Util.getResourceString("htmlFileDesc"));
             chooser.setFileFilter(filter); // apply the file filter
             final String lastFileName = prefs.get(SHTMLPanelImpl.FILE_LAST_OPEN, "");
-            if (lastFileName.length() > 0) {
+            if (!lastFileName.isEmpty()) {
                 chooser.setCurrentDirectory(new File(lastFileName).getParentFile());
             }
             final int returnVal = // ..and show the file chooser
@@ -2764,7 +2762,7 @@ class SHTMLEditorKitActions {
             filter.setDescription(Util.getResourceString("htmlFileDesc"));
             chooser.setFileFilter(filter);
             final String lastSaveFileName = prefs.get(SHTMLPanelImpl.FILE_LAST_SAVE, "");
-            if (lastSaveFileName.length() > 0) {
+            if (!lastSaveFileName.isEmpty()) {
                 chooser.setCurrentDirectory(new File(lastSaveFileName).getParentFile());
             }
             final URL sourceUrl = panel.getDocumentPane().getSource();
@@ -2776,7 +2774,7 @@ class SHTMLEditorKitActions {
                 fName = panel.getDocumentPane().getDocumentName();
                 fName = Util.removeChar(fName, ' ');
             }
-            if (fName.indexOf(Util.CLASS_SEPARATOR) < 0) {
+            if (!fName.contains(Util.CLASS_SEPARATOR)) {
                 chooser.setSelectedFile(new File(fName + ".htm"));
             }
             else {

@@ -238,9 +238,7 @@ class CombinedAttribute {
     private void copyValues(final String[] v) {
         switch (v.length) {
             case 1:
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = v[0];
-                }
+                values[0] = v[0];
                 break;
             case 2:
                 values[ATTR_TOP] = v[ATTR_TOP];
@@ -255,9 +253,7 @@ class CombinedAttribute {
                 values[ATTR_LEFT] = v[ATTR_RIGHT];
                 break;
             case 4:
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = v[i];
-                }
+                System.arraycopy(v, 0, values, 0, values.length);
                 break;
         }
     }

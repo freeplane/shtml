@@ -162,7 +162,7 @@ class PluginManager {
     private void findPlugins(final String pluginPath) {
         final String appPath = Util.getClassFilePath(this.getClass());
         String filePath;
-        if (appPath.indexOf(":") < 0) {
+        if (!appPath.contains(":")) {
             filePath = "/" + appPath;
         }
         else {

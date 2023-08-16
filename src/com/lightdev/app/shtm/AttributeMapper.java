@@ -92,7 +92,7 @@ class AttributeMapper extends SimpleAttributeSet {
                 addAttribute(CSS.Attribute.FONT_FAMILY, "SansSerif, Sans-Serif");
                 //System.out.println("mapToHTMLAttributes SansSerif, Sans-Serif");
             }
-            else if (cssFontFamily.toString().indexOf("Monospaced") > -1) {
+            else if (cssFontFamily.toString().contains("Monospaced")) {
                 addAttribute(CSS.Attribute.FONT_FAMILY, "Monospace, Monospaced");
             }
         }
@@ -104,19 +104,19 @@ class AttributeMapper extends SimpleAttributeSet {
         if (htmlFontFace != null) {
             if (cssFontFamily != null) {
                 removeAttribute(HTML.Attribute.FACE);
-                if (cssFontFamily.toString().indexOf("Sans-Serif") > -1) {
+                if (cssFontFamily.toString().contains("Sans-Serif")) {
                     Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
                 }
-                else if (cssFontFamily.toString().indexOf("Monospace") > -1) {
+                else if (cssFontFamily.toString().contains("Monospace")) {
                     Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
                 }
             }
             else {
                 removeAttribute(HTML.Attribute.FACE);
-                if (htmlFontFace.toString().indexOf("Sans-Serif") > -1) {
+                if (htmlFontFace.toString().contains("Sans-Serif")) {
                     Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
                 }
-                else if (htmlFontFace.toString().indexOf("Monospace") > -1) {
+                else if (htmlFontFace.toString().contains("Monospace")) {
                     Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
                 }
                 else {
@@ -126,10 +126,10 @@ class AttributeMapper extends SimpleAttributeSet {
         }
         else {
             if (cssFontFamily != null) {
-                if (cssFontFamily.toString().indexOf("Sans-Serif") > -1) {
+                if (cssFontFamily.toString().contains("Sans-Serif")) {
                     Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "SansSerif");
                 }
-                else if (cssFontFamily.toString().indexOf("Monospace") > -1) {
+                else if (cssFontFamily.toString().contains("Monospace")) {
                     Util.styleSheet().addCSSAttribute(this, CSS.Attribute.FONT_FAMILY, "Monospaced");
                 }
             }

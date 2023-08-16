@@ -172,16 +172,14 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
                     //System.out.println("AbstractPlugin plLoader != null, resources=" + resources);
                 }
                 else {
-                    final InternalUiResources instance = new InternalUiResources(ResourceBundle.getBundle(this
+                    textResources = new InternalUiResources(ResourceBundle.getBundle(this
                         .getClass().getName(), Locale.getDefault()));
-                    textResources = instance;
                     //System.out.println("AbstractPlugin plLoader == null, resources=" + resources);
                 }
             }
             else {
-                final InternalUiResources instance = new InternalUiResources(ResourceBundle.getBundle(this.getClass()
+                textResources = new InternalUiResources(ResourceBundle.getBundle(this.getClass()
                     .getName(), Locale.getDefault()));
-                textResources = instance;
                 //System.out.println("AbstractPlugin pluginManager = null, resources=" + resources);
             }
             active = prefs.getBoolean(internalName + PREFSID_PLUGIN_ACTIVE, true);

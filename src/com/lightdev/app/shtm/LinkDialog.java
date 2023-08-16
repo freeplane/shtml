@@ -496,7 +496,7 @@ class LinkDialog extends DialogShell implements ActionListener {
      * transform a given protocol to be shown in the correct notation
      */
     private String transformProtocol(final String protName) {
-        final StringBuffer prot = new StringBuffer(protName);
+        final StringBuilder prot = new StringBuilder(protName);
         if (protName.equalsIgnoreCase(LINK_TYPE_MAILTO_KEY) || protName.equalsIgnoreCase(LINK_TYPE_NEWS_KEY)) {
             prot.append(Util.PROTOCOL_SEPARATOR);
         }
@@ -612,12 +612,12 @@ class LinkDialog extends DialogShell implements ActionListener {
      * @return the object this link refers to
      */
     public String getHref() {
-        final StringBuffer href = new StringBuffer();
+        final StringBuilder href = new StringBuilder();
         final String protocol = getProtocol();
         final String linkAddressText = linkAddress.getText();
         final String linkAnchorText = linkAnchor.getText();
-        if ((linkAddressText == null || linkAddressText.length() < 1)
-                && (linkAnchorText != null && linkAnchorText.length() > 0)) {
+        if ((linkAddressText == null || linkAddressText.isEmpty())
+                && (linkAnchorText != null && !linkAnchorText.isEmpty())) {
             // link to an anchor inside this document
             href.append(Util.ANCHOR_SEPARATOR);
             href.append(linkAnchorText);
@@ -628,7 +628,7 @@ class LinkDialog extends DialogShell implements ActionListener {
             }
             href.append(getLinkAddress());
             final String anchor = linkAnchor.getText();
-            if (anchor.length() > 0) {
+            if (!anchor.isEmpty()) {
                 href.append(Util.ANCHOR_SEPARATOR);
                 href.append(anchor);
             }
@@ -789,7 +789,7 @@ class LinkDialog extends DialogShell implements ActionListener {
             AnchorDialog anchorDialog;
             final File file = getLinkedFile();
             final String linkAddrText = linkAddress.getText();
-            if (linkAddrText == null || linkAddrText.length() < 1) {
+            if (linkAddrText == null || linkAddrText.isEmpty()) {
                 anchorDialog = new AnchorDialog(this, Util.getResourceString("anchorDialogTitle"), doc);
             }
             else {

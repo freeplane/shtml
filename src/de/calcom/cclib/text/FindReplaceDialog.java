@@ -331,7 +331,7 @@ public class FindReplaceDialog extends JDialog {
     private void jbtnFindNext_actionPerformed(final ActionEvent e) {
         operation = OP_FIND;
         jbtnReplace.setEnabled(false);
-        if (mode == MODE_PROJECT && jcbProject.isSelected() && listeners.size() > 0 && !findInProgress) {
+        if (mode == MODE_PROJECT && jcbProject.isSelected() && !listeners.isEmpty() && !findInProgress) {
             fireGetFirstDocument();
         }
         else {
@@ -347,7 +347,7 @@ public class FindReplaceDialog extends JDialog {
         operation = OP_REPLACE;
         replaceChoice = RO_YES;
         setVisible(false);
-        if (mode == MODE_PROJECT && jcbProject.isSelected() && listeners.size() > 0 && !findInProgress) {
+        if (mode == MODE_PROJECT && jcbProject.isSelected() && !listeners.isEmpty() && !findInProgress) {
             fireGetFirstDocument();
         }
         else {
@@ -536,7 +536,7 @@ public class FindReplaceDialog extends JDialog {
      */
     private void find() {
         if (!doFind()) {
-            if (mode == MODE_PROJECT && jcbProject.isSelected() && listeners.size() > 0) {
+            if (mode == MODE_PROJECT && jcbProject.isSelected() && !listeners.isEmpty()) {
                 fireGetNextDocument();
             }
             else {
@@ -615,7 +615,7 @@ public class FindReplaceDialog extends JDialog {
      */
     private int findNext() {
     	// avoid endless loop due to "" always being found
-    	if (searchTerm.length() == 0)
+    	if (searchTerm.isEmpty())
     		return -1;
     	
         int start = -1; // -1 means not found.
@@ -681,7 +681,7 @@ public class FindReplaceDialog extends JDialog {
                     break;
             }
         }
-        if (mode == MODE_PROJECT && jcbProject.isSelected() && listeners.size() > 0) {
+        if (mode == MODE_PROJECT && jcbProject.isSelected() && !listeners.isEmpty()) {
             switch (replaceChoice) {
                 case RO_YES:
                 case RO_NO:
@@ -812,7 +812,7 @@ public class FindReplaceDialog extends JDialog {
 
     /* ----------- Helper methods end ------- */
     /** GUI builder init */
-    private void jbInit() throws Exception {
+    private void jbInit() {
         final KeyListener escapeKeyListender = new KeyAdapter() {
             public void keyPressed(final KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -1031,7 +1031,7 @@ public class FindReplaceDialog extends JDialog {
     public static synchronized void rememberSearchTerm(final String searchTerm, final JComboBox searchTermCombo)
     {
     	//System.out.format("rememberSearchTerm(%s)\n", searchTerm);
-    	if (searchTerm.equals(""))
+    	if (searchTerm.isEmpty())
     		return;
     	
     	MutableComboBoxModel searchTermComboModel = (MutableComboBoxModel)searchTermCombo.getModel();
@@ -1050,7 +1050,7 @@ public class FindReplaceDialog extends JDialog {
     	searchTermCombo.setSelectedItem(searchTerm);
     }
     
-    private final static List<String> searchTermHistory = new LinkedList<String>();
+    private final static List<String> searchTermHistory = new LinkedList<>();
     private final static AtomicBoolean matchCaseSetting = new AtomicBoolean(false);
     private final static AtomicBoolean matchApproxSetting = new AtomicBoolean(false);
 }

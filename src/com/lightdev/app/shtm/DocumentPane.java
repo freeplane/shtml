@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +30,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.Vector;
@@ -343,11 +343,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * The desired name and location for the save need then to be set using method
      * setSource prior to a call to this method
      *
-     * @throws DocNameMissingException to ensure the caller gets notified
-     *        that a save did not take place because of a missing name
-     *        and location
      */
-    public void saveDocument(URL targetUrl) throws DocNameMissingException {
+    public void saveDocument(URL targetUrl) {
         if (!saveInProgress()) {
             saveThread = Thread.currentThread(); // store thread for saveInProgress
             saveSuccessful = false; // if something goes wrong, this remains false
@@ -357,8 +354,8 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                         editorPane.setText(sourceEditorPane.getText());
                     }
                     final SHTMLDocument doc = getDocument();
-                    try (final OutputStream os = new FileOutputStream(targetUrl.getPath());
-                    final OutputStreamWriter osw = new OutputStreamWriter(os)) {
+                    try (final OutputStream os = Files.newOutputStream(new File(targetUrl.getPath()).toPath());
+                         final OutputStreamWriter osw = new OutputStreamWriter(os)) {
                     final SHTMLWriter hw = new SHTMLWriter(osw, doc);
                         hw.write();
                     }
@@ -472,7 +469,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     mergeStyleSheets(loadStyleSheet(styleSheetFile), styles);
                 }
             }
-            try (final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(styleSheetFile))) {
+            try (final OutputStreamWriter osw = new OutputStreamWriter(Files.newOutputStream(styleSheetFile.toPath()))) {
                 CSSWriter cssWriter = new CSSWriter(osw, styles);
                 cssWriter.write();
             }
@@ -500,7 +497,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         for (int i = 0; i < srcNames.size(); i++) {
             elem = srcNames.get(i);
             name = elem.toString();
-            if (destNames.indexOf(elem) < 0) {
+            if (!destNames.contains(elem)) {
                 buf.delete(0, buf.length());
                 cssWriter.writeRule(name, sourceStyleSheet.getStyle(name));
                 destinationStyleSheet.removeStyle(name);
@@ -539,7 +536,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      */
     public String getDocumentName() {
         String theName;
-        if (docName == null || docName.length() < 1) {
+        if (docName == null || docName.isEmpty()) {
             theName = DEFAULT_DOC_NAME + " " + newDocNo;
         }
         else {
