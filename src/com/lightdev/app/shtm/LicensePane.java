@@ -56,8 +56,7 @@ class LicensePane extends JPanel {
         licText.setEditable(false);
         licText.setFont(new Font("Courier", Font.PLAIN, 12));
         /* create a scroll pane as the license text is long */
-        JScrollPane licPane = new JScrollPane();
-        licPane = new JScrollPane(licText);
+        JScrollPane licPane = new JScrollPane(licText);
         licPane.setPreferredSize(d);
         licPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         licPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

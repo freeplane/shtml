@@ -344,7 +344,7 @@ public class Util {
             if (!destFile.exists()) {
                 File destDir;
                 final byte[] buf = new byte[blockSize];
-                int bytesRead = 0;
+                int bytesRead;
                 destDir = new File(destFile.getParent());
                 destDir.mkdirs();
                 try(RandomAccessFile src = new RandomAccessFile(srcFile.getPath(), "r");
@@ -394,7 +394,7 @@ public class Util {
      *      file resides in, whatever applies
      */
     public static String getClassFilePath(final Class cls) {
-        int end = 0;
+        int end;
         String urlStr = null;
         String clsName = cls.getName();
         final int clsNameLen = clsName.length() + CLASS_EXT.length();

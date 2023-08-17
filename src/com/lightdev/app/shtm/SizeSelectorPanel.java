@@ -125,8 +125,8 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
 
     public void setValue(final String val) {
         //System.out.println("SizeSelectorPanel setValue STRING, val=" + val);
-        String unit = null;
-        int newVal = 0;
+        String unit;
+        int newVal;
         //if(attributeKey instanceof CSS.Attribute) {
         //lv = new LengthValue(val);
         final float aVal = Util.getAbsoluteAttrVal(val);
@@ -220,7 +220,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
      * @return the unit string (one of UNIT_PT and UNIT_PERCENT)
      */
     public String getUnit() {
-        String unit = "";
+        String unit;
         if (unitSelector != null) {
             unit = unitSelector.getSelectedItem().toString();
         }

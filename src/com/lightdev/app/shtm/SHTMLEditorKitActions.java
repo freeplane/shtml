@@ -138,7 +138,7 @@ class SHTMLEditorKitActions {
          */
         private final SHTMLPanelImpl panel;
         private boolean ignoreActions = false;
-        private String tag = null;
+        private String tag;
 
         public SetTagAction(final SHTMLPanelImpl panel) {
         	this(panel, null);
@@ -262,7 +262,7 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success = false;
+            boolean success;
             boolean isBold = StyleConstants.isBold(a);
             if (a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
                 final Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
@@ -349,7 +349,7 @@ class SHTMLEditorKitActions {
          * @param  ev  the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent ev) {
-            boolean performTheAction = false;
+            boolean performTheAction;
             if (ev.getSource() instanceof JToggleButton) {
                 final JToggleButton button = (JToggleButton) ev.getSource();
                 performTheAction = button.isSelected();
@@ -640,7 +640,7 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success = false;
+            boolean success;
             boolean isUnderlined = StyleConstants.isUnderline(a);
             if (a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
                 final Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
@@ -1869,7 +1869,7 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success = false;
+            boolean success;
             boolean isItalic = StyleConstants.isItalic(a);
             if (a.isDefined(CSS.Attribute.FONT_STYLE)) {
                 final Object value = a.getAttribute(CSS.Attribute.FONT_STYLE);

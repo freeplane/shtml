@@ -202,7 +202,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
      */
     public void propertyChange(final PropertyChangeEvent e) {
         if (e.getSource() == getEditor() && e.getPropertyName().equals("document")) {
-            getEditor();
             final Document oldDoc = (Document) e.getOldValue();
             final Document newDoc = (Document) e.getNewValue();
             // Reset the DocumentListener
@@ -252,7 +251,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
      */
     public void caretUpdate(final CaretEvent e) {
         if (!updatingSelection) {
-            getEditor();
             final int selBegin = Math.min(e.getDot(), e.getMark());
             final int end = Math.max(e.getDot(), e.getMark());
             final Vector paths = new Vector();

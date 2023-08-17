@@ -47,7 +47,7 @@ import javax.swing.text.html.HTMLWriter;
 public class SHTMLWriter extends HTMLWriter {
     private static final char NB_SPACE = '\u00A0';
 	private Element element;
-    private Writer writer = null;
+    private Writer writer;
     private boolean replaceEntities;
     private boolean inTextArea;
     private int inPreLevel=0;
@@ -78,7 +78,6 @@ public class SHTMLWriter extends HTMLWriter {
 
     @SuppressWarnings("serial")
 	private final static Map<Character, String> HTML_CHAR_ENTITIES = new HashMap<Character, String>(){{
-    	put('<', "&lt;");
     	put('>', "&gt;");
     	put('&', "&amp;");
     	put('"', "&quot;");
@@ -220,7 +219,6 @@ public class SHTMLWriter extends HTMLWriter {
             write();
         }
         catch (final BadLocationException | IOException e) {
-            element = null;
             throw e;
         }
     }

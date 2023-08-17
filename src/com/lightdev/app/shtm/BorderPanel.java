@@ -116,8 +116,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
             bColor.setAttribute(i, bs.getBorderColor());
             bWidth.setAttribute(i, bs.getBorderWidth());
         }
-        String newValue = bColor.getAttribute();
-        newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
+        String newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
         Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);
@@ -134,8 +133,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
                 bColor.setAttribute(i, bs.getBorderColor());
                 bWidth.setAttribute(i, bs.getBorderWidth());
             }
-            String newValue = bColor.getAttribute();
-            newValue = bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
+            String newValue =  bWidth.getAttribute(CombinedAttribute.ATTR_TOP);
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_TOP_WIDTH, newValue);
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_RIGHT_WIDTH, newValue);
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.BORDER_BOTTOM_WIDTH, newValue);

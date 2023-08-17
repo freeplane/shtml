@@ -147,8 +147,8 @@ class ImagePreview extends JComponent implements Scrollable {
     public int getScale() {
         int scale = 100;
         if (pic != null) {
-            int vPct = 100;
-            int hPct = 100;
+            int vPct;
+            int hPct;
             final Dimension ps = getPreferredSize();
             hPct = (int) (ps.getWidth() / ((double) pic.getIconWidth() / (double) 100));
             //System.out.println("ImagePreview getScale ps.getWidth " + ps.getWidth());
@@ -229,7 +229,7 @@ class ImagePreview extends JComponent implements Scrollable {
 
     public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
         //Get the current position.
-        int currentPosition = 0;
+        int currentPosition;
         if (orientation == SwingConstants.HORIZONTAL) {
             currentPosition = visibleRect.x;
         }

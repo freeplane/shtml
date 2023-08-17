@@ -162,7 +162,7 @@ class DynamicResource {
      * @return the created menu
      */
     public JMenu createMenu(final UIResources resources, final String key) {
-        JMenu menu = null;
+        JMenu menu;
         String def = Util.getResourceString(resources, key);
         if (def == null) {
             def = "";
@@ -196,7 +196,7 @@ class DynamicResource {
      * @return the created menu
      */
     public JPopupMenu createPopupMenu(final UIResources resources, final String key) {
-        JPopupMenu menu = null;
+        JPopupMenu menu;
         String def = Util.getResourceString(resources, key);
         if (def == null) {
             def = "";
