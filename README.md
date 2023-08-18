@@ -12,13 +12,6 @@ SimplyHTML is not intended to be used as an editor for web pages. The applicatio
 - Gradle 8.x
 - Java 8
 
-Add the following properties to your default gradle.properties file
-```
-ossrhUsername=user
-ossrhPassword=password
-```
-or add ```  -PossrhUsername=user -PossrhPassword=password``` to your run configurations.
-
 ## Contributing
 Contributions, issues and feature requests are welcome. Add a issue to start the discussion
 
