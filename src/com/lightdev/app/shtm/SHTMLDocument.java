@@ -158,10 +158,7 @@ public class SHTMLDocument extends HTMLDocument {
             Element suffixParagraph = body.getElement(body.getElementCount() - 1);
             suffixLength = getLength() - suffixParagraph.getStartOffset();
         }
-        catch (final BadLocationException e) {
-            e.printStackTrace();
-        }
-        catch (final IOException e) {
+        catch (final BadLocationException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -596,8 +593,7 @@ public class SHTMLDocument extends HTMLDocument {
         for (int i = offset; i < offset + length;) {
             final Element paragraphElement = super.getParagraphElement(i);
             removeParagraphAtributes(paragraphElement);
-            final int endOffset = paragraphElement.getEndOffset();
-            i = endOffset;
+            i = paragraphElement.getEndOffset();
         }
         endCompoundEdit();
     }
@@ -615,10 +611,7 @@ public class SHTMLDocument extends HTMLDocument {
             htmlStartWriter.writeEndTag(paragraphElement.getName());
             setOuterHTML(paragraphElement, writer.toString());
         }
-        catch (final IOException e) {
-            e.printStackTrace();
-        }
-        catch (final BadLocationException e) {
+        catch (final IOException | BadLocationException e) {
             e.printStackTrace();
         }
     }

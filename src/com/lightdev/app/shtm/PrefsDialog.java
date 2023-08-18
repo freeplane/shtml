@@ -71,7 +71,7 @@ class PrefsDialog extends DialogShell implements ActionListener {
     private final JComboBox pasteModeCombo;
     /** the help id for this dialog */
     private static final String helpTopicId = "item167";
-    private final List<SHTMLPrefsChangeListener> prefChangeListeners = new LinkedList<SHTMLPrefsChangeListener>();
+    private final List<SHTMLPrefsChangeListener> prefChangeListeners = new LinkedList<>();
 
     public PrefsDialog(final Frame parent, final String title) {   	
         super(parent, title, helpTopicId);

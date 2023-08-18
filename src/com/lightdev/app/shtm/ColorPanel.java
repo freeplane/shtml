@@ -90,7 +90,7 @@ class ColorPanel extends JPanel implements ActionListener {
         eastPanel.add(colorDisplay);
         eastPanel.add(browseButton);
 
-        if ((title != null) && (title.length() > 0)) {
+        if ((title != null) && (!title.isEmpty())) {
             final JLabel titleLabel = new JLabel(title);
             titleLabel.setFont(UIManager.getFont("TextField.font"));
             add(titleLabel, BorderLayout.WEST);
@@ -205,8 +205,7 @@ class ColorPanel extends JPanel implements ActionListener {
     }
 
     public String getAttr() {
-        final String color = "#" + Integer.toHexString(getColor().getRGB()).substring(2);
-        return color;
+        return "#" + Integer.toHexString(getColor().getRGB()).substring(2);
     }
 
     /**

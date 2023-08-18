@@ -116,8 +116,7 @@ public class SHTMLWriter extends HTMLWriter {
     protected String entity(char c) {
     	if (c < ' ')
     		return "&#x" + Integer.toHexString(c) + ';';
-    	String knownEntity = HTML_CHAR_ENTITIES.get(c);
-		return knownEntity;
+        return HTML_CHAR_ENTITIES.get(c);
     }
 
 	private void replaceMultipleSpacesByNonBreakingSpaces(char[] chars, int start, int length) {
@@ -220,11 +219,7 @@ public class SHTMLWriter extends HTMLWriter {
         try {
             write();
         }
-        catch (final BadLocationException e) {
-            element = null;
-            throw e;
-        }
-        catch (final IOException e) {
+        catch (final BadLocationException | IOException e) {
             element = null;
             throw e;
         }
@@ -259,7 +254,7 @@ public class SHTMLWriter extends HTMLWriter {
             final Object sourceAttributeName = sourceAttributeNames.nextElement();
             if (sourceAttributeName instanceof CSS.Attribute) {
                 // default is to store in a HTML style attribute
-                if (value.length() > 0) {
+                if (!value.isEmpty()) {
                     value += "; ";
                 }
                 value += sourceAttributeName + ": " + source.getAttribute(sourceAttributeName);
@@ -268,7 +263,7 @@ public class SHTMLWriter extends HTMLWriter {
                 target.addAttribute(sourceAttributeName, source.getAttribute(sourceAttributeName));
             }
         }
-        if (value.length() > 0) {
+        if (!value.isEmpty()) {
             target.addAttribute(HTML.Attribute.STYLE, value);
         }
     }
@@ -450,17 +445,17 @@ public class SHTMLWriter extends HTMLWriter {
      * character level attributes.  Examples include
      * &lt;b&gt;, &lt;i&gt;, &lt;font&gt;, and &lt;a&gt;.
      */
-    private final Vector<HTML.Tag> tags = new Vector<HTML.Tag>(10);
+    private final Vector<HTML.Tag> tags = new Vector<>(10);
 
     /**
      * Values for the tags.
      */
-    private final Vector<Object> tagValues = new Vector<Object>(10);
+    private final Vector<Object> tagValues = new Vector<>(10);
 
      /*
      * This is used in closeOutUnwantedEmbeddedTags.
      */
-    private final Vector<HTML.Tag> tagsToRemove = new Vector<HTML.Tag>(10);
+    private final Vector<HTML.Tag> tagsToRemove = new Vector<>(10);
 
     @Override
     protected void writeEmbeddedTags(AttributeSet attr) throws IOException {
@@ -590,7 +585,7 @@ public class SHTMLWriter extends HTMLWriter {
                 to.addAttribute(key, attributeValue);
             }
         }
-        if (value.length() > 0) {
+        if (!value.isEmpty()) {
             if (matchNameAttribute(from, HTML.Tag.CONTENT)) {
                 SimpleAttributeSet styleAttribute = new SimpleAttributeSet();
                 styleAttribute.addAttribute(HTML.Attribute.STYLE, value);

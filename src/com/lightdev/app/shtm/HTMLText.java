@@ -111,7 +111,7 @@ class HTMLText {
      * @param  document  the document to insert into
      * @param  position  the text position to insert at
      */
-    public void pasteHTML(final Document document, int position) throws BadLocationException, IOException {
+    public void pasteHTML(final Document document, int position) throws BadLocationException {
         /*
          * if only text within one paragraph is to be inserted,
          * iterate over copied text chunks and insert each
@@ -272,7 +272,7 @@ class HTMLText {
      * @return string of all chunks in this object
      */
     public String toString() {
-        final StringBuffer text = new StringBuffer();
+        final StringBuilder text = new StringBuilder();
         if (stringRepresentation) {
             text.append(plainText);
         }

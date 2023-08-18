@@ -844,7 +844,7 @@ public class Util {
             oldPos = pos + 1;
             pos = fromStr.indexOf(File.separator, oldPos);
         }
-        final StringBuffer relPath = new StringBuffer();
+        final StringBuilder relPath = new StringBuilder();
         if (level > 0) {
             for (int i = 0; i < level; i++) {
                 relPath.append("..");
@@ -904,7 +904,7 @@ public class Util {
      * @return a string copy of src with all occurrences of c removed
      */
     public static String removeChar(final String src, final char c) {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         int start = 0;
         int pos = src.indexOf(c);
         while ((pos > -1) && (start < src.length())) {

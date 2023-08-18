@@ -102,7 +102,7 @@ class HTMLTextSelection implements Transferable {
      * @exception UnsupportedFlavorException if the requested data flavor is
      *              not supported.
      */
-    public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+    public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException {
         if (flavor.equals(flavors[HTML_TEXT])) {
             return data;
         }

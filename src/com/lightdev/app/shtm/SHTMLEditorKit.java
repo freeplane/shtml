@@ -257,7 +257,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
                         spanAttributes.removeAttribute(entryKey);
                 }
             }
-            final int last = end < endOffset ? end : endOffset;
+            final int last = Math.min(end, endOffset);
             try {
                 doc.setCharacterAttributes(i, last - i, sasText, true);
             }

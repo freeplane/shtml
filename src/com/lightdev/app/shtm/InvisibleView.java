@@ -153,8 +153,7 @@ public class InvisibleView extends View {
      *		legal <code>Position.Bias</code> values listed above
      * @see View#viewToModel
      */
-    public Shape modelToView(final int pos, final Shape a, final Position.Bias b)
-            throws BadLocationException {
+    public Shape modelToView(final int pos, final Shape a, final Position.Bias b) {
         return new Rectangle(0, 0);
     }
 

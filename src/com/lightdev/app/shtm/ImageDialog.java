@@ -293,10 +293,10 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         imgFileList.setSelectedValue(new File(fName).getName(), true);
         preview.setImage(new ImageIcon(fName));
         try {
-            if (w != null && w.length() > 0) {
+            if (w != null && !w.isEmpty()) {
                 preview.setPreviewWidth(Integer.parseInt(w));
             }
-            if (h != null && h.length() > 0) {
+            if (h != null && !h.isEmpty()) {
                 preview.setPreviewHeight(Integer.parseInt(h));
             }
         }
@@ -332,7 +332,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * @return the value of the SRC attribute of an image tag
      */
     public String getImageSrc() {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         final Object value = imgFileList.getSelectedValue();
         if (value != null) {
             buf.append(doc.getImageDirectoryName());

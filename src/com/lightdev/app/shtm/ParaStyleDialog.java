@@ -492,7 +492,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      */
     private boolean styleNameExists(final String styleName) {
         final Vector styleNames = Util.getStyleNamesForTag(styles, getContentType() /*HTML.Tag.P.toString()*/);
-        return (styleNames.indexOf(styleName) > -1);
+        return (styleNames.contains(styleName));
     }
 
     /**
