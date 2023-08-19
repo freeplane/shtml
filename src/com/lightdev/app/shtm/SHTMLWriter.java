@@ -96,6 +96,10 @@ public class SHTMLWriter extends HTMLWriter {
     	if(inPreLevel == 0)
     	    replaceMultipleSpacesByNonBreakingSpaces(chars, start, length);
 
+        outputEscaped(chars, start, length);
+    }
+
+    private void outputEscaped(char[] chars, int start, int length) throws IOException {
         int last = start;
         length += start;
         for (int counter = start; counter < length; counter++) {
@@ -296,7 +300,8 @@ public class SHTMLWriter extends HTMLWriter {
                     || attributeName == HTML.Attribute.ENDTAG) {
                 continue;
             }
-            write(" " + attributeName + "=\"" + convertedAttributeSet.getAttribute(attributeName) + "\"");
+            Object attributeValue = convertedAttributeSet.getAttribute(attributeName);
+            writeAttribute(attributeName, attributeValue);
         }
     }
 
@@ -307,17 +312,36 @@ public class SHTMLWriter extends HTMLWriter {
 
         Enumeration<?> names = attr.getAttributeNames();
         while (names.hasMoreElements()) {
-            Object name = names.nextElement();
-            if (name instanceof HTML.Tag ||
-                name instanceof StyleConstants ||
-                name == HTML.Attribute.ENDTAG) {
+            Object attributeName = names.nextElement();
+            if (attributeName instanceof HTML.Tag ||
+                attributeName instanceof StyleConstants ||
+                attributeName == HTML.Attribute.ENDTAG) {
                 continue;
             }
-            write(" " + name + "=\"" + attr.getAttribute(name) + "\"");
+            Object attributeValue =  attr.getAttribute(attributeName);
+            writeAttribute(attributeName, attributeValue);
         }
     }
 
+    private void writeAttribute(Object attributeName, Object attributeValue) throws IOException {
+        write(" " + attributeName + "=\"");
+        writeEscaped(String.valueOf(attributeValue));
+        write("\"");
+    }
 
+
+
+    private void writeEscaped(String content) throws IOException {
+        int size = content.length();
+        if (tempChars == null || tempChars.length < size) {
+            tempChars = new char[size];
+        }
+        content.getChars(0, size, tempChars, 0);
+        outputEscaped(tempChars, 0, size);
+    }
+
+    /**
+    }
 
     /**
      * write an element and all its children. If a given element is reached,
