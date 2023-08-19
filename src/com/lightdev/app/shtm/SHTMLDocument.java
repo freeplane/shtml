@@ -28,8 +28,11 @@ import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 import javax.swing.event.DocumentEvent;
@@ -359,9 +362,6 @@ public class SHTMLDocument extends HTMLDocument {
         final String source = (String) attributes.getAttribute(HTML.Attribute.SRC);
         if(! copiedExternalImagesSources.includes(source))
             return;
-        int extensionIndex = source.lastIndexOf('.');
-        if(extensionIndex == -1)
-            return;
         try {
             URL sourceUrl = new URL(getBase(), source);
             File imageDirectory = getImageDirectory().getCanonicalFile();
@@ -375,11 +375,17 @@ public class SHTMLDocument extends HTMLDocument {
                     return;
                 }
             }
-            String imageExtension = source.substring(extensionIndex);
+            URLConnection connection = sourceUrl.openConnection();
+            
+            String contentType = connection.getContentType();
+            String imageExtension = getExtensionFromContentType(contentType);
+            if(imageExtension == null)
+            	return;
+
             imageDirectory.mkdirs();
-            File imageCopy = File.createTempFile("image-", imageExtension, imageDirectory);
+            File imageCopy = File.createTempFile(createImageFileNamePrefix(), "." + imageExtension, imageDirectory);
             try(
-                    ReadableByteChannel rbc = Channels.newChannel(sourceUrl.openStream());
+                    ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
                     FileOutputStream fos = new FileOutputStream(imageCopy)){
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                 ((MutableAttributeSet)attributes).addAttribute(HTML.Attribute.SRC, imageDirectory.getName() + '/' + imageCopy.getName());
@@ -392,6 +398,20 @@ public class SHTMLDocument extends HTMLDocument {
         catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd-HHmmssSSS");
+	private static String createImageFileNamePrefix() {
+		LocalDateTime currentTime = LocalDateTime.now();
+        String formattedTime = currentTime.format(TIME_FORMATTER);
+		return "image-" + formattedTime + "-";
+	}
+    
+    private static String getExtensionFromContentType(String contentType) {
+        if (contentType != null && contentType.toLowerCase().startsWith("image/")) {
+            return contentType.substring("image/".length()).toLowerCase();
+        }
+        return null;
     }
 
     /** */
