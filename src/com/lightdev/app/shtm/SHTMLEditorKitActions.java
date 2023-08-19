@@ -138,7 +138,7 @@ class SHTMLEditorKitActions {
          */
         private final SHTMLPanelImpl panel;
         private boolean ignoreActions = false;
-        private String tag;
+        private String tag = null;
 
         public SetTagAction(final SHTMLPanelImpl panel) {
         	this(panel, null);
@@ -262,7 +262,6 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success;
             boolean isBold = StyleConstants.isBold(a);
             if (a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
                 final Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
@@ -276,8 +275,8 @@ class SHTMLEditorKitActions {
             else {
                 putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             }
-            success = true;
-            return success;
+
+            return true;
         }
 
         /**
@@ -349,7 +348,7 @@ class SHTMLEditorKitActions {
          * @param  ev  the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent ev) {
-            boolean performTheAction;
+            boolean performTheAction = false;
             if (ev.getSource() instanceof JToggleButton) {
                 final JToggleButton button = (JToggleButton) ev.getSource();
                 performTheAction = button.isSelected();
@@ -640,7 +639,6 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success;
             boolean isUnderlined = StyleConstants.isUnderline(a);
             if (a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
                 final Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
@@ -655,8 +653,7 @@ class SHTMLEditorKitActions {
             else {
                 putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             }
-            success = true;
-            return success;
+            return true;
         }
 
         /**
@@ -1869,7 +1866,6 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success;
             boolean isItalic = StyleConstants.isItalic(a);
             if (a.isDefined(CSS.Attribute.FONT_STYLE)) {
                 final Object value = a.getAttribute(CSS.Attribute.FONT_STYLE);
@@ -1883,8 +1879,8 @@ class SHTMLEditorKitActions {
             else {
                 putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             }
-            success = true;
-            return success;
+
+            return true;
         }
 
         /**

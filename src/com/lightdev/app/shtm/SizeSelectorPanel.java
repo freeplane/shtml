@@ -125,13 +125,11 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
 
     public void setValue(final String val) {
         //System.out.println("SizeSelectorPanel setValue STRING, val=" + val);
-        String unit;
-        int newVal;
         //if(attributeKey instanceof CSS.Attribute) {
         //lv = new LengthValue(val);
         final float aVal = Util.getAbsoluteAttrVal(val);
         //System.out.println("SizeSelectorPanel aVal=" + aVal);
-        unit = Util.getLastAttrUnit(); //lv.getUnit();
+        String unit = Util.getLastAttrUnit(); //lv.getUnit();
         //System.out.println("SizeSelectorPanel unit=" + unit);
         adjustMinMax(unit);
         if (unitSelector != null) {
@@ -142,7 +140,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
             //System.out.println("SizeSelectorPanel setValue setting label");
             unitName.setText(unit);
         }
-        newVal = (int) aVal; // new Float(lv.getValue(100)).intValue();
+        int newVal = (int) aVal; // new Float(lv.getValue(100)).intValue();
         //System.out.println("SizeSelectorPanel setValue newVal=" + newVal);
         valueSelector.setValue(newVal);
         //}
@@ -220,7 +218,7 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
      * @return the unit string (one of UNIT_PT and UNIT_PERCENT)
      */
     public String getUnit() {
-        String unit;
+        String unit = null;
         if (unitSelector != null) {
             unit = unitSelector.getSelectedItem().toString();
         }

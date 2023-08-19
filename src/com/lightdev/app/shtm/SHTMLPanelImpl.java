@@ -566,7 +566,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         final JMenu hMenu = dynRes.getMenu(helpMenuId);
         final JMenuItem pluginMenu = pi.getPluginMenu();
         final JMenuItem helpMenu = pi.getHelpMenu();
-        JTabbedPane p;
         final Preferences prefs;
         if (pi.isActive()) {
             final JComponent pc = pi.getComponent();
@@ -588,7 +587,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         panelNo = SplitPanel.NORTH;
                         break;
                 }
-                p = splitPanel.getPanel(panelNo);
+                JTabbedPane p = splitPanel.getPanel(panelNo);
                 p.setVisible(true);
                 p.add(pi.getGUIName(), pc);
                 if (((panelNo == SplitPanel.WEST) && splitPanel.getDivLoc(panelNo) < this.getWidth() / 10)

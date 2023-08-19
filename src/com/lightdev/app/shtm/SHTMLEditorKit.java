@@ -242,10 +242,10 @@ public class SHTMLEditorKit extends HTMLEditorKit {
                                                  final int length) {
         // clear all character attributes in selection
         final int end = start + length;
-        SimpleAttributeSet sasText;
+
         for (int i = start; i < end;) {
             final Element characterElement = doc.getCharacterElement(i);
-            sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
+            SimpleAttributeSet sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
             MutableAttributeSet spanAttributes = attributeName != null ? (MutableAttributeSet) sasText.getAttribute(HTML.Tag.SPAN) : null;
             final int endOffset = characterElement.getEndOffset();
             final ArrayList<?> attributeNames = Collections.list(sasText.getAttributeNames());
@@ -269,7 +269,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
 
     public static class SHTMLFactory extends HTMLEditorKit.HTMLFactory implements ViewFactory {
         public View create(final Element elem) {
-            View view;
+            View view = null;
             final Object o = elem.getAttributes().getAttribute(StyleConstants.NameAttribute);
             if (o instanceof HTML.Tag) {
                 final HTML.Tag kind = (HTML.Tag) o;

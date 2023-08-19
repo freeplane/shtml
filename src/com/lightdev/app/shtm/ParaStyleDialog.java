@@ -142,7 +142,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      */
     private ParaStyleDialog(final Frame parent, final String title, final Document doc, final int mode) {
         super(parent, title);
-        JPanel hPanel;
+        JPanel hPanel = null;
         this.mode = mode;
         this.doc = doc;
         // get content pane of DialogShell to add components to
@@ -247,7 +247,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
         cTypes[i++] = new NamedObject(HTML.Tag.H6.toString(), Util.getResourceString("cTagNameHead6"));
         cTypes[i++] = new NamedObject(HTML.Tag.A.toString(), Util.getResourceString("cTagNameLink"));
         cTypes[i++] = new NamedObject(HTML.Tag.UL.toString(), Util.getResourceString("cTagNameUL"));
-        cTypes[i] = new NamedObject(HTML.Tag.OL.toString(), Util.getResourceString("cTagNameOL"));
+        cTypes[i++] = new NamedObject(HTML.Tag.OL.toString(), Util.getResourceString("cTagNameOL"));
     }
 
     /**

@@ -47,7 +47,7 @@ import javax.swing.text.html.HTMLWriter;
 public class SHTMLWriter extends HTMLWriter {
     private static final char NB_SPACE = '\u00A0';
 	private Element element;
-    private Writer writer;
+    private Writer writer = null;
     private boolean replaceEntities;
     private boolean inTextArea;
     private int inPreLevel=0;

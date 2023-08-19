@@ -618,7 +618,7 @@ public class FindReplaceDialog extends JDialog {
     	if (searchTerm.isEmpty())
     		return -1;
     	
-        int start;
+        int start = -1;
         if (jrbUp.isSelected()) {
             if (lastPosition < doc.getLength()) {
                 start = searchText.lastIndexOf(searchTerm, lastPosition - 1);

@@ -461,10 +461,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         private boolean treatTables(final ActionEvent event) {
             final int selectionStart = getSelectionStart();
             final int nextPosition = selectionStart + 1;
-            Element elem;
+
             final SHTMLDocument doc = getDocument();
             // Table cell element at the start of the selection
-            elem = getCurrentTableCell();
+            Element elem = getCurrentTableCell();
             if (elem != null && elem.getEndOffset() == nextPosition) {
                 // Do nothing to avoid deletion of the whole cell.
                 //return;
@@ -1085,7 +1085,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         final Element table = cell.getParentElement().getParentElement();
-        Element srcCell;
         final SimpleAttributeSet set = new SimpleAttributeSet();
         final Object attr = set.getAttribute(CSS.Attribute.WIDTH);
         if (attr != null) {
@@ -1104,6 +1103,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         //SimpleAttributeSet a = new SimpleAttributeSet(set.copyAttributes());
         //int cellIndex = getCellIndex(srcCell);
         //boolean insertFirst = (before && (cellIndex == 0));
+        Element srcCell = null;
         for (int rIndex = 0; rIndex < table.getElementCount(); rIndex++) {
             srcCell = table.getElement(rIndex).getElement(cIndex);
             /*
@@ -1603,7 +1603,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     public void applyCellAttributes(final AttributeSet a, final int range) {
         //System.out.println("SHTMLEditorPane applyCellAttributes a=" + a);
         final Element cell = getCurrentTableCell();
-        int cIndex;
+        int cIndex = 0;
         int rIndex = 0;
         final SHTMLDocument doc = getDocument();
         if (cell != null) {
@@ -2388,7 +2388,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             final Element startElementToBeReplaced = nextElement;
             int nrElementsToBeReplaced = 1;
             int listItemIdx = 0;
-            Element listItemElement;
+            Element listItemElement = null;
             if (nextElement.getStartOffset() < fistParagraphElementStart) {
                 sHTMLwriter.writeStartTag(nextElement);
                 elementIdx++;
@@ -2481,8 +2481,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             int fistParagraphElementStart = firstParagraphElement.getStartOffset();
             int lastParagraphElementEnd = getParagraphElement(selectionEnd).getEndOffset();
             final Element parentElement = getListParent(firstParagraphElement);
-            Element startElementToBeRemoved;
-            int removeCount;
             final SHTMLWriter writer = new SHTMLWriter(getDocument());
             if (fistParagraphElementStart > 0) {
                 final Element before = getParagraphElement(fistParagraphElementStart - 1);
@@ -2510,10 +2508,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     break;
                 }
             }
-            startElementToBeRemoved = next;
-            removeCount = 1;
+            Element startElementToBeRemoved = next;
+            int removeCount = 1;
             int j = 0;
-            Element li;
+            Element li = null;
             if (next.getStartOffset() < fistParagraphElementStart) {
                 i++;
                 writer.writeStartTag(next);
@@ -2709,7 +2707,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 for (int i = 0; i < indexOfSelectionStart - 1; i++) {
                     writer.write(list.getElement(i));
                 }
-                Element tagModel;
+                Element tagModel = null;
                 if (indexOfSelectionStart > 0 && isListElement(list.getElement(indexOfSelectionStart - 1))) {
                     tagModel = list.getElement(indexOfSelectionStart - 1);
                 }
@@ -3385,15 +3383,13 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     }
                     else {
                         final DataFlavor htmlFlavor = getSupportedHtmlFlavor(transferable);
-                        String stringContent;
-                        String htmlContent;
                         if (htmlFlavor != null
                                 && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                            htmlContent = (String) transferable.getTransferData(htmlFlavor);
+                            String htmlContent = (String) transferable.getTransferData(htmlFlavor);
                             if (htmlContent.charAt(0) == 65533) {
                                 return importDataWithoutHtmlFlavor(comp, transferable);
                             }
-                            stringContent = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                            String stringContent = (String) transferable.getTransferData(DataFlavor.stringFlavor);
                             String bodyContent = htmlContent.replaceAll("<!--(?:Start|End)Fragment-->", "");
                             final HTMLText htmlText = new HTMLText(bodyContent, stringContent);
                             doc.copyingExternalImages(

@@ -64,7 +64,7 @@ import javax.swing.filechooser.FileFilter;
 public class ExampleFileFilter extends FileFilter {
     private static final String TYPE_UNKNOWN = "Type Unknown";
     private static final String HIDDEN_FILE = "Hidden File";
-    private Hashtable filters;
+    private Hashtable filters = null;
     private String description = null;
     private String fullDescription = null;
     private boolean useExtensionsInDescription = true;
