@@ -31,6 +31,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 import javax.swing.event.DocumentEvent;
@@ -381,7 +383,7 @@ public class SHTMLDocument extends HTMLDocument {
             	return;
 
             imageDirectory.mkdirs();
-            File imageCopy = File.createTempFile("image-", "." + imageExtension, imageDirectory);
+            File imageCopy = File.createTempFile(createImageFileNamePrefix(), "." + imageExtension, imageDirectory);
             try(
                     ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
                     FileOutputStream fos = new FileOutputStream(imageCopy)){
@@ -397,6 +399,13 @@ public class SHTMLDocument extends HTMLDocument {
             throw new UncheckedIOException(e);
         }
     }
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd-HHmmssSSS");
+	private static String createImageFileNamePrefix() {
+		LocalDateTime currentTime = LocalDateTime.now();
+        String formattedTime = currentTime.format(TIME_FORMATTER);
+		return "image-" + formattedTime + "-";
+	}
     
     private static String getExtensionFromContentType(String contentType) {
         if (contentType != null && contentType.toLowerCase().startsWith("image/")) {
