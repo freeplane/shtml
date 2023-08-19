@@ -566,7 +566,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         final JMenu hMenu = dynRes.getMenu(helpMenuId);
         final JMenuItem pluginMenu = pi.getPluginMenu();
         final JMenuItem helpMenu = pi.getHelpMenu();
-        JTabbedPane p = null;
         final Preferences prefs;
         if (pi.isActive()) {
             final JComponent pc = pi.getComponent();
@@ -588,7 +587,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                         panelNo = SplitPanel.NORTH;
                         break;
                 }
-                p = splitPanel.getPanel(panelNo);
+                JTabbedPane p = splitPanel.getPanel(panelNo);
                 p.setVisible(true);
                 p.add(pi.getGUIName(), pc);
                 if (((panelNo == SplitPanel.WEST) && splitPanel.getDivLoc(panelNo) < this.getWidth() / 10)
@@ -605,7 +604,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 if (menuIcon == null) {
                     final URL url = DynamicResource.getResource(uiResources, emptyIcon);
                     if (url != null) {
-                        menuIcon = new ImageIcon(url);
                         pluginMenu.setIcon(new ImageIcon(url));
                     }
                 }
@@ -618,7 +616,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                     if (menuIcon == null) {
                         final URL url = DynamicResource.getResource(uiResources, emptyIcon);
                         if (url != null) {
-                            menuIcon = new ImageIcon(url);
                             helpMenu.setIcon(new ImageIcon(url));
                         }
                     }

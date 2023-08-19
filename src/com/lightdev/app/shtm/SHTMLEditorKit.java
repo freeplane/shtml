@@ -242,10 +242,10 @@ public class SHTMLEditorKit extends HTMLEditorKit {
                                                  final int length) {
         // clear all character attributes in selection
         final int end = start + length;
-        SimpleAttributeSet sasText = null;
+
         for (int i = start; i < end;) {
             final Element characterElement = doc.getCharacterElement(i);
-            sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
+            SimpleAttributeSet sasText = new SimpleAttributeSet(characterElement.getAttributes().copyAttributes());
             MutableAttributeSet spanAttributes = attributeName != null ? (MutableAttributeSet) sasText.getAttribute(HTML.Tag.SPAN) : null;
             final int endOffset = characterElement.getEndOffset();
             final ArrayList<?> attributeNames = Collections.list(sasText.getAttributeNames());

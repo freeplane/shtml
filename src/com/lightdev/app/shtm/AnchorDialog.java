@@ -223,7 +223,6 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
      * @param doc the document to get anchors from
      */
     private void getAnchors(final Document doc) {
-        HTML.Tag.A.toString();
         Object nameAttr;
         Object link;
         anchorTable.clear();

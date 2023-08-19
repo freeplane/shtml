@@ -262,7 +262,6 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success = false;
             boolean isBold = StyleConstants.isBold(a);
             if (a.isDefined(CSS.Attribute.FONT_WEIGHT)) {
                 final Object value = a.getAttribute(CSS.Attribute.FONT_WEIGHT);
@@ -276,8 +275,8 @@ class SHTMLEditorKitActions {
             else {
                 putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             }
-            success = true;
-            return success;
+
+            return true;
         }
 
         /**
@@ -640,7 +639,6 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success = false;
             boolean isUnderlined = StyleConstants.isUnderline(a);
             if (a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
                 final Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
@@ -655,8 +653,7 @@ class SHTMLEditorKitActions {
             else {
                 putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             }
-            success = true;
-            return success;
+            return true;
         }
 
         /**
@@ -1869,7 +1866,6 @@ class SHTMLEditorKitActions {
          *            false if not
          */
         public boolean setValue(final AttributeSet a) {
-            boolean success = false;
             boolean isItalic = StyleConstants.isItalic(a);
             if (a.isDefined(CSS.Attribute.FONT_STYLE)) {
                 final Object value = a.getAttribute(CSS.Attribute.FONT_STYLE);
@@ -1883,8 +1879,8 @@ class SHTMLEditorKitActions {
             else {
                 putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
             }
-            success = true;
-            return success;
+
+            return true;
         }
 
         /**

@@ -147,14 +147,12 @@ class ImagePreview extends JComponent implements Scrollable {
     public int getScale() {
         int scale = 100;
         if (pic != null) {
-            int vPct = 100;
-            int hPct = 100;
             final Dimension ps = getPreferredSize();
-            hPct = (int) (ps.getWidth() / ((double) pic.getIconWidth() / (double) 100));
+            int hPct = (int) (ps.getWidth() / ((double) pic.getIconWidth() / (double) 100));
             //System.out.println("ImagePreview getScale ps.getWidth " + ps.getWidth());
             //System.out.println("ImagePreview getScale pic.getIconWidth() " + pic.getIconWidth());
             //System.out.println("ImagePreview getScale hPct " + hPct + "\r\n\r\n");
-            vPct = (int) (ps.getHeight() / ((double) pic.getIconHeight() / (double) 100));
+            int vPct = (int) (ps.getHeight() / ((double) pic.getIconHeight() / (double) 100));
             //System.out.println("ImagePreview getScale ps.getHeight() " + ps.getHeight());
             //System.out.println("ImagePreview getScale pic.getIconHeight() " + pic.getIconHeight());
             //System.out.println("ImagePreview getScale vPct " + vPct + "\r\n\r\n");
@@ -229,13 +227,8 @@ class ImagePreview extends JComponent implements Scrollable {
 
     public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
         //Get the current position.
-        int currentPosition = 0;
-        if (orientation == SwingConstants.HORIZONTAL) {
-            currentPosition = visibleRect.x;
-        }
-        else {
-            currentPosition = visibleRect.y;
-        }
+        int currentPosition = orientation == SwingConstants.HORIZONTAL ? visibleRect.x : visibleRect.y;
+
         //Return the number of pixels between currentPosition
         //and the nearest tick mark in the indicated direction.
         if (direction < 0) {

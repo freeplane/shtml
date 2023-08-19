@@ -78,11 +78,10 @@ public class SHTMLWriter extends HTMLWriter {
 
     @SuppressWarnings("serial")
 	private final static Map<Character, String> HTML_CHAR_ENTITIES = new HashMap<Character, String>(){{
-    	put('<', "&lt;");
+	put('<', "&lt;");
     	put('>', "&gt;");
     	put('&', "&amp;");
     	put('"', "&quot;");
-    	put('<', "&lt;");
     	put(NB_SPACE, "&nbsp;");
     }};
 
@@ -224,7 +223,6 @@ public class SHTMLWriter extends HTMLWriter {
             write();
         }
         catch (final BadLocationException | IOException e) {
-            element = null;
             throw e;
         }
     }

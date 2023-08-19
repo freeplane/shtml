@@ -162,13 +162,13 @@ class DynamicResource {
      * @return the created menu
      */
     public JMenu createMenu(final UIResources resources, final String key) {
-        JMenu menu = null;
         String def = Util.getResourceString(resources, key);
         if (def == null) {
             def = "";
         }
         final String[] itemKeys = Util.tokenize(def, " ");
-        menu = new JMenu(Util.getResourceString(resources, key + labelSuffix));
+
+        JMenu menu = new JMenu(Util.getResourceString(resources, key + labelSuffix));
         for (int i = 0; i < itemKeys.length; i++) {
             if (itemKeys[i].equals(menuSeparatorKey)) {
                 menu.addSeparator();
@@ -196,13 +196,13 @@ class DynamicResource {
      * @return the created menu
      */
     public JPopupMenu createPopupMenu(final UIResources resources, final String key) {
-        JPopupMenu menu = null;
         String def = Util.getResourceString(resources, key);
         if (def == null) {
             def = "";
         }
         final String[] itemKeys = Util.tokenize(def, " ");
-        menu = new JPopupMenu();
+
+        JPopupMenu menu = new JPopupMenu();
         for (int i = 0; i < itemKeys.length; i++) {
             if (itemKeys[i].equals(menuSeparatorKey)) {
                 menu.addSeparator();
