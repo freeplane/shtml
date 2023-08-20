@@ -37,7 +37,7 @@ import javax.swing.KeyStroke;
  * 
  */
 class SHTMLMenuBar extends JMenuBar {
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.JMenuBar#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
     public boolean handleKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
@@ -47,7 +47,7 @@ class SHTMLMenuBar extends JMenuBar {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.JMenuBar#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
     public boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {

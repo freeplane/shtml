@@ -99,7 +99,6 @@ class CombinedAttribute {
         // now load attributes into this object
         final Object attr = a.getAttribute(key);
         if (attr != null) {
-            //System.out.println("  construct CombinedAttribute attr=" + attr);
             copyValues(Util.tokenize(attr.toString(), " "));
         }
         else {

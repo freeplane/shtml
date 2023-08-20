@@ -111,7 +111,7 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
         update();
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.JComboBox#fireActionEvent()
      */
     protected void fireActionEvent() {

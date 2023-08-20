@@ -198,7 +198,6 @@ class BorderPanel extends JPanel implements AttributeComponent {
          */
         public void setValue(final CombinedAttribute borderWidths, final CombinedAttribute borderColors) {
             String attr = borderColors.getAttribute(side);
-            //System.out.println("BorderSettings setValue attr='" + attr + "'");
             if (attr != null) {
                 bColor.setValue(attr);
             }

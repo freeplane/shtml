@@ -95,15 +95,6 @@ class PrefsDialog extends DialogShell implements ActionListener {
         Util.addGridBagComponent(appPrefsPanel, pasteModeCombo, g, c, 1, 1, GridBagConstraints.EAST);
         
         // build a panel for preferences related to documents
-        /*
-        JPanel docPrefsPanel = new JPanel(g);
-        Util.addGridBagComponent(docPrefsPanel,
-                                 new JCheckBox(
-                                 FrmMain.dynRes.getResourceString(
-                                 FrmMain.resources, "prfShareDocResourcesLabel")),
-                                 g, c, 0, 1,
-                                 GridBagConstraints.EAST);
-        */
         Util.addGridBagComponent(layoutPanel, appPrefsPanel, g, c, 0, 0, GridBagConstraints.WEST);
         // add option for standard style sheet
         useStdStyleSheet = new JCheckBox(Util.getResourceString("linkDefaultStyleSheetLabel"));
@@ -114,8 +105,6 @@ class PrefsDialog extends DialogShell implements ActionListener {
         // add to content pane of DialogShell
         final Container contentPane = super.getContentPane();
         contentPane.add(layoutPanel, BorderLayout.CENTER);
-        //contentPane.add(appPrefsPanel, BorderLayout.NORTH);
-        //contentPane.add(docPrefsPanel, BorderLayout.CENTER);
         // cause optimal placement of all elements
         pack();
     }

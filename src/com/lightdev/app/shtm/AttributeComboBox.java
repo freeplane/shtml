@@ -98,7 +98,6 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
              correction end: missing list-style-type attribute from style sheet
              */
             else {
-                //System.out.println("AttributeComboBox setValue value=" + valObj);
             	success = setValue(valObj);
             }
         }
@@ -144,12 +143,10 @@ class AttributeComboBox extends JComboBox implements AttributeComponent {
     public AttributeSet getValue() {
         final SimpleAttributeSet a = new SimpleAttributeSet();
         final int value = getSelectedIndex();
-        //System.out.println("AttributeComboBox getValue originalIndex=" + originalIndex + " value=" + value);
         if (originalIndex != value) {
-            //System.out.println("changed " + attributeKey + " originalIndex=" + originalIndex + " value=" + value);
+
             if (attributeKey != null) {
                 Util.styleSheet().addCSSAttribute(a, (CSS.Attribute) attributeKey, names[value]);
-                //a.addAttribute(attributeKey, names[value]);
             }
         }
         return a;

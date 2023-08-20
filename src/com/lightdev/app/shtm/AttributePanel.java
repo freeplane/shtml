@@ -65,12 +65,6 @@ abstract class AttributePanel extends JPanel implements AttributeComponent, Cont
      *            false if not
      */
     public boolean setValue(final AttributeSet a) {
-        /*
-        System.out.println("AttributePanel setValue");
-        de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-        hd.listAttributes(a, 4);
-        System.out.println("\r\n");
-        */
         boolean result = true;
         final Enumeration elements = components.elements();
         AttributeComponent ac;

@@ -296,7 +296,6 @@ class DynamicResource {
      * @return the string for the given key or null if not found
      */
     static public String getResourceString(final UIResources resources, final String key) {
-            //System.out.println("getResourceString nm=" + nm);
             if (resources != null) {
                 return resources.getString(key);
             }
