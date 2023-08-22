@@ -757,7 +757,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     }
 
     /** the event object definition for DocumentPaneEvents */
-    class DocumentPaneEvent extends EventObject {
+    static class DocumentPaneEvent extends EventObject {
         public DocumentPaneEvent(final Object source) {
             super(source);
         }

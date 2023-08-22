@@ -634,7 +634,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
     }
 
-    class PluginInfo implements Runnable {
+    static class PluginInfo implements Runnable {
         final SHTMLPlugin pi;
 
         PluginInfo(final SHTMLPlugin pi) {
@@ -1140,7 +1140,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     * a JComboBox for selecting a font family names
     * from those available in the system.
     */
-    class FontFamilyPicker extends JComboBox implements AttributeComponent {
+    static class FontFamilyPicker extends JComboBox implements AttributeComponent {
         /** switch for the action listener */
         private boolean ignoreActions = false;
 
@@ -1196,7 +1196,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     */
     static final String[] FONT_SIZES = new String[] { "8", "10", "12", "14", "18", "24" };
 
-    class FontSizePicker extends JComboBox implements AttributeComponent {
+    static class FontSizePicker extends JComboBox implements AttributeComponent {
         private boolean ignoreActions = false;
         final private Object key;
 
@@ -1251,7 +1251,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * a listener for property change events on ToggleFontActions
      */
-    private class ToggleActionChangedListener implements PropertyChangeListener {
+    private static class ToggleActionChangedListener implements PropertyChangeListener {
         final JToggleButton button;
 
         ToggleActionChangedListener(final JToggleButton button) {

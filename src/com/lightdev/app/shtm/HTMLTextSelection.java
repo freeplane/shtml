@@ -21,7 +21,6 @@ package com.lightdev.app.shtm;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
 /**
  * A transferable for HTML text.
@@ -97,8 +96,6 @@ class HTMLTextSelection implements Transferable {
      *
      * @param flavor the requested flavor for the data
      * @see DataFlavor#getRepresentationClass
-     * @exception IOException                if the data is no longer available
-     *              in the requested flavor.
      * @exception UnsupportedFlavorException if the requested data flavor is
      *              not supported.
      */

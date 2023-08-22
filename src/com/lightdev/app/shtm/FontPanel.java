@@ -224,7 +224,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
      * extend <code>TitledPickList</code> with a way to set values
      * special to font family values
      */
-    class FamilyPickList extends TitledPickList implements AttributeComponent {
+    static class FamilyPickList extends TitledPickList implements AttributeComponent {
         private int setValCount = 0;
         private Object originalValue;
 
@@ -288,7 +288,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
      * extend <code>TitledPickList</code> with a way to set values
      * special to font size values
      */
-    class SizePickList extends TitledPickList implements AttributeComponent {
+    static class SizePickList extends TitledPickList implements AttributeComponent {
         private int setValCount = 0;
         private String originalValue;
 
@@ -346,7 +346,7 @@ class FontPanel extends JPanel implements TitledPickList.TitledPickListListener 
      * extend <code>TitledPickList</code> with a way to set values
      * special to font style values
      */
-    class StylePickList extends TitledPickList implements AttributeComponent {
+    static class StylePickList extends TitledPickList implements AttributeComponent {
         private int originalValue;
         private int setValCount = 0;
 

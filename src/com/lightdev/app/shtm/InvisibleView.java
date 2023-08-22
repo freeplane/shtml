@@ -27,7 +27,6 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.View;
-import javax.swing.text.BadLocationException;
 
 /**
  * A view to hide HTML tags (e.g. comments)
@@ -147,8 +146,6 @@ public class InvisibleView extends View {
      * </ul>
      * @return the bounding box, in view coordinate space,
      *		of the character at the specified position
-     * @exception BadLocationException  if the specified position does
-     *   not represent a valid location in the associated document
      * @exception IllegalArgumentException if <code>b</code> is not one of the
      *		legal <code>Position.Bias</code> values listed above
      * @see View#viewToModel

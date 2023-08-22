@@ -240,7 +240,7 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
     }
 
     /** the event object definition for ColorPanels */
-    class TitledPickListEvent extends EventObject {
+    static class TitledPickListEvent extends EventObject {
         public TitledPickListEvent(final Object source) {
             super(source);
         }
