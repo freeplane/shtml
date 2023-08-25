@@ -27,7 +27,6 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.View;
-import javax.swing.text.BadLocationException;
 
 /**
  * A view to hide HTML tags (e.g. comments)

@@ -270,7 +270,7 @@ class ColorPanel extends JPanel implements ActionListener {
     }
 
     /** the event object definition for ColorPanels */
-    class ColorPanelEvent extends EventObject {
+    static class ColorPanelEvent extends EventObject {
         public ColorPanelEvent(final Object source) {
             super(source);
         }

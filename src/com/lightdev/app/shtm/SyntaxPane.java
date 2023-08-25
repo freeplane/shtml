@@ -283,7 +283,7 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * convenience class associating a pattern with a
      * set of attributes
      */
-    class RegExStyle {
+    static class RegExStyle {
         /**
          * construct a <code>RegExStyle</code> instance
          *
