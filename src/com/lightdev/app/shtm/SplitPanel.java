@@ -52,11 +52,7 @@ import javax.swing.border.EmptyBorder;
  * 
  */
 class SplitPanel extends JPanel {
-    /* --------------- class fields start --------------- */
-    /** constant for the major axis being the horizontal one */
-    public static final int MAJOR_AXIS_HORIZONTAL = 1; // NOT SUPPORTED
-    /** constant for the major axis being the vertical one */
-    public static final int MAJOR_AXIS_VERTICAL = 2;
+
     /** constant for the north plug-in container of this SplitPanel */
     public static final int NORTH = 0;
     /** constant for the east plug-in container of this SplitPanel */
@@ -69,13 +65,7 @@ class SplitPanel extends JPanel {
     public static final int CENTER = 4;
     /** the outer panels of this SplitPanel */
     private final JSplitPane[] outerPanels;
-    /** current setting for major axis of this SplitPanel */
-    private final int majorAxis = SplitPanel.MAJOR_AXIS_VERTICAL;
 
-    /* ------ class fields end ------------------ */
-    /**
-     * Constructor
-     */
     public SplitPanel() {
         super();
         setLayout(new BorderLayout());
@@ -99,20 +89,10 @@ class SplitPanel extends JPanel {
         outerPanels[SOUTH].setOrientation(JSplitPane.VERTICAL_SPLIT);
         outerPanels[WEST].setOrientation(JSplitPane.HORIZONTAL_SPLIT);
         outerPanels[EAST].setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-        if (majorAxis == SplitPanel.MAJOR_AXIS_VERTICAL) {
-            // [ ALWAYS THE CASE ]
-            outerPanels[SOUTH].setTopComponent(outerPanels[NORTH]);
-            outerPanels[WEST].setRightComponent(outerPanels[SOUTH]);
-            outerPanels[EAST].setLeftComponent(outerPanels[WEST]);
-            this.add(outerPanels[EAST], BorderLayout.CENTER);
-        }
-        else {
-            // [ NOT SUPPORTED ]
-            outerPanels[SOUTH].setTopComponent(outerPanels[NORTH]);
-            outerPanels[WEST].setRightComponent(outerPanels[SOUTH]);
-            outerPanels[EAST].setLeftComponent(outerPanels[WEST]);
-            this.add(outerPanels[SOUTH], BorderLayout.CENTER);
-        }
+        outerPanels[SOUTH].setTopComponent(outerPanels[NORTH]);
+        outerPanels[WEST].setRightComponent(outerPanels[SOUTH]);
+        outerPanels[EAST].setLeftComponent(outerPanels[WEST]);
+        this.add(outerPanels[EAST], BorderLayout.CENTER);
     }
 
     /**
@@ -121,23 +101,18 @@ class SplitPanel extends JPanel {
     public void removeAllOuterPanels() {
         // Warning: it does not really remove the outer panels per se.
         JComponent p;
-        if (majorAxis == MAJOR_AXIS_VERTICAL) {
-            p = (JComponent) outerPanels[NORTH].getTopComponent();
-            p.removeAll();
-            p.setVisible(false);
-            p = (JComponent) outerPanels[WEST].getLeftComponent();
-            p.removeAll();
-            p.setVisible(false);
-            p = (JComponent) outerPanels[SOUTH].getBottomComponent();
-            p.removeAll();
-            p.setVisible(false);
-            p = (JComponent) outerPanels[EAST].getRightComponent();
-            p.removeAll();
-            p.setVisible(false);
-        }
-        else {
-            // pending...
-        }
+        p = (JComponent) outerPanels[NORTH].getTopComponent();
+        p.removeAll();
+        p.setVisible(false);
+        p = (JComponent) outerPanels[WEST].getLeftComponent();
+        p.removeAll();
+        p.setVisible(false);
+        p = (JComponent) outerPanels[SOUTH].getBottomComponent();
+        p.removeAll();
+        p.setVisible(false);
+        p = (JComponent) outerPanels[EAST].getRightComponent();
+        p.removeAll();
+        p.setVisible(false);
     }
 
     /**
@@ -252,44 +227,27 @@ class SplitPanel extends JPanel {
      * @param location  the location to add to (SplitPanel.NORTH, SOUTH, etc.)
      */
     public void addComponent(final JComponent component, final int location) {
-        if (majorAxis == SplitPanel.MAJOR_AXIS_VERTICAL) {
-            switch (location) {
-                case CENTER:
-                    outerPanels[NORTH].remove(outerPanels[NORTH].getBottomComponent());
-                    outerPanels[NORTH].setBottomComponent(component);
-                    break;
-                case NORTH:
-                    outerPanels[NORTH].remove(outerPanels[NORTH].getTopComponent());
-                    outerPanels[NORTH].setTopComponent(component);
-                    break;
-                case WEST:
-                    outerPanels[WEST].remove(outerPanels[WEST].getLeftComponent());
-                    outerPanels[WEST].setLeftComponent(component);
-                    break;
-                case SOUTH:
-                    outerPanels[SOUTH].remove(outerPanels[SOUTH].getBottomComponent());
-                    outerPanels[SOUTH].setBottomComponent(component);
-                    break;
-                case EAST:
-                    outerPanels[EAST].remove(outerPanels[EAST].getRightComponent());
-                    outerPanels[EAST].setRightComponent(component);
-                    break;
-            }
-        }
-        else {
-            // pending...
-            switch (location) {
-                case CENTER:
-                    break;
-                case NORTH:
-                    break;
-                case WEST:
-                    break;
-                case SOUTH:
-                    break;
-                case EAST:
-                    break;
-            }
+        switch (location) {
+            case CENTER:
+                outerPanels[NORTH].remove(outerPanels[NORTH].getBottomComponent());
+                outerPanels[NORTH].setBottomComponent(component);
+                break;
+            case NORTH:
+                outerPanels[NORTH].remove(outerPanels[NORTH].getTopComponent());
+                outerPanels[NORTH].setTopComponent(component);
+                break;
+            case WEST:
+                outerPanels[WEST].remove(outerPanels[WEST].getLeftComponent());
+                outerPanels[WEST].setLeftComponent(component);
+                break;
+            case SOUTH:
+                outerPanels[SOUTH].remove(outerPanels[SOUTH].getBottomComponent());
+                outerPanels[SOUTH].setBottomComponent(component);
+                break;
+            case EAST:
+                outerPanels[EAST].remove(outerPanels[EAST].getRightComponent());
+                outerPanels[EAST].setRightComponent(component);
+                break;
         }
     }
 }
