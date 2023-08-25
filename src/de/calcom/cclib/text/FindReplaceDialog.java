@@ -411,16 +411,12 @@ public class FindReplaceDialog extends JDialog {
         }
     }
     
-	public void setSearchingBusyCursor()
-	{
-		//RootPaneContainer root = (RootPaneContainer)getTopLevelAncestor();
+	public void setSearchingBusyCursor() {
 		getRootPane().getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		getRootPane().getGlassPane().setVisible(true);
 	}
 	
-	public void setSearchingDefaultCursor()
-	{
-		//RootPaneContainer root = (RootPaneContainer)getTopLevelAncestor();
+	public void setSearchingDefaultCursor() {
 		getRootPane().getGlassPane().setCursor(Cursor.getDefaultCursor());
 		getRootPane().getGlassPane().setVisible(false);
 	}
@@ -433,7 +429,6 @@ public class FindReplaceDialog extends JDialog {
      * locking the dialog window.
      */
     private void initFind() {
-    	//System.out.format("initFind(findInProgress=%s)\n", findInProgress);
         if (!findInProgress) {
             try {
                 searchText = doc.getText(0, doc.getLength());
@@ -442,7 +437,6 @@ public class FindReplaceDialog extends JDialog {
                 e.printStackTrace();
             }
             searchTerm = (String)jcomboSearchTerm.getEditor().getItem();
-            //System.out.format("initFind(): searchTerm='%s'\n", searchTerm);
             
             rememberSearchTerm(searchTerm, jcomboSearchTerm);
             matchCaseSetting.getAndSet(jcbMatchCase.isSelected());
@@ -489,7 +483,6 @@ public class FindReplaceDialog extends JDialog {
 	    // get the approximate search threshold parameter (0.65 by default)
 	    // (see https://www.freeplane.org/wiki/index.php/Approximate_search)
 	    double threshold = Double.parseDouble(Util.getPreference("approximate_search_threshold", ""));
-	    //System.out.format("simplyhtml: approximate_search_threshold=%.2f\n", threshold);
 	    
 	    try
 	    {
@@ -579,8 +572,6 @@ public class FindReplaceDialog extends JDialog {
             editor.getCaret().setSelectionVisible(true);
             found = true;
         }
-//        System.out.format("doFind() => start=%d/found=%s\n",
-//        		start, found);
         return found;
     }
     
@@ -860,7 +851,7 @@ public class FindReplaceDialog extends JDialog {
         });
         jpnlMain.setLayout(gridBagLayout6);
         jrbUp.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchUp"));
-        //jcomboSearchTerm.setText("jtfPhrase");
+
         jcomboSearchTerm.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
             public void keyPressed(final KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -1028,9 +1019,7 @@ public class FindReplaceDialog extends JDialog {
     private final JCheckBox jcbProject = new JCheckBox();
     /* ---- GUI elements end ---------*/
     
-    public static synchronized void rememberSearchTerm(final String searchTerm, final JComboBox searchTermCombo)
-    {
-    	//System.out.format("rememberSearchTerm(%s)\n", searchTerm);
+    public static synchronized void rememberSearchTerm(final String searchTerm, final JComboBox searchTermCombo) {
     	if (searchTerm.isEmpty())
     		return;
     	

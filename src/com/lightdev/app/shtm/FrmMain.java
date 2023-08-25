@@ -1,5 +1,4 @@
 /*
-/*
  * SimplyHTML, a word processor based on Java, HTML and CSS
  * Copyright (C) 2002 Ulrich Hilger
  * Copyright (C) 2006 Dimitri Polivaev

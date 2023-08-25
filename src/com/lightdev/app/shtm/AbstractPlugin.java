@@ -66,12 +66,6 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
      * java.lang.Class.newInstance can be used on it.</p>
      */
     public AbstractPlugin() {
-        //System.out.println("AbstractPlugin constructor");
-        /*SecurityManager security = System.getSecurityManager();
-        if (security != null) {
-          security.
-        }
-        */
         prefs = Preferences.userNodeForPackage(getClass());
     }
 
@@ -162,25 +156,21 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
         this.pluginMenuId = pluginMenuId;
         this.helpMenuId = helpMenuId;
         try {
-            //System.out.println("AbstractPlugin this.getClass.getName=" + this.getClass().getName());
             if (SHTMLPanelImpl.pluginManager != null) {
                 final ClassLoader plLoader = SHTMLPanelImpl.pluginManager.getPluginLoader();
                 if (plLoader != null) {
                     final ResourceBundle resourceBundle = ResourceBundle.getBundle(this.getClass().getName(),
                         Locale.getDefault(), plLoader);
                     textResources = new InternalUiResources(resourceBundle);
-                    //System.out.println("AbstractPlugin plLoader != null, resources=" + resources);
                 }
                 else {
                     textResources = new InternalUiResources(ResourceBundle.getBundle(this
                         .getClass().getName(), Locale.getDefault()));
-                    //System.out.println("AbstractPlugin plLoader == null, resources=" + resources);
                 }
             }
             else {
                 textResources = new InternalUiResources(ResourceBundle.getBundle(this.getClass()
                     .getName(), Locale.getDefault()));
-                //System.out.println("AbstractPlugin pluginManager = null, resources=" + resources);
             }
             active = prefs.getBoolean(internalName + PREFSID_PLUGIN_ACTIVE, true);
             dockLocation = prefs.getInt(internalName + PREFSID_PLUGIN_DOCK_LOCATION, SHTMLPlugin.DOCK_LOCATION_LEFT);

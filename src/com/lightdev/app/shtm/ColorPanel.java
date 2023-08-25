@@ -116,7 +116,6 @@ class ColorPanel extends JPanel implements ActionListener {
      * @param color the selected color
      */
     private void setColor(final Color color) {
-        //System.out.println("ColorPanel setColor attributeKey=" + attributeKey + ", color=" + color);
         colorDisplay.setBackground(color);
         if (++setValCount < 2) {
             originalColor = color;
@@ -188,14 +187,11 @@ class ColorPanel extends JPanel implements ActionListener {
     }
 
     public void setValue(final String value) {
-        //System.out.println("ColorPanel setValue value=" + value);
         try {
             setColor(new Color(Integer.parseInt(value.substring(1).toUpperCase(), 16)));
         }
         catch (final Exception e) {
             try {
-                //setColor(Util.styleSheet().getForeground(a));
-                //System.out.println("ColorPanel setValue value=" + value + "=" + Color.getColor(value));
                 setColor(Color.getColor(value));
             }
             catch (final Exception e2) {
@@ -234,7 +230,7 @@ class ColorPanel extends JPanel implements ActionListener {
             catch (final Exception e) {
                 set.addAttribute(attributeKey, color);
             }
-            //System.out.println("ColorPanel getValue color=" + color);
+
             return set;
         }
         else {

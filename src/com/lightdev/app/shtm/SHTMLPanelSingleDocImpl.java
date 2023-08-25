@@ -24,7 +24,7 @@ class SHTMLPanelSingleDocImpl extends SHTMLPanelImpl {
         super();
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#initDocumentPane()
      */
     protected void initDocumentPane() {

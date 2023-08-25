@@ -177,8 +177,6 @@ public class SHTMLDocument extends HTMLDocument {
         if ((e != null) && (a != null)) {
             try {
                 writeLock();
-                //System.out.println("SHTMLDocument addAttributes e=" + e);
-                //System.out.println("SHTMLDocument addAttributes a=" + a);
                 final int start = e.getStartOffset();
                 final DefaultDocumentEvent changes = new DefaultDocumentEvent(start, e.getEndOffset() - start,
                     DocumentEvent.EventType.CHANGE);
@@ -233,7 +231,7 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLDocument#setOuterHTML(javax.swing.text.Element, java.lang.String)
      */
     public void setOuterHTML(final Element paragraphElement, final String htmlText) throws BadLocationException,
@@ -265,7 +263,7 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLDocument#insertAfterEnd(javax.swing.text.Element, java.lang.String)
      */
     public void insertAfterEnd(final Element elem, final String htmlText) throws BadLocationException, IOException {
@@ -278,7 +276,7 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLDocument#insertAfterStart(javax.swing.text.Element, java.lang.String)
      */
     public void insertAfterStart(final Element elem, final String htmlText) throws BadLocationException, IOException {
@@ -291,7 +289,7 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLDocument#insertBeforeEnd(javax.swing.text.Element, java.lang.String)
      */
     public void insertBeforeEnd(final Element elem, final String htmlText) throws BadLocationException, IOException {
@@ -304,7 +302,7 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLDocument#insertBeforeStart(javax.swing.text.Element, java.lang.String)
      */
     public void insertBeforeStart(final Element elem, final String htmlText) throws BadLocationException, IOException {
@@ -595,7 +593,7 @@ public class SHTMLDocument extends HTMLDocument {
         return length - suffixLength;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLDocument#setParagraphAttributes(int, int, javax.swing.text.AttributeSet, boolean)
      */
     public void setParagraphAttributes(final int offset, final int length, final AttributeSet s, final boolean replace) {

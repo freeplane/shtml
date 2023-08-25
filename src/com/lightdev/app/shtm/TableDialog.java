@@ -103,7 +103,6 @@ class TableDialog extends DialogShell {
     }
 
     public AttributeSet getCellAttributes() {
-        //System.out.println("TableDialog getCellattributes=" + getComponentAttributes(cellComponents));
         return getComponentAttributes(cellComponents);
     }
 
@@ -113,7 +112,6 @@ class TableDialog extends DialogShell {
         AttributeComponent ac;
         while (components.hasMoreElements()) {
             ac = (AttributeComponent) components.nextElement();
-            //System.out.println(ac.getValue());
             attributes.addAttributes(ac.getValue());
         }
         return attributes;
@@ -157,12 +155,6 @@ class TableDialog extends DialogShell {
         cellRange = new JComboBox(cellRangeSelection);
         crPanel.add(cellRange);
         // get the preferred size of the tabbed pane
-        /*
-        int lastTabIndex = tp.getTabCount() - 1;
-        Rectangle tabRect = tp.getBoundsAt(lastTabIndex);
-        int prefWidth = tabRect.x + tabRect.width + 30;
-        tp.setPreferredSize(new Dimension(prefWidth, 300));
-        */
         // add tabbed pane and range selector to cell panel
         cellPanel.add(tp, BorderLayout.CENTER);
         cellPanel.add(crPanel, BorderLayout.SOUTH);

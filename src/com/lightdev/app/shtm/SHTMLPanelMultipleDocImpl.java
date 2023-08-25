@@ -50,7 +50,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         getDocumentPane().getEditor().setCaretPosition(0);
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#initActions()
      */
     protected void initActions() {
@@ -67,7 +67,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         addAction(exitAction, new SHTMLEditorKitActions.SHTMLFileExitAction(this));
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#customizeFrame()
      */
     protected void customizeFrame() {
@@ -77,7 +77,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         splitPanel.addComponent(jtpDocs, SplitPanel.CENTER);
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#createToolbarItem(javax.swing.JToolBar, java.lang.String)
      */
     protected void createToolbarItem(final JToolBar toolBar, final String itemKey) {
@@ -93,7 +93,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#registerDocument()
      */
     protected void registerDocument() {
@@ -101,7 +101,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         getDocumentPane().getDocument().getStyleSheet().addChangeListener(styleSelector);
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#unregisterDocument()
      */
     protected void unregisterDocument() {
@@ -129,9 +129,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         if (activeTabNo >= 0) {
             setDocumentPane((DocumentPane) jtpDocs.getComponentAt(activeTabNo));
             setEditorPane(getDocumentPane().getEditor());
-            //System.out.println("FrmMain stateChanged docName now " + documentPane.getDocumentName());
             doc = getSHTMLEditorPane().getDocument();
-            //fireDocumentChanged();
             if (!ignoreActivateDoc) {
                 getDocumentPane().fireActivated();
             }
@@ -150,7 +148,7 @@ class SHTMLPanelMultipleDocImpl extends SHTMLPanelImpl implements ChangeListener
         return jtpDocs;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see com.lightdev.app.shtm.SHTMLPanelImpl#updateFormatControls()
      */
     void updateFormatControls() {

@@ -101,7 +101,6 @@ class SplitPanel extends JPanel {
         outerPanels[EAST].setOrientation(JSplitPane.HORIZONTAL_SPLIT);
         if (majorAxis == SplitPanel.MAJOR_AXIS_VERTICAL) {
             // [ ALWAYS THE CASE ]
-            //System.out.println("SplitPanel.buildLayout majorAxis = vertical");
             outerPanels[SOUTH].setTopComponent(outerPanels[NORTH]);
             outerPanels[WEST].setRightComponent(outerPanels[SOUTH]);
             outerPanels[EAST].setLeftComponent(outerPanels[WEST]);
@@ -109,7 +108,6 @@ class SplitPanel extends JPanel {
         }
         else {
             // [ NOT SUPPORTED ]
-            //System.out.println("SplitPanel.buildLayout majorAxis = horizontal");
             outerPanels[SOUTH].setTopComponent(outerPanels[NORTH]);
             outerPanels[WEST].setRightComponent(outerPanels[SOUTH]);
             outerPanels[EAST].setLeftComponent(outerPanels[WEST]);
@@ -149,7 +147,6 @@ class SplitPanel extends JPanel {
      * @param loc  the relative location of the divider (0, 0.1, ..., 0.9, 1)
      */
     public void setDivLoc(final int panel, final double loc) {
-        //System.out.println("SplitPanel.setDivLoc panel=" + panel + ", loc=" + loc);
         outerPanels[panel].setDividerLocation(loc);
     }
 
@@ -161,7 +158,6 @@ class SplitPanel extends JPanel {
      * @return the divider location
      */
     public int getDivLoc(final int panel) {
-        //System.out.println("SplitPanel.getDivLoc panel=" + panel + ", loc=" + outerPanels[panel].getDividerLocation());
         return outerPanels[panel].getDividerLocation();
     }
 
@@ -172,7 +168,6 @@ class SplitPanel extends JPanel {
         final Preferences prefs = Preferences.userNodeForPackage(getClass());
         for (int i = 0; i < 4; i++) {
             prefs.putInt("divLoc" + i, outerPanels[i].getDividerLocation());
-            //System.out.println("SplitPanel.savePrefs divLoc" + i + "=" + outerPanels[i].getDividerLocation());
         }
     }
 
@@ -183,7 +178,6 @@ class SplitPanel extends JPanel {
         final Preferences prefs = Preferences.userNodeForPackage(getClass());
         for (int i = 0; i < 4; i++) {
             outerPanels[i].setDividerLocation(prefs.getInt("divLoc" + i, 300));
-            //System.out.println("SplitPanel.restorePrefs divLoc" + i + "=" + prefs.getInt("divLoc" + i, 300));
         }
     }
 
@@ -223,7 +217,6 @@ class SplitPanel extends JPanel {
         JSplitPane splitPane;
         splitPane = outerPanels[NORTH];
         if (splitPane.getTopComponent().isVisible()) {
-            //System.out.println("north panel top is visible, showing divider");
             splitPane.setDividerSize(2);
         }
         else {
@@ -231,7 +224,6 @@ class SplitPanel extends JPanel {
         }
         splitPane = outerPanels[WEST];
         if (splitPane.getLeftComponent().isVisible()) {
-            //System.out.println("west panel left is visible, showing divider");
             splitPane.setDividerSize(2);
         }
         else {
@@ -239,7 +231,6 @@ class SplitPanel extends JPanel {
         }
         splitPane = outerPanels[SOUTH];
         if (splitPane.getBottomComponent().isVisible()) {
-            //System.out.println("south panel bottom is visible, showing divider");
             splitPane.setDividerSize(2);
         }
         else {
@@ -247,7 +238,6 @@ class SplitPanel extends JPanel {
         }
         splitPane = outerPanels[EAST];
         if (splitPane.getRightComponent().isVisible()) {
-            //System.out.println("south panel right is visible, showing divider");
             splitPane.setDividerSize(2);
         }
         else {
@@ -263,30 +253,24 @@ class SplitPanel extends JPanel {
      */
     public void addComponent(final JComponent component, final int location) {
         if (majorAxis == SplitPanel.MAJOR_AXIS_VERTICAL) {
-            //System.out.println("SplitPanel.addComponent majorAxis = vertical");
             switch (location) {
                 case CENTER:
-                    //System.out.println("SplitPanel.addComponent CENTER");
                     outerPanels[NORTH].remove(outerPanels[NORTH].getBottomComponent());
                     outerPanels[NORTH].setBottomComponent(component);
                     break;
                 case NORTH:
-                    //System.out.println("SplitPanel.addComponent NORTH");
                     outerPanels[NORTH].remove(outerPanels[NORTH].getTopComponent());
                     outerPanels[NORTH].setTopComponent(component);
                     break;
                 case WEST:
-                    //System.out.println("SplitPanel.addComponent WEST");
                     outerPanels[WEST].remove(outerPanels[WEST].getLeftComponent());
                     outerPanels[WEST].setLeftComponent(component);
                     break;
                 case SOUTH:
-                    //System.out.println("SplitPanel.addComponent SOUTH");
                     outerPanels[SOUTH].remove(outerPanels[SOUTH].getBottomComponent());
                     outerPanels[SOUTH].setBottomComponent(component);
                     break;
                 case EAST:
-                    //System.out.println("SplitPanel.addComponent EAST");
                     outerPanels[EAST].remove(outerPanels[EAST].getRightComponent());
                     outerPanels[EAST].setRightComponent(component);
                     break;

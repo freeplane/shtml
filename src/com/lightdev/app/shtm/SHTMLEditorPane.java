@@ -315,28 +315,14 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         myInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, KeyEvent.SHIFT_MASK), shiftHomeAction);
         myActionMap.put(shiftEndAction, new ShiftEndAction());
         myInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, KeyEvent.SHIFT_MASK), shiftEndAction);
-        //myActionMap.put("TTH", getDnew SHTMLEditorKitActions.ToggleTableHeaderCellAction(null));
-        //myInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, KeyEvent.SHIFT_MASK), "TTH");
         myActionMap.setParent(getActionMap());
         myInputMap.setParent(getInputMap());
         setActionMap(myActionMap);
         setInputMap(JComponent.WHEN_FOCUSED, myInputMap);
-        /*
-         implementation before 1.4.1
-         -------------------------------------
 
-        Keymap map = getKeymap();
-        KeyStroke tab = KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0);
-        map.addActionForKeyStroke(tab, new NextTableCellAction(map.getAction(tab)));
-        KeyStroke shiftTab = KeyStroke.getKeyStroke(
-                                KeyEvent.VK_TAB, InputEvent.SHIFT_MASK);
-        map.addActionForKeyStroke(shiftTab,
-                        new PrevTableCellAction(map.getAction(shiftTab)));
-        setKeymap(map);
-        */
     }
 
-    /* (non-Javadoc)
+    /*
     * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
     */
     protected boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
@@ -383,7 +369,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     }
 
     private class MyNavigationFilter extends NavigationFilter {
-        /* (non-Javadoc)
+        /*
          * @see javax.swing.text.NavigationFilter#moveDot(javax.swing.text.NavigationFilter.FilterBypass, int, javax.swing.text.Position.Bias)
          */
         public void moveDot(final FilterBypass fb, int dot, final Bias bias) {
@@ -391,7 +377,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             super.moveDot(fb, dot, bias);
         }
 
-        /* (non-Javadoc)
+        /*
          * @see javax.swing.text.NavigationFilter#setDot(javax.swing.text.NavigationFilter.FilterBypass, int, javax.swing.text.Position.Bias)
          */
         public void setDot(final FilterBypass fb, int dot, final Bias bias) {
@@ -825,8 +811,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 finally {
                     doc.endCompoundEdit();
                 }
-                //      w.write(para);
-                //doc.replaceHTML(para, 1, sw.getBuffer().toString());
             }
         }
         catch (final Exception ex) {
@@ -1019,7 +1003,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param anchorName  the name of the anchor to remove
      */
     public void removeAnchor(final String anchorName) {
-        //System.out.println("SHTMLEditorPane removeAnchor");
         AttributeSet attrs;
         Object nameAttr;
         Object link;
@@ -1028,12 +1011,11 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         while (elem != null) {
             attrs = elem.getAttributes();
             link = attrs.getAttribute(HTML.Tag.A);
-            if (link != null /*&& link.toString().equalsIgnoreCase(HTML.Tag.A.toString())*/) {
-                //System.out.println("found anchor attribute");
+            if (link != null) {
+
                 nameAttr = ((AttributeSet) link).getAttribute(HTML.Attribute.NAME);
                 if (nameAttr != null && nameAttr.toString().equalsIgnoreCase(anchorName)) {
                     // remove anchor here
-                    //System.out.println("removing anchor name=" + nameAttr);
                     final SimpleAttributeSet newSet = new SimpleAttributeSet(attrs);
                     newSet.removeAttribute(HTML.Tag.A);
                     final SHTMLDocument doc = getDocument();
@@ -1088,30 +1070,15 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final SimpleAttributeSet set = new SimpleAttributeSet();
         final Object attr = set.getAttribute(CSS.Attribute.WIDTH);
         if (attr != null) {
-            //LengthValue lv = new LengthValue(attr);
-            //String unit = lv.getUnit();
-            //int width = (int) lv.getAttrValue(attr.toString(), unit);
-            final int width = (int) Util.getAbsoluteAttrVal(attr); // Util.getAttrValue(attr);
-            //System.out.println("SHTMLEditorPane.createTableColumn width=" + width);
+            final int width = (int) Util.getAbsoluteAttrVal(attr);
             final String unit = Util.getLastAttrUnit();
-            //System.out.println("SHTMLEditorPane.createTableColumn unit=" + unit);
             final String widthString = width / 2 + unit;
-            //System.out.println("SHTMLEditorPane.createTableColumn widthString=" + widthString);
             Util.styleSheet().addCSSAttribute(set, CSS.Attribute.WIDTH, widthString);
         }
         // adjust width and insert new column
-        //SimpleAttributeSet a = new SimpleAttributeSet(set.copyAttributes());
-        //int cellIndex = getCellIndex(srcCell);
-        //boolean insertFirst = (before && (cellIndex == 0));
         Element srcCell = null;
         for (int rIndex = 0; rIndex < table.getElementCount(); rIndex++) {
             srcCell = table.getElement(rIndex).getElement(cIndex);
-            /*
-            if(rIndex > 0) {
-              adjustBorder(a, a, a, CombinedAttribute.ATTR_TOP);
-            }
-            adjustBorder(a, a, a, CombinedAttribute.ATTR_LEFT);
-            */
             doc.addAttributes(srcCell, set);
             try {
                 if (before) {
@@ -1125,8 +1092,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 Util.errMsg(null, ioe.getMessage(), ioe);
             }
         }
-        //adjustColumnBorders(table.getElement(0).getElement(cIndex));
-        //adjustColumnBorders(table.getElement(0).getElement(++cIndex));
         doc.endCompoundEdit();
     }
 
@@ -1237,7 +1202,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         catch (final IOException e) {
             Util.errMsg(null, e.getMessage(), e);
         }
-        //System.out.println("getTableCellHTML buffer='" + sw.getBuffer().toString() + "'");
         return sw.getBuffer().toString();
     }
 
@@ -1289,12 +1253,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final Object attrA = row.getElement(cIndex + offset).getAttributes().getAttribute(CSS.Attribute.WIDTH);
         SimpleAttributeSet set = null;
         if (attrC != null && attrA != null) {
-            //LengthValue lvC = new LengthValue(attrC);
-            //LengthValue lvA = new LengthValue(attrA);
-            final int widthC = (int) Util.getAbsoluteAttrVal(attrC); // Util.getAttrValue(attrC);
+            final int widthC = (int) Util.getAbsoluteAttrVal(attrC);
             final String cUnit = Util.getLastAttrUnit();
-            //String cUnit = lvC.getUnit();
-            final int widthA = (int) Util.getAbsoluteAttrVal(attrA); // Util.getAttrValue(attrA);
+            final int widthA = (int) Util.getAbsoluteAttrVal(attrA);
             final String aUnit = Util.getLastAttrUnit();
             if (aUnit.equalsIgnoreCase(cUnit)) {
                 int width = 0;
@@ -1560,24 +1521,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         if (cell != null) {
             final Element table = cell.getParentElement().getParentElement();
             if (a.getAttributeCount() > 0) {
-                //System.out.println("applyTableAttributes count=" + a.getAttributeCount() + " a=" + a);
                 getDocument().addAttributes(table, a);
-
-                /*
-                 * for some reason above code does not show the changed attributes
-                 * of the table, although the element really has them (maybe somebody
-                 * could let me know why...). Therefore we update the editor pane
-                 * contents comparably rude (any other more elegant alternatives
-                 * welcome!)
-                 * --> found out why: the swing package does not render short hand
-                 *                    properties such as MARGIN or PADDING. When
-                 *                    contained in a document inside an AttributeSet
-                 *                    they already have to be split into MARGIN-TOP,
-                 *                    MARGIN-LEFT, etc.
-                 *                    adjusted AttributeComponents accordingly so
-                 *                    we don't need refresh anymore
-                 */
-                //refresh();
             }
         }
     }
@@ -1601,7 +1545,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @param range  the range of cells to apply attributes to
      */
     public void applyCellAttributes(final AttributeSet a, final int range) {
-        //System.out.println("SHTMLEditorPane applyCellAttributes a=" + a);
         final Element cell = getCurrentTableCell();
         int cIndex = 0;
         int rIndex = 0;
@@ -1633,7 +1576,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                         cIndex = 0;
                         while (cIndex < row.getElementCount()) {
                             aCell = row.getElement(cIndex);
-                            //System.out.println("applyCellAttributes ALL_CELLS adjusted a=" + adjustCellBorders(aCell, a));
                             doc.addAttributes(aCell, a);
                             cIndex++;
                         }
@@ -2619,8 +2561,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 final Element parentElement = getListParent(firstParagraphElement);
                 getDocument().startCompoundEdit();
                 // Why is OL not a valid parent element? How could a parent element be invalid? --Dan
-                //if (!isValidParentElement(parentElement))
-                //  throw new SwitchListException();
                 if (selectionStart != selectionEnd) {
                     final Element last = getParagraphElement(lastParagraphElementEnd - 1);
                     if (parentElement != getListParent(last)) {
@@ -3275,21 +3215,21 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             return null;
         }
         class LocalTransferHandler extends TransferHandler {
-            /* (non-Javadoc)
+            /*
              * @see javax.swing.TransferHandler#canImport(javax.swing.JComponent, java.awt.datatransfer.DataFlavor[])
              */
             public boolean canImport(final JComponent comp, final DataFlavor[] transferFlavors) {
                 return defaultTransferHandler.canImport(comp, transferFlavors);
             }
 
-            /* (non-Javadoc)
+            /*
              * @see javax.swing.TransferHandler#exportAsDrag(javax.swing.JComponent, java.awt.event.InputEvent, int)
              */
             public void exportAsDrag(final JComponent comp, final InputEvent e, final int action) {
                 defaultTransferHandler.exportAsDrag(comp, e, action);
             }
 
-            /* (non-Javadoc)
+            /*
              * @see javax.swing.TransferHandler#exportToClipboard(javax.swing.JComponent, java.awt.datatransfer.Clipboard, int)
              */
             public void exportToClipboard(final JComponent comp, final Clipboard clip, final int action) {
@@ -3341,21 +3281,21 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 }
             }
 
-            /* (non-Javadoc)
+            /*
              * @see javax.swing.TransferHandler#getSourceActions(javax.swing.JComponent)
              */
             public int getSourceActions(final JComponent c) {
                 return defaultTransferHandler.getSourceActions(c);
             }
 
-            /* (non-Javadoc)
+            /*
              * @see javax.swing.TransferHandler#getVisualRepresentation(java.awt.datatransfer.Transferable)
              */
             public Icon getVisualRepresentation(final Transferable t) {
                 return defaultTransferHandler.getVisualRepresentation(t);
             }
 
-            /* (non-Javadoc)
+            /*
              * @see javax.swing.TransferHandler#importData(javax.swing.JComponent, java.awt.datatransfer.Transferable)
              */
             public boolean importData(final JComponent comp, final Transferable transferable) {
@@ -3363,7 +3303,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 doc.startCompoundEdit();
                 boolean result = false;
                 try {
-                	//System.out.format("getPasteMode()=%s\n", getPasteMode());
                 	if (getPasteMode() == PasteMode.PASTE_PLAIN_TEXT)
                 	{
                 		final String content = transferable.getTransferData(DataFlavor.stringFlavor).toString();
@@ -3400,7 +3339,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                             result = true;
                         }
                         else {
-                            //result = defaultImportData(comp, transferable);
                             result = importExternalData(comp, transferable);
                         }
                     }
@@ -3563,25 +3501,20 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             final Element paragraphElement = doc.getParagraphElement(selectionStart);
             final int regionStart = paragraphElement.getStartOffset();
             final int regionEnd = Math.max(paragraphElement.getEndOffset(), selectionEnd);
-            //System.out.println("SHTMLEditorPane applyTag start=" + start + ", end=" + end);
             final Element parentOfparagraphElement = paragraphElement.getParentElement();
             int replaceStart = -1;
             int replaceEnd = -1;
             int index = -1;
             int elementsToRemoveCount = 0;
             final int elementCount = parentOfparagraphElement.getElementCount();
-            //System.out.println("SHTMLEditorPane applyTag parent elem=" + elem.getName() + ", eCount=" + eCount);
             for (int i = 0; i < elementCount; i++) {
                 final Element child = parentOfparagraphElement.getElement(i);
-                //System.out.println("SHTMLEditorPane applyTag child elem=" + child.getName() + ", eCount=" + eCount);
                 final int elementStart = child.getStartOffset();
                 final int elementEnd = child.getEndOffset();
-                //System.out.println("SHTMLEditorPane applyTag eStart=" + eStart + ", eEnd=" + eEnd);
                 if ((elementStart >= regionStart && elementStart < regionEnd)
                         || (elementEnd > regionEnd && elementEnd <= regionEnd)) {
                     elementsToRemoveCount++;
                     if (overwritableTags.contains(child.getName())) {
-                        //System.out.println("SHTMLEditorPane applyTag element is in selection");
                         writer.writeStartTag(tag, child.getAttributes());
                         writer.writeChildElements(child);
                         writer.writeEndTag(tag);
@@ -3607,14 +3540,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     }
                }
             }
-            //System.out.println("SHTMLEditorPane applyTag remove index=" + index + ", removeCount=" + removeCount);
             if (index > -1) {
                 doc.insertAfterEnd(parentOfparagraphElement.getElement(index), stringWriter.getBuffer().toString());
                 doc.removeElements(parentOfparagraphElement, index, elementsToRemoveCount);
             }
-            //SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
-            //System.out.println("SHTMLEditorPane applyTag new HTML=\r\n" + sw.getBuffer().toString() );
-            //kit.read(new StringReader(sw.getBuffer().toString()), doc, getCaretPosition());
         }
         catch (final Exception e) {
             Util.errMsg(this, e.getMessage(), e);

@@ -265,13 +265,11 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * @param a  the set of attributes to set dialog contents from
      */
     public void setImageAttributes(final AttributeSet a) {
-        //System.out.println("ImageDialog.setImageAttributes");
         ignoreChangeEvents = true;
         originalAttributes.addAttributes(a);
         if (a.isDefined(HTML.Attribute.SRC)) {
             File imgFile = new File(Util.resolveRelativePath(doc
                     .getBase(), a.getAttribute(HTML.Attribute.SRC).toString()).getPath());
-            //System.out.println("ImageDialog.setImageAttribute imgFile=" + imgFile.getAbsolutePath());
             imgFileList.setSelectedValue(imgFile.getName().toLowerCase(), true);
         }
         for (int i = 0; i < attributeComponents.size(); i++) {
@@ -289,7 +287,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     }
 
     public void setImage(final String fName, final String w, final String h) {
-        //System.out.println("ImageDialog.setImage fName=" + fName);
         imgFileList.setSelectedValue(new File(fName).getName(), true);
         preview.setImage(new ImageIcon(fName));
         try {
@@ -364,7 +361,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
                 }
                 final String imgDirName = imgDir.getAbsolutePath();
                 for (int i = 0; i < sFiles.length; i++) {
-                    //System.out.println("file selected: " + sFiles[i] + " new name= " + imgDirName + File.separator + sFiles[i].getName());
                     Util.copyFile(sFiles[i], new File(imgDirName + File.separator + sFiles[i].getName()));
                     updateFileList();
                 }
@@ -414,9 +410,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         final SimpleAttributeSet set = new SimpleAttributeSet();
         oWidth.setText(Integer.toString(preview.getOriginalWidth()));
         oHeight.setText(Integer.toString(preview.getOriginalHeight()));
-        //System.out.println("updateControls origW=" + preview.getOriginalWidth());
-        //System.out.println("updateControls add WIDTH attr as " + Integer.toString(
-        //            preview.getOriginalWidth() * scalePct / 100) + SizeSelectorPanel.UNIT_PT);
         set.addAttribute(HTML.Attribute.WIDTH, preview.getOriginalWidth() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
         set.addAttribute(HTML.Attribute.HEIGHT, preview.getOriginalHeight() * scalePct / 100
@@ -432,7 +425,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      * update all related image property displays
      */
     private void applyPreviewScale() {
-        //System.out.println("applyPreviewScale scale=" + scale.getText());
         ignoreChangeEvents = true;
         try {
             preview.setScale(Integer.parseInt(scale.getText()));
@@ -448,17 +440,13 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      *  all related image property displays
      */
     private void applyPreviewWidth() {
-        //System.out.println("applyPreviewWidth width=" + imgWidth.getIntValue().intValue());
         ignoreChangeEvents = true;
         preview.setPreviewWidth(imgWidth.getIntValue());
         final int scalePct = preview.getScale();
-        //System.out.println("applyPreviewWidth scale now " + scalePct);
         final SimpleAttributeSet set = new SimpleAttributeSet();
         scale.setText(Integer.toString(scalePct));
         set.addAttribute(HTML.Attribute.HEIGHT, preview.getOriginalHeight() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
-        //System.out.println("applyPreviewWidth, changing height to " + Integer.toString(
-        //    preview.getOriginalHeight() * scalePct / 100) + SizeSelectorPanel.UNIT_PT);
         imgHeight.setValue(set);
         ignoreChangeEvents = false;
     }
@@ -468,17 +456,15 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      *  all related image property displays
      */
     private void applyPreviewHeight() {
-        //System.out.println("applyPreviewHeight height=" + imgHeight.getIntValue().intValue());
+
         ignoreChangeEvents = true;
         preview.setPreviewHeight(imgHeight.getIntValue());
         final int scalePct = preview.getScale();
-        //System.out.println("applyPreviewHeight scale now " + scalePct);
+
         final SimpleAttributeSet set = new SimpleAttributeSet();
         scale.setText(Integer.toString(scalePct));
         set.addAttribute(HTML.Attribute.WIDTH, preview.getOriginalWidth() * scalePct / 100
                 + SizeSelectorPanel.UNIT_PT);
-        //System.out.println("applyPreviewHeight, changing width to " + Integer.toString(
-        //    preview.getOriginalWidth() * scalePct / 100) + SizeSelectorPanel.UNIT_PT);
         imgWidth.setValue(set);
         ignoreChangeEvents = false;
     }
@@ -509,9 +495,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
      */
     public void valueChanged(final ListSelectionEvent e) {
         if (!imgFileList.isSelectionEmpty()) {
-            /*System.out.println("ImageDialog.valueChanged setting preview image to " + imgDir.getAbsolutePath() +
-                                 File.separator +
-                                 imgFileList.getSelectedValue().toString());*/
             File imgDir = doc.getImageDirectory();
             preview.setImage(new ImageIcon(imgDir.getAbsolutePath() + File.separator
                     + imgFileList.getSelectedValue().toString()));

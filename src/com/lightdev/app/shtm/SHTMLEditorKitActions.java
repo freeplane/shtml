@@ -86,8 +86,6 @@ class SHTMLEditorKitActions {
                 final StyleSelector styleSelector = (StyleSelector) ae.getSource();
                 final AttributeSet attributeSet = styleSelector.getValue();
                 if (attributeSet != null) {
-                    //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-                    //hd.listAttributes(a, 2);
                     panel.getSHTMLEditorPane().applyAttributes(attributeSet, true);
                 }
                 panel.updateActions();
@@ -225,26 +223,19 @@ class SHTMLEditorKitActions {
          * @param  e  the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent e) {
-            //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-            //editor.applyAttributes(getValue(), (unselectedValue == null));
             super.actionPerformed(e);
-            //if(unselectedValue != null) {
+
             if (panel.getSHTMLEditorPane() != null) {
                 final SHTMLDocument doc = panel.getSHTMLEditorPane().getDocument();
                 if (doc != null) {
                     final AttributeSet a = doc.getCharacterElement(panel.getSHTMLEditorPane().getSelectionStart())
                         .getAttributes();
                     final boolean isBold = StyleConstants.isBold(a);
-                    //if(a.isDefined(attributeKey)) {
-                    //Object value = a.getAttribute(attributeKey);
                     putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, isBold ? SHTMLPanelImpl.ACTION_SELECTED
                             : SHTMLPanelImpl.ACTION_UNSELECTED);
                 }
             }
-            /*}
-            else {
-              putValue(FrmMain.ACTION_SELECTED_KEY, FrmMain.ACTION_SELECTED);
-            }*/
+
             panel.updateActions();
         }
 
@@ -285,20 +276,14 @@ class SHTMLEditorKitActions {
          * @return the value selected from this component
          */
         public AttributeSet getValue() {
-            //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
             final SimpleAttributeSet set = new SimpleAttributeSet();
-            //if(unselectedValue != null) {
+
             if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(SHTMLPanelImpl.ACTION_SELECTED)) {
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT, StyleConstants.Bold.toString());
             }
             else {
                 Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_WEIGHT, Util.CSS_ATTRIBUTE_NORMAL);
             }
-            /*}
-                   else {
-              Util.styleSheet().addCSSAttribute(set,
-                  (CSS.Attribute) getAttributeKey(), selectedValue.toString());
-                   }*/
             return set;
         }
 
@@ -405,7 +390,6 @@ class SHTMLEditorKitActions {
          * @return the value selected from this component
          */
         public AttributeSet getValue() {
-            //System.out.println("ToggleAction getValue getValue(FrmMain.ACTION_SELECTED_KEY)=" + getValue(FrmMain.ACTION_SELECTED_KEY));
             final SimpleAttributeSet attributeSet = new SimpleAttributeSet();
             Util.styleSheet().addCSSAttribute(attributeSet, (CSS.Attribute) getAttributeName(),
                 attributeValue.toString());
@@ -605,10 +589,8 @@ class SHTMLEditorKitActions {
          * @param  e  the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent e) {
-            //System.out.println("ToggleAction getValue=" + getValue() + "selectedValue=" + selectedValue);
-            //editor.applyAttributes(getValue(), (unselectedValue == null));
             super.actionPerformed(e);
-            //if(unselectedValue != null) {
+
             if (panel.getSHTMLEditorPane() != null) {
                 final SHTMLDocument doc = panel.getSHTMLEditorPane().getDocument();
                 if (doc != null) {
@@ -1068,11 +1050,9 @@ class SHTMLEditorKitActions {
             currentTab = panel.getTabbedPaneForDocuments().getSelectedIndex();
             caretPos = panel.getDocumentPane().getEditor().getCaretPosition();
             if (panel.getTabbedPaneForDocuments().getTabCount() > 1) {
-                //System.out.println("FindReplaceAction.actionPerformed with Listener");
                 new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane(), this);
             }
             else {
-                //System.out.println("FindReplaceAction.actionPerformed NO Listener");
                 new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane());
             }
         }
@@ -2181,9 +2161,6 @@ class SHTMLEditorKitActions {
     }
 
     static class SHTMLEditPrefsAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
         private final SHTMLPanelImpl panel;
 
         public SHTMLEditPrefsAction(final SHTMLPanelImpl panel) {
@@ -2433,7 +2410,6 @@ class SHTMLEditorKitActions {
             final SHTMLFileCloseAction a = (SHTMLFileCloseAction) panel.dynRes
                 .getAction(SHTMLPanelMultipleDocImpl.closeAction);
             for (int i = panel.getTabbedPaneForDocuments().getTabCount(); i > 0; i--) {
-                //System.out.println("CloseAll, close tab no " + i);
                 a.closeDocument(i - 1, ae, false);
             }
             panel.updateActions();

@@ -107,16 +107,12 @@ class PluginManager {
         while (cNames.hasMoreElements()) {
             try {
                 final String nextClass = (String) cNames.nextElement();
-                //System.out.println("PluginManager loadPlugins loading " + pluginPrefix + nextClass /* pluginPrefix + (String) cNames.nextElement()*/);
-                cl = loader.loadClass(/*pluginPrefix +*/
-                /*(String) cNames.nextElement()*/pluginPrefix + nextClass);
-                //System.out.println("PluginManager loadPlugins calling newInstance ");
+                cl = loader.loadClass(pluginPrefix + nextClass);
+
                 o = cl.newInstance();
                 if (o instanceof SHTMLPlugin) {
                     p = (SHTMLPlugin) o;
                     p.initPlugin(owner, null, null, null);
-                    //p.setOwner(owner);
-                    //p.initPluginActions();
                     intName = p.getInternalName();
                     loadedPlugins.put(intName, o);
                     nameMap.put(p.getGUIName(), intName);
@@ -140,7 +136,6 @@ class PluginManager {
         final URL[] urlArray = new URL[urls.size()];
         for (int i = 0; i < urls.size(); i++) {
             urlArray[i] = (URL) urls.elementAt(i);
-            //System.out.println("urlArray[" + i + "]=" + urlArray[i]);
         }
         return new URLClassLoader(urlArray, this.getClass().getClassLoader());
     }
@@ -168,7 +163,6 @@ class PluginManager {
         else {
             filePath = appPath;
         }
-        //System.out.println("PluginManager.findPlugins appPath=" + appPath + ", filePath=" + filePath);
         pluginClassNames.clear();
         urls.clear();
         String fName;
@@ -180,15 +174,10 @@ class PluginManager {
                     for (int i = 0; i < content.length; i++) {
                         if (content[i].isFile()) {
                             fName = content[i].getName();
-                            //System.out.println("PluginManager.findPlugins fName=" + fName);
                             if (fName.toLowerCase().endsWith("jhall.jar")) {
-                                /*System.out.println("PluginManager.findPlugins adding URL " + Util.FILE_PREFIX +
-                                                  Util.URL_SEPARATOR + appPath + fName);*/
                                 urls.addElement(new URL(Util.FILE_PREFIX + Util.URL_SEPARATOR + appPath + fName));
                             }
                             if (fName.toLowerCase().endsWith("simplyhtml.jar")) {
-                                /*System.out.println("PluginManager.findPlugins adding URL " + Util.FILE_PREFIX +
-                                                  Util.URL_SEPARATOR + appPath + fName);*/
                                 urls.addElement(new URL(Util.FILE_PREFIX + Util.URL_SEPARATOR + appPath + fName));
                             }
                             else if (fName.endsWith(Util.JAR_EXTENSION)) {
@@ -230,8 +219,6 @@ class PluginManager {
                 je = (JarEntry) jarEntries.nextElement();
                 jeName = je.getName();
                 if (jeName.startsWith(pluginPath) && !je.isDirectory() && jeName.endsWith(Util.CLASS_EXT)) {
-                    /*System.out.println("PluginManager.readJar adding URL " + Util.FILE_PREFIX +
-                                      Util.URL_SEPARATOR + filePath + fileName);*/
                     urls.addElement(new URL(Util.FILE_PREFIX + Util.URL_SEPARATOR + filePath + fileName));
                     pluginClassNames.addElement(jeName.substring(pluginPath.length(),
                         jeName.indexOf(Util.CLASS_SEPARATOR)));
@@ -239,8 +226,6 @@ class PluginManager {
             }
         }
         catch (final Exception e) {
-            /*Util.errMsg(null, this.getClass().getName() + ".readJar: " +
-                        e.getMessage(), e);*/
         }
     }
 }
