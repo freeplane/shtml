@@ -1312,9 +1312,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             else if (content.matches("(?is)\\s*<th.*")) {
                 newContent = content.replaceFirst("(?is)^\\s*<th", "<td").replaceFirst("(?is)</th>\\s*$", "</td>");
             }
-            else {
-                // Unexpected
-            }
+
             final Element row = tableCell.getParentElement();
             final int tableCellIdx = row.getElementIndex(tableCell.getStartOffset());
             try {

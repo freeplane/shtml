@@ -322,9 +322,7 @@ class DynamicResource {
             final Component[] items = ((JMenu) e.getSource()).getMenuComponents();
             Action action;
             for (int i = 0; i < items.length; i++) {
-                if (items[i] instanceof JPopupMenu.Separator) {
-                }
-                else if (items[i] instanceof JMenuItem) {
+                if (items[i] instanceof JMenuItem) {
                     action = getAction(((JMenuItem) items[i]).getActionCommand());
                     if (action instanceof SHTMLAction) {
                         ((SHTMLAction) action).update();

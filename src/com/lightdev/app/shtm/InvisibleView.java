@@ -101,10 +101,7 @@ public class InvisibleView extends View {
      * @see View#paint
      */
     public void paint(final Graphics g, final Shape allocation) {
-        if (isVisible) {
-            // paint something here
-        }
-        else {
+        if (!isVisible) {
             setSize(0, 0);
         }
     }

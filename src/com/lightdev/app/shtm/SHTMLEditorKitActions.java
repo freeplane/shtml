@@ -2178,9 +2178,7 @@ class SHTMLEditorKitActions {
             Util.center(parent, dlg);
             dlg.setModal(true);
             dlg.setVisible(true);
-            /* if the user made a selection, apply it to the document */
-            if (dlg.getResult() == DialogShell.RESULT_OK) {
-            }
+
             panel.updateActions();
 
             dlg.removePrefChangeListener(panel);
