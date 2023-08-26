@@ -22,10 +22,7 @@ package com.lightdev.app.shtm;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -278,7 +275,7 @@ public class SHTMLWriter extends HTMLWriter {
         final Object nameTag = (attributeSet != null) ? attributeSet.getAttribute(StyleConstants.NameAttribute) : null;
         final Object endTag = (attributeSet != null) ? attributeSet.getAttribute(HTML.Attribute.ENDTAG) : null;
         // write no attributes for end tags
-        if (nameTag != null && endTag != null && (endTag instanceof String) && endTag.equals("true")) {
+        if (nameTag != null && endTag instanceof String && endTag.equals("true")) {
             return;
         }
         if (attributeSet instanceof Element) {
@@ -496,7 +493,7 @@ public class SHTMLWriter extends HTMLWriter {
                 write('<');
                 write(tag.toString());
                 Object o = htmlAttr.getAttribute(tag);
-                if (o != null && o instanceof AttributeSet) {
+                if (o instanceof AttributeSet) {
                     writeAttributes((AttributeSet)o);
                 }
                 write('>');
@@ -548,7 +545,7 @@ public class SHTMLWriter extends HTMLWriter {
                 write('<');
                 write(t.toString());
                 Object o = tagValues.elementAt(i);
-                if (o != null && o instanceof AttributeSet) {
+                if (o instanceof AttributeSet) {
                     writeAttributes((AttributeSet)o);
                 }
                 write('>');
@@ -565,10 +562,7 @@ public class SHTMLWriter extends HTMLWriter {
         if (attr != null && attr.isDefined(t)) {
             Object newValue = attr.getAttribute(t);
 
-            if ((tagValue == null) ? (newValue == null) :
-                (newValue != null && tagValue.equals(newValue))) {
-                return false;
-            }
+            return !Objects.equals(tagValue, newValue);
         }
         return true;
     }

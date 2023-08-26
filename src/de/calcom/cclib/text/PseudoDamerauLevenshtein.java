@@ -138,14 +138,10 @@ public class PseudoDamerauLevenshtein {
 				return false;
 			}
 			if (searchTextString == null) {
-				if (other.searchTextString != null) {
-					return false;
-				}
-			} else if (!searchTextString.equals(other.searchTextString)) {
-				return false;
-			}
-			return true;
-		}
+                return other.searchTextString == null;
+			} else
+				return searchTextString.equals(other.searchTextString);
+        }
 
 
 
@@ -198,14 +194,10 @@ public class PseudoDamerauLevenshtein {
 		}
 	}
 	
-	private boolean isMatch(int i, int j) 
-	{
+	private boolean isMatch(int i, int j) {
 		char col = searchTerm.charAt(i-1);
 		char row = searchText.charAt(j-1);
-		if (col == row || row == '-')
-			return true;
-		else
-			return false;
+        return col == row || row == '-';
 	}
 	
 	public int distance() {

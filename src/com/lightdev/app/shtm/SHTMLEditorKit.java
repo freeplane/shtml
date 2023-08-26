@@ -156,7 +156,7 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             final ParserCallback receiver = hdoc.getReader(pos);
             if (doc.getLength() == 0) {
                 final Boolean ignoreCharset = (Boolean) doc.getProperty("IgnoreCharsetDirective");
-                parser.parse(in, receiver, (ignoreCharset == null) ? false : ignoreCharset);
+                parser.parse(in, receiver, (ignoreCharset != null && ignoreCharset));
             }
             else {
                 parser.parse(in, receiver, true);
@@ -250,10 +250,10 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             final int endOffset = characterElement.getEndOffset();
             final ArrayList<?> attributeNames = Collections.list(sasText.getAttributeNames());
             for (final Object entryKey : attributeNames) {
-                if (attributeName != null && entryKey.equals(attributeName) || attributeName == null
+                if (entryKey.equals(attributeName) || attributeName == null
                         && !entryKey.equals(StyleConstants.NameAttribute)) {
                     sasText.removeAttribute(entryKey);
-                    if(spanAttributes != null)
+                    if (spanAttributes != null)
                         spanAttributes.removeAttribute(entryKey);
                 }
             }
