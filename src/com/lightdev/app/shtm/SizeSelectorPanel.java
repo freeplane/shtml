@@ -102,12 +102,10 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
         this(key, htmlKey, allowNegative);
         switch (type) {
             case TYPE_LABEL:
-                //System.out.println("SizeSelectorPanel constructor setting Label");
                 unitName = new JLabel(UNIT_PT);
                 add(unitName);
                 break;
             case TYPE_COMBO:
-                //System.out.println("SizeSelectorPanel constructor setting COMBO");
                 unitSelector = new JComboBox(UNIT_VALUES);
                 unitSelector.addActionListener(this);
                 add(unitSelector);
@@ -118,39 +116,23 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
 
     public void actionPerformed(final ActionEvent ae) {
         if (ae.getSource().equals(unitSelector)) {
-            //System.out.println("actionPerformed is unitSelector new value = " + unitSelector.getSelectedItem().toString());
             adjustMinMax(unitSelector.getSelectedItem().toString());
         }
     }
 
     public void setValue(final String val) {
-        //System.out.println("SizeSelectorPanel setValue STRING, val=" + val);
-        //if(attributeKey instanceof CSS.Attribute) {
-        //lv = new LengthValue(val);
         final float aVal = Util.getAbsoluteAttrVal(val);
-        //System.out.println("SizeSelectorPanel aVal=" + aVal);
-        String unit = Util.getLastAttrUnit(); //lv.getUnit();
-        //System.out.println("SizeSelectorPanel unit=" + unit);
+        String unit = Util.getLastAttrUnit();
         adjustMinMax(unit);
         if (unitSelector != null) {
-            //System.out.println("SizeSelectorPanel setValue setting combo");
             unitSelector.setSelectedItem(unit);
         }
         else if (unitName != null) {
-            //System.out.println("SizeSelectorPanel setValue setting label");
             unitName.setText(unit);
         }
-        int newVal = (int) aVal; // new Float(lv.getValue(100)).intValue();
-        //System.out.println("SizeSelectorPanel setValue newVal=" + newVal);
+        int newVal = (int) aVal;
         valueSelector.setValue(newVal);
-        //}
-        /*
-        else {
-          newVal = Integer.parseInt(val);
-          valueSelector.setValue(new Integer(val));
-          unit = UNIT_PT;
-        }
-        */
+
         if (++setValueCalls < 2) {
             originalValue = newVal;
             originalUnit = unit;
@@ -168,10 +150,8 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
      */
     public boolean setValue(final AttributeSet a) {
         boolean success = false;
-        //System.out.println("SizeSelectorPanel setValue SET attributeKey=" + attributeKey + ", htmlAttrKey=" + htmlAttrKey);
         Object valObj = a.getAttribute(attributeKey);
         if (valObj != null) {
-            //System.out.println("SizeSelectorPanel CSS valObj=" + valObj);
             setValue(valObj.toString());
             success = true;
         }
@@ -179,7 +159,6 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
             if (htmlAttrKey != null) {
                 valObj = a.getAttribute(htmlAttrKey);
                 if (valObj != null) {
-                    //System.out.println("SizeSelectorPanel HTML valObj=" + valObj);
                     setValue(valObj.toString());
                     success = true;
                 }
@@ -193,23 +172,19 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
      * according to the unit
      */
     private void adjustMinMax(final String unit) {
-        //if(lv != null) {
         final SpinnerNumberModel model = (SpinnerNumberModel) valueSelector.getModel();
         int minVal = 0;
         if (allowNegative) {
             minVal = Integer.MIN_VALUE;
         }
         if (unit.equalsIgnoreCase(UNIT_PERCENT)) {
-            //System.out.println("adjustMinMax percent");
             model.setMinimum(minVal);
             model.setMaximum(100);
         }
         else {
-            //System.out.println("adjustMinMax pt");
             model.setMinimum(minVal);
             model.setMaximum(Integer.MAX_VALUE);
         }
-        //}
     }
 
     /**
@@ -270,7 +245,6 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
                 }
             }
         }
-        //System.out.println("SizeSelectorPanel getValue()='" + a + "'");
         return a;
     }
 
@@ -280,7 +254,6 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
             final Integer value = getIntValue();
             final String unit = getUnit();
             if (attributeKey instanceof CSS.Attribute) {
-                //a.addAttribute(attributeKey, value.toString() + unit);
                 Util.styleSheet().addCSSAttribute(a, (CSS.Attribute) attributeKey, value.toString() + unit);
             }
             else {
@@ -289,7 +262,6 @@ class SizeSelectorPanel extends JPanel implements AttributeComponent, ActionList
                     a.addAttribute(htmlAttrKey, value.toString());
                 }
             }
-            //System.out.println("SizeSelectorPanel getValue()='" + a + "'");
             return a;
         }
         else {

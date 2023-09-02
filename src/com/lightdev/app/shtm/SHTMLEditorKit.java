@@ -273,7 +273,6 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             final Object o = elem.getAttributes().getAttribute(StyleConstants.NameAttribute);
             if (o instanceof HTML.Tag) {
                 final HTML.Tag kind = (HTML.Tag) o;
-                //System.out.println("SHTMLEditorKit.SHTMLFactory o is HTML.Tag kind=" + kind.toString());
                 if (kind == HTML.Tag.TABLE) {
                     view = super.create(elem);
                 }

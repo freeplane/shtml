@@ -148,7 +148,7 @@ class BorderPanel extends JPanel implements AttributeComponent {
     /**
      * Panel to show and manipulate border settings
      */
-    private class BorderSettings extends JPanel {
+    private static class BorderSettings extends JPanel {
         /** the border side */
         private final int side;
         /** selector for border width */
@@ -198,7 +198,6 @@ class BorderPanel extends JPanel implements AttributeComponent {
          */
         public void setValue(final CombinedAttribute borderWidths, final CombinedAttribute borderColors) {
             String attr = borderColors.getAttribute(side);
-            //System.out.println("BorderSettings setValue attr='" + attr + "'");
             if (attr != null) {
                 bColor.setValue(attr);
             }

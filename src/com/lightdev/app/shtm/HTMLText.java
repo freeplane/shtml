@@ -157,9 +157,6 @@ class HTMLText {
             for (int elementIdx = 0; elementIdx < count; elementIdx++) {
                 final Element element = paragraphElement.getElement(elementIdx);
                 if (element.equals(characterElement)) {
-                    // Why the following?
-                    //if(elementIdx > 0) 
-                    //  w.writeStartTag(paragraphElementAdjustedName, paragraphElement.getAttributes());
                     //Write first part of the splitted text.
                     final SHTMLWriter htmlStartWriter = new SHTMLWriter(sw, doc, element.getStartOffset(),
                         targetPosition - element.getStartOffset());
@@ -177,8 +174,6 @@ class HTMLText {
                             - targetPosition);
                     htmlEndWriter.write(element);
                     // Why the following?
-                    //if(elementIdx > 0) 
-                    //  w.writeEndTag(paragraphElementAdjustedName);
                 }
                 else {
                     w.write(element);

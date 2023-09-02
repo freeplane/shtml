@@ -149,16 +149,10 @@ class ImagePreview extends JComponent implements Scrollable {
         if (pic != null) {
             final Dimension ps = getPreferredSize();
             int hPct = (int) (ps.getWidth() / ((double) pic.getIconWidth() / (double) 100));
-            //System.out.println("ImagePreview getScale ps.getWidth " + ps.getWidth());
-            //System.out.println("ImagePreview getScale pic.getIconWidth() " + pic.getIconWidth());
-            //System.out.println("ImagePreview getScale hPct " + hPct + "\r\n\r\n");
             int vPct = (int) (ps.getHeight() / ((double) pic.getIconHeight() / (double) 100));
-            //System.out.println("ImagePreview getScale ps.getHeight() " + ps.getHeight());
-            //System.out.println("ImagePreview getScale pic.getIconHeight() " + pic.getIconHeight());
-            //System.out.println("ImagePreview getScale vPct " + vPct + "\r\n\r\n");
             scale = Math.min(hPct, vPct);
         }
-        //System.out.println("ImagePreview getScale=" + scale + "\r\n\r\n");
+
         return scale;
     }
 
@@ -168,7 +162,7 @@ class ImagePreview extends JComponent implements Scrollable {
      * @param  newWidth   the new width for the image preview
      */
     public void setPreviewWidth(final int newWidth) {
-        //System.out.println("ImagePreview setPreviewWidth newWidth=" + newWidth);
+
         if (pic != null) {
             try {
                 final int hPct = (int) (newWidth / ((double) getOriginalWidth() / (double) 100));

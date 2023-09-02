@@ -170,16 +170,13 @@ public class Util {
             Object key;
             while (names.hasMoreElements()) {
                 key = names.nextElement();
-                //System.out.println("Util resolveAttributes key=" + key);
                 value = style.getAttribute(key);
-                //System.out.println("Util resolveAttributes value=" + value);
                 if ((!key.equals(StyleConstants.NameAttribute)) && (!key.equals(StyleConstants.ResolveAttribute))
                         && (!key.equals(AttributeSet.ResolveAttribute)) && (!key.equals(AttributeSet.NameAttribute))) {
                     set.addAttribute(key, value);
                 }
                 else {
                     if (key.equals(StyleConstants.ResolveAttribute) || key.equals(AttributeSet.ResolveAttribute)) {
-                        //System.out.println("Util resolveAttributes resolving key=" + key);
                         set.addAttributes(Util.resolveAttributes((AttributeSet) value));
                     }
                 }
@@ -278,7 +275,6 @@ public class Util {
         while (e.hasMoreElements()) {
             name = (String) e.nextElement();
             if (name.toLowerCase().startsWith(tag + ".")) {
-                //System.out.println("getStyleClassVector adding name '" + name + "'");
                 v.addElement(name.substring(2));
             }
         }
@@ -455,40 +451,13 @@ public class Util {
                 if (pos > -1) {
                     unit = pct;
                     valStr = valStr.substring(0, pos);
-                    //System.out.println("Util.getPtValue valStr=" + valStr);
                     len = Float.parseFloat(valStr) / 100f;
-                    //System.out.println("Util.getPtValue len=" + len);
                 }
                 else {
                     // assume relative value 1 .. 6
                     try {
                         len = Float.parseFloat(valStr);
                         unit = pt;
-                        /*
-                        switch((int) len) {
-                          case 1:
-                            len = 8;
-                            break;
-                          case 2:
-                            len = 10;
-                            break;
-                          case 3:
-                            len = 12;
-                            break;
-                          case 4:
-                            len = 14;
-                            break;
-                          case 5:
-                            len = 18;
-                            break;
-                          case 6:
-                            len = 24;
-                            break;
-                          default:
-                            len = len;
-                            break;
-                        }
-                        */
                     }
                     catch (final Exception e) {
                         // unsupported number format (em ex, etc.)
@@ -520,7 +489,6 @@ public class Util {
         float val = -1;
         if (attr != null) {
             val = Util.getPtValue(attr.toString());
-            //System.out.println("Util.getAttrValue val=" + val);
         }
         return val;
     }
@@ -622,7 +590,6 @@ public class Util {
     public static void msgStart(final String startMsg) {
         final long startTime = System.currentTimeMillis();
         startTimes.addElement(startTime);
-        //System.out.println(startMsg + " startTime=" + startTime);
     }
 
     /**
@@ -696,16 +663,6 @@ public class Util {
      */
     public static void addGridBagComponent(final JComponent container, final JComponent comp, final GridBagLayout g,
                                            final GridBagConstraints c, final int gx, final int gy, final int a) {
-        /*
-        c.gridx = gx;
-        c.gridy = gy;
-        c.anchor = a;
-        c.insets = new Insets(2, 2, 2, 2);
-        c.ipadx = 2;
-        c.ipady = 2;
-        g.setConstraints(comp, c);
-        container.add(comp);
-        */
         Util.addGridBagComponent(container, comp, g, c, gx, gy, a, 1, 1, GridBagConstraints.NONE, 0, 0);
     }
 

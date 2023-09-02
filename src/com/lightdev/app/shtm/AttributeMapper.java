@@ -70,9 +70,6 @@ class AttributeMapper extends SimpleAttributeSet {
                 mapToJavaAttributes();
                 break;
         }
-        //System.out.println("AttributeMapper transformed attributes=");
-        //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-        //hd.listAttributes(this, 2);
         return this;
     }
 
@@ -90,7 +87,6 @@ class AttributeMapper extends SimpleAttributeSet {
         if (cssFontFamily != null) {
             if (cssFontFamily.toString().equalsIgnoreCase("SansSerif")) {
                 addAttribute(CSS.Attribute.FONT_FAMILY, "SansSerif, Sans-Serif");
-                //System.out.println("mapToHTMLAttributes SansSerif, Sans-Serif");
             }
             else if (cssFontFamily.toString().contains("Monospaced")) {
                 addAttribute(CSS.Attribute.FONT_FAMILY, "Monospace, Monospaced");

@@ -270,7 +270,7 @@ public class SHTMLWriter extends HTMLWriter {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLWriter#writeAttributes(javax.swing.text.AttributeSet)
      */
     @Override
@@ -387,7 +387,7 @@ public class SHTMLWriter extends HTMLWriter {
         }
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLWriter#startTag(javax.swing.text.Element)
      */
     void writeStartTag(final Element elem) throws IOException, BadLocationException {
@@ -395,7 +395,7 @@ public class SHTMLWriter extends HTMLWriter {
         super.startTag(elem);
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.text.html.HTMLWriter#endTag(javax.swing.text.Element)
      */
     void writeEndTag(final Element elem) throws IOException {

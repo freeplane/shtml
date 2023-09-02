@@ -166,9 +166,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
             cType = new JComboBox(cTypes);
             cType.addActionListener(this);
             // create a list of styles
-            //Vector styleNames = Util.getStyleNamesForTag(styles, getContentType());
-            //styleNames.insertElementAt(standardStyleName, 0);
-            styleList = new JList(/*new DefaultComboBoxModel(styleNames)*/);
+            styleList = new JList();
             updateStyleList();
             styles.addChangeListener(this);
             styleList.addListSelectionListener(this);
@@ -304,11 +302,6 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      */
     public boolean setValue(final AttributeSet a) {
         boolean result = true;
-        /*
-        System.out.println("\r\n");
-        de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-        hd.listAttributes(a, 4);
-        */
         final AttributeSet set = Util.resolveAttributes(a);
         final Enumeration elements = components.elements();
         AttributeComponent ac;
@@ -346,7 +339,6 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
                 else {
                     styleName = getContentType() + Util.CLASS_SEPARATOR + className;
                 }
-                //Style style = styles.getStyle(styleName);
                 AttributeSet style = styles.getStyle(styleName);
                 if (style == null) {
                     style = new SimpleAttributeSet();
@@ -355,8 +347,6 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
                     ((SHTMLDocument) doc).getCharacterElement(doc.getEndPosition().getOffset()),
                     ((SHTMLDocument) doc).getStyleSheet());
                 allStyles.addAttributes(style);
-                //mapSet = new AttributeMapper(Util.resolveAttributes(style)).getMappedAttributes(AttributeMapper.toJava);
-                //setValue(style);
                 setValue(allStyles);
             }
         }
@@ -448,14 +438,8 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
             if (mapSet != null) {
                 a.addAttributes(mapSet);
             }
-            /*
-            AttributeSet test = getValue(true);
-            de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-            hd.listAttributes(test, 4);
-            System.out.println(" \r\n");
-            */
             a.addAttributes(new AttributeMapper(getValue(true)).getMappedAttributes(AttributeMapper.toCSS));
-            // hd.listAttributes(a, 4);
+
             cw.writeRule(className, a);
             final String ruleStr = sw.getBuffer().toString();
             styles.removeStyle(className);

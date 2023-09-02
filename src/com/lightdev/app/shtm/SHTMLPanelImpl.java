@@ -207,8 +207,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String moveTableColumnLeftAction = "moveTableColumnLeft";
     public static final String moveTableColumnRightAction = "moveTableColumnRight";
     public static final String moveTableRowDownAction = "moveTableRowDown";
-    //public static final String nextCellAction = "nextCell";
-    //public static final String prevCellAction = "prevCell";
     public static final String toggleBulletsAction = "toggleBullets";
     public static final String toggleNumbersAction = "toggleNumbers";
     public static final String formatListAction = "formatList";
@@ -285,7 +283,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         super.shtmlPrefChanged(propertyName, newValue, oldValue);
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
     protected boolean processKeyBinding(final KeyStroke ks, final KeyEvent e, final int condition, final boolean pressed) {
@@ -396,11 +394,9 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      */
     void addDocumentPaneListener(final DocumentPane.DocumentPaneListener listener) {
         if (getDocumentPane() != null) {
-            //System.out.println("FrmMain.addDocumentPaneListener documentPane.source=" + documentPane.getSource());
             getDocumentPane().addDocumentPaneListener(listener);
         }
         else {
-            //System.out.println("FrmMain.addDocumentPaneListener documentPane is null, did not add");
         }
     }
 
@@ -610,7 +606,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 pMenu.add(pluginMenu);
             }
             if (helpMenu != null) {
-                //System.out.println("FrmMain.refreshPluginDisplay insert helpMenu");
                 if (helpMenu.getSubElements().length > 0) {
                     Icon menuIcon = helpMenu.getIcon();
                     if (menuIcon == null) {
@@ -634,7 +629,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
     }
 
-    class PluginInfo implements Runnable {
+    static class PluginInfo implements Runnable {
         final SHTMLPlugin pi;
 
         PluginInfo(final SHTMLPlugin pi) {
@@ -661,9 +656,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         catch (final Throwable e) {
             System.err.println("Simply HTML : Warning : loading help failed.");
             // --Dan
-            //Util.errMsg(this,
-            //            Util.getResourceString("helpNotFoundError"),
-            //            e);
         }
     }
 
@@ -931,13 +923,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         else if (itemKey.equalsIgnoreCase(setTagAction)) {
             tagSelector = new TagSelector();
             tagSelector.setAction(dynRes.getAction(setTagAction));
-            /*
-             styleSelector = new StyleSelector(HTML.Attribute.CLASS);
-             styleSelector.setPreferredSize(new Dimension(110, 23));
-             styleSelector.setAction(dynRes.getAction(setStyleAction));
-             styleSelector.setMaximumSize(comboBoxSize);
-             jtpDocs.addChangeListener(styleSelector);
-             */
             toolBar.add(tagSelector);
         }
         else {
@@ -1008,7 +993,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             doc.removeUndoableEditListener(undoHandler);
         }
         getDocumentPane().removeAllListeners(); // for plug-in removal from any documentPane that is about to close
-        //System.out.println("FrmMain unregister document documentPane.name=" + documentPane.getDocumentName());
     }
 
     /**
@@ -1140,7 +1124,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     * a JComboBox for selecting a font family names
     * from those available in the system.
     */
-    class FontFamilyPicker extends JComboBox implements AttributeComponent {
+    static class FontFamilyPicker extends JComboBox implements AttributeComponent {
         /** switch for the action listener */
         private boolean ignoreActions = false;
 
@@ -1196,7 +1180,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     */
     static final String[] FONT_SIZES = new String[] { "8", "10", "12", "14", "18", "24" };
 
-    class FontSizePicker extends JComboBox implements AttributeComponent {
+    static class FontSizePicker extends JComboBox implements AttributeComponent {
         private boolean ignoreActions = false;
         final private Object key;
 
@@ -1251,7 +1235,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     /**
      * a listener for property change events on ToggleFontActions
      */
-    private class ToggleActionChangedListener implements PropertyChangeListener {
+    private static class ToggleActionChangedListener implements PropertyChangeListener {
         final JToggleButton button;
 
         ToggleActionChangedListener(final JToggleButton button) {
@@ -1262,7 +1246,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         public void propertyChange(final PropertyChangeEvent e) {
             final String propertyName = e.getPropertyName();
             if (e.getPropertyName().equals(SHTMLPanelImpl.ACTION_SELECTED_KEY)) {
-                //System.out.println("propertyName=" + propertyName + " newValue=" + e.getNewValue());
                 if (e.getNewValue().toString().equals(SHTMLPanelImpl.ACTION_SELECTED)) {
                     button.setSelected(true);
                 }
@@ -1323,7 +1306,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 styleName = elemName + "." + classAttr;
                 a.addAttribute(HTML.Attribute.CLASS, classAttr);
             }
-            //System.out.println("getMaxAttributes name=" + styleName);
+
             attrs = s.getStyle(styleName);
             if (attrs != null) {
                 a.addAttributes(Util.resolveAttributes(attrs));
@@ -1340,12 +1323,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
             a.addAttributes(Util.resolveAttributes(e.getAttributes()));
         }
         if (cElem != null) {
-            //System.out.println("getMaxAttributes cElem.name=" + cElem.getName());
             a.addAttributes(cElem.getAttributes());
         }
-        //System.out.println(" ");
-        //de.calcom.cclib.html.HTMLDiag hd = new de.calcom.cclib.html.HTMLDiag();
-        //hd.listAttributes(a, 4);
         return new AttributeMapper(a).getMappedAttributes(AttributeMapper.toJava);
     }
 
@@ -1428,7 +1407,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see javax.swing.JComponent#requestFocus()
      */
     public JEditorPane getMostRecentFocusOwner() {

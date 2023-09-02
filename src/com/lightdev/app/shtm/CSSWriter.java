@@ -103,7 +103,6 @@ class CSSWriter {
      * @exception IOException if i/o fails
      */
     public void writeRule(final String ruleName, final AttributeSet rule) throws IOException {
-        //System.out.println("CSSWriter writeRule ruleName=" + ruleName);
         indentLen = ruleName.length() + 3;
         if (!ruleName.equalsIgnoreCase(StyleContext.DEFAULT_STYLE)) {
             writer.write(ruleName);

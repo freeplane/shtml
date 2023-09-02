@@ -296,7 +296,6 @@ class DynamicResource {
      * @return the string for the given key or null if not found
      */
     static public String getResourceString(final UIResources resources, final String key) {
-            //System.out.println("getResourceString nm=" + nm);
             if (resources != null) {
                 return resources.getString(key);
             }
@@ -323,9 +322,7 @@ class DynamicResource {
             final Component[] items = ((JMenu) e.getSource()).getMenuComponents();
             Action action;
             for (int i = 0; i < items.length; i++) {
-                if (items[i] instanceof JPopupMenu.Separator) {
-                }
-                else if (items[i] instanceof JMenuItem) {
+                if (items[i] instanceof JMenuItem) {
                     action = getAction(((JMenuItem) items[i]).getActionCommand());
                     if (action instanceof SHTMLAction) {
                         ((SHTMLAction) action).update();

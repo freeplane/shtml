@@ -184,9 +184,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             paneHoldingScrollPanes.add(richViewScrollPane, BorderLayout.CENTER);
             activeView = VIEW_TAB_LAYOUT;
             //BorderLayout DOES NOT allow two parts with ..CENTER.
-            //paneHoldingScrollPanes.add(sourceViewScrollPane, BorderLayout.CENTER);
-            //sourceViewScrollPane.setVisible(false);
-            //paneHoldingScrollPanes.addChangeListener(this);
             setLayout(new BorderLayout());
             add(paneHoldingScrollPanes, BorderLayout.CENTER);
         }
@@ -251,8 +248,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         try {
             final SHTMLEditorKit kit = (SHTMLEditorKit) editorPane.getEditorKit();
             final SHTMLDocument doc = (SHTMLDocument) kit.createDefaultDocument();
-            //insertStyleRef(doc); // create style sheet reference in HTML header tag
-            //styles = kit.getStyleSheet();
             doc.addDocumentListener(this); // listen to changes
             docTempDir = new File(SHTMLPanelImpl.getAppTempDir().getAbsolutePath() + File.separator + getDocumentName()
             + File.separator);
@@ -260,7 +255,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             doc.setBase(tempDocumentUrl);
             editorPane.setDocument(doc); // let the document be edited in our editor
             updateFileName();
-            //doc.putProperty(Document.TitleProperty, getDocumentName());
             final boolean useStyle = Util.useSteStyleSheet();
             if (useStyle) {
                 doc.insertStyleRef();
@@ -369,12 +363,10 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     */
                     saveImages(targetUrl);
                     /* clean up */
-                    //System.out.println("DocumentPane textChanged = false");
                     setDocumentChanged(false); // indicate no changes pending anymore after the save
                     getDocument().setBase(targetUrl); // set the doc base
                     updateFileName();
                     deleteTempDir();
-                    //System.out.println("DocumentPane saveSuccessful = true");
                     saveSuccessful = true; // signal that saving was successful
             }
              catch (final Exception e) {
@@ -420,7 +412,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * @return true, if a save process is going on, else false
      */
     public boolean saveInProgress() {
-        //System.out.println("DocumentPane.saveInProgress=" + (saveThread != null) + " for document " + getDocumentName());
         return saveThread != null;
     }
 
@@ -551,7 +542,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * @return  true, if changes need to be saved
      */
     public boolean needsSaving() {
-        //System.out.println("DocumentPane.needsSaving=" + textChanged + " for document " + getDocumentName());
         return isDocumentChanged();
     }
 
@@ -736,7 +726,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * needs to be saved.
      */
     public void changedUpdate(final DocumentEvent e) {
-        //System.out.println("changedUpdate setting textChanged=true for " + getDocumentName());
         if (getSelectedTab() == VIEW_TAB_LAYOUT) {
             editorPane.updateInputAttributes();
             setHtmlChanged(true);
@@ -757,7 +746,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     }
 
     /** the event object definition for DocumentPaneEvents */
-    class DocumentPaneEvent extends EventObject {
+    static class DocumentPaneEvent extends EventObject {
         public DocumentPaneEvent(final Object source) {
             super(source);
         }
@@ -776,7 +765,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         if (!dpListeners.contains(listener)) {
             dpListeners.addElement(listener);
         }
-        //System.out.println("DocumentPane.addDocumentPaneListener docName=" + getDocumentName() + ", listener.count=" + dpListeners.size());
     }
 
     /**

@@ -278,7 +278,6 @@ class LinkDialog extends DialogShell implements ActionListener {
     private void setLinkText(final int start, final int end) {
         try {
             linkText.setText(doc.getText(start, end - start));
-            //System.out.println("showAsText = true");
             showAsText.setSelected(true);
             linkTextPanel.setVisible(true);
             linkImagePanel.setVisible(false);
@@ -784,7 +783,6 @@ class LinkDialog extends DialogShell implements ActionListener {
      * to browse anchors of a given file.
      */
     private void handleBrowseAnchorAction() {
-        //System.out.println("LinkDialog actionPerformed browseAnchor file=" + getLinkedFile().getAbsolutePath());
         try {
             AnchorDialog anchorDialog;
             final File file = getLinkedFile();
