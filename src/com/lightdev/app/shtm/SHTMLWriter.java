@@ -284,11 +284,10 @@ public class SHTMLWriter extends HTMLWriter {
         if (attributeSet instanceof Element) {
             final Element element = (Element) attributeSet;
             if (element.isLeaf() || element.getName().equalsIgnoreCase("p-implied")) {
-                superWriteAttributes(attributeSet);
+                writeUnwrappedAttributes(convertToHTML(attributeSet));
                 return;
             }
         }
-        //convertedAttributeSet.removeAttributes(convertedAttributeSet);
         final MutableAttributeSet convertedAttributeSet = new SimpleAttributeSet();
         SHTMLWriter.convertStyleToHTMLStyle(attributeSet, convertedAttributeSet);
         final Enumeration attributeNames = convertedAttributeSet.getAttributeNames();
@@ -304,10 +303,7 @@ public class SHTMLWriter extends HTMLWriter {
     }
 
 
-    private void superWriteAttributes(AttributeSet attr) throws IOException {
-        // translate css attributes to html
-        attr = convertToHTML(attr);
-
+    private void writeUnwrappedAttributes(AttributeSet attr) throws IOException {
         Enumeration<?> names = attr.getAttributeNames();
         while (names.hasMoreElements()) {
             Object attributeName = names.nextElement();
@@ -593,7 +589,7 @@ public class SHTMLWriter extends HTMLWriter {
             return;
         }
         Enumeration<?> keys = from.getAttributeNames();
-        String value = "";
+        StringBuilder value = null;
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
             Object attributeValue = from.getAttribute(key);
@@ -601,21 +597,38 @@ public class SHTMLWriter extends HTMLWriter {
                 attributeValue = cssFontSizeFromHtmlFont(attributeValue);
             }
             if (key instanceof CSS.Attribute) {
-                if(! containsExplicitTag(from.getAttributeNames(), (CSS.Attribute)key, attributeValue))
-                    value = (value.isEmpty() ? key : value  + " " + key) + ": " + attributeValue + ";";
-            } else if(key != HTML.Tag.FONT){
+                if(! containsExplicitTag(from.getAttributeNames(), (CSS.Attribute)key, attributeValue)) {
+                    if(value == null)
+                        value = new StringBuilder();
+                    else
+                        value.append(" ");
+                    value.append(key).append(": ").append(attributeValue).append(";");
+                    }
+            } else if(key != HTML.Tag.FONT && key != HTML.Tag.SPAN){
                 to.addAttribute(key, attributeValue);
             }
         }
-        if (!value.isEmpty()) {
-            if (matchNameAttribute(from, HTML.Tag.CONTENT)) {
-                SimpleAttributeSet styleAttribute = new SimpleAttributeSet();
-                styleAttribute.addAttribute(HTML.Attribute.STYLE, value);
-                to.addAttribute(HTML.Tag.SPAN, styleAttribute);
+        AttributeSet spanElementAttributes = (AttributeSet) from.getAttribute(HTML.Tag.SPAN);
+        SimpleAttributeSet combinedSpanAttributes = spanElementAttributes != null || value != null ? new SimpleAttributeSet() : null;
+        if(spanElementAttributes != null) {
+            Enumeration<?> spanKeys = spanElementAttributes.getAttributeNames();
+            while (spanKeys.hasMoreElements()) {
+                Object key = spanKeys.nextElement();
+                if (! (key instanceof CSS.Attribute)) {
+                    Object attributeValue = spanElementAttributes.getAttribute(key);
+                    combinedSpanAttributes.addAttribute(key, attributeValue);
+                }
             }
-            else
-                to.addAttribute(HTML.Attribute.STYLE, value);
         }
+        if (matchNameAttribute(from, HTML.Tag.CONTENT)) {
+            if (value != null) {
+                combinedSpanAttributes.addAttribute(HTML.Attribute.STYLE, value.toString());
+            }
+        }
+        else if (value != null)
+            to.addAttribute(HTML.Attribute.STYLE, value.toString());
+        if(combinedSpanAttributes != null && ! combinedSpanAttributes.isEmpty())
+            to.addAttribute(HTML.Tag.SPAN, combinedSpanAttributes);
     }
 
     private Object cssFontSizeFromHtmlFont(Object cssFontSizeValue) {
