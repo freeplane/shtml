@@ -19,12 +19,7 @@
  */
 package de.calcom.cclib.text;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Pseudo-Damerau-Levenshtein (aka "Optimal String Distance")
@@ -130,17 +125,9 @@ public class PseudoDamerauLevenshtein {
 			if (r != other.r) {
 				return false;
 			}
-			if (searchTermString == null) {
-				if (other.searchTermString != null) {
-					return false;
-				}
-			} else if (!searchTermString.equals(other.searchTermString)) {
+			if (!Objects.equals(searchTermString, other.searchTermString))
 				return false;
-			}
-			if (searchTextString == null) {
-                return other.searchTextString == null;
-			} else
-				return searchTextString.equals(other.searchTextString);
+			return Objects.equals(searchTextString, other.searchTextString);
         }
 
 
