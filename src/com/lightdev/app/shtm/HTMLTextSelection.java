@@ -64,7 +64,6 @@ class HTMLTextSelection implements Transferable {
         this.data = data;
     }
 
-    /* ---- start of Transferable implementation ----------------------------*/
     /**
      * Returns an array of DataFlavor objects indicating the flavors the data
      * can be provided in.  The array should be ordered according to preference
@@ -107,5 +106,4 @@ class HTMLTextSelection implements Transferable {
             throw new UnsupportedFlavorException(flavor);
         }
     }
-    /* ----------- end of Transferable implementation ------------------- */
 }

@@ -138,7 +138,6 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
         }
     }
 
-    /* ----------- SimplyHTML plugin interface implementation start --------- */
     /**
      * initialize the plugin
      *
@@ -336,8 +335,6 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
         return owner.getDynRes().getAction(cmd);
     }
 
-    /* ----------- SimplyHTML plugin interface implementation end --------- */
-    /* --------------- class fields start --------------------- */
     /** TextResources of plug-in */
     public static UIResources textResources;
     /** constant for active setting in preferences file */
@@ -366,5 +363,4 @@ public abstract class AbstractPlugin implements SHTMLPlugin {
     protected final Preferences prefs;
     /** the owner of this plug in */
     protected SHTMLPanelImpl owner;
-    /* ------------- class fields end ------------------ */
 }

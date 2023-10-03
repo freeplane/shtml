@@ -439,7 +439,7 @@ class DynamicResource {
      */
     static public URL getResource(final UIResources resources, final String key) {
         final String name = Util.getResourceString(resources, key);
-        if (name != null/* && !name.endsWith(IMAGE_EMPTY)*/) {
+        if (name != null) {
             return DynamicResource.class.getResource(name);
         }
         return null;

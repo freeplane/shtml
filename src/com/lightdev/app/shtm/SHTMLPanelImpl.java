@@ -63,8 +63,7 @@ import java.util.prefs.*;
 public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     private static final String SHOW_TOOLBARS_PROPERTY = "show_toolbars";
     private static final String SHOW_MENU_PROPERTY = "show_menu";
-    //private int renderMode = SHTMLEditorKit.RENDER_MODE_JAVA;
-    /* some public constants */
+
     public static final String APP_TEMP_DIR = "temp";
     public static final String ACTION_SELECTED_KEY = "selected";
     public static final String ACTION_SELECTED = "true";
@@ -1033,7 +1032,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
     }
 
-    /* ---------- undo/redo implementation ----------------------- */
     /** Listener for edits on a document. */
     private final UndoableEditListener undoHandler = new UndoHandler();
     /** UndoManager that we add edits to. */
@@ -1404,7 +1402,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         return null;
     }
 
-    /* ---------- font manipulation code end ------------------ */
     public int getCaretPosition() {
         return getSHTMLEditorPane().getCaretPosition();
     }

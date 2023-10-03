@@ -64,6 +64,6 @@ public class App {
         catch (final Exception e) {
             e.printStackTrace();
         }
-        FrmMain.run(); // create an instance of the app's main window
+        FrmMain.run();
     }
 }

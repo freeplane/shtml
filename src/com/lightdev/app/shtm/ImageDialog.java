@@ -124,7 +124,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     /**
      * build the dialog contents after construction
      *
-     * @param title  the title of this ImageDialog
+     * @param title the title of this ImageDialog
      */
     private void initDialog(final String title) {
         Dimension dim;
@@ -262,7 +262,7 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
     /**
      * set dialog content from a given set of image attributes
      *
-     * @param a  the set of attributes to set dialog contents from
+     * @param a the set of attributes to set dialog contents from
      */
     public void setImageAttributes(final AttributeSet a) {
         ignoreChangeEvents = true;
@@ -469,7 +469,6 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
         ignoreChangeEvents = false;
     }
 
-    /* ---------------- event handling start ------------------------- */
     /**
      * implements the ActionListener interface to be notified of
      * clicks onto the file repository buttons.
@@ -576,5 +575,4 @@ class ImageDialog extends DialogShell implements ActionListener, ListSelectionLi
             }
         }
     }
-    /* ---------------- event handling end ------------------------- */
 }

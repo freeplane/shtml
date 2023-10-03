@@ -133,9 +133,9 @@ class SyntaxPane extends JEditorPane implements CaretListener {
      * apply syntax highlighting to all HTML tags found in the given
      * area of the given document
      *
-     * @param sDoc  the document to apply syntax highlighting to
-     * @param offset  the position inside the given document to start to apply syntax highlighting to
-     * @param len  the number of characters to apply syntax highlighting to
+     * @param sDoc the document to apply syntax highlighting to
+     * @param offset the position inside the given document to start to apply syntax highlighting to
+     * @param len the number of characters to apply syntax highlighting to
      */
     public void setMarks(final StyledDocument sDoc, final int offset, final int len) {
         SwingUtilities.invokeLater(new StyleUpdater(this, sDoc, offset, len));
@@ -189,10 +189,10 @@ class SyntaxPane extends JEditorPane implements CaretListener {
         /**
          * construct a <code>StyleUpdater</code>
          *
-         * @param sp  the SyntaxPane this StyleUpdater works on
-         * @param doc  the document to apply syntax highlighting to
-         * @param offset  the position inside the given document to start to apply syntax highlighting to
-         * @param len  the number of characters to apply syntax highlighting to
+         * @param sp the SyntaxPane this StyleUpdater works on
+         * @param doc the document to apply syntax highlighting to
+         * @param offset the position inside the given document to start to apply syntax highlighting to
+         * @param len the number of characters to apply syntax highlighting to
          */
         public StyleUpdater(final SyntaxPane sp, final StyledDocument doc, final int offset, final int len) {
             sDoc = doc;

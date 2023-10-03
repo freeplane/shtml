@@ -62,8 +62,8 @@ class TableDialog extends DialogShell {
     /**
      * constructor
      *
-     * @param parent  the main frame having the TextResources
-     * @param title  the title for this dialog
+     * @param parent the main frame having the TextResources
+     * @param title the title for this dialog
      */
     public TableDialog(final Frame parent, final String title) {
         super(parent, title);

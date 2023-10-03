@@ -368,7 +368,6 @@ public class PseudoDamerauLevenshtein {
         }
 		else
 		{
-			// TODO: comments!!
 			
 			// match/mismatch
 			if (ali.r >= 1 && ali.c >= 1 && matrix[ali.r][ali.c] == matrix[ali.r-1][ali.c-1] + (isMatch(ali.r,ali.c) ? 0 : costMismatch))

@@ -67,7 +67,6 @@ class FrmMain extends JFrame {
             EventQueue.invokeAndWait(new Runnable() {
                 public void run() {
                     mainPane = new SHTMLPanelMultipleDocImpl();
-                    //                    mainPane = new SHTMLPanelSingleDocImpl();
                     mainPane.setContentPanePreferredSize(new Dimension(1024, 500));
                     getContentPane().add(mainPane);
                     pack();
@@ -81,7 +80,7 @@ class FrmMain extends JFrame {
                     }
                     //Center the window
                     setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-                    setVisible(true); // show the window
+                    setVisible(true);
                     getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
                 }
             });

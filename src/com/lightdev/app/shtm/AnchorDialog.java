@@ -353,7 +353,6 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
         }
     }
 
-    /* -------- DocumentListener implementation start ------------*/
     /**
      * listens to inserts into the document to track whether or not the document
      * needs to be saved.
@@ -377,5 +376,4 @@ class AnchorDialog extends DialogShell implements ActionListener, CaretListener,
     public void changedUpdate(final DocumentEvent e) {
         updateAnchorList();
     }
-    /* -------- DocumentListener implementation end ------------*/
 }

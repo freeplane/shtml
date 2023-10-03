@@ -57,6 +57,5 @@ class Remover {
         .removeFirstAndBefore("body").removeLastAndAfter("/body")
         .getProcessedText().equals("4 1 5");
         System.out.println("Success");
-        // assert removeLastAndAfter.equals("1");
     }
 }

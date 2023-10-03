@@ -126,7 +126,6 @@ import de.calcom.cclib.text.PseudoDamerauLevenshtein.Alignment;
  * @see javax.swing.JEditorPane
  */
 public class FindReplaceDialog extends JDialog {
-    /* ---- Constructor(s) start -----------*/
     /**
      * Construct a <code>FindReplaceDialog</code>.
      *
@@ -158,8 +157,8 @@ public class FindReplaceDialog extends JDialog {
      * <p>Using this constructor implies the dialog shall be used in mode
      * MODE_DOCUMENT</p>
      *
-     * @param owner  the <code>Frame</code> that owns this dialog
-     * @param editor  <code>JEditorPane</code> displaying the
+     * @param owner the <code>Frame</code> that owns this dialog
+     * @param editor <code>JEditorPane</code> displaying the
      *                    <code>Document</code> to search in
      *
      * @see javax.swing.JEditorPane
@@ -191,10 +190,10 @@ public class FindReplaceDialog extends JDialog {
      * <p>Using this constructor implies the dialog shall be used in mode
      * MODE_PROJECT</p>
      *
-     * @param owner  the <code>Frame</code> that owns this dialog
-     * @param editor  <code>JEditorPane</code> displaying the
+     * @param owner the <code>Frame</code> that owns this dialog
+     * @param editor <code>JEditorPane</code> displaying the
      *                    <code>Document</code> to search in
-     * @param listener  listener for handling FindReplaceEvents
+     * @param listener listener for handling FindReplaceEvents
      *
      * @see javax.swing.JEditorPane
      * @see javax.swing.text.Document
@@ -216,8 +215,6 @@ public class FindReplaceDialog extends JDialog {
             e.printStackTrace();
         }
     }
-
-    /* --------- Constructor(s) end ------------- */
     
     private void rememberSearchTermFromSelection()
     {
@@ -226,12 +223,11 @@ public class FindReplaceDialog extends JDialog {
     		rememberSearchTerm(editor.getSelectedText(), jcomboSearchTerm);
     	}
     }
-    
-    /* --------- Event handling start ------------- */
+
     /**
      * add an event listener to this dialog.
      *
-     * @param  listener  the event listener to add
+     * @param listener the event listener to add
      */
     public void addFindReplaceListener(final FindReplaceListener listener) {
         listeners.addElement(listener);
@@ -240,7 +236,7 @@ public class FindReplaceDialog extends JDialog {
     /**
      * remove an event listener from this dialog.
      *
-     * @param  listener  the event listener to remove
+     * @param listener the event listener to remove
      */
     public void removeFindReplaceListener(final FindReplaceListener listener) {
         listeners.removeElement(listener);
@@ -374,12 +370,10 @@ public class FindReplaceDialog extends JDialog {
         dispose();
     }
 
-    /* --------- Event handling end ------------- */
-    /* --------- Getters and setters start ------------- */
     /**
      * Set the JEditorPane holding the document to be searched
      *
-     * @param editor  the JEditorPane holding the document to be searched
+     * @param editor the JEditorPane holding the document to be searched
      *
      * @see javax.swing.JEditorPane
      */
@@ -399,7 +393,7 @@ public class FindReplaceDialog extends JDialog {
      *    the user likes to search a whole group of documents.</li>
      * </ul>
      *
-     * @param mode  one of MODE_DOCUMENT and MODE_PROJECT
+     * @param mode one of MODE_DOCUMENT and MODE_PROJECT
      */
     public void setMode(final int mode) {
         this.mode = mode;
@@ -416,9 +410,6 @@ public class FindReplaceDialog extends JDialog {
 		getRootPane().getGlassPane().setVisible(false);
 	}
 
-
-    /* --------- Getters and setters end ------------- */
-    /* --------- Find implementation start ------ */
     /**
      * Initialize the find operation by reading all relevant settings and
      * locking the dialog window.
@@ -628,7 +619,7 @@ public class FindReplaceDialog extends JDialog {
      * Find the next whole word occurrence of the searched phrase from
      * a given position.
      *
-     * @param start  the position to start the search at
+     * @param start the position to start the search at
      *
      * @return the start position of the next occurrence or
      *                          0 if no more hits were found
@@ -643,8 +634,6 @@ public class FindReplaceDialog extends JDialog {
         return start;
     }
 
-    /* ----------- Find implementation end ------- */
-    /* ----------- Replace implementation start ------- */
     /**
      * Initiate a replace operation. If no (more)
      * hits are found, a message is displayed and the dialog is unlocked for a
@@ -706,8 +695,6 @@ public class FindReplaceDialog extends JDialog {
         offset += replaceDiff;
     }
 
-    /* ----------- Replace implementation end ------- */
-    /* ----------- Helper methods start ------- */
     /**
      * Set dialog components to their initial state
      */
@@ -738,7 +725,7 @@ public class FindReplaceDialog extends JDialog {
     /**
      * Center this dialog window relative to its owning <code>Frame</code>.
      *
-     * @param owner  <code>Frame</code> owning this dialog
+     * @param owner <code>Frame</code> owning this dialog
      *
      * @see java.awt.Frame
      */
@@ -755,7 +742,7 @@ public class FindReplaceDialog extends JDialog {
      * <p>The state of the dialog is either unlocked (no find in progress) or
      * locked (find in progress).</p>
      *
-     * @param unlocked  one of FindReplaceDialog.STATE_LOCKED and
+     * @param unlocked one of FindReplaceDialog.STATE_LOCKED and
      *      FindReplaceDialog.STATE_UNLOCKED
      */
     private void toggleState(final boolean unlocked) {
@@ -796,8 +783,6 @@ public class FindReplaceDialog extends JDialog {
             JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /* ----------- Helper methods end ------- */
-    /** GUI builder init */
     private void jbInit() {
         final KeyListener escapeKeyListender = new KeyAdapter() {
             public void keyPressed(final KeyEvent e) {
@@ -931,7 +916,6 @@ public class FindReplaceDialog extends JDialog {
         getRootPane().setDefaultButton(jbtnFindNext);
     }
 
-    /* ----------------- class fields ------------------------------ */
     /** result value for this dialog */
     private int result;
     /** mode of dialog */
@@ -944,9 +928,7 @@ public class FindReplaceDialog extends JDialog {
     private String searchText;
     /** search phrase to find */
     private String searchTerm;
-    /** new phrase to replace the searched phrase with */
-    
-    /* search results for approximate matching */
+
     private List<PseudoDamerauLevenshtein.Alignment> currentApproximateMatches;
     private int currentApproximateMatchIndex;
     
@@ -987,7 +969,7 @@ public class FindReplaceDialog extends JDialog {
     public static final int OP_NONE = 0;
     public static final int OP_FIND = 1;
     public static final int OP_REPLACE = 2;
-    /* ---- GUI elements start ---------*/
+
     private TitledBorder titledBorder1;
     private final JButton jbtnFindNext = new JButton();
     private final JCheckBox jcbStartOnTop = new JCheckBox();
@@ -1012,7 +994,6 @@ public class FindReplaceDialog extends JDialog {
     private final JButton jbtnReplace = new JButton();
     private final JButton jbtnCancel = new JButton();
     private final JCheckBox jcbProject = new JCheckBox();
-    /* ---- GUI elements end ---------*/
     
     public static synchronized void rememberSearchTerm(final String searchTerm, final JComboBox searchTermCombo) {
     	if (searchTerm.isEmpty())

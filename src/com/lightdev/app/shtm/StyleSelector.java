@@ -100,7 +100,6 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
         return getValue();
     }
 
-    /* --------------- ChangeListener implementation start --------------- */
     /**
      * this method listens and reacts to changes to either the JTabbedPane of FrmMain or
      * a given StyleSheet this component was registered with. Once either one changes
@@ -143,5 +142,4 @@ class StyleSelector extends JComboBox implements AttributeComponent, ChangeListe
             updateRunning = false;
         }
     }
-    /* --------------- ChangeListener implementation end ----------------- */
 }

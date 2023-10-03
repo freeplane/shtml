@@ -36,7 +36,6 @@
 /*
  * @(#)ExampleFileFilter.java	1.8 04/07/26
  */
-/* for use in SimplyHTML */
 package com.sun.demo;
 
 import java.io.File;

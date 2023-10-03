@@ -125,7 +125,6 @@ class LinkDialog extends DialogShell implements ActionListener {
         // save document for later use
         this.editorPane = editorPane;
         doc = editorPane.getDocument();
-        //this.renderMode = renderMode;
         // layout and constraints to use later on
         final GridBagLayout g = new GridBagLayout();
         final GridBagConstraints c = new GridBagConstraints();
@@ -659,7 +658,6 @@ class LinkDialog extends DialogShell implements ActionListener {
         return file;
     }
 
-    /* -------- ActionListener implementation start (including additional handling methods) ---------- */
     /**
      * actionListener implementation to control dialog components
      */
@@ -804,5 +802,4 @@ class LinkDialog extends DialogShell implements ActionListener {
             Util.errMsg(this, ex.getMessage(), ex);
         }
     }
-    /* -------- ActionListener implementation end  (including additional handling methods) ---------- */
 }

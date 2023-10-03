@@ -239,7 +239,6 @@ class ColorPanel extends JPanel implements ActionListener {
     }
 
 
-    /* -------------- event listener implementation start ----------- */
     /** the listeners for ColorPanelEvents */
     private final Vector listeners = new Vector(0);
 
@@ -280,5 +279,4 @@ class ColorPanel extends JPanel implements ActionListener {
     interface ColorPanelListener extends EventListener {
         void colorChanged(ColorPanelEvent e);
     }
-    /* -------------- event listener implementation end ----------- */
 }

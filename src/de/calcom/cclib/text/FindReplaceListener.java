@@ -46,7 +46,7 @@ public interface FindReplaceListener extends EventListener {
      * the end of the current document and requires the next document
      * of a group of documents.
      *
-     * @param  e  the object having details for the event
+     * @param e the object having details for the event
      */
     void getNextDocument(FindReplaceEvent e);
 
@@ -55,7 +55,7 @@ public interface FindReplaceListener extends EventListener {
      * an operation for a group of documents which requires to start at
      * the first document.
      *
-     * @param  e  the object having details for the event
+     * @param e the object having details for the event
      */
     void getFirstDocument(FindReplaceEvent e);
 
@@ -63,7 +63,7 @@ public interface FindReplaceListener extends EventListener {
      * this event gets fired when a FindReplaceDialog has finalized its
      * task.
      *
-     * @param  e  the object having details for the event
+     * @param e the object having details for the event
      */
     void findReplaceTerminated(FindReplaceEvent e);
 }

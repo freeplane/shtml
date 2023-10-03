@@ -36,7 +36,6 @@
 /*
  * @(#)ElementTreePanel.java	1.16 04/07/26
  */
-/* for use in SimplyHTML */
 package com.sun.demo;
 
 import java.awt.BorderLayout;
@@ -128,7 +127,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
             }
         };
         tree.addTreeSelectionListener(this);
-        /* commented out for use in SimplyHTML */
         // Don't show the root, it is fake.
         tree.setRootVisible(false);
         // Since the display value of every node after the insertion point
@@ -146,17 +144,14 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
                 return retValue;
             }
         });
-        // become a listener on the document to update the tree.
+
         document.addDocumentListener(this);
-        // become a PropertyChangeListener to know when the Document has
-        // changed.
         editor.addPropertyChangeListener(this);
-        // Become a CaretListener
         editor.addCaretListener(this);
-        // configure the panel and frame containing it.
+
         setLayout(new BorderLayout());
         add(new JScrollPane(tree), BorderLayout.CENTER);
-        // Add a label above tree to describe what is being shown
+
         final JLabel label = new JLabel("Elements that make up the current document", SwingConstants.CENTER);
         label.setFont(new Font("Dialog", Font.BOLD, 14));
         add(label, BorderLayout.NORTH);
@@ -192,7 +187,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
         }
     }
 
-    // PropertyChangeListener
     /**
      * Invoked when a property changes. We are only interested in when the
      * Document changes to reset the DocumentListener.
@@ -201,16 +195,14 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
         if (e.getSource() == getEditor() && e.getPropertyName().equals("document")) {
             final Document oldDoc = (Document) e.getOldValue();
             final Document newDoc = (Document) e.getNewValue();
-            // Reset the DocumentListener
             oldDoc.removeDocumentListener(this);
             newDoc.addDocumentListener(this);
-            // Recreate the TreeModel.
+
             treeModel = new ElementTreeModel(newDoc);
             tree.setModel(treeModel);
         }
     }
 
-    // DocumentListener
     /**
      * Gives notification that there was an insert into the document.  The
      * given range bounds the freshly inserted region.
@@ -241,7 +233,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
         updateTree(e);
     }
 
-    // CaretListener
     /**
      * Messaged when the selection in the editor has changed. Will update
      * the selection in the tree.
@@ -287,7 +278,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
         }
     }
 
-    // TreeSelectionListener
     /**
       * Called whenever the value of the selection changes.
       * @param e the event that characterizes the change.
@@ -310,7 +300,6 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
         }
     }
 
-    // Local methods
     /**
      * @return tree showing elements.
      */
@@ -448,7 +437,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
          * <i>parent</i> (that is <i>index</i> >= 0 && <i>index</i>
          * < getChildCount(<i>parent</i>)).
          *
-         * @param   parent  a node in the tree, obtained from this data source
+         * @param parent a node in the tree, obtained from this data source
          * @return  the child of <I>parent</I> at index <I>index</I>
          */
         public Object getChild(final Object parent, final int index) {
@@ -464,7 +453,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
          * <I>parent</I> must be a node previously obtained from this
          * data source.
          *
-         * @param   parent  a node in the tree, obtained from this data source
+         * @param parent a node in the tree, obtained from this data source
          * @return  the number of children of the node <I>parent</I>
          */
         public int getChildCount(final Object parent) {
@@ -481,7 +470,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
          * contain no files; the node representing the directory is
          * not a leaf, but it also has no children.
          *
-         * @param   node    a node in the tree, obtained from this data source
+         * @param node a node in the tree, obtained from this data source
          * @return  true if <I>node</I> is a leaf
          */
         public boolean isLeaf(final Object node) {

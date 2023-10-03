@@ -114,8 +114,8 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * create a <code>ParaStyleDialog</code> to manipulate
      * the format of a paragraph
      *
-     * @param parent  the parent frame of this dialog
-     * @param title  the text to be shown as title for this dialog
+     * @param parent the parent frame of this dialog
+     * @param title the text to be shown as title for this dialog
      */
     public ParaStyleDialog(final Frame parent, final String title) {
         this(parent, title, null, MODE_PARAGRAPH_STYLE);
@@ -125,9 +125,9 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * create a <code>ParaStyleDialog</code> to edit named
      * styles of a given document
      *
-     * @param parent  the parent frame of this dialog
+     * @param parent the parent frame of this dialog
      * @param title the text to be shown as title for this dialog
-     * @param doc  the document having the style sheet to edit named styles from
+     * @param doc the document having the style sheet to edit named styles from
      */
     public ParaStyleDialog(final Frame parent, final String title, final Document doc) {
         this(parent, title, doc, MODE_NAMED_STYLES);
@@ -136,9 +136,9 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     /**
      * construct a <code>ParaStyleDialog</code>
      *
-     * @param parent  the parent frame for this dialog
-     * @param title  the text to be shown as title for this dialog
-     * @param mode  the mode this dialog is to be created, one of MODE_NAMED_STYLES or MODE_PARAGRAPH_STYLE
+     * @param parent the parent frame for this dialog
+     * @param title the text to be shown as title for this dialog
+     * @param mode the mode this dialog is to be created, one of MODE_NAMED_STYLES or MODE_PARAGRAPH_STYLE
      */
     private ParaStyleDialog(final Frame parent, final String title, final Document doc, final int mode) {
         super(parent, title);
@@ -294,7 +294,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     /**
      * set the value of this <code>AttributeComponent</code>
      *
-     * @param a  the set of attributes possibly having an
+     * @param a the set of attributes possibly having an
      *          attribute this component can display
      *
      * @return true, if the set of attributes had a matching attribute,
@@ -424,7 +424,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
     /**
      * save a style under a given name
      *
-     * @param newStyleName  the name the style has to be saved under
+     * @param newStyleName the name the style has to be saved under
      */
     private void saveStyleAs(final String newStyleName) {
         try {
@@ -469,7 +469,7 @@ class ParaStyleDialog extends DialogShell implements AttributeComponent, ActionL
      * check whether or not a named style already exists in the style sheet
      * associated to this dialog
      *
-     * @param styleName  the name of the style to be looked for
+     * @param styleName the name of the style to be looked for
      *
      * @return true, if the given style name already is used in the style sheet,
      *    false if not

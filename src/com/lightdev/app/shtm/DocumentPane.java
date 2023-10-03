@@ -353,21 +353,18 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                     final SHTMLWriter hw = new SHTMLWriter(osw, doc);
                         hw.write();
                     }
-                    /* write the style sheet */
+
                     if (doc.hasStyleRef()) {
                         saveStyleSheet(targetUrl);
                     }
-                    /*
-                      copy image directory,
-                      if new document or saved from different location
-                    */
+
                     saveImages(targetUrl);
-                    /* clean up */
+
                     setDocumentChanged(false); // indicate no changes pending anymore after the save
-                    getDocument().setBase(targetUrl); // set the doc base
+                    getDocument().setBase(targetUrl);
                     updateFileName();
                     deleteTempDir();
-                    saveSuccessful = true; // signal that saving was successful
+                    saveSuccessful = true;
             }
              catch (final Exception e) {
                 Util.errMsg(this, "An exception occurred while saving the file", e);
@@ -685,7 +682,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         });
     }
 
-    /* ----------------- changeListener implementation start ---------------------- */
     public void stateChanged(final ChangeEvent e) {
         final Object src = e.getSource();
         if (src.equals(paneHoldingScrollPanes)) {
@@ -701,8 +697,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         SHTMLPanelImpl.getOwnerSHTMLPanel(this).updateActions();
     }
 
-    /* ----------------- changeListener implementation end ------------------------ */
-    /* -------- DocumentListener implementation start ------------*/
     /**
      * listens to inserts into the document to track whether or not the document
      * needs to be saved.
@@ -733,8 +727,6 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
         }
     }
 
-    /* -------- DocumentListener implementation end ------------*/
-    /* -------- DocumentPaneListener definition start --------------- */
     /**
      * interface to be implemented for being notified of
      * changes to the name of this document
@@ -822,5 +814,4 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
             scrollPane.invalidate();
         }
     }
-    /* -------- DocumentPaneListener definition end --------------- */
 }

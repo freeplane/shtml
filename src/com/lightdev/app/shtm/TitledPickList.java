@@ -209,7 +209,6 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
         fireValueChanged();
     }
 
-    /* ------------- event handling start ------------ */
     /** the listeners for TitledPickkListEvents */
     private final Vector listeners = new Vector(0);
 
@@ -250,5 +249,4 @@ class TitledPickList extends JPanel implements ListSelectionListener, CaretListe
     interface TitledPickListListener extends EventListener {
         void valueChanged(TitledPickListEvent e);
     }
-    /* ------------- event handling end ------------ */
 }

@@ -45,18 +45,16 @@ class FontDialog extends DialogShell {
     /**
      * constructor
      *
-     * @param parent  the main frame having the TextResources
-     * @param title  the title for this dialog
-     * @param a  the set of attributes to show and manipulate
+     * @param parent the main frame having the TextResources
+     * @param title the title for this dialog
+     * @param a the set of attributes to show and manipulate
      */
     public FontDialog(final Frame parent, final String title, final AttributeSet a) {
         super(parent, title);
-        // construct font panel
         fontPanel = new FontPanel(a);
         // add font panel to content pane of DialogShell
         final Container contentPane = super.getContentPane();
         contentPane.add(fontPanel, BorderLayout.CENTER);
-        // cause optimal placement of all elements
         pack();
     }
 

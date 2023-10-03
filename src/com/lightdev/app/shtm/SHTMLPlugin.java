@@ -125,14 +125,14 @@ public interface SHTMLPlugin {
     /**
      * set status of plug-in
      *
-     * @param isActive  indicates whether or not the plug-in shall be activated
+     * @param isActive indicates whether or not the plug-in shall be activated
      */
     void setStatus(boolean isActive);
 
     /**
      * set the owner of this plug-in
      *
-     * @param owner  the main frame of the instance of SimplyHTML creating the plug-in
+     * @param owner the main frame of the instance of SimplyHTML creating the plug-in
      */
     void setOwner(SHTMLPanelImpl owner);
 
@@ -146,7 +146,7 @@ public interface SHTMLPlugin {
     /**
      * get a string from the resource bundle of the owner of this plug-in
      *
-     * @param nm  the name of the string resource to get
+     * @param nm the name of the string resource to get
      *
      * @return the string with the given name or null, if none is found
      */
@@ -155,7 +155,7 @@ public interface SHTMLPlugin {
     /**
      * get an action from the resource bundle of the owner of this plug-in
      *
-     * @param cmd  the name of the action to get
+     * @param cmd the name of the action to get
      *
      * @return the action with the given name or null, if none is found
      */
@@ -164,11 +164,11 @@ public interface SHTMLPlugin {
     /**
      * init the plug-in
      * this is called by the PluginManager directly after instantiating the plug-in
-     * @param owner  the owner of this plug-in
-     * @param internalName  the internal name this plug-in shall have
-     * @param pluginMenuId  the id of the plug-in menu in the TextResources,
+     * @param owner the owner of this plug-in
+     * @param internalName the internal name this plug-in shall have
+     * @param pluginMenuId the id of the plug-in menu in the TextResources,
      * or null if no plugin-in menu is to be created
-     * @param helpMenuId  the id of the help menu for this plug-in in the
+     * @param helpMenuId the id of the help menu for this plug-in in the
      * TextResources, or null if no help menu is to be created
      */
     void initPlugin(SHTMLPanelImpl owner, String internalName, String pluginMenuId, String helpMenuId);

@@ -87,7 +87,6 @@ public class SHTMLEditorKit extends HTMLEditorKit {
 
 
 
-    /* --------------- SHTMLDocument implementation start ------------ */
     /**
      * Create an uninitialized text storage model
      * that is appropriate for this type of editor.
@@ -202,7 +201,6 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         }
     }
 
-    /* --------------- SHTMLDocument implementation end --------------- */
     void updateInputAttributes(final SHTMLEditorPane e) {
         final int start = e.getSelectionStart();
         // record current character attributes.
@@ -223,7 +221,6 @@ public class SHTMLEditorKit extends HTMLEditorKit {
         createInputAttributes(run, getInputAttributes());
     }
 
-    /* --------------- ViewFactory implementation start -------------- */
     /** Shared factory for creating HTML Views. */
     private static final ViewFactory defaultFactory = new SHTMLFactory();
 
@@ -292,5 +289,4 @@ public class SHTMLEditorKit extends HTMLEditorKit {
             return view;
         }
     }
-    /* --------------- ViewFactory implementation end -------------- */
 }

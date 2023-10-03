@@ -62,7 +62,6 @@ import javax.swing.text.html.StyleSheet;
  * 
  */
 public class Util {
-    /* some constants */
     public static final String JAR_PREFIX = "jar:";
     public static final String JAR_EXTENSION = ".jar";
     public static final String FILE_PREFIX = "file:";
@@ -86,7 +85,7 @@ public class Util {
     private static String unit = "";
     /** a style sheet instanciated once for access to its utility methods */
     private static final StyleSheet s = new StyleSheet();
-    /* CSS Attribute constants */
+
     public static final String CSS_ATTRIBUTE_NORMAL = "normal";
     public static final String CSS_ATTRIBUTE_UNDERLINE = "underline";
     public static final String CSS_ATTRIBUTE_LINE_THROUGH = "line-through";
@@ -101,8 +100,8 @@ public class Util {
     /**
      * rename a file to have a given extension
      *
-     * @param from  the file to rename
-     * @param newExt  the new extension the file shall have
+     * @param from the file to rename
+     * @param newExt the new extension the file shall have
      *
      * @return the renamed file
      */
@@ -118,7 +117,7 @@ public class Util {
      * find the next link attribute from a given element upwards
      * through the element hierarchy
      *
-     * @param elem  the element to start looking at
+     * @param elem the element to start looking at
      *
      * @return the link attribute found, or null, if none was found
      */

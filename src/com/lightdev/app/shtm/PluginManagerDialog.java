@@ -86,7 +86,6 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         final JPanel pluginPanel = new JPanel(new BorderLayout());
         pluginPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("pluginPanelTitle")));
-        //pluginPanel.setMinimumSize(new Dimension(400, 400));
         SHTMLPanelImpl.pluginManager.plugins();
         pluginNames = new JList(SHTMLPanelImpl.pluginManager.getPluginNames());
         pluginNames.addListSelectionListener(this);
@@ -116,7 +115,6 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         dockLocation.setEnabled(false);
         dockLocation.addActionListener(this);
         Util.addGridBagComponent(pluginSettingsPanel, dockLocation, g, c, 1, 1, GridBagConstraints.WEST);
-        /* add components to dialog */
         contentPane.add(pluginPanel, BorderLayout.WEST);
         final JPanel centerPanel = new JPanel(new BorderLayout());
         final JPanel centerWestPanel = new JPanel(new BorderLayout());
@@ -124,7 +122,6 @@ class PluginManagerDialog extends DialogShell implements ListSelectionListener, 
         centerPanel.add(centerWestPanel, BorderLayout.WEST);
         centerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), Util
             .getResourceString("pluginSettingsPanelTitle")));
-        //centerPanel.setPreferredSize(new Dimension(200,400));
         contentPane.add(centerPanel, BorderLayout.CENTER);
         pack();
     }

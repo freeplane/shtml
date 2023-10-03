@@ -43,12 +43,10 @@ class ListDialog extends DialogShell {
 
     public ListDialog(final Frame parent, final String title) {
         super(parent, title);
-        // create a ListPanel and keep a reference for later use
         listPanel = new ListPanel();
         // add to content pane of DialogShell
         final Container contentPane = super.getContentPane();
         contentPane.add(listPanel, BorderLayout.CENTER);
-        // cause optimal placement of all elements
         pack();
     }
 

@@ -44,23 +44,19 @@ import javax.swing.JTextArea;
  * 
  */
 class LicensePane extends JPanel {
-    /* line separator character (sequence) */
     private final String lineSeparator = System.getProperty("line.separator");
 
     /**
      * construct a <code>LicensePane</code>
      */
     public LicensePane(final Dimension d, final String licensePath) {
-        /* create a text area to show the license text in */
         final JTextArea licText = new JTextArea(getLicenseText(getClass().getResourceAsStream(licensePath)));
         licText.setEditable(false);
         licText.setFont(new Font("Courier", Font.PLAIN, 12));
-        /* create a scroll pane as the license text is long */
         JScrollPane licPane = new JScrollPane(licText);
         licPane.setPreferredSize(d);
         licPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         licPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        /* add the scroll pane to this panel */
         setLayout(new BorderLayout());
         add(licPane, BorderLayout.CENTER);
         licText.setCaretPosition(0); // go to top of text (for JRE versions earlier than 1.4)

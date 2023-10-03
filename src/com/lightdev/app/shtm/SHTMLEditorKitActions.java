@@ -220,7 +220,7 @@ class SHTMLEditorKitActions {
          *
          * <p>This reverses the current setting for the associated attribute</p>
          *
-         * @param  e  the ActionEvent describing the cause for this action
+         * @param e the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent e) {
             super.actionPerformed(e);
@@ -246,7 +246,7 @@ class SHTMLEditorKitActions {
         /**
          * set the value of this <code>AttributeComponent</code>
          *
-         * @param a  the set of attributes possibly having an
+         * @param a the set of attributes possibly having an
          *          attribute this component can display
          *
          * @return true, if the set of attributes had a matching attribute,
@@ -309,7 +309,7 @@ class SHTMLEditorKitActions {
         /**
          * Constructs a ToggleAttributeAction.
          * @param panel TODO
-         * @param actionName  the name and command for this action
+         * @param actionName the name and command for this action
          * @param attributeName the name of the attribute to be modified
          * @param attributeValue the value the attribute should be set to
          * @param applyToParagraph TODO
@@ -330,7 +330,7 @@ class SHTMLEditorKitActions {
          *
          * <p>This reverses the current setting for the associated attribute</p>
          *
-         * @param  ev  the ActionEvent describing the cause for this action
+         * @param ev the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent ev) {
             boolean performTheAction = false;
@@ -360,7 +360,7 @@ class SHTMLEditorKitActions {
         /**
          * set the value of this <code>AttributeComponent</code>
          *
-         * @param a  the set of attributes possibly having an
+         * @param a the set of attributes possibly having an
          *          attribute this component can display
          *
          * @return true, if the set of attributes had a matching attribute,
@@ -586,7 +586,7 @@ class SHTMLEditorKitActions {
          *
          * <p>This reverses the current setting for the associated attribute</p>
          *
-         * @param  e  the ActionEvent describing the cause for this action
+         * @param e the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent e) {
             super.actionPerformed(e);
@@ -614,7 +614,7 @@ class SHTMLEditorKitActions {
         /**
          * set the value of this <code>AttributeComponent</code>
          *
-         * @param a  the set of attributes possibly having an
+         * @param a the set of attributes possibly having an
          *          attribute this component can display
          *
          * @return true, if the set of attributes had a matching attribute,
@@ -1012,7 +1012,7 @@ class SHTMLEditorKitActions {
          *
          * <p>This reverses the current setting for the associated attribute</p>
          *
-         * @param  e  the ActionEvent describing the cause for this action
+         * @param e the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent e) {
             final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
@@ -1790,7 +1790,7 @@ class SHTMLEditorKitActions {
          *
          * <p>This reverses the current setting for the associated attribute</p>
          *
-         * @param  e  the ActionEvent describing the cause for this action
+         * @param e the ActionEvent describing the cause for this action
          */
         public void actionPerformed(final ActionEvent e) {
             super.actionPerformed(e);
@@ -1818,7 +1818,7 @@ class SHTMLEditorKitActions {
         /**
          * set the value of this <code>AttributeComponent</code>
          *
-         * @param a  the set of attributes possibly having an
+         * @param a the set of attributes possibly having an
          *          attribute this component can display
          *
          * @return true, if the set of attributes had a matching attribute,

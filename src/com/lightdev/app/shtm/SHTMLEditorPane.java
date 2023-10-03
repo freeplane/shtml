@@ -207,9 +207,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             }
         });
         setPasteModeFromPrefs();
-        /* implement customized caret movement */
         adjustKeyBindings();
-        /* init drag and drop */
         initDnd();
     }
 
@@ -621,12 +619,11 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         }
     }
 
-    /* ------- list manipulation start ------------------- */
     /**
      * apply a set of attributes to the list the caret is
      * currently in (if any)
      *
-     * @param a  the set of attributes to apply
+     * @param a the set of attributes to apply
      */
     public void applyListAttributes(final AttributeSet a) {
         final SHTMLDocument doc = getDocument();
@@ -697,9 +694,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * <p>Switches list formatting off, if the selection contains
      * only parts formatted as list of the given type.</p>
      *
-     * @param listTag  the list tag type to toggle on or off (UL or OL)
-     * @param attributeSet  the attributes to use for the list to toggle to
-     * @param forceOff  indicator for toggle operation. If true, possibly
+     * @param listTag the list tag type to toggle on or off (UL or OL)
+     * @param attributeSet the attributes to use for the list to toggle to
+     * @param forceOff indicator for toggle operation. If true, possibly
      * existing list formatting inside the selected parts always is switched
      * off. If false, the method decides, if list formatting for the parts
      * inside the selection needs to be switched on or off.
@@ -816,7 +813,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      *
      * <p>If nothing is selected, this method does nothing</p>
      *
-     * @param anchorName  the name of the new anchor
+     * @param anchorName the name of the new anchor
      */
     public void insertAnchor(final String anchorName) {
         if (getSelectionStart() != getSelectionEnd()) {
@@ -851,9 +848,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * replace the existing link. If nothing is selected and the caret
      * is not inside a link, this method does nothing.</p>
      *
-     * @param linkText  the text that shall appear as link at the current selection
-     * @param href  the target this link shall refer to
-     * @param className  the style class to be used
+     * @param linkText the text that shall appear as link at the current selection
+     * @param href the target this link shall refer to
+     * @param className the style class to be used
      */
     public void setLink(final String linkText, final String href, final String className) {
         setLink(linkText, href, className, null, null);
@@ -1595,33 +1592,17 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         return i;
     }
 
-    /* ------- table manipulation end -------------------- */
-    /* ------- table cell navigation start --------------- */
     /**
      * <code>Action</code> to move the caret from the current table cell
      * to the next table cell.
      */
     private class TabAction extends AbstractAction {
-        /* action to use when not inside a table */
-        /* removed for changes in J2SE 1.4.1
-        private Action alternateAction;
-         */
+
         /** construct a <code>NextTableCellAction</code> */
         public TabAction(final String actionName) {
             super(actionName);
         }
 
-        /*
-         * construct a <code>NextTableCellAction</code>
-         *
-         * @param altAction  the action to use when the caret
-         *      is not inside a table
-         */
-        /* removed for changes in J2SE 1.4.1
-        public NextTableCellAction(Action altAction) {
-          alternateAction = altAction;
-        }
-         */
         /**
          * move to the previous cell or invoke an alternate action if the
          * caret is not inside a table

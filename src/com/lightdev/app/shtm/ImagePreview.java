@@ -64,7 +64,7 @@ class ImagePreview extends JComponent implements Scrollable {
     /**
      * Construct an <CODE>ImagePreview</CODE>.
      *
-     * @param  pic - the image to be previewed
+     * @param pic - the image to be previewed
      */
     public ImagePreview(final ImageIcon pic) {
         setImage(pic);
@@ -125,7 +125,7 @@ class ImagePreview extends JComponent implements Scrollable {
      * of the component, the image is painted in its original size. Otherwise,
      * the image is scaled down to the size of this component.
      *
-     * @param   g - The graphics context to use for painting.
+     * @param g - The graphics context to use for painting.
      */
     public void paint(final Graphics g) {
         if (pic != null) {
@@ -159,7 +159,7 @@ class ImagePreview extends JComponent implements Scrollable {
     /**
      * set the preview to a new width maintaining the image proportions
      *
-     * @param  newWidth   the new width for the image preview
+     * @param newWidth the new width for the image preview
      */
     public void setPreviewWidth(final int newWidth) {
 
@@ -180,7 +180,7 @@ class ImagePreview extends JComponent implements Scrollable {
     /**
      * set the preview to a new height maintaining the image proportions
      *
-     * @param  newHeight   the new height for the image preview
+     * @param newHeight the new height for the image preview
      */
     public void setPreviewHeight(final int newHeight) {
         if (pic != null) {
@@ -201,7 +201,7 @@ class ImagePreview extends JComponent implements Scrollable {
      * Adapt the size of the image previewed by this component to a new
      * scale.
      *
-     * @param  newScale   the new scale the image shall adapt to in size
+     * @param newScale the new scale the image shall adapt to in size
      */
     public void setScale(final int newScale) {
         int newWidth;

@@ -58,7 +58,7 @@ abstract class AttributePanel extends JPanel implements AttributeComponent, Cont
     /**
      * set the value of this <code>AttributeComponent</code>
      *
-     * @param a  the set of attributes possibly having an
+     * @param a the set of attributes possibly having an
      *          attribute this component can display
      *
      * @return true, if the set of attributes had a matching attribute,

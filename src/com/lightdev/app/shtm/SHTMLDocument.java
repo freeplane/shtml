@@ -462,11 +462,10 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* ------------------ custom document title handling start -------------------- */
     /**
      * set the title of this SHTMLDocument
      *
-     * @param title  the title this document shall have
+     * @param title the title this document shall have
      */
     public void setDocumentTitle(final String title) {
         try {
@@ -508,8 +507,6 @@ public class SHTMLDocument extends HTMLDocument {
         }
     }
 
-    /* ------------------ custom document title handling end -------------------- */
-    /* ------------------ custom style sheet reference handling start -------------------- */
     /**
      * insert a style sheet reference into the head of this SHTMLDocument
      */
@@ -569,7 +566,6 @@ public class SHTMLDocument extends HTMLDocument {
         return linkName;
     }
 
-    /* ------------------ custom style sheet reference handling end -------------------- */
     public Element getParagraphElement(final int pos) {
         return getParagraphElement(pos, inSetParagraphAttributes);
     }

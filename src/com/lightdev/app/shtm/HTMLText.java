@@ -173,7 +173,6 @@ class HTMLText {
                     final SHTMLWriter htmlEndWriter = new SHTMLWriter(sw, doc, targetPosition, element.getEndOffset()
                             - targetPosition);
                     htmlEndWriter.write(element);
-                    // Why the following?
                 }
                 else {
                     w.write(element);
