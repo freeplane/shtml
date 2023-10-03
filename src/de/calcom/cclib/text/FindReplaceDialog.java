@@ -403,12 +403,7 @@ public class FindReplaceDialog extends JDialog {
      */
     public void setMode(final int mode) {
         this.mode = mode;
-        if (mode == MODE_PROJECT) {
-            jcbProject.setVisible(true);
-        }
-        else {
-            jcbProject.setVisible(false);
-        }
+        jcbProject.setVisible(mode == MODE_PROJECT);
     }
     
 	public void setSearchingBusyCursor() {

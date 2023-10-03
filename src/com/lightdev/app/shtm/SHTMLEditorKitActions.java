@@ -1062,12 +1062,7 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
                 return;
             }
-            if (panel.getTabbedPaneForDocuments().getTabCount() > 0) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getTabbedPaneForDocuments().getTabCount() > 0);
         }
 
 
@@ -1139,12 +1134,7 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
                 return;
             }
-            if (panel.getDocumentPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getDocumentPane() != null);
         }
 
         public void findReplaceTerminated(final FindReplaceEvent e) {
@@ -1360,15 +1350,9 @@ class SHTMLEditorKitActions {
             }
             if (panel.getSHTMLEditorPane() != null) {
                 final Element img = panel.getSHTMLDocument().getCharacterElement(
-                    panel.getSHTMLEditorPane().getCaretPosition());
-                if (img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
-                    this.setEnabled(true);
-                }
-                else {
-                    this.setEnabled(false);
-                }
-            }
-            else {
+                        panel.getSHTMLEditorPane().getCaretPosition());
+                this.setEnabled(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString()));
+            } else {
                 this.setEnabled(false);
             }
         }
@@ -1577,12 +1561,7 @@ class SHTMLEditorKitActions {
                 this.setEnabled(false);
                 return;
             }
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2040,12 +2019,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+            setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2068,12 +2042,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+            setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2096,12 +2065,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+            setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2151,12 +2115,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                setEnabled(true);
-            }
-            else {
-                setEnabled(false);
-            }
+            setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2211,12 +2170,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2374,12 +2328,7 @@ class SHTMLEditorKitActions {
 
         /** update the state of this action */
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2414,12 +2363,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 
@@ -2695,12 +2639,7 @@ class SHTMLEditorKitActions {
         }
 
         public void update() {
-            if (panel.getSHTMLEditorPane() != null) {
-                this.setEnabled(true);
-            }
-            else {
-                this.setEnabled(false);
-            }
+            this.setEnabled(panel.getSHTMLEditorPane() != null);
         }
     }
 

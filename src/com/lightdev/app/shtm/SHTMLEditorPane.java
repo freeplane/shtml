@@ -351,9 +351,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         MapElementRemovingWorkaround.removeAllMapElements(doc);
         try {
             doc.remove(0, doc.getLength());
-            if (text == null || text.isEmpty()) {
-                return;
-            }
+
             Reader r = new StringReader(text);
             SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
             kit.read(r, doc, 0);
@@ -451,10 +449,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             final SHTMLDocument doc = getDocument();
             // Table cell element at the start of the selection
             Element elem = getCurrentTableCell();
-            if (elem != null && elem.getEndOffset() == nextPosition) {
-                // Do nothing to avoid deletion of the whole cell.
-                //return;
-            }
+
             if (nextPosition < doc.getLength()) {
                 // Table cell element at next position
                 elem = getTableCell(nextPosition);
@@ -679,7 +674,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 final Element listItemElement = listManager.getListItemElement(caretPosition);
                 if (listItemElement != null) {
                     listManager.newListItem();
-                    return;
                 }
                 // we are not in a list, call alternate action
                 else {
@@ -800,18 +794,16 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     && !parent.getName().equalsIgnoreCase(HTML.Tag.TD.toString()); para = parent, parent = parent
                 .getParentElement()) {
             }
-            if (para != null) {
-                try {
-                    doc.startCompoundEdit();
-                    doc.insertBeforeStart(para, sw.getBuffer().toString());
-                }
-                catch (final Exception e) {
-                    Util.errMsg(null, e.getMessage(), e);
-                }
-                finally {
-                    doc.endCompoundEdit();
-                }
+
+            try {
+                doc.startCompoundEdit();
+                doc.insertBeforeStart(para, sw.getBuffer().toString());
+            } catch (final Exception e) {
+                Util.errMsg(null, e.getMessage(), e);
+            } finally {
+                doc.endCompoundEdit();
             }
+
         }
         catch (final Exception ex) {
             Util.errMsg(null, ex.getMessage(), ex);
@@ -3116,19 +3108,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                     }
                     writer.writeEndTag(listItemElement);
                     writer.writeStartTag(listItemElement);
-                    if (containsNestedListItems(listItemElement)
-                            && (listItemElement.getElement(0).getEndOffset() - 1) == caretPosition) {
-                        // Contains nested list and the caret is at the end of the list items's paragraph.
-                        // Let it be. Workaround for the user: press undo.
-                        // ---Old:---
-                        // Block the action. User can enter new item by pressing enter when the caret
-                        // is not at the end of the list item.
-                        //return;
-                        //stringWriter.write("<p></p>");
-                        // A workaround. Otherwise, the caret cannot reach the position in the new
-                        // list item. Ideally, Java's editor kit would create implied paragraph, which
-                        // it does not.
-                    }
+
                     if (caretPosition < eo - 1) {
                         final SHTMLWriter htmlEndWriter = new SHTMLWriter(stringWriter, doc, caretPosition, eo
                                 - caretPosition);

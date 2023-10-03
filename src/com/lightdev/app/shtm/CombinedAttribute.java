@@ -148,18 +148,11 @@ class CombinedAttribute {
      * @param a  the set of attributes to get the value from
      */
     private void setValue(final int side, final Object key, final AttributeSet a) {
-        if ((includeParents) || ((!includeParents) && (aNames.contains(key)))) { // filter out parent attributes
+        if (includeParents || aNames.contains(key)) { // filter out parent attributes
             final Object attr = a.getAttribute(key);
-            if (attr != null) {
-                values[side] = attr.toString();
-                present[side] = true;
-            }
-            else {
-                values[side] = defaultValue(attributeKey);
-                present[side] = true;
-            }
-        }
-        else { // key not present, set default value
+            values[side] = attr != null ? attr.toString() : defaultValue(attributeKey);
+            present[side] = true;
+        } else {
             values[side] = defaultValue(attributeKey);
             present[side] = false;
         }

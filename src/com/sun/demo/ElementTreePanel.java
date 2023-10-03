@@ -123,10 +123,7 @@ public class ElementTreePanel extends JPanel implements CaretListener, DocumentL
                 else {
                     asString = "[ ]";
                 }
-                if (e.isLeaf()) {
-                    return e.getName() + " [" + e.getStartOffset() + ", " + e.getEndOffset() + "] Attributes: "
-                            + asString;
-                }
+
                 return e.getName() + " [" + e.getStartOffset() + ", " + e.getEndOffset() + "] Attributes: " + asString;
             }
         };

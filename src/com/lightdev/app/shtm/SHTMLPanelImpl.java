@@ -396,8 +396,6 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         if (getDocumentPane() != null) {
             getDocumentPane().addDocumentPaneListener(listener);
         }
-        else {
-        }
     }
 
     /**
@@ -498,12 +496,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
                 nextTask.cancel();
             }
             when = e.getWhen();
-            if ((when - lastWhen) <= delay) {
-                repeating = true;
-            }
-            else {
-                repeating = false;
-            }
+            repeating = (when - lastWhen) <= delay;
             lastWhen = when;
         }
 
@@ -1244,14 +1237,8 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         }
 
         public void propertyChange(final PropertyChangeEvent e) {
-            final String propertyName = e.getPropertyName();
             if (e.getPropertyName().equals(SHTMLPanelImpl.ACTION_SELECTED_KEY)) {
-                if (e.getNewValue().toString().equals(SHTMLPanelImpl.ACTION_SELECTED)) {
-                    button.setSelected(true);
-                }
-                else {
-                    button.setSelected(false);
-                }
+                button.setSelected(e.getNewValue().toString().equals(SHTMLPanelImpl.ACTION_SELECTED));
             }
         }
     }
