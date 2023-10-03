@@ -64,26 +64,23 @@ class FrmMain extends JFrame {
     private void start() {
         SplashScreen.showInstance();
         try {
-            EventQueue.invokeAndWait(new Runnable() {
-                public void run() {
-                    mainPane = new SHTMLPanelMultipleDocImpl();
-                    //                    mainPane = new SHTMLPanelSingleDocImpl();
-                    mainPane.setContentPanePreferredSize(new Dimension(1024, 500));
-                    getContentPane().add(mainPane);
-                    pack();
-                    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    final Dimension frameSize = getSize();
-                    if (frameSize.height > screenSize.height) {
-                        frameSize.height = screenSize.height;
-                    }
-                    if (frameSize.width > screenSize.width) {
-                        frameSize.width = screenSize.width;
-                    }
-                    //Center the window
-                    setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-                    setVisible(true); // show the window
-                    getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
+            EventQueue.invokeAndWait(() -> {
+                mainPane = new SHTMLPanelMultipleDocImpl();
+                mainPane.setContentPanePreferredSize(new Dimension(1024, 500));
+                getContentPane().add(mainPane);
+                pack();
+                final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                final Dimension frameSize = getSize();
+                if (frameSize.height > screenSize.height) {
+                    frameSize.height = screenSize.height;
                 }
+                if (frameSize.width > screenSize.width) {
+                    frameSize.width = screenSize.width;
+                }
+                //Center the window
+                setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+                setVisible(true);
+                getSHTMLPanel().getMostRecentFocusOwner().requestFocus();
             });
         }
         catch (final InterruptedException | InvocationTargetException e) {

@@ -34,10 +34,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -130,29 +128,20 @@ class PrefsDialog extends DialogShell implements ActionListener {
         lafCombo.setSelectedItem(lafName);
     }
     
-    private void initPasteModeComboBox()
-    {
+    private void initPasteModeComboBox() {
     	pasteModeCombo.setModel(new DefaultComboBoxModel(SHTMLEditorPane.PasteMode.values()));
     	pasteModeCombo.setSelectedItem(
     			SHTMLEditorPane.PasteMode.valueOf(SHTMLEditorPane.PasteMode.class, prefs.get(PREFS_DEFAULT_PASTE_MODE, SHTMLEditorPane.PasteMode.PASTE_HTML.name())));
-    	pasteModeCombo.setRenderer(new ListCellRenderer() {
-
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) 
-			{
-				switch ((SHTMLEditorPane.PasteMode)value)
-				{
-				case PASTE_HTML:
-					return new JLabel(Util.getResourceString("pasteModeHTML"));
-				case PASTE_PLAIN_TEXT:
-					return new JLabel(Util.getResourceString("pasteModePlainText"));
-				default:
-					throw new AssertionError();
-				}
-			}
-    		
-    	});
+    	pasteModeCombo.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            switch ((SHTMLEditorPane.PasteMode)value) {
+            case PASTE_HTML:
+                return new JLabel(Util.getResourceString("pasteModeHTML"));
+            case PASTE_PLAIN_TEXT:
+                return new JLabel(Util.getResourceString("pasteModePlainText"));
+            default:
+                throw new AssertionError();
+            }
+        });
     }
 
     /**

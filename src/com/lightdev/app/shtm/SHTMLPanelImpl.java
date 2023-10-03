@@ -1059,11 +1059,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
      */
     public void caretUpdate(final CaretEvent e) {
         if (!rkw.isRepeating()) {
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    updateFormatControls();
-                }
-            });
+            EventQueue.invokeLater(this::updateFormatControls);
         }
     }
 

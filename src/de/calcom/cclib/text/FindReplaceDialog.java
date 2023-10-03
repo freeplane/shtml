@@ -810,11 +810,7 @@ public class FindReplaceDialog extends JDialog {
         titledBorder1 = new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(142, 142, 142)),
             "Options");
         final ButtonGroup bgSearchDirection = new ButtonGroup();
-        jbtnFindNext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                jbtnFindNext_actionPerformed(e);
-            }
-        });
+        jbtnFindNext.addActionListener(this::jbtnFindNext_actionPerformed);
         jbtnFindNext.setText(Util.getResourceString(SHTMLPanel.getResources(), "findNext"));
         jbtnFindNext.addKeyListener(escapeKeyListender);
         jcbStartOnTop.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchFromStart"));
@@ -869,28 +865,16 @@ public class FindReplaceDialog extends JDialog {
         jLabel3.setText(Util.getResourceString(SHTMLPanel.getResources(), "replaceWith"));
         jLabel4.setText(Util.getResourceString(SHTMLPanel.getResources(), "textToFind"));
         jbtnClose.setText(Util.getResourceString(SHTMLPanel.getResources(), "closeBtnName"));
-        jbtnClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                jbtnClose_actionPerformed(e);
-            }
-        });
+        jbtnClose.addActionListener(this::jbtnClose_actionPerformed);
         gridLayout2.setRows(4);
         gridLayout2.setColumns(2);
         this.setModal(true);
         this.setTitle(Util.getResourceString(SHTMLPanel.getResources(), "findReplaceDialogTitle"));
         jbtnReplace.setText(Util.getResourceString(SHTMLPanel.getResources(), "replace"));
-        jbtnReplace.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                jbtnReplace_actionPerformed(e);
-            }
-        });
+        jbtnReplace.addActionListener(this::jbtnReplace_actionPerformed);
         jbtnReplace.addKeyListener(escapeKeyListender);
         jbtnCancel.setText(Util.getResourceString(SHTMLPanel.getResources(), "cancelBtnName"));
-        jbtnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                jbtnCancel_actionPerformed(e);
-            }
-        });
+        jbtnCancel.addActionListener(this::jbtnCancel_actionPerformed);
         jcbProject.setText(Util.getResourceString(SHTMLPanel.getResources(), "searchWholeProject"));
         this.getContentPane().add(jpnlMain, BorderLayout.NORTH);
         jpnlBtn.add(jbtnFindNext, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,

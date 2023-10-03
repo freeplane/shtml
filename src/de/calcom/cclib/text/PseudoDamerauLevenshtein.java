@@ -348,15 +348,8 @@ public class PseudoDamerauLevenshtein {
 	 * Sort alignments (matches) by start positions
 	 * @param alignments list of alignments to sort
 	 */
-	static void sortAlignments(final ArrayList<Alignment> alignments)
-	{
-		alignments.sort(new Comparator<Alignment>() {
-
-            public int compare(Alignment o1, Alignment o2) {
-                return Integer.compare(o1.matchStart, o2.matchStart);
-            }
-
-        });
+	static void sortAlignments(final ArrayList<Alignment> alignments) {
+		alignments.sort(Comparator.comparingInt(o -> o.matchStart));
 	}
 
 	private void developAlignment(final Alignment ali)

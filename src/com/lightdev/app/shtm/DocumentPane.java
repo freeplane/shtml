@@ -677,11 +677,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
                 sourceEditorPane.setText(sText);
                 break;
         }
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                setHtmlChanged(true);
-                setDocumentChanged(false);
-            }
+        EventQueue.invokeLater(() -> {
+            setHtmlChanged(true);
+            setDocumentChanged(false);
         });
     }
 
