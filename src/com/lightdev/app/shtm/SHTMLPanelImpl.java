@@ -166,7 +166,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
     public static final String increaseFontSizeAction = "increaseFontSize";
     public static final String decreaseFontSizeAction = "decreaseFontSize";
     public static final String fontBoldAction = "fontBold";
-    public static final String fontStrikethroughAction = "fontStrikethrough";
+    public static final String fontStrikeThroughAction = "fontStrikeThrough";
     public static final String fontItalicAction = "fontItalic";
     public static final String fontUnderlineAction = "fontUnderline";
 
@@ -737,8 +737,7 @@ public class SHTMLPanelImpl extends SHTMLPanel implements CaretListener {
         addAction(yellowHighlightColorAction, new SHTMLEditorKitActions.FixedFontColorAction(this, yellowHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR, Color.YELLOW, Color.ORANGE.darker()));
         addAction(removeHighlightColorAction, new SHTMLEditorKitActions.RemoveStyleAttributeAction(this, removeHighlightColorAction, CSS.Attribute.BACKGROUND_COLOR));
 
-        addAction(fontStrikethroughAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
-            fontStrikethroughAction, CSS.Attribute.TEXT_DECORATION, "line-through", false));
+        addAction(fontStrikeThroughAction, new SHTMLEditorKitActions.StrikeThroughAction(this));
         addAction(paraAlignLeftAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,
             paraAlignLeftAction, CSS.Attribute.TEXT_ALIGN, Util.CSS_ATTRIBUTE_ALIGN_LEFT, true));
         addAction(paraAlignCenterAction, new SHTMLEditorKitActions.ApplyCSSAttributeAction(this,

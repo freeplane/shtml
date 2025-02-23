@@ -659,6 +659,70 @@ class SHTMLEditorKitActions {
         }
     }
 
+    static class StrikeThroughAction extends AbstractAction implements SHTMLAction, AttributeComponent {
+        private final SHTMLPanelImpl panel;
+
+        public StrikeThroughAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontStrikeThroughAction);
+        }
+
+        public void actionPerformed(final ActionEvent e) {
+            final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
+            if (editor != null) {
+                final StyledDocument doc = editor.getDocument();
+                final int start = editor.getSelectionStart();
+                final int end = editor.getSelectionEnd();
+                if (start != end) {
+                    final AttributeSet a = doc.getCharacterElement(start).getAttributes();
+                    final boolean isStrikeThrough = StyleConstants.isStrikeThrough(a);
+                    final SimpleAttributeSet attr = new SimpleAttributeSet();
+                    StyleConstants.setStrikeThrough(attr, !isStrikeThrough);
+                    doc.setCharacterAttributes(start, end - start, attr, false);
+                }
+            }
+            panel.updateActions();
+        }
+
+        public void update() {
+            setEnabled(panel.isWYSIWYGEditorActive());
+        }
+
+        public boolean setValue(final AttributeSet a) {
+            boolean isStrikeThrough = StyleConstants.isStrikeThrough(a);
+            if (a.isDefined(CSS.Attribute.TEXT_DECORATION)) {
+                final Object value = a.getAttribute(CSS.Attribute.TEXT_DECORATION);
+                if (value.toString().equalsIgnoreCase(Util.CSS_ATTRIBUTE_LINE_THROUGH)) {
+                    isStrikeThrough = true;
+                }
+            }
+            if (isStrikeThrough) {
+                putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_SELECTED);
+            }
+            else {
+                putValue(SHTMLPanelImpl.ACTION_SELECTED_KEY, SHTMLPanelImpl.ACTION_UNSELECTED);
+            }
+            return true;
+        }
+
+        public AttributeSet getValue() {
+            final SimpleAttributeSet set = new SimpleAttributeSet();
+            if (getValue(SHTMLPanelImpl.ACTION_SELECTED_KEY).toString().equals(SHTMLPanelImpl.ACTION_SELECTED)) {
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, Util.CSS_ATTRIBUTE_LINE_THROUGH);
+            }
+            else {
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.TEXT_DECORATION, Util.CSS_ATTRIBUTE_NONE);
+            }
+            return set;
+        }
+
+        public AttributeSet getValue(final boolean includeUnchanged) {
+            return getValue();
+        }
+    }
+
     abstract static class FontColorAction extends AbstractAction implements SHTMLAction {
     	protected static final ColorPanel hiddenColorPanel = new ColorPanel("Select Color");
     	protected final SHTMLPanelImpl panel;
