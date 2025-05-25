@@ -2060,8 +2060,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     private int lastSelStart = 0;
     /** the last selection end */
     private int lastSelEnd = 0;
-    /** the location of the last event in the text component */
-    private int dndEventLocation = 0;
     /**
      * <p>This flag is set by this objects dragGestureRecognizer to indicate that
      * a drag operation has been started from this object. It is cleared once
@@ -2110,11 +2108,9 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             if ((lastSelEnd > lastSelStart) && (selStart >= lastSelStart) && (selStart < lastSelEnd)) {
                 dragStartedHere = true;
                 select(lastSelStart, lastSelEnd);
-                final HTMLText text = new HTMLText();
-                final int start = getSelectionStart();
-                text.copyHTML(this, start, getSelectionEnd() - start);
-                final HTMLTextSelection trans = new HTMLTextSelection(text);
-                dragSource.startDrag(event, DragSource.DefaultMoveDrop, trans, this);
+                final Clipboard transferrableHolder = new Clipboard("");
+				getTransferHandler().exportToClipboard(this, transferrableHolder, DnDConstants.ACTION_COPY);
+                dragSource.startDrag(event, DragSource.DefaultMoveDrop, transferrableHolder.getContents(this), this);
             }
         }
         catch (final Exception e) {
@@ -2132,7 +2128,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
 
     /** is invoked when a drag operation is going on */
     public void dragOver(final DropTargetDragEvent event) {
-        dndEventLocation = viewToModel(event.getLocation());
+        int dndEventLocation = viewToModel(event.getLocation());
         try {
             setCaretPosition(dndEventLocation);
         }
@@ -2149,7 +2145,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @see java.awt.datatransfer.DataFlavor
      */
     public void drop(final DropTargetDropEvent event) {
-        dndEventLocation = viewToModel(event.getLocation());
         final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         try {
@@ -2164,12 +2159,10 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             else
             */
              if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
-                event.acceptDrop(DnDConstants.ACTION_MOVE);
                 final HTMLText s = (HTMLText) transferable.getTransferData(htmlTextDataFlavor);
                 doDrop(event, s);
             }
             else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                event.acceptDrop(DnDConstants.ACTION_MOVE);
                 final String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
                 doDrop(event, s);
             }
@@ -2191,10 +2184,14 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * necessarily removing the dragged element from the original position
      */
     private void doDrop(final DropTargetDropEvent event, final Object s) {
-        int removeOffset = 0;
-        int moveOffset = 0;
-        int newSelStart;
-        int newSelEnd;
+    	event.acceptDrop(DnDConstants.ACTION_MOVE);
+        int dndEventLocation = viewToModel(event.getLocation());
+        if(event.getDropAction() == DnDConstants.ACTION_MOVE && dragStartedHere) {
+        	select(lastSelStart, lastSelEnd);
+        	replaceSelection("");
+        	if(dndEventLocation >= lastSelStart)
+        		dndEventLocation -= Math.min(dndEventLocation, lastSelEnd) - lastSelStart;
+        }
         setCaretPosition(dndEventLocation);
         if (s instanceof HTMLText) {
             replaceSelection((HTMLText) s);
@@ -2202,23 +2199,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         else if (s instanceof String) {
             replaceSelection((String) s);
         }
-        if (dndEventLocation < lastSelStart) {
-            removeOffset = s.toString().length();
-        }
-        else {
-            moveOffset = s.toString().length();
-        }
-        newSelEnd = dndEventLocation + (lastSelEnd - lastSelStart) - moveOffset;
-        newSelStart = dndEventLocation - moveOffset;
-        if (dragStartedHere) {
-            lastSelStart += removeOffset;
-            lastSelEnd += removeOffset;
-            select(lastSelStart, lastSelEnd);
-            replaceSelection("");
-        }
-        lastSelEnd = newSelEnd;
-        lastSelStart = newSelStart;
-        select(lastSelStart, lastSelEnd);
+        select(dndEventLocation, dndEventLocation + lastSelEnd - lastSelStart);
         event.getDropTargetContext().dropComplete(true);
     }
 

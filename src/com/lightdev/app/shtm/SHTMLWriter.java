@@ -343,22 +343,24 @@ public class SHTMLWriter extends HTMLWriter {
      * @param end  the last leaf element to write or the branch element
      * to stop writing at (whatever applies)
      */
-    private void writeElementsUntil(final Element e, final Element end) throws IOException, BadLocationException {
-        if (e.isLeaf()) {
-            write(e);
-        }
-        else {
-            if (e != end) {
-                startTag(e);
-                final int childCount = e.getElementCount();
-                int index = 0;
-                while (index < childCount) {
-                    writeElementsUntil(e.getElement(index), end); // drill down in recursion
-                    index++;
-                }
-                endTag(e);
-            }
-        }
+    private boolean writeElementsUntil(final Element e, final Element end) throws IOException, BadLocationException {
+     	boolean stop = e.getStartOffset() == end.getStartOffset();
+    	if (e.isLeaf()) {
+    		write(e);
+    	}
+    	else {
+    		startTag(e);
+    		final int childCount = e.getElementCount();
+    		for (int index = 0;index < childCount; index++) {
+    			final Element nextElement = e.getElement(index);
+    			if (writeElementsUntil(nextElement, end)) {
+    				stop = true;
+    				break;
+    			}
+    		}
+    		endTag(e);
+    	}
+    	return stop;
     }
 
     /**
@@ -379,7 +381,8 @@ public class SHTMLWriter extends HTMLWriter {
             e = parentElement.getElement(i++);
         }
         while (i < count) {
-            writeElementsUntil(e, endElement);
+            if(writeElementsUntil(e, endElement))
+            	break;
             e = parentElement.getElement(i++);
         }
     }

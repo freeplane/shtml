@@ -45,7 +45,7 @@ import javax.swing.text.html.HTMLDocument;
  *      for details see file gpl.txt in the distribution
  *      package of this software
  *
- * 
+ *
  */
 class HTMLText {
     /** the HTML representation of the text */
@@ -98,7 +98,7 @@ class HTMLText {
             final StringWriter sw = new StringWriter();
             final SHTMLWriter w = new SHTMLWriter(sw, doc, start, length);
             final Element first = doc.getParagraphElement(start);
-            final Element last = doc.getCharacterElement(start + length);
+            final Element last = doc.getCharacterElement(start + length - 1);
             w.write(first, last);
             htmlText = sw.getBuffer().toString();
             plainText = doc.getText(start, length);
