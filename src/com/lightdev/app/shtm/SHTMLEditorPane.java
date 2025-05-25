@@ -68,6 +68,7 @@ import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
@@ -2090,15 +2091,16 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         dropTarget = new DropTarget(this, this);
         dragSource = new DragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
+        final DefaultCaret caret = (DefaultCaret)getCaret();
+		this.removeMouseListener(caret);
         this.addMouseListener(new MouseAdapter() {
-            public void mouseReleased(final MouseEvent e) {
-                this_mouseReleased(e);
-            }
+            public void mousePressed(final MouseEvent e) {
+				lastSelStart = getSelectionStart();
+                lastSelEnd = getSelectionEnd();
+			}
 
-            public void mouseClicked(final MouseEvent e) {
-                this_mouseClicked(e);
-            }
         });
+		this.addMouseListener(caret);
     }
 
     /** a drag gesture has been initiated */
@@ -2148,45 +2150,39 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     public void drop(final DropTargetDropEvent event) {
         dndEventLocation = viewToModel(event.getLocation());
-        if ((dndEventLocation >= lastSelStart) && (dndEventLocation <= lastSelEnd)) {
-            event.rejectDrop();
-            select(lastSelStart, lastSelEnd);
-        }
-        else {
-            final SHTMLDocument doc = getDocument();
-            doc.startCompoundEdit();
-            try {
-                final Transferable transferable = event.getTransferable();
-                /*
-                if (getPasteMode() == PasteMode.PASTE_PLAIN_TEXT)
-                {
-                    event.acceptDrop(DnDConstants.ACTION_MOVE);
-                    final String content = transferable.getTransferData(DataFlavor.stringFlavor).toString();
-                    doDrop(event, content);
-                }
-                else
-                */
-                 if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
-                    event.acceptDrop(DnDConstants.ACTION_MOVE);
-                    final HTMLText s = (HTMLText) transferable.getTransferData(htmlTextDataFlavor);
-                    doDrop(event, s);
-                }
-                else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                    event.acceptDrop(DnDConstants.ACTION_MOVE);
-                    final String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-                    doDrop(event, s);
-                }
-                else {
-                    event.rejectDrop();
-                }
+        final SHTMLDocument doc = getDocument();
+        doc.startCompoundEdit();
+        try {
+            final Transferable transferable = event.getTransferable();
+            /*
+            if (getPasteMode() == PasteMode.PASTE_PLAIN_TEXT)
+            {
+                event.acceptDrop(DnDConstants.ACTION_MOVE);
+                final String content = transferable.getTransferData(DataFlavor.stringFlavor).toString();
+                doDrop(event, content);
             }
-            catch (final Exception exception) {
-                exception.printStackTrace();
+            else
+            */
+             if (transferable.isDataFlavorSupported(htmlTextDataFlavor)) {
+                event.acceptDrop(DnDConstants.ACTION_MOVE);
+                final HTMLText s = (HTMLText) transferable.getTransferData(htmlTextDataFlavor);
+                doDrop(event, s);
+            }
+            else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                event.acceptDrop(DnDConstants.ACTION_MOVE);
+                final String s = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                doDrop(event, s);
+            }
+            else {
                 event.rejectDrop();
             }
-            finally {
-                doc.endCompoundEdit();
-            }
+        }
+        catch (final Exception exception) {
+            exception.printStackTrace();
+            event.rejectDrop();
+        }
+        finally {
+            doc.endCompoundEdit();
         }
     }
 
@@ -3135,18 +3131,6 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
     }
 
     /** remember current selection when mouse button is released */
-    void this_mouseReleased(final MouseEvent e) {
-        lastSelStart = getSelectionStart();
-        lastSelEnd = getSelectionEnd();
-    }
-
-    /** remember current selection when mouse button is double clicked */
-    void this_mouseClicked(final MouseEvent e) {
-        if (e.getClickCount() > 1) {
-            lastSelStart = getSelectionStart();
-            lastSelEnd = getSelectionEnd();
-        }
-    }
 
     /** is invoked if the user modifies the current drop gesture */
     public void dropActionChanged(final DropTargetDragEvent event) {
