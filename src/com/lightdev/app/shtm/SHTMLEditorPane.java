@@ -1983,10 +1983,18 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             pastedHTMLText.pasteHTML(sDocument, position);
             return;
         }
-        // [ Uses string representation ]
+        
         String pasteHtmlTextModified = pastedHTMLText.getHTMLText();
         final Element characterElement = sDocument.getCharacterElement(position);
         final Element paragraphElement = characterElement.getParentElement();
+        
+        // NEW: Check if we're inside a list item and pasting list content
+        final Element currentListItem = listManager.getListItemElement(position);
+        if (currentListItem != null && containsListContent(pasteHtmlTextModified)) {
+            handleListItemPaste(pasteHtmlTextModified, position, currentListItem);
+            return;
+        }
+        
         if (position == paragraphElement.getStartOffset()) {
             if (caretWithinTableCell() && pastedHTMLText.isOneCellInOneRow()) {
                 pasteHtmlTextModified = pasteHtmlTextModified.replaceAll("(?ims).*<td.*?>", "").replaceAll(
@@ -2048,6 +2056,187 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final Element newParagraphElement = getDocument().getParagraphElement(oldCaretPosition);
         // Place the caret after the pasted text
         setCaretPosition(oldCaretPosition + newParagraphElement.getEndOffset() - paragraphOldEndOffset);
+    }
+
+    /**
+     * Checks if the HTML content contains list elements (ul, ol, or li tags).
+     *
+     * @param htmlContent the HTML content to check
+     * @return true if the content contains list elements
+     */
+    private boolean containsListContent(String htmlContent) {
+        return htmlContent.matches("(?ims).*<(ul|ol|li)\\b.*") || 
+               htmlContent.matches("(?ims).*</(ul|ol|li)>.*");
+    }
+
+    /**
+     * Handles pasting list content when the caret is inside a list item.
+     * Instead of creating nested lists, this extracts list items and inserts them as siblings.
+     *
+     * @param pasteHtmlTextModified the HTML content to paste
+     * @param position the caret position
+     * @param currentListItem the current list item element containing the caret
+     */
+    private void handleListItemPaste(String pasteHtmlTextModified, int position, Element currentListItem) throws Exception {
+        final SHTMLDocument sDocument = getDocument();
+        final Element currentList = currentListItem.getParentElement();
+        final String currentListType = currentList.getName().toLowerCase();
+        
+        sDocument.startCompoundEdit();
+        try {
+            // Extract list items from the pasted content
+            String extractedListItems = extractListItems(pasteHtmlTextModified, currentListType);
+            
+            if (extractedListItems.isEmpty()) {
+                // If no list items found, fall back to regular paste within the current list item
+                if (position == currentListItem.getStartOffset()) {
+                    sDocument.insertAfterStart(currentListItem, pasteHtmlTextModified);
+                } else if (position >= currentListItem.getEndOffset() - 1) {
+                    sDocument.insertBeforeEnd(currentListItem, pasteHtmlTextModified);
+                } else {
+                    // Insert within the list item content
+                    final Element paragraphElement = sDocument.getParagraphElement(position);
+                    sDocument.insertAfterStart(paragraphElement, pasteHtmlTextModified);
+                }
+                return;
+            }
+            
+            // Determine where to insert the new list items
+            if (position <= currentListItem.getStartOffset() || 
+                (position > currentListItem.getStartOffset() && isAtBeginningOfListItemContent(position, currentListItem))) {
+                // Insert before the current list item
+                sDocument.insertBeforeStart(currentListItem, extractedListItems);
+                setCaretPosition(currentListItem.getStartOffset());
+            } else if (position >= currentListItem.getEndOffset() - 1 || 
+                       isAtEndOfListItemContent(position, currentListItem)) {
+                // Insert after the current list item
+                sDocument.insertAfterEnd(currentListItem, extractedListItems);
+                setCaretPosition(currentListItem.getEndOffset());
+            } else {
+                // Split the current list item and insert between the parts
+                splitListItemAndInsert(currentListItem, position, extractedListItems);
+            }
+        } finally {
+            sDocument.endCompoundEdit();
+        }
+    }
+
+    /**
+     * Extracts list items from HTML content and returns them as properly formatted list items.
+     * Attempts to preserve the original list item content while adapting to the target list type.
+     *
+     * @param htmlContent the HTML content containing lists
+     * @param targetListType the type of list we're inserting into ("ul" or "ol")
+     * @return a string containing the extracted list items
+     */
+    private String extractListItems(String htmlContent, String targetListType) {
+        StringBuilder result = new StringBuilder();
+        
+        // Pattern to match list items
+        java.util.regex.Pattern liPattern = java.util.regex.Pattern.compile(
+            "(?ims)<li\\b[^>]*>(.*?)</li>", 
+            java.util.regex.Pattern.DOTALL
+        );
+        
+        java.util.regex.Matcher liMatcher = liPattern.matcher(htmlContent);
+        
+        // Extract all list items
+        while (liMatcher.find()) {
+            String liContent = liMatcher.group(1);
+            result.append("<li>").append(liContent).append("</li>");
+        }
+        
+        // If no list items found but content looks like it should be list items
+        if (result.length() == 0) {
+            // Try to extract content from between list tags
+            java.util.regex.Pattern listPattern = java.util.regex.Pattern.compile(
+                "(?ims)<(ul|ol)\\b[^>]*>(.*?)</(ul|ol)>", 
+                java.util.regex.Pattern.DOTALL
+            );
+            
+            java.util.regex.Matcher listMatcher = listPattern.matcher(htmlContent);
+            if (listMatcher.find()) {
+                String listContent = listMatcher.group(2);
+                // Re-run the list item extraction on the inner content
+                java.util.regex.Matcher innerLiMatcher = liPattern.matcher(listContent);
+                while (innerLiMatcher.find()) {
+                    String liContent = innerLiMatcher.group(1);
+                    result.append("<li>").append(liContent).append("</li>");
+                }
+            }
+        }
+        
+        return result.toString();
+    }
+
+    /**
+     * Checks if the position is at the beginning of the list item content
+     * (right after the opening li tag but before any content).
+     */
+    private boolean isAtBeginningOfListItemContent(int position, Element listItem) {
+        // Check if we're at the very start of the first child element in the list item
+        if (listItem.getElementCount() > 0) {
+            Element firstChild = listItem.getElement(0);
+            return position <= firstChild.getStartOffset();
+        }
+        return position <= listItem.getStartOffset();
+    }
+
+    /**
+     * Checks if the position is at the end of the list item content
+     * (right before the closing li tag but after all content).
+     */
+    private boolean isAtEndOfListItemContent(int position, Element listItem) {
+        // Check if we're at the very end of the last child element in the list item
+        if (listItem.getElementCount() > 0) {
+            Element lastChild = listItem.getElement(listItem.getElementCount() - 1);
+            return position >= lastChild.getEndOffset() - 1;
+        }
+        return position >= listItem.getEndOffset() - 1;
+    }
+
+    /**
+     * Splits the current list item at the given position and inserts the new list items between the parts.
+     */
+    private void splitListItemAndInsert(Element currentListItem, int position, String extractedListItems) throws Exception {
+        final SHTMLDocument sDocument = getDocument();
+        
+        // Get the content before and after the split position
+        int listItemStart = currentListItem.getStartOffset();
+        int listItemEnd = currentListItem.getEndOffset();
+        
+        String beforeContent = "";
+        String afterContent = "";
+        
+        if (position > listItemStart) {
+            beforeContent = sDocument.getText(listItemStart, position - listItemStart);
+        }
+        
+        if (position < listItemEnd - 1) {
+            afterContent = sDocument.getText(position, listItemEnd - position - 1);
+        }
+        
+        // Create the replacement HTML
+        StringBuilder newHtml = new StringBuilder();
+        
+        // First part of the original list item (if any content before split)
+        if (!beforeContent.trim().isEmpty()) {
+            newHtml.append("<li>").append(beforeContent).append("</li>");
+        }
+        
+        // Insert the new list items
+        newHtml.append(extractedListItems);
+        
+        // Second part of the original list item (if any content after split)
+        if (!afterContent.trim().isEmpty()) {
+            newHtml.append("<li>").append(afterContent).append("</li>");
+        }
+        
+        // Replace the original list item with the split version
+        sDocument.setOuterHTML(currentListItem, newHtml.toString());
+        
+        // Position the caret after the inserted content
+        setCaretPosition(position + extractedListItems.length());
     }
 
     /* ------ start of drag and drop implementation -------------------------
@@ -2193,12 +2382,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         		dndEventLocation -= Math.min(dndEventLocation, lastSelEnd) - lastSelStart;
         }
         setCaretPosition(dndEventLocation);
-        if (s instanceof HTMLText) {
-            replaceSelection((HTMLText) s);
-        }
-        else if (s instanceof String) {
-            replaceSelection((String) s);
-        }
+        getTransferHandler().importData(this, event.getTransferable());
         select(dndEventLocation, dndEventLocation + lastSelEnd - lastSelStart);
         event.getDropTargetContext().dropComplete(true);
     }
