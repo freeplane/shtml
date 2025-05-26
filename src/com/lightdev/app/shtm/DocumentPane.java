@@ -114,6 +114,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     /** indicates if the document text has changed */
     private boolean htmlChanged = true;
 
+    /** indicates if the HTML source was directly edited (vs changes from layout view) */
+    private boolean htmlSourceEdited = false;
+
     /**
      * @param htmlChanged The htmlChanged to set.
      */
@@ -126,6 +129,20 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      */
     private boolean isHtmlChanged() {
         return htmlChanged;
+    }
+
+    /**
+     * @param htmlSourceEdited The htmlSourceEdited to set.
+     */
+    private void setHtmlSourceEdited(final boolean htmlSourceEdited) {
+        this.htmlSourceEdited = htmlSourceEdited;
+    }
+
+    /**
+     * @return Returns the htmlSourceEdited.
+     */
+    private boolean isHtmlSourceEdited() {
+        return htmlSourceEdited;
     }
 
     /** the name of the document */
@@ -645,10 +662,13 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     private void setLayoutView() {
         sourceEditorPane.getDocument().removeDocumentListener(this);
         sourceEditorPane.removeCaretListener(sourceEditorPane);
-        if (isHtmlChanged()) {
+
+        if (isHtmlSourceEdited()) {
             editorPane.setText(sourceEditorPane.getText());
             setHtmlChanged(false);
+            setHtmlSourceEdited(false);
         }
+
         editorPane.setCaretPosition(0);
         editorPane.getDocument().addDocumentListener(this);
         editorPane.requestFocus();
@@ -659,8 +679,9 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * @return returns the document text as string.
      */
     String getDocumentText() {
-        if (getSelectedTab() == VIEW_TAB_HTML) {
+        if (getSelectedTab() == VIEW_TAB_HTML && isHtmlSourceEdited()) {
             editorPane.setText(sourceEditorPane.getText());
+            setHtmlSourceEdited(false);
         }
         return editorPane.getText();
     }
@@ -671,15 +692,24 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
     void setDocumentText(final String sText) {
         switch (getSelectedTab()) {
             case VIEW_TAB_LAYOUT:
+                editorPane.getDocument().removeDocumentListener(this);
                 editorPane.setText(sText);
+                editorPane.getDocument().addDocumentListener(this);
+                // Views are now out of sync - layout view has new content, HTML view has old content
+                setHtmlChanged(true);
+                setHtmlSourceEdited(false);
                 break;
             case VIEW_TAB_HTML:
+                sourceEditorPane.getDocument().removeDocumentListener(this);
                 sourceEditorPane.setText(sText);
+                sourceEditorPane.getDocument().addDocumentListener(this);
+                // Views are synchronized - HTML source set directly, layout will render same content
+                setHtmlChanged(false);
+                setHtmlSourceEdited(true);
                 break;
         }
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                setHtmlChanged(true);
                 setDocumentChanged(false);
             }
         });
@@ -708,8 +738,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * needs to be saved.
      */
     public void insertUpdate(final DocumentEvent e) {
-        setHtmlChanged(true);
-        setDocumentChanged(true);
+        setDocumentChanged();
     }
 
     /**
@@ -717,8 +746,7 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * needs to be saved.
      */
     public void removeUpdate(final DocumentEvent e) {
-        setHtmlChanged(true);
-        setDocumentChanged(true);
+        setDocumentChanged();
     }
 
     /**
@@ -726,12 +754,23 @@ class DocumentPane extends JPanel implements DocumentListener, ChangeListener {
      * needs to be saved.
      */
     public void changedUpdate(final DocumentEvent e) {
+        // changedUpdate is called for attribute changes (like syntax highlighting)
+        // Only treat as real content change if we're in layout view
         if (getSelectedTab() == VIEW_TAB_LAYOUT) {
             editorPane.updateInputAttributes();
-            setHtmlChanged(true);
-            setDocumentChanged(true);
+            setDocumentChanged();
         }
+        // Ignore changedUpdate in HTML view - it's just syntax highlighting
     }
+
+	private void setDocumentChanged() {
+		if (getSelectedTab() == VIEW_TAB_LAYOUT) {
+            setHtmlChanged(true);
+        } else if (getSelectedTab() == VIEW_TAB_HTML) {
+            setHtmlSourceEdited(true);
+        }
+        setDocumentChanged(true);
+	}
 
     /* -------- DocumentListener implementation end ------------*/
     /* -------- DocumentPaneListener definition start --------------- */

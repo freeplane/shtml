@@ -343,6 +343,8 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
        * @param text the html-text of the document
        */
     public void setText(String text) {
+    	if(getText().equals(text))
+    		return;
         final SHTMLDocument doc = getDocument();
         doc.startCompoundEdit();
         if (text == null || text.isEmpty()) {
@@ -351,12 +353,11 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         doc.putProperty(SHTMLDocument.AdditionalComments, null);
         MapElementRemovingWorkaround.removeAllMapElements(doc);
         try {
-            doc.remove(0, doc.getLength());
+            doc.remove(0, doc.getLastDocumentPosition());
 
             Reader r = new StringReader(text);
             SHTMLEditorKit kit = (SHTMLEditorKit) getEditorKit();
             kit.read(r, doc, 0);
-            kit.setStandardSuffix(doc);
         } catch (IOException | BadLocationException ioe) {
             UIManager.getLookAndFeel().provideErrorFeedback(SHTMLEditorPane.this);
         }
@@ -1983,18 +1984,18 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
             pastedHTMLText.pasteHTML(sDocument, position);
             return;
         }
-        
+
         String pasteHtmlTextModified = pastedHTMLText.getHTMLText();
         final Element characterElement = sDocument.getCharacterElement(position);
         final Element paragraphElement = characterElement.getParentElement();
-        
+
         // NEW: Check if we're inside a list item and pasting list content
         final Element currentListItem = listManager.getListItemElement(position);
         if (currentListItem != null && containsListContent(pasteHtmlTextModified)) {
             handleListItemPaste(pasteHtmlTextModified, position, currentListItem);
             return;
         }
-        
+
         if (position == paragraphElement.getStartOffset()) {
             if (caretWithinTableCell() && pastedHTMLText.isOneCellInOneRow()) {
                 pasteHtmlTextModified = pasteHtmlTextModified.replaceAll("(?ims).*<td.*?>", "").replaceAll(
@@ -2065,7 +2066,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      * @return true if the content contains list elements
      */
     private boolean containsListContent(String htmlContent) {
-        return htmlContent.matches("(?ims).*<(ul|ol|li)\\b.*") || 
+        return htmlContent.matches("(?ims).*<(ul|ol|li)\\b.*") ||
                htmlContent.matches("(?ims).*</(ul|ol|li)>.*");
     }
 
@@ -2081,12 +2082,12 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
         final SHTMLDocument sDocument = getDocument();
         final Element currentList = currentListItem.getParentElement();
         final String currentListType = currentList.getName().toLowerCase();
-        
+
         sDocument.startCompoundEdit();
         try {
             // Extract list items from the pasted content
             String extractedListItems = extractListItems(pasteHtmlTextModified, currentListType);
-            
+
             if (extractedListItems.isEmpty()) {
                 // If no list items found, fall back to regular paste within the current list item
                 if (position == currentListItem.getStartOffset()) {
@@ -2100,14 +2101,14 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 }
                 return;
             }
-            
+
             // Determine where to insert the new list items
-            if (position <= currentListItem.getStartOffset() || 
+            if (position <= currentListItem.getStartOffset() ||
                 (position > currentListItem.getStartOffset() && isAtBeginningOfListItemContent(position, currentListItem))) {
                 // Insert before the current list item
                 sDocument.insertBeforeStart(currentListItem, extractedListItems);
                 setCaretPosition(currentListItem.getStartOffset());
-            } else if (position >= currentListItem.getEndOffset() - 1 || 
+            } else if (position >= currentListItem.getEndOffset() - 1 ||
                        isAtEndOfListItemContent(position, currentListItem)) {
                 // Insert after the current list item
                 sDocument.insertAfterEnd(currentListItem, extractedListItems);
@@ -2131,29 +2132,29 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     private String extractListItems(String htmlContent, String targetListType) {
         StringBuilder result = new StringBuilder();
-        
+
         // Pattern to match list items
         java.util.regex.Pattern liPattern = java.util.regex.Pattern.compile(
-            "(?ims)<li\\b[^>]*>(.*?)</li>", 
+            "(?ims)<li\\b[^>]*>(.*?)</li>",
             java.util.regex.Pattern.DOTALL
         );
-        
+
         java.util.regex.Matcher liMatcher = liPattern.matcher(htmlContent);
-        
+
         // Extract all list items
         while (liMatcher.find()) {
             String liContent = liMatcher.group(1);
             result.append("<li>").append(liContent).append("</li>");
         }
-        
+
         // If no list items found but content looks like it should be list items
         if (result.length() == 0) {
             // Try to extract content from between list tags
             java.util.regex.Pattern listPattern = java.util.regex.Pattern.compile(
-                "(?ims)<(ul|ol)\\b[^>]*>(.*?)</(ul|ol)>", 
+                "(?ims)<(ul|ol)\\b[^>]*>(.*?)</(ul|ol)>",
                 java.util.regex.Pattern.DOTALL
             );
-            
+
             java.util.regex.Matcher listMatcher = listPattern.matcher(htmlContent);
             if (listMatcher.find()) {
                 String listContent = listMatcher.group(2);
@@ -2165,7 +2166,7 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
                 }
             }
         }
-        
+
         return result.toString();
     }
 
@@ -2200,41 +2201,41 @@ public class SHTMLEditorPane extends JEditorPane implements DropTargetListener, 
      */
     private void splitListItemAndInsert(Element currentListItem, int position, String extractedListItems) throws Exception {
         final SHTMLDocument sDocument = getDocument();
-        
+
         // Get the content before and after the split position
         int listItemStart = currentListItem.getStartOffset();
         int listItemEnd = currentListItem.getEndOffset();
-        
+
         String beforeContent = "";
         String afterContent = "";
-        
+
         if (position > listItemStart) {
             beforeContent = sDocument.getText(listItemStart, position - listItemStart);
         }
-        
+
         if (position < listItemEnd - 1) {
             afterContent = sDocument.getText(position, listItemEnd - position - 1);
         }
-        
+
         // Create the replacement HTML
         StringBuilder newHtml = new StringBuilder();
-        
+
         // First part of the original list item (if any content before split)
         if (!beforeContent.trim().isEmpty()) {
             newHtml.append("<li>").append(beforeContent).append("</li>");
         }
-        
+
         // Insert the new list items
         newHtml.append(extractedListItems);
-        
+
         // Second part of the original list item (if any content after split)
         if (!afterContent.trim().isEmpty()) {
             newHtml.append("<li>").append(afterContent).append("</li>");
         }
-        
+
         // Replace the original list item with the split version
         sDocument.setOuterHTML(currentListItem, newHtml.toString());
-        
+
         // Position the caret after the inserted content
         setCaretPosition(position + extractedListItems.length());
     }

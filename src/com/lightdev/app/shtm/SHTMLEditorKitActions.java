@@ -982,7 +982,6 @@ class SHTMLEditorKitActions {
             }
             try {
                 panel.getUndo().undo();
-                panel.getSHTMLEditorPane();
             }
             catch (final Exception ex) {
                 Util.errMsg((Component) e.getSource(), Util.getResourceString("unableToUndoError") + ex, ex);
@@ -990,435 +989,8 @@ class SHTMLEditorKitActions {
             panel.updateActions();
         }
 
-        public void update() { this.setEnabled(panel.isWYSIWYGEditorActive());
+        public void update() {
             setEnabled(panel.isWYSIWYGEditorActive() && panel.getUndo().canUndo());
-        }
-
-    }
-
-    /**
-     * action to change the paragraph style
-     */
-    static class EditNamedStyleAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public EditNamedStyleAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.editNamedStyleAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            final Frame parent = JOptionPane.getFrameForComponent(panel);
-            final ParaStyleDialog dlg = new ParaStyleDialog(parent, Util.getResourceString("namedStyleDialogTitle"),
-                panel.getSHTMLDocument());
-            Util.center(parent, dlg);
-            dlg.setModal(true);
-            dlg.setValue(panel.getMaxAttributes(panel.getSHTMLEditorPane()));
-            dlg.setVisible(true);
-            panel.updateActions();
-        }
-
-        public void update() {
-        	setEnabled(panel.isWYSIWYGEditorActive());
-        }
-    }
-
-	static public class RemoveStyleAttributeAction extends AbstractAction implements SHTMLAction {
-	    final private Object[] attributes;
-
-	    private final SHTMLPanelImpl panel;
-
-        public RemoveStyleAttributeAction(final SHTMLPanelImpl panel, String name, Object... attributes) {
-	        super(name);
-			this.panel = panel;
-	        this.attributes = attributes;
-	        SHTMLPanelImpl.configureActionProperties(this, name);
-        }
-
-		public void actionPerformed(ActionEvent e) {
-		    if(!panel.isWYSIWYGEditorActive()){
-		    	return;
-		    }
-		    final JEditorPane editor = panel.getSHTMLEditorPane();
-		    final int selectionStart = editor.getSelectionStart();
-		    final int selectionEnd = editor.getSelectionEnd();
-		    if(selectionStart == selectionEnd){
-		    	return;
-		    }
-		    for(Object attribute : attributes)
-		    	SHTMLEditorKit.removeCharacterAttributes((StyledDocument) editor.getDocument(), attribute, selectionStart, selectionEnd - selectionStart);
-	    }
-
-        public void update() {
-            this.setEnabled(panel.isWYSIWYGEditorActive());
-        }
-   }
-
-
-    static class ClearFormatAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public ClearFormatAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.clearFormatAction);
-        }
-
-        /**
-         * do the format change for the associated attribute
-         *
-         * <p>This reverses the current setting for the associated attribute</p>
-         *
-         * @param  e  the ActionEvent describing the cause for this action
-         */
-        public void actionPerformed(final ActionEvent e) {
-            final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
-            if (editor != null) {
-                if (editor.getSelectionStart() != editor.getSelectionEnd()) {
-                    editor.removeCharacterAttributes();
-                }
-                else {
-                    editor.removeParagraphAttributes();
-                }
-            }
-            panel.updateActions();
-        }
-        public void update() {
-        	 this.setEnabled(panel.isWYSIWYGEditorActive());
-        }
-    }
-
-    /**
-     * action to find and replace a given text
-     */
-    static class MultipleDocFindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener {
-        /**
-         *
-         */
-        private final SHTMLPanelMultipleDocImpl panel;
-
-        public MultipleDocFindReplaceAction(final SHTMLPanelMultipleDocImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelMultipleDocImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.findReplaceAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            currentTab = panel.getTabbedPaneForDocuments().getSelectedIndex();
-            caretPos = panel.getDocumentPane().getEditor().getCaretPosition();
-            if (panel.getTabbedPaneForDocuments().getTabCount() > 1) {
-                new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane(), this);
-            }
-            else {
-                new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane());
-            }
-        }
-
-        public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            this.setEnabled(panel.getTabbedPaneForDocuments().getTabCount() > 0);
-        }
-
-
-        public void getNextDocument(final FindReplaceEvent e) {
-            final FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-            final int tabCount = panel.getTabbedPaneForDocuments().getTabCount();
-            int curTab = panel.getTabbedPaneForDocuments().getSelectedIndex();
-            System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
-            if (++curTab < tabCount) {
-                System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
-                resumeWithNewEditor(frd, curTab);
-            }
-            else {
-                frd.terminateOperation();
-            }
-        }
-
-        public void getFirstDocument(final FindReplaceEvent e) {
-            final FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
-            resumeWithNewEditor(frd, 0);
-        }
-
-        public void findReplaceTerminated(final FindReplaceEvent e) {
-            panel.getTabbedPaneForDocuments().setSelectedIndex(currentTab);
-            final DocumentPane docPane = (DocumentPane) panel.getTabbedPaneForDocuments().getSelectedComponent();
-            final JEditorPane editor = docPane.getEditor();
-            editor.setCaretPosition(caretPos);
-            editor.requestFocus();
-        }
-
-        private void resumeWithNewEditor(final FindReplaceDialog frd, final int tabNo) {
-            panel.getTabbedPaneForDocuments().setSelectedIndex(tabNo);
-            final DocumentPane docPane = (DocumentPane) panel.getTabbedPaneForDocuments().getComponentAt(tabNo);
-            final JEditorPane editor = docPane.getEditor();
-            editor.requestFocus();
-            frd.setEditor(editor);
-            frd.resumeOperation();
-        }
-
-        private int caretPos;
-        private int currentTab;
-    }
-
-    /**
-     * action to find and replace a given text
-     */
-    static class SingleDocFindReplaceAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public SingleDocFindReplaceAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.findReplaceAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            currentDocumentPane = panel.getDocumentPane();
-            if (currentDocumentPane != null) {
-                caretPos = currentDocumentPane.getEditor().getCaretPosition();
-                new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane());
-            }
-        }
-
-        public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            this.setEnabled(panel.getDocumentPane() != null);
-        }
-
-        public void findReplaceTerminated(final FindReplaceEvent e) {
-            if (currentDocumentPane.isVisible()) {
-                final JEditorPane editor = currentDocumentPane.getEditor();
-                editor.setCaretPosition(caretPos);
-                editor.requestFocus();
-            }
-        }
-
-        private int caretPos;
-        private DocumentPane currentDocumentPane;
-    }
-
-    /**
-     * Show a dialog to format fonts
-     */
-    static class FontAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public FontAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            final Frame parent = JOptionPane.getFrameForComponent(panel);
-            panel.getSHTMLEditorPane().requestFocus();
-            /* create a modal FontDialog, center and show it */
-            final FontDialog fd = new FontDialog(parent, Util.getResourceString("fontDialogTitle"),
-                panel.getMaxAttributes(panel.getSHTMLEditorPane()));
-            Util.center(parent, fd);
-            fd.setModal(true);
-            fd.setVisible(true);
-            /* if the user made a selection, apply it to the document */
-            if (fd.getResult() == FontDialog.RESULT_OK) {
-                panel.getSHTMLEditorPane().applyAttributes(fd.getAttributes(), false);
-                panel.updateFormatControls();
-            }
-            panel.updateActions();
-        }
-
-        public void update() {
-        	setEnabled(panel.isWYSIWYGEditorActive());
-        }
-    }
-
-    /**
-     * change a font family setting
-     */
-    static class FontFamilyAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public FontFamilyAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontFamilyAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            final FontFamilyPicker ffp = ((FontFamilyPicker) ae.getSource());
-            if (!ffp.ignore()) {
-                panel.getSHTMLEditorPane().applyAttributes(ffp.getValue(), false);
-            }
-            panel.updateActions();
-        }
-
-        public void update() {
-        	setEnabled(panel.isWYSIWYGEditorActive());
-        }
-    }
-
-    /**
-     * change a font size setting
-     */
-    static class FontSizeAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public FontSizeAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontSizeAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            final FontSizePicker fsp = ((FontSizePicker) ae.getSource());
-            if (!fsp.ignore()) {
-                panel.getSHTMLEditorPane().applyAttributes(fsp.getValue(), false);
-            }
-            panel.updateActions();
-        }
-
-        public void update() {
-        	setEnabled(panel.isWYSIWYGEditorActive());
-        }
-    }
-
-    /**
-     * change a font size setting
-     */
-    static class ChangeFontSizeAction extends AbstractAction implements SHTMLAction {
-    	enum Change{INCREASE(1), DECREASE(-1);
-    		final int changeAmount;
-
-			Change(int changeAmount) {
-				this.changeAmount = changeAmount;
-			}
-    	}
-
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-		private final Change change;
-
-        ChangeFontSizeAction(final SHTMLPanelImpl panel, String name, Change change ) {
-            super(name);
-            this.panel = panel;
-			this.change = change;
-            SHTMLPanelImpl.configureActionProperties(this, name);
-
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
-			final AttributeSet a = panel.getMaxAttributes(editorPane);
-			final int size = Util.styleSheet().getFont(a).getSize();
-			int index = 0;
-			for (String availableSizeAsString : SHTMLPanelImpl.FONT_SIZES){
-				final int availableSizeAsNumber = Integer.parseInt(availableSizeAsString);
-				if(size < availableSizeAsNumber) {
-					setSize(change == Change.INCREASE ? index + 1 : index);
-					return;
-				}
-				else if(size == availableSizeAsNumber) {
-					setSize(index + change.changeAmount);
-					return;
-				}
-				else {
-					index++;
-					if(index == SHTMLPanelImpl.FONT_SIZES.length && change == Change.DECREASE) {
-						setSize(index - 1);
-						return;
-					}
-				}
-			}
-        }
-
-        private void setSize(int index) {
-        	if(index >= 0 && index < SHTMLPanelImpl.FONT_SIZES.length) {
-                final SimpleAttributeSet set = new SimpleAttributeSet();
-                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE, SHTMLPanelImpl.FONT_SIZES[index] + "pt");
-                panel.getSHTMLEditorPane().applyAttributes(set, false);
-                panel.updateActions();
-        	}
-		}
-
-		public void update() {
-			 this.setEnabled(panel.isWYSIWYGEditorActive());
-        }
-
-    }
-
-    static class FormatImageAction extends AbstractAction implements SHTMLAction {
-        /**
-         *
-         */
-        private final SHTMLPanelImpl panel;
-
-        public FormatImageAction(final SHTMLPanelImpl panel) {
-            super();
-            this.panel = panel;
-            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.formatImageAction);
-        }
-
-        public void actionPerformed(final ActionEvent ae) {
-            final Frame parent = JOptionPane.getFrameForComponent(panel);
-            final ImageDialog dlg = new ImageDialog(parent, Util.getResourceString("imageDialogTitle"), panel.getDocumentPane().getDocument());
-            final Element img = panel.getSHTMLDocument().getCharacterElement(
-                panel.getSHTMLEditorPane().getCaretPosition());
-            if (img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
-                Util.center(parent, dlg);
-                dlg.setImageAttributes(img.getAttributes());
-                dlg.setModal(true);
-                dlg.setVisible(true);
-                /* if the user made a selection, apply it to the document */
-                if (dlg.getResult() == DialogShell.RESULT_OK) {
-                    try {
-                        panel.getSHTMLDocument().setOuterHTML(img, dlg.getImageHTML());
-                    }
-                    catch (final Exception e) {
-                        Util.errMsg(null, e.getMessage(), e);
-                    }
-                }
-                panel.updateActions();
-            }
-        }
-
-        public void update() {
-            if (panel.isHtmlEditorActive()) {
-                this.setEnabled(false);
-                return;
-            }
-            if (panel.getSHTMLEditorPane() != null) {
-                final Element img = panel.getSHTMLDocument().getCharacterElement(
-                        panel.getSHTMLEditorPane().getCaretPosition());
-                this.setEnabled(img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString()));
-            } else {
-                this.setEnabled(false);
-            }
         }
     }
 
@@ -2914,6 +2486,425 @@ class SHTMLEditorKitActions {
 
         public void update() {
         	setEnabled(panel.isWYSIWYGEditorActive() && !panel.getSHTMLDocument().hasStyleRef());
+        }
+    }
+
+    /**
+     * action to change the paragraph style
+     */
+    static class EditNamedStyleAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public EditNamedStyleAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.editNamedStyleAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            final Frame parent = JOptionPane.getFrameForComponent(panel);
+            final ParaStyleDialog dlg = new ParaStyleDialog(parent, Util.getResourceString("namedStyleDialogTitle"),
+                panel.getSHTMLDocument());
+            Util.center(parent, dlg);
+            dlg.setModal(true);
+            dlg.setValue(panel.getMaxAttributes(panel.getSHTMLEditorPane()));
+            dlg.setVisible(true);
+            panel.updateActions();
+        }
+
+        public void update() {
+        	setEnabled(panel.isWYSIWYGEditorActive());
+        }
+    }
+
+	static public class RemoveStyleAttributeAction extends AbstractAction implements SHTMLAction {
+	    final private Object[] attributes;
+
+	    private final SHTMLPanelImpl panel;
+
+        public RemoveStyleAttributeAction(final SHTMLPanelImpl panel, String name, Object... attributes) {
+	        super(name);
+			this.panel = panel;
+	        this.attributes = attributes;
+	        SHTMLPanelImpl.configureActionProperties(this, name);
+        }
+
+		public void actionPerformed(ActionEvent e) {
+		    if(!panel.isWYSIWYGEditorActive()){
+		    	return;
+		    }
+		    final JEditorPane editor = panel.getSHTMLEditorPane();
+		    final int selectionStart = editor.getSelectionStart();
+		    final int selectionEnd = editor.getSelectionEnd();
+		    if(selectionStart == selectionEnd){
+		    	return;
+		    }
+		    for(Object attribute : attributes)
+		    	SHTMLEditorKit.removeCharacterAttributes((StyledDocument) editor.getDocument(), attribute, selectionStart, selectionEnd - selectionStart);
+	    }
+
+        public void update() {
+            this.setEnabled(panel.isWYSIWYGEditorActive());
+        }
+   }
+
+
+    static class ClearFormatAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public ClearFormatAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.clearFormatAction);
+        }
+
+        /**
+         * do the format change for the associated attribute
+         *
+         * <p>This reverses the current setting for the associated attribute</p>
+         *
+         * @param  e  the ActionEvent describing the cause for this action
+         */
+        public void actionPerformed(final ActionEvent e) {
+            final SHTMLEditorPane editor = panel.getSHTMLEditorPane();
+            if (editor != null) {
+                if (editor.getSelectionStart() != editor.getSelectionEnd()) {
+                    editor.removeCharacterAttributes();
+                }
+                else {
+                    editor.removeParagraphAttributes();
+                }
+            }
+            panel.updateActions();
+        }
+        public void update() {
+        	 this.setEnabled(panel.isWYSIWYGEditorActive());
+        }
+    }
+
+    /**
+     * action to find and replace a given text
+     */
+    static class MultipleDocFindReplaceAction extends AbstractAction implements SHTMLAction, FindReplaceListener {
+        /**
+         *
+         */
+        private final SHTMLPanelMultipleDocImpl panel;
+
+        public MultipleDocFindReplaceAction(final SHTMLPanelMultipleDocImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelMultipleDocImpl.configureActionProperties(this, SHTMLPanelMultipleDocImpl.findReplaceAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            currentTab = panel.getTabbedPaneForDocuments().getSelectedIndex();
+            caretPos = panel.getDocumentPane().getEditor().getCaretPosition();
+            if (panel.getTabbedPaneForDocuments().getTabCount() > 1) {
+                new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane(), this);
+            }
+            else {
+                new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane());
+            }
+        }
+
+        public void update() {
+            if (panel.isHtmlEditorActive()) {
+                this.setEnabled(false);
+                return;
+            }
+            this.setEnabled(panel.getTabbedPaneForDocuments().getTabCount() > 0);
+        }
+
+
+        public void getNextDocument(final FindReplaceEvent e) {
+            final FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
+            final int tabCount = panel.getTabbedPaneForDocuments().getTabCount();
+            int curTab = panel.getTabbedPaneForDocuments().getSelectedIndex();
+            System.out.println("FindReplaceAction.getNextDocument curTab=" + curTab + ", tabCount=" + tabCount);
+            if (++curTab < tabCount) {
+                System.out.println("FindReplaceAction.getNextDocument next tab no=" + curTab);
+                resumeWithNewEditor(frd, curTab);
+            }
+            else {
+                frd.terminateOperation();
+            }
+        }
+
+        public void getFirstDocument(final FindReplaceEvent e) {
+            final FindReplaceDialog frd = (FindReplaceDialog) e.getSource();
+            resumeWithNewEditor(frd, 0);
+        }
+
+        public void findReplaceTerminated(final FindReplaceEvent e) {
+            panel.getTabbedPaneForDocuments().setSelectedIndex(currentTab);
+            final DocumentPane docPane = (DocumentPane) panel.getTabbedPaneForDocuments().getSelectedComponent();
+            final JEditorPane editor = docPane.getEditor();
+            editor.setCaretPosition(caretPos);
+            editor.requestFocus();
+        }
+
+        private void resumeWithNewEditor(final FindReplaceDialog frd, final int tabNo) {
+            panel.getTabbedPaneForDocuments().setSelectedIndex(tabNo);
+            final DocumentPane docPane = (DocumentPane) panel.getTabbedPaneForDocuments().getComponentAt(tabNo);
+            final JEditorPane editor = docPane.getEditor();
+            editor.requestFocus();
+            frd.setEditor(editor);
+            frd.resumeOperation();
+        }
+
+        private int caretPos;
+        private int currentTab;
+    }
+
+    /**
+     * action to find and replace a given text
+     */
+    static class SingleDocFindReplaceAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public SingleDocFindReplaceAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.findReplaceAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            currentDocumentPane = panel.getDocumentPane();
+            if (currentDocumentPane != null) {
+                caretPos = currentDocumentPane.getEditor().getCaretPosition();
+                new FindReplaceDialog(panel.getMainFrame(), panel.getSHTMLEditorPane());
+            }
+        }
+
+        public void update() {
+            if (panel.isHtmlEditorActive()) {
+                this.setEnabled(false);
+                return;
+            }
+            this.setEnabled(panel.getDocumentPane() != null);
+        }
+
+        public void findReplaceTerminated(final FindReplaceEvent e) {
+            if (currentDocumentPane.isVisible()) {
+                final JEditorPane editor = currentDocumentPane.getEditor();
+                editor.setCaretPosition(caretPos);
+                editor.requestFocus();
+            }
+        }
+
+        private int caretPos;
+        private DocumentPane currentDocumentPane;
+    }
+
+    /**
+     * Show a dialog to format fonts
+     */
+    static class FontAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public FontAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            final Frame parent = JOptionPane.getFrameForComponent(panel);
+            panel.getSHTMLEditorPane().requestFocus();
+            /* create a modal FontDialog, center and show it */
+            final FontDialog fd = new FontDialog(parent, Util.getResourceString("fontDialogTitle"),
+                panel.getMaxAttributes(panel.getSHTMLEditorPane()));
+            Util.center(parent, fd);
+            fd.setModal(true);
+            fd.setVisible(true);
+            /* if the user made a selection, apply it to the document */
+            if (fd.getResult() == FontDialog.RESULT_OK) {
+                panel.getSHTMLEditorPane().applyAttributes(fd.getAttributes(), false);
+                panel.updateFormatControls();
+            }
+            panel.updateActions();
+        }
+
+        public void update() {
+        	setEnabled(panel.isWYSIWYGEditorActive());
+        }
+    }
+
+    /**
+     * change a font family setting
+     */
+    static class FontFamilyAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public FontFamilyAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontFamilyAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            final FontFamilyPicker ffp = ((FontFamilyPicker) ae.getSource());
+            if (!ffp.ignore()) {
+                panel.getSHTMLEditorPane().applyAttributes(ffp.getValue(), false);
+            }
+            panel.updateActions();
+        }
+
+        public void update() {
+        	setEnabled(panel.isWYSIWYGEditorActive());
+        }
+    }
+
+    /**
+     * change a font size setting
+     */
+    static class FontSizeAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public FontSizeAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.fontSizeAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            final FontSizePicker fsp = ((FontSizePicker) ae.getSource());
+            if (!fsp.ignore()) {
+                panel.getSHTMLEditorPane().applyAttributes(fsp.getValue(), false);
+            }
+            panel.updateActions();
+        }
+
+        public void update() {
+        	setEnabled(panel.isWYSIWYGEditorActive());
+        }
+    }
+
+    /**
+     * change a font size setting
+     */
+    static class ChangeFontSizeAction extends AbstractAction implements SHTMLAction {
+    	enum Change{INCREASE(1), DECREASE(-1);
+    		final int changeAmount;
+
+			Change(int changeAmount) {
+				this.changeAmount = changeAmount;
+			}
+    	}
+
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+		private final Change change;
+
+        ChangeFontSizeAction(final SHTMLPanelImpl panel, String name, Change change ) {
+            super(name);
+            this.panel = panel;
+			this.change = change;
+            SHTMLPanelImpl.configureActionProperties(this, name);
+
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+			final SHTMLEditorPane editorPane = panel.getSHTMLEditorPane();
+			final AttributeSet a = panel.getMaxAttributes(editorPane);
+			final int size = Util.styleSheet().getFont(a).getSize();
+			int index = 0;
+			for (String availableSizeAsString : SHTMLPanelImpl.FONT_SIZES){
+				final int availableSizeAsNumber = Integer.parseInt(availableSizeAsString);
+				if(size < availableSizeAsNumber) {
+					setSize(change == Change.INCREASE ? index + 1 : index);
+					return;
+				}
+				else if(size == availableSizeAsNumber) {
+					setSize(index + change.changeAmount);
+					return;
+				}
+				else {
+					index++;
+					if(index == SHTMLPanelImpl.FONT_SIZES.length && change == Change.DECREASE) {
+						setSize(index - 1);
+						return;
+					}
+				}
+			}
+        }
+
+        private void setSize(int index) {
+        	if(index >= 0 && index < SHTMLPanelImpl.FONT_SIZES.length) {
+                final SimpleAttributeSet set = new SimpleAttributeSet();
+                Util.styleSheet().addCSSAttribute(set, CSS.Attribute.FONT_SIZE, SHTMLPanelImpl.FONT_SIZES[index] + "pt");
+                panel.getSHTMLEditorPane().applyAttributes(set, false);
+                panel.updateActions();
+        	}
+		}
+
+		public void update() {
+			 this.setEnabled(panel.isWYSIWYGEditorActive());
+        }
+
+    }
+
+    static class FormatImageAction extends AbstractAction implements SHTMLAction {
+        /**
+         *
+         */
+        private final SHTMLPanelImpl panel;
+
+        public FormatImageAction(final SHTMLPanelImpl panel) {
+            super();
+            this.panel = panel;
+            SHTMLPanelImpl.configureActionProperties(this, SHTMLPanelImpl.formatImageAction);
+        }
+
+        public void actionPerformed(final ActionEvent ae) {
+            final Frame parent = JOptionPane.getFrameForComponent(panel);
+            final ImageDialog dlg = new ImageDialog(parent, Util.getResourceString("imageDialogTitle"), panel.getDocumentPane().getDocument());
+            final Element img = panel.getSHTMLDocument().getCharacterElement(
+                panel.getSHTMLEditorPane().getCaretPosition());
+            if (img.getName().equalsIgnoreCase(HTML.Tag.IMG.toString())) {
+                Util.center(parent, dlg);
+                dlg.setImageAttributes(img.getAttributes());
+                dlg.setModal(true);
+                dlg.setVisible(true);
+                /* if the user made a selection, apply it to the document */
+                if (dlg.getResult() == DialogShell.RESULT_OK) {
+                    try {
+                        panel.getSHTMLDocument().setOuterHTML(img, dlg.getImageHTML());
+                    }
+                    catch (final Exception e) {
+                        Util.errMsg(null, e.getMessage(), e);
+                    }
+                }
+                panel.updateActions();
+            }
+        }
+
+        public void update() {
+            if (panel.isHtmlEditorActive()) {
+                this.setEnabled(false);
+                return;
+            }
         }
     }
 }
