@@ -1,10 +1,15 @@
+plugins {
+  id "com.vanniktech.maven.publish" version "0.32.0"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+
 group 'org.freeplane.lightdev'
-version = '0.19.11'
+version = '0.19.12-SNAPSHOT'
 
 targetCompatibility='1.8'
 sourceCompatibility='1.8'
@@ -24,111 +29,109 @@ sourceSets {
     main {
         java {
             srcDir 'src'
-			exclude 'com/lightdev/app/shtm/resources/**'
-			exclude 'com/lightdev/app/shtm/help/**'
+            exclude 'com/lightdev/app/shtm/help/**'
         }
-    }
-    main {
         resources {
             srcDir 'src'
-			include 'com/lightdev/app/shtm/resources/**'
-			include 'com/lightdev/app/shtm/help/**'
+            include 'com/lightdev/app/shtm/resources/**'
+            exclude 'com/lightdev/app/shtm/help/**'
         }
     }
+    
+    help {
+        java {
+            srcDir 'src'
+            include 'com/lightdev/app/shtm/help/**'
+        }
+        resources {
+            srcDir 'src'
+            include 'com/lightdev/app/shtm/help/**'
+            exclude '**/*.java'
+        }
+    }
+}
+
+// Configure help source set to use main's dependencies
+configurations {
+    helpImplementation.extendsFrom implementation
+    helpRuntimeOnly.extendsFrom runtimeOnly
 }
 
 // help.jar
-task helpJar(type: Jar) {
-	archiveBaseName = 'SimplyHTMLHelp'
-    from(sourceSets.main.output) {
-        include "com/lightdev/app/shtm/help/**"
-    }
+task helpJar(type: Jar, dependsOn: helpClasses) {
+    archiveBaseName = 'SimplyHTMLHelp'
+    from sourceSets.help.output
 }
 
-// lib.jar
-task mainJar(type: Jar, dependsOn: classes) {
-	archiveBaseName = 'SimplyHTML'
-    from(sourceSets.main.output) {
-        exclude "com/lightdev/app/shtm/help/**"
-    }
-	manifest {
-
-    attributes(
-		'Implementation-Title': project.name,
-        'Implementation-Version': project.version,
-        'Main-Class': 'com.lightdev.app.shtm.App',
-		)
-  }
-}
-
-task sourceJar(type: Jar) {
+// Configure the default jar task
+jar {
     archiveBaseName = 'SimplyHTML'
-    archiveClassifier = 'sources'
-    from (sourceSets.main.allSource){
-        exclude "com/lightdev/app/shtm/help/**"
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Main-Class': 'com.lightdev.app.shtm.App',
+        )
     }
 }
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  archiveClassifier = 'javadoc'
-  from javadoc.destinationDir
+
+build.dependsOn helpJar
+
+// Configure the sourcesJar task to avoid duplicates
+afterEvaluate {
+    tasks.named('sourcesJar') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
 }
-build.dependsOn mainJar
-build.dependsOn javadoc
+
+import com.vanniktech.maven.publish.SonatypeHost
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
+mavenPublishing {
+  configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
+  publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+  signAllPublications()
+  
+    pom {
+        name = project.name
+        description = 'Application and java components for html'
+        url = 'https://sourceforge.net/projects/simplyhtml/'
+
+        scm {
+            url = 'https://github.com/freeplane/shtml'
+            connection = 'scm:git:https://github.com/freeplane/shtml.git'
+            developerConnection = 'scm:git:git@github.com:freeplane/shtml.git'
+        }
+
+        licenses {
+            license {
+                name = 'GPL, Version 2 or later'
+                url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'lightdev'
+                name = 'Ulrich Hilger'
+            }
+            developer {
+                id = 'dpolivaev'
+                name = 'Dimitry Polivaev'
+                email = 'dpolivaev@gmx.de'
+            }
+        }
+    }
+}
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId 'simplyhtml'
-			groupId = project.group
-			version = project.version
-			artifact mainJar
-			artifact sourceJar
-			artifact javadocJar
-            pom {
-                name = project.name
-                description = 'Application and java components for html'
-                url = 'https://sourceforge.net/projects/simplyhtml/'
-
-                scm {
-                    url = 'https://github.com/freeplane/shtml'
-                    connection = 'scm:git:https://github.com/freeplane/shtml.git'
-                    developerConnection = 'scm:git:git@github.com:freeplane/shtml.git'
-                }
-
-                licenses {
-                    license {
-                        name = 'GPL, Version 2 or later'
-                        url = 'https://www.gnu.org/licenses/gpl-3.0.html'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = 'lightdev'
-                        name = 'Ulrich Hilger'
-                    }
-                    developer {
-                        id = 'dpolivaev'
-                        name = 'Dimitry Polivaev'
-                        email = 'dpolivaev@gmx.de'
-                    }
-                }
-            }
-        }
-    }
     repositories {
         maven {
-        	name = 'central'
-            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
-            credentials {
-                username project.findProperty('ossrhUsername') ?: '-'
-                password project.findProperty('ossrhPassword') ?: '-'
-            }
+            name = 'localartifacts'
+            url  = "${project.gradle.gradleUserHomeDir}/local-artifacts"
         }
-        maven {
-        	name = 'localartifacts'
-			url  = "${project.gradle.gradleUserHomeDir}/local-artifacts"
-		}
     }
 }
 
