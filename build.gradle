@@ -57,6 +57,25 @@ configurations {
     helpRuntimeOnly.extendsFrom runtimeOnly
 }
 
+// Configure Eclipse plugin to use only the IDE source set
+eclipse {
+    classpath {
+        // Don't use any source sets, we'll define manually
+        sourceSets = []
+        
+        file {
+            whenMerged { classpath ->
+                // Remove all existing source entries
+                classpath.entries.removeAll { it.kind == 'src' }
+                
+                // Add a single, clean source entry that Eclipse will recognize
+                def sourceEntry = new org.gradle.plugins.ide.eclipse.model.SourceFolder('src', 'bin/main')
+                classpath.entries.add(0, sourceEntry)
+            }
+        }
+    }
+}
+
 // help.jar
 task helpJar(type: Jar, dependsOn: helpClasses) {
     archiveBaseName = 'SimplyHTMLHelp'
