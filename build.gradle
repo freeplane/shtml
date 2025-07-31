@@ -9,7 +9,7 @@ apply plugin: 'signing'
 
 
 group 'org.freeplane.lightdev'
-version = '0.19.12-SNAPSHOT'
+version = '0.19.12'
 
 targetCompatibility='1.8'
 sourceCompatibility='1.8'
@@ -37,7 +37,7 @@ sourceSets {
             exclude 'com/lightdev/app/shtm/help/**'
         }
     }
-    
+
     help {
         java {
             srcDir 'src'
@@ -62,12 +62,12 @@ eclipse {
     classpath {
         // Don't use any source sets, we'll define manually
         sourceSets = []
-        
+
         file {
             whenMerged { classpath ->
                 // Remove all existing source entries
                 classpath.entries.removeAll { it.kind == 'src' }
-                
+
                 // Add a single, clean source entry that Eclipse will recognize
                 def sourceEntry = new org.gradle.plugins.ide.eclipse.model.SourceFolder('src', 'bin/main')
                 classpath.entries.add(0, sourceEntry)
@@ -112,7 +112,7 @@ mavenPublishing {
   publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
   signAllPublications()
-  
+
     pom {
         name = project.name
         description = 'Application and java components for html'
