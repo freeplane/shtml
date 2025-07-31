@@ -1,5 +1,5 @@
 plugins {
-  id "com.vanniktech.maven.publish" version "0.32.0"
+  id "com.vanniktech.maven.publish" version "0.34.0"
 }
 
 apply plugin: 'java'
@@ -103,13 +103,12 @@ afterEvaluate {
     }
 }
 
-import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 
 mavenPublishing {
   configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
-  publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+  publishToMavenCentral(true)
 
   signAllPublications()
 
